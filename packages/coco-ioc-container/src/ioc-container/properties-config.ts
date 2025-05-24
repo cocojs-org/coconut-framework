@@ -3,6 +3,8 @@
  * @public
  */
 class PropertiesConfig {
+  static bootComponentKey = 'bootComponents';
+
   beanConfig: Record<string, any>;
 
   constructor(jsonConfig: Record<string, any> = {}) {
@@ -25,9 +27,16 @@ class PropertiesConfig {
 
   public getAllBootComponents() {
     const boots: string[] = [];
-    for (const [componentId, config] of Object.entries(this.beanConfig)) {
-      if (config['boot']) {
-        boots.push(componentId);
+    const bootComponents = this.beanConfig[PropertiesConfig.bootComponentKey];
+    if (
+      bootComponents &&
+      typeof bootComponents === 'object' &&
+      bootComponents.toString() === '[object Object]'
+    ) {
+      for (const [componentId, value] of Object.entries(bootComponents)) {
+        if (!!value) {
+          boots.push(componentId);
+        }
       }
     }
     return boots;

@@ -2,7 +2,7 @@
   "Render": {
     "qualifier": "TestWebRender"
   },
-  "Router": {
-    "boot": true
+  "bootComponents": {
+    "Router": {}
   }
 }
