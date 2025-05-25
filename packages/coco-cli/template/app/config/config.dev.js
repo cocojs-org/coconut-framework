@@ -6,7 +6,7 @@ const config = {
     mode: 'development',
     devServer: {
       static: {
-        directory: path.join(process.cwd(), 'docs'),
+        directory: path.join(process.cwd(), 'dist'),
       },
     },
   },

@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import process from 'node:process';
-import { getEnvConfigName } from './util/env';
+import { propertiesFileName, defaultPropertiesName } from './util/env';
 import Project from './project';
 
 function readFile(filepath: string) {
@@ -13,20 +12,25 @@ function readFile(filepath: string) {
 }
 
 function merge(project: Project, cmd: string) {
-  const defaultConfig = readFile(
-    path.join(project.absPath, `properties/application.json`)
+  const defaultConfigStr = readFile(
+    path.join(project.absPath, `properties/${defaultPropertiesName}`)
   );
-  const env = getEnvConfigName(cmd);
-  let envConfig = '{}';
-  if (env) {
-    envConfig = readFile(
-      path.join(project.absPath, `properties/application.${env}.json`)
-    );
+  const envConfigStr = readFile(
+    path.join(project.absPath, `properties/${propertiesFileName(cmd)}`)
+  );
+  let defaultConfig = {};
+  try {
+    defaultConfig = JSON.parse(defaultConfigStr);
+  } catch (error) {
+    // 写了一半的配置文件
   }
-  const config = merge2properties(
-    JSON.parse(defaultConfig),
-    JSON.parse(envConfig)
-  );
+  let envConfig = {};
+  try {
+    envConfig = JSON.parse(envConfigStr);
+  } catch (error) {
+    // 写了一半的配置文件
+  }
+  const config = merge2properties(defaultConfig, envConfig);
   const filePath = path.join(project.absPath, 'src/.coco/application.json');
   fs.writeFileSync(filePath, JSON.stringify(config, null, 2), {
     encoding: 'utf-8',

@@ -8,11 +8,14 @@ import chokidar from 'chokidar';
 import type { FSWatcher } from 'chokidar';
 import fs from 'fs';
 import { scanOneFile, scan, scanPathConfig, ScanResult } from './scanner';
+import { defaultPropertiesName, propertiesFileName } from './util/env';
 
 class Watcher {
   project: Project;
   iocComponents: ScanResult;
-  chokidarWatcher: FSWatcher;
+  cmd: 'dev' | 'build';
+  srcWatcher: FSWatcher;
+  propertiesWatcher: FSWatcher;
 
   /**
    * 目前仅支持单体应用，为了单元测试，可以传入子应用相对项目根的路径
@@ -33,10 +36,10 @@ class Watcher {
   /**
    * 完成构建前的准备工作
    */
-  doPrepareWork = (cmd: 'dev' | 'build') => {
+  doPrepareWork = () => {
     this.ensureEmptyDotCocoFolder(this.project);
     validateConstructor(this.project);
-    mergeProperties(this.project, cmd);
+    mergeProperties(this.project, this.cmd);
     genIndexTsx(this.project, this.iocComponents);
   };
 
@@ -44,7 +47,7 @@ class Watcher {
     process.on('message', (msg) => {
       switch (msg) {
         case 'start': {
-          this.doPrepareWork('dev');
+          this.doPrepareWork();
           process.send('prepare-success');
           this.startWatch();
           break;
@@ -95,8 +98,8 @@ class Watcher {
     }
   };
 
-  startWatch = () => {
-    this.chokidarWatcher = chokidar.watch(this.project.srcAbsPath, {
+  watchSrc = () => {
+    this.srcWatcher = chokidar.watch(this.project.srcAbsPath, {
       ignored: (absPath, stats) => {
         // 忽略.coco文件夹
         const srcPath = path.relative(this.project.srcAbsPath, absPath);
@@ -105,18 +108,51 @@ class Watcher {
       ignoreInitial: true,
       cwd: this.project.srcAbsPath,
     });
-    this.chokidarWatcher.on('add', this.handleAddFile);
-    this.chokidarWatcher.on('change', this.handleAddFile);
-    this.chokidarWatcher.on('unlink', this.handleDeleteFile);
+    this.srcWatcher.on('add', this.handleAddFile);
+    this.srcWatcher.on('change', this.handleAddFile);
+    this.srcWatcher.on('unlink', this.handleDeleteFile);
+  };
+
+  watchProperties = () => {
+    this.propertiesWatcher = chokidar.watch(this.project.propertiesAbsPath, {
+      ignored: (absPath, stats) => {
+        const filename = path.relative(this.project.propertiesAbsPath, absPath);
+        if (
+          absPath === this.project.propertiesAbsPath ||
+          filename === defaultPropertiesName ||
+          filename === propertiesFileName(this.cmd)
+        ) {
+          return false;
+        }
+        return true;
+      },
+      ignoreInitial: true,
+      cwd: this.project.srcAbsPath,
+    });
+    this.propertiesWatcher.on('add', () =>
+      mergeProperties(this.project, this.cmd)
+    );
+    this.propertiesWatcher.on('change', () =>
+      mergeProperties(this.project, this.cmd)
+    );
+    this.propertiesWatcher.on('unlink', () =>
+      mergeProperties(this.project, this.cmd)
+    );
+  };
+
+  startWatch = () => {
+    this.watchSrc();
+    this.watchProperties();
   };
 }
 
 function build(ifWatch: boolean) {
   const watcher = new Watcher();
+  watcher.cmd = ifWatch ? 'dev' : 'build';
   if (ifWatch) {
     watcher.startListen();
   } else {
-    watcher.doPrepareWork('build');
+    watcher.doPrepareWork();
     process.exit(0);
   }
 }
