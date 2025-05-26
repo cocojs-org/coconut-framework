@@ -1,4 +1,4 @@
-import Project from './project';
+import Project from '../util/project';
 import { scan } from './scanner';
 import fs from 'fs';
 import { parse } from '@babel/parser';

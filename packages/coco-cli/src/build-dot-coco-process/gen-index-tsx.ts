@@ -4,7 +4,7 @@
 import fs from 'fs';
 import fse from 'fs-extra';
 import path from 'path';
-import Project from './project';
+import Project from '../util/project';
 import type { ScanResult } from './scanner';
 import * as process from 'node:process';
 

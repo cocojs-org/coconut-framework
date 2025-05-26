@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { propertiesFileName, defaultPropertiesName } from './util/env';
-import Project from './project';
+import { propertiesFileName, defaultPropertiesName } from '../util/env';
+import Project from '../util/project';
 
 function readFile(filepath: string) {
   let content = '{}';

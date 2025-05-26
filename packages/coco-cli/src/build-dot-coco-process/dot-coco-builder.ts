@@ -3,15 +3,15 @@
  * * 入口文件 src/.coco/index.tsx
  * * 运行时配置文件 src/.coco/application.json
  */
-import genIndexTsx from '../gen-index-tsx';
-import mergeProperties from '../merge-properties';
-import { validateConstructor } from '../validate-constructor';
-import Project from '../project';
+import genIndexTsx from './gen-index-tsx';
+import mergeProperties from './merge-properties';
+import { validateConstructor } from './validate-constructor';
+import Project from '../util/project';
 import path from 'node:path';
 import chokidar from 'chokidar';
 import type { FSWatcher } from 'chokidar';
 import fs from 'fs';
-import { scanOneFile, scan, scanPathConfig, ScanResult } from '../scanner';
+import { scanOneFile, scan, scanPathConfig, ScanResult } from './scanner';
 import { defaultPropertiesName, propertiesFileName } from '../util/env';
 
 class DotCocoBuilder {

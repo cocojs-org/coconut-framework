@@ -3,8 +3,8 @@
  */
 import * as fs from 'fs';
 import * as path from 'path';
-import Project from './project';
-import { numberToLetter } from './util/number-2-letter';
+import Project from '../util/project';
+import { numberToLetter } from '../util/number-2-letter';
 
 enum PATH_TYPE {
   FOLDER,
