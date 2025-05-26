@@ -16,53 +16,53 @@ const startWebpackDevServer = () => {
 };
 
 async function devApp() {
-  const watchProcess = fork(
+  const buildDotCocoProcess = fork(
     path.join(__dirname, './build-dot-coco-process/index.js'),
-    ['build-and-watch']
+    ['run-as-process']
   );
   let webpackDevProcess: ChildProcess;
-  watchProcess.on('message', (msg) => {
+  buildDotCocoProcess.on('message', (msg) => {
     switch (msg) {
-      case 'prepare-success': {
+      case 'build-success': {
         webpackDevProcess = startWebpackDevServer();
         webpackDevProcess.on('exit', () => {
-          if (watchProcess) {
-            watchProcess.kill();
+          if (buildDotCocoProcess) {
+            buildDotCocoProcess.kill();
           }
           process.exit(0);
         });
         break;
       }
       default: {
-        console.info(msg);
+        console.info(`收到来自buildDotCocoProcess未知的消息：${msg}`);
         break;
       }
     }
   });
-  watchProcess.on('exit', () => {
+  buildDotCocoProcess.on('exit', () => {
     if (webpackDevProcess) {
       webpackDevProcess.kill();
     }
     process.exit(0);
   });
   process.on('exit', () => {
-    if (watchProcess) {
-      watchProcess.kill();
+    if (buildDotCocoProcess) {
+      buildDotCocoProcess.kill();
     }
     if (webpackDevProcess) {
       webpackDevProcess.kill();
     }
   });
   process.on('uncaughtException', () => {
-    if (watchProcess) {
-      watchProcess.kill();
+    if (buildDotCocoProcess) {
+      buildDotCocoProcess.kill();
     }
     if (webpackDevProcess) {
       webpackDevProcess.kill(); // 显式杀死子进程
     }
   });
 
-  watchProcess.send('start');
+  buildDotCocoProcess.send('build-and-watch');
 }
 
 export default devApp;

@@ -9,7 +9,7 @@ let ApplicationContext;
 
 describe('field装饰器', () => {
   beforeEach(async () => {
-    cli_helper.prepareBuild(pkgPath(__dirname));
+    cli_helper.buildDotCoco(pkgPath(__dirname));
     ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
   });
 

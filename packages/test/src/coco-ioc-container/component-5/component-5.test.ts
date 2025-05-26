@@ -7,7 +7,7 @@ let throwError;
 describe('不能同时添加多个component的复合装饰器的复合装饰器', () => {
   beforeEach(async () => {
     try {
-      cli_helper.prepareBuild(pkgPath(__dirname));
+      cli_helper.buildDotCoco(pkgPath(__dirname));
       ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
     } catch (e) {
       throwError = true;

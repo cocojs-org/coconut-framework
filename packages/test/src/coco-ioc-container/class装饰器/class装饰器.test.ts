@@ -10,7 +10,7 @@ let ApplicationContext;
 describe('class装饰器', () => {
   beforeEach(async () => {
     // TEST.decorator.reset();
-    cli_helper.prepareBuild(pkgPath(__dirname));
+    cli_helper.buildDotCoco(pkgPath(__dirname));
     ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
   });
 

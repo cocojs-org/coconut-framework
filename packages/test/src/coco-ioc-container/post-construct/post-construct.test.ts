@@ -9,7 +9,7 @@ let Button;
 let throwError;
 describe('decorator', () => {
   beforeEach(async () => {
-    cli_helper.prepareBuild(pkgPath(__dirname));
+    cli_helper.buildDotCoco(pkgPath(__dirname));
     ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
     Button = (await import('./src/component/a-button.ts')).default;
   });

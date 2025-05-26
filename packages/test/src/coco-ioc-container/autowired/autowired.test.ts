@@ -12,7 +12,7 @@ let UserInfo;
 describe('autowired', () => {
   beforeEach(async () => {
     try {
-      cli_helper.prepareBuild(pkgPath(__dirname));
+      cli_helper.buildDotCoco(pkgPath(__dirname));
       User = (await import('./src/component/user.ts')).default;
       Computer = (await import('./src/component/computer.ts')).default;
       Theme = (await import('./src/component/theme.ts')).default;

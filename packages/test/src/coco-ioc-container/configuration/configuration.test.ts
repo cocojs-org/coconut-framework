@@ -10,7 +10,7 @@ let Theme;
 describe('decorator', () => {
   beforeEach(async () => {
     try {
-      cli_helper.prepareBuild(pkgPath(__dirname));
+      cli_helper.buildDotCoco(pkgPath(__dirname));
       User = (await import('./src/config/user.ts')).default;
       Button = (await import('./src/config/button.ts')).default;
       Theme = (await import('./src/config/theme.ts')).default;

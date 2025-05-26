@@ -1,16 +1,16 @@
-function prepareBuild(monorepoProjPath: string) {
-  const Watcher = require('./build-dot-coco-process/index.js');
-  const watch = new Watcher(monorepoProjPath);
-  watch.doPrepareWork('build');
+function buildDotCoco(monorepoProjPath: string) {
+  const Builder = require('./build-dot-coco-process/index.js');
+  const builder = new Builder(monorepoProjPath);
+  builder.build();
 }
 
 let _test_helper: {
-  prepareBuild: typeof prepareBuild;
+  buildDotCoco: typeof buildDotCoco;
 };
 
 if (__TEST__) {
   _test_helper = {
-    prepareBuild,
+    buildDotCoco,
   };
 }
 

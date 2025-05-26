@@ -7,7 +7,7 @@ let Button;
 let Single;
 describe('ioc-container', () => {
   beforeEach(async () => {
-    cli_helper.prepareBuild(pkgPath(__dirname));
+    cli_helper.buildDotCoco(pkgPath(__dirname));
     Single = (await import('./src/component/a-single.ts')).default;
     Button = (await import('./src/component/a-button.ts')).default;
     ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;

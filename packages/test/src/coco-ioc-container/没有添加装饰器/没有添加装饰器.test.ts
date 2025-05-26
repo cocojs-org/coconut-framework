@@ -6,7 +6,7 @@ let ApplicationContext;
 let Space;
 describe('ioc-container', () => {
   beforeEach(async () => {
-    cli_helper.prepareBuild(pkgPath(__dirname));
+    cli_helper.buildDotCoco(pkgPath(__dirname));
     Space = (await import('./src/component/Space.ts')).default;
     ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
   });

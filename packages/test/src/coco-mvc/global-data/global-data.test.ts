@@ -7,7 +7,7 @@ let Button;
 let Button1;
 describe('global-data', () => {
   beforeEach(async () => {
-    cli_helper.prepareBuild(pkgPath(__dirname));
+    cli_helper.buildDotCoco(pkgPath(__dirname));
     ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
     Button = (await import('./src/view/button.tsx')).default;
     Button1 = (await import('./src/view/button1.tsx')).default;

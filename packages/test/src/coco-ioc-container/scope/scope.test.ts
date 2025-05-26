@@ -10,7 +10,7 @@ let Prototype;
 describe('decorator', () => {
   beforeEach(async () => {
     try {
-      cli_helper.prepareBuild(pkgPath(__dirname));
+      cli_helper.buildDotCoco(pkgPath(__dirname));
       DefaultValue = (await import('./src/component/default-value.ts')).default;
       Single = (await import('./src/component/single.ts')).default;
       Prototype = (await import('./src/component/prototype.ts')).default;

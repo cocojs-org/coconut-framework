@@ -14,7 +14,7 @@ let throwError;
 let App;
 describe('viewDidUpdate', () => {
   beforeEach(async () => {
-    cli_helper.prepareBuild(pkgPath(__dirname));
+    cli_helper.buildDotCoco(pkgPath(__dirname));
     ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
     applicationJson = (await import(cocoIdxAppJson)).default;
     Render = (await import('coco-mvc')).Render;

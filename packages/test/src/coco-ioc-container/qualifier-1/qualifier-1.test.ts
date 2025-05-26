@@ -14,7 +14,7 @@ let User;
 describe('qualifier-1', () => {
   beforeEach(async () => {
     try {
-      cli_helper.prepareBuild(pkgPath(__dirname));
+      cli_helper.buildDotCoco(pkgPath(__dirname));
       Child = (await import('./src/component/child.ts')).default;
       User = (await import('./src/view/user.tsx')).default;
       ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;

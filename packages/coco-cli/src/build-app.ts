@@ -16,24 +16,25 @@ const runWebpack = async () => {
   });
 };
 
-async function prepareBuild() {
+async function buildDotCoco() {
   return new Promise(function (resolve, reject) {
-    const prepareProcess = fork(
+    const buildDotCocoProcess = fork(
       path.join(__dirname, './build-dot-coco-process/index.js'),
-      ['build-once']
+      ['run-as-process']
     );
-    prepareProcess.on('exit', (code) => {
-      if (code === 0) {
+    buildDotCocoProcess.on('exit', (code) => reject());
+    buildDotCocoProcess.on('message', (msg) => {
+      if (msg === 'build-success') {
         resolve(true);
-      } else {
-        reject();
+        buildDotCocoProcess.kill();
       }
     });
+    buildDotCocoProcess.send('build-once');
   });
 }
 
 async function buildApp() {
-  await prepareBuild();
+  await buildDotCoco();
   await runWebpack();
 }
 
