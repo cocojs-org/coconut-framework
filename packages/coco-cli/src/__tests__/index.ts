@@ -1,5 +1,5 @@
 function prepareBuild(monorepoProjPath: string) {
-  const Watcher = require('./prepare-build');
+  const Watcher = require('./build-dot-coco-process/index.js');
   const watch = new Watcher(monorepoProjPath);
   watch.doPrepareWork('build');
 }

@@ -1,14 +1,14 @@
-import genIndexTsx from './gen-index-tsx';
-import mergeProperties from './merge-properties';
-import { validateConstructor } from './validate-constructor';
-import Project from './project';
+import genIndexTsx from '../gen-index-tsx';
+import mergeProperties from '../merge-properties';
+import { validateConstructor } from '../validate-constructor';
+import Project from '../project';
 import path from 'node:path';
 import process from 'node:process';
 import chokidar from 'chokidar';
 import type { FSWatcher } from 'chokidar';
 import fs from 'fs';
-import { scanOneFile, scan, scanPathConfig, ScanResult } from './scanner';
-import { defaultPropertiesName, propertiesFileName } from './util/env';
+import { scanOneFile, scan, scanPathConfig, ScanResult } from '../scanner';
+import { defaultPropertiesName, propertiesFileName } from '../util/env';
 
 class Watcher {
   project: Project;
