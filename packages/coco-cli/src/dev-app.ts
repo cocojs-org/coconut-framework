@@ -1,18 +1,11 @@
-import { fork, spawn, ChildProcess } from 'child_process';
+import { fork, ChildProcess } from 'child_process';
 import * as path from 'path';
-import { resolveCli } from './util/resolve';
 import process from 'node:process';
 
 const startWebpackDevServer = () => {
-  const devServer = resolveCli('webpack-dev-server');
-  const webpackConfigPath = path.resolve(
-    __dirname,
-    '../build-config/webpack.config.js'
-  );
-  return spawn(devServer, ['--config', webpackConfigPath], {
-    cwd: process.cwd(),
-    stdio: 'inherit',
-  });
+  return fork(path.join(__dirname, './webpack-process/index.js'), [
+    'run-as-process',
+  ]);
 };
 
 async function devApp() {
@@ -31,6 +24,7 @@ async function devApp() {
           }
           process.exit(0);
         });
+        webpackDevProcess.send('start-server');
         break;
       }
       default: {

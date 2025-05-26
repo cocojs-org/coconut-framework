@@ -1,18 +1,20 @@
 import * as path from 'path';
-import webpack from 'webpack';
 import { fork } from 'child_process';
 
 const runWebpack = async () => {
-  const { default: config } = await import(
-    path.resolve(__dirname, '../build-config/webpack.config.js')
-  );
-  return webpack(config, (err, stats) => {
-    console.log(
-      stats.toString({
-        chunks: false, // 使构建过程更静默无输出
-        colors: true, // 在控制台展示颜色
-      })
+  return new Promise((resolve, reject) => {
+    const webpackProcess = fork(
+      path.join(__dirname, './webpack-process/index.js'),
+      ['run-as-process']
     );
+    webpackProcess.on('exit', (code) => reject());
+    webpackProcess.on('message', (msg) => {
+      if (msg === 'build-success') {
+        resolve(true);
+        webpackProcess.kill();
+      }
+    });
+    webpackProcess.send('build-once');
   });
 };
 

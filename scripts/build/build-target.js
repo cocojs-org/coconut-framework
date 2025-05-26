@@ -13,6 +13,8 @@ const cliSrc = path.join(cocoCli, './src/index.ts');
 const cliDist = path.join(cocoCli, '/dist/index.js');
 const cliBuildDotCocoProcess = path.join(cocoCli, './src/build-dot-coco-process/index.ts');
 const cliBuildCotCocoDist = path.join(cocoCli, '/dist/build-dot-coco-process/index.js');
+const cliWebpackProcess = path.join(cocoCli, './src/webpack-process/index.ts');
+const cliWebpackDist = path.join(cocoCli, '/dist/webpack-process/index.js');
 
 module.exports.rollupTargets = [
   {
@@ -53,6 +55,13 @@ module.exports.rollupTargets = [
     input: cliBuildDotCocoProcess,
     output: {
       file: cliBuildCotCocoDist,
+      format: 'cjs'
+    },
+  },
+  {
+    input: cliWebpackProcess,
+    output: {
+      file: cliWebpackDist,
       format: 'cjs'
     },
   }

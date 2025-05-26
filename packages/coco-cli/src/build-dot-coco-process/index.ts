@@ -7,12 +7,12 @@ function startListening(builder: DotCocoBuilder) {
       case 'build-once': {
         builder.build();
         process.send('build-success');
-        builder.startWatch();
         break;
       }
       case 'build-and-watch': {
         builder.build();
         process.send('build-success');
+        builder.startWatch();
         break;
       }
     }
