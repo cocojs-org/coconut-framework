@@ -2,6 +2,8 @@ import process from 'node:process';
 import WebpackBuilder from './webpack-builder';
 
 function startListening(builder: WebpackBuilder) {
+  let terminating = false;
+
   process.on('exit', async () => {
     await builder.stopServer();
   });
@@ -10,15 +12,33 @@ function startListening(builder: WebpackBuilder) {
     switch (msg) {
       case 'build-once': {
         await builder.build();
+        if (terminating) {
+          return;
+        }
         process.send('build-success');
         break;
       }
       case 'start-server': {
+        if (terminating) {
+          return;
+        }
         await builder.startServer();
+        break;
+      }
+      default: {
+        process.send(`webpack process rcv msg:[${msg}]`);
         break;
       }
     }
   });
+
+  async function handleTerminate() {
+    terminating = true;
+    await builder.stopServer();
+    process.exit(0);
+  }
+  process.on('SIGTERM', handleTerminate);
+  process.on('SIGINT', handleTerminate);
 }
 
 function startAsProcess() {

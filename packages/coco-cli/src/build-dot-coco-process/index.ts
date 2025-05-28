@@ -2,6 +2,7 @@ import process from 'node:process';
 import DotCocoBuilder from './dot-coco-builder';
 
 function startListening(builder: DotCocoBuilder) {
+  let watching = false;
   process.on('message', (msg) => {
     switch (msg) {
       case 'build-once': {
@@ -11,12 +12,27 @@ function startListening(builder: DotCocoBuilder) {
       }
       case 'build-and-watch': {
         builder.build();
-        process.send('build-success');
+        process.send('init-build-success');
+        watching = true;
         builder.startWatch();
+        break;
+      }
+      default: {
+        process.send(`dot coco process rcv msg:[${msg}]`);
         break;
       }
     }
   });
+
+  async function handleTerminate() {
+    if (watching) {
+      await builder.stopWatch();
+      watching = false;
+    }
+    process.exit(0);
+  }
+  process.on('SIGTERM', handleTerminate);
+  process.on('SIGINT', handleTerminate);
 }
 
 function startAsProcess() {

@@ -135,6 +135,17 @@ class DotCocoBuilder {
     this.watchSrc();
     this.watchProperties();
   };
+
+  stopWatch = async () => {
+    if (this.srcWatcher) {
+      await this.srcWatcher.close();
+      this.srcWatcher = null;
+    }
+    if (this.propertiesWatcher) {
+      await this.propertiesWatcher.close();
+      this.propertiesWatcher = null;
+    }
+  };
 }
 
 export default DotCocoBuilder;
