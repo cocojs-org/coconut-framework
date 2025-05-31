@@ -8,13 +8,14 @@ function readWebpack(cmd?: string) {
   const filename = cmd ? configFileName(cmd) : defaultConfigName;
   const filepath = path.resolve(process.cwd(), `config/${filename}`);
   if (!fs.existsSync(filepath)) {
-    console.warn(`找不到配置文件：${filepath}`);
+    console.warn(`配置文件不存在：${filepath}`);
     return {};
   }
   return require(filepath).webpack ?? {}; // Merging undefined is not supported
 }
 
 const buildInConfig = {
+  mode: 'production',
   entry: path.join(process.cwd(), './src/.coco/index.tsx'),
   module: {
     rules: [
