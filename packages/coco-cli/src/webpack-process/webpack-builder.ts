@@ -1,7 +1,6 @@
-import path from 'path';
 import Webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
-import getWebpackConfig from './webpack.config';
+import getWebpackConfig from './get-webpack-config';
 
 class WebpackBuilder {
   server: WebpackDevServer;
