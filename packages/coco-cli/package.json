@@ -10,7 +10,7 @@
   "files": [
     "bin",
     "template",
-    "build-config",
+    "runtime-config",
     "dist"
   ],
   "scripts": {
