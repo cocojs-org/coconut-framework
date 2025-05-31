@@ -55,7 +55,7 @@ async function create(type: 'app' | 'lib') {
     console.error('指定的模版目录不应该为空，', type);
     return;
   }
-  const tempFolderPath = path.resolve(__dirname, '..', 'template', folder);
+  const tempFolderPath = path.resolve(__dirname, '..', `template-${folder}`);
   if (!fse.pathExistsSync(tempFolderPath)) {
     console.error('模版目录不存在', tempFolderPath, type);
     return;

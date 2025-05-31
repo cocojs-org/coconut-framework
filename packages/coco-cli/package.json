@@ -9,7 +9,8 @@
   },
   "files": [
     "bin",
-    "template",
+    "template-app",
+    "template-lib",
     "runtime-config",
     "dist"
   ],
