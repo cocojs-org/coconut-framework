@@ -21,7 +21,9 @@ const clsDefinitionMap: Map<
 function addDefinition(cls: Class<any>) {
   const existClsDef = clsDefinitionMap.get(cls);
   if (existClsDef) {
-    throw new Error(`存在同名的组件: [${existClsDef.cls}] - [${cls}]`);
+    throw new Error(
+      `存在同名的组件: [${existClsDef.cls.name}] - [${cls.name}]`
+    );
   }
   const id = uppercaseFirstLetter(cls.name);
   if (typeof id !== 'string' || !id.trim()) {
@@ -29,7 +31,7 @@ function addDefinition(cls: Class<any>) {
   }
   const existIdDef = idDefinitionMap.get(id);
   if (existIdDef) {
-    throw new Error(`存在id的组件: [${existIdDef.cls}] - [${cls.name}]`);
+    throw new Error(`存在id的组件: [${existIdDef.cls.name}] - [${cls.name}]`);
   }
   const componentDefinition = new IocComponentDefinition();
   componentDefinition.id = id;

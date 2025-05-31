@@ -75,5 +75,7 @@ export function once(fn?: () => void): (THIS: any) => void {
 
 // 判断入参是否是类
 export function isClass(v: any) {
+  // todo class会不会被转移成function？
+  // todo v.toString().includes('class')改为是否是Metadata的子类
   return typeof v === 'function' && v.toString().includes('class');
 }

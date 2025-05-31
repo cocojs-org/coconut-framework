@@ -1,25 +1,20 @@
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const path = require('node:path');
-const fs = require('node:fs');
-const { merge } = require('webpack-merge');
-const { getEnvConfigName } = require('./env');
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import path from 'node:path';
+import fs from 'node:fs';
+import { merge } from 'webpack-merge';
+import { configFileName, defaultConfigName } from '../util/env';
 
-function readWebpack(env) {
-  const filename = env ? `config.${env}.js` : 'config.js';
+function readWebpack(cmd?: string) {
+  const filename = cmd ? configFileName(cmd) : defaultConfigName;
   const filepath = path.resolve(process.cwd(), `config/${filename}`);
   if (!fs.existsSync(filepath)) {
-    console.warn(`找不到配置文件：${filename}`);
+    console.warn(`找不到配置文件：${filepath}`);
     return {};
   }
   return require(filepath).webpack ?? {}; // Merging undefined is not supported
 }
 
-const baseConfig = readWebpack();
-const env = getEnvConfigName();
-const envConfig = env && readWebpack(env);
-
 const buildInConfig = {
-  mode: 'production',
   entry: path.join(process.cwd(), './src/.coco/index.tsx'),
   module: {
     rules: [
@@ -29,7 +24,20 @@ const buildInConfig = {
           {
             loader: 'babel-loader',
             options: {
-              extends: path.resolve(__dirname, 'babel.config.js'),
+              presets: [require.resolve('@babel/preset-typescript')],
+              plugins: [
+                [
+                  require.resolve('@babel/plugin-proposal-decorators'),
+                  { version: '2023-11' },
+                ],
+                [
+                  require.resolve('@babel/plugin-transform-react-jsx'),
+                  {
+                    runtime: 'automatic',
+                    importSource: 'coco-mvc',
+                  },
+                ],
+              ],
             },
           },
           {
@@ -65,7 +73,7 @@ const buildInConfig = {
     ],
   },
   resolveLoader: {
-    modules: [path.resolve(__dirname, '../node_modules'), 'node_modules'],
+    modules: [path.resolve(__dirname, '../../node_modules'), 'node_modules'],
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.jsx', '.js'],
@@ -104,4 +112,10 @@ const buildInConfig = {
   ],
 };
 
-module.exports = merge(buildInConfig, baseConfig, envConfig);
+function getWebpackConfig(cmd: string) {
+  const baseConfig = readWebpack();
+  const envConfig = readWebpack(cmd);
+  return merge(buildInConfig, baseConfig, envConfig);
+}
+
+export default getWebpackConfig;

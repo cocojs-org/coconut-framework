@@ -1,18 +1,14 @@
 import path from 'path';
 import Webpack from 'webpack';
 import WebpackDevServer from 'webpack-dev-server';
+import getWebpackConfig from './webpack.config';
 
 class WebpackBuilder {
   server: WebpackDevServer;
 
   public async build() {
     return new Promise<void>(async (resolve, reject) => {
-      const configPath = path.resolve(
-        __dirname,
-        '../../build-config/webpack.config.js'
-      );
-      const { default: config } = await import(configPath);
-      const compiler = Webpack(config);
+      const compiler = Webpack(getWebpackConfig('build'));
       compiler.run((err, stats) => {
         console.log(
           stats.toString({
@@ -31,13 +27,9 @@ class WebpackBuilder {
   }
 
   public async startServer() {
-    const configPath = path.resolve(
-      __dirname,
-      '../../build-config/webpack.config.js'
-    );
-    const { default: config } = await import(configPath);
+    const { devServer, ...config } = getWebpackConfig('dev');
     const compiler = Webpack(config);
-    const devServerOptions = { ...config.devServer, open: true };
+    const devServerOptions = { ...devServer, open: true };
     this.server = new WebpackDevServer(devServerOptions, compiler);
     await this.server.start();
   }

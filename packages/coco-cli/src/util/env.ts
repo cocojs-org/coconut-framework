@@ -1,3 +1,5 @@
+import process from 'node:process';
+
 const cmdDefaultEnvMap = {
   dev: 'dev',
   build: 'prod',
@@ -11,7 +13,21 @@ const defaultPropertiesName = 'application.json';
  */
 const propertiesFileName = (cmd: string) => {
   const env = process.env.NODE_ENV || cmdDefaultEnvMap[cmd] || '';
-  return env ? defaultPropertiesName : `application.${env}.json`;
+  return env ? `application.${env}.json` : defaultPropertiesName;
 };
 
-export { propertiesFileName, defaultPropertiesName };
+const defaultConfigName = 'config.js';
+/**
+ * 得到构建配置的名称
+ */
+const configFileName = (cmd: string) => {
+  const env = process.env.NODE_ENV || cmdDefaultEnvMap[cmd] || '';
+  return env ? `config.${env}.js` : defaultConfigName;
+};
+
+export {
+  propertiesFileName,
+  defaultPropertiesName,
+  configFileName,
+  defaultConfigName,
+};
