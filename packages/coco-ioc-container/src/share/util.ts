@@ -1,30 +1,25 @@
-function transformFirstLetter(str: string, transform: 'lower' | 'upper') {
+function transformStr(str: string, transformer?: (str: string) => string) {
   if (!str) {
     if (__DEV__ && typeof str !== 'string') {
       throw new Error(`请传入字符串:[${str}]`);
     }
     return str;
   }
-  switch (transform) {
-    case 'lower':
-      return str[0].toLowerCase() + str.slice(1);
-    case 'upper':
-      return str[0].toUpperCase() + str.slice(1);
-    default:
-      return str;
-  }
+  return transformer ? transformer(str) : str;
 }
 /**
  * 第一个字母改为小写，其他不变
  */
 export function lowercaseFirstLetter(str: string) {
-  return transformFirstLetter(str, 'lower');
+  const fn = (str: string) => str[0].toLowerCase() + str.slice(1);
+  return transformStr(str, fn);
 }
 /**
  * 第一个字母改为大写，其他不变
  */
 export function uppercaseFirstLetter(str: string) {
-  return transformFirstLetter(str, 'upper');
+  const fn = (str: string) => str[0].toUpperCase() + str.slice(1);
+  return transformStr(str, fn);
 }
 
 /**
