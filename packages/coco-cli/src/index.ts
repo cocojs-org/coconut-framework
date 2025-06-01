@@ -3,32 +3,74 @@ import buildApp from './build-app';
 import { build as buildLib } from './build-lib';
 import { createApp, createLib } from './create';
 
-function cli(command: string, ...args: string[]) {
-  switch (command) {
+/**
+ * 应用项目命令
+ * coco app create 搭建框架
+ * coco app build 构建
+ * coco app dev 开发
+ */
+function execAppCmd(action: string) {
+  switch (action) {
     case 'create': {
-      const arg = args[0];
-      if (arg?.[0] === 'lib') {
-        createLib();
-      } else {
-        createApp();
-      }
+      createApp();
       break;
     }
-    case 'dev':
+    case 'build': {
+      buildApp();
+      break;
+    }
+    case 'dev': {
       devApp();
       break;
-    case 'build': {
-      const arg = args[0];
-      if (arg?.[0] === 'lib') {
-        buildLib();
-      } else {
-        buildApp();
-      }
+    }
+    default: {
+      console.log(`Unknown app action: ${action}`);
       break;
     }
-    default:
-      console.log(`Unknown command: ${command}`);
+  }
+}
+
+/**
+ * 组件库项目命令
+ * coco lib create 搭建框架
+ * coco lib build 构建
+ */
+function execLibCmd(action: string) {
+  switch (action) {
+    case 'create': {
+      createLib();
       break;
+    }
+    case 'build': {
+      buildLib();
+      break;
+    }
+    case 'dev': {
+      devApp();
+      break;
+    }
+    default: {
+      console.log(`Unknown lib action: ${action}`);
+      break;
+    }
+  }
+}
+
+function cli(command: string, domain: string, rest: string[]) {
+  const [action] = rest;
+  switch (domain) {
+    case 'app': {
+      execAppCmd(action);
+      break;
+    }
+    case 'lib': {
+      execLibCmd(action);
+      break;
+    }
+    default: {
+      console.log(`Unknown domain: ${domain}`);
+      break;
+    }
   }
 }
 import { _test_helper } from './__tests__';
