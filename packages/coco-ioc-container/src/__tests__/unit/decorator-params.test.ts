@@ -73,12 +73,12 @@ describe('decorator-params', () => {
     const dd = create(MetaMeta);
 
     @dd()
-    class Meta {}
-    const d = create(Meta);
+    class MetaA {}
+    const d = create(MetaA);
 
     @d()
     class A {}
-    const f1 = isIncludesClassDecorator(A, Meta);
+    const f1 = isIncludesClassDecorator(A, MetaA);
     expect(f1).toBe(true);
     const f2 = isIncludesClassDecorator(A, MetaMeta);
     expect(f2).toBe(false);
@@ -91,8 +91,8 @@ describe('decorator-params', () => {
     const ddd = create(MetaMetaMeta);
 
     @ddd()
-    class MetaMeta {}
-    const dd = create(MetaMeta);
+    class MetaMetaA {}
+    const dd = create(MetaMetaA);
 
     @dd()
     class Meta {}
@@ -103,9 +103,9 @@ describe('decorator-params', () => {
 
     const f1 = isIncludesClassDecorator(A, Meta);
     expect(f1).toBe(true);
-    const f2 = isIncludesClassDecorator(A, MetaMeta);
+    const f2 = isIncludesClassDecorator(A, MetaMetaA);
     expect(f2).toBe(false);
-    const f3 = isIncludesClassDecorator(A, MetaMeta, 1);
+    const f3 = isIncludesClassDecorator(A, MetaMetaA, 1);
     expect(f3).toBe(true);
     const f4 = isIncludesClassDecorator(A, MetaMetaMeta, 1);
     expect(f4).toBe(false);

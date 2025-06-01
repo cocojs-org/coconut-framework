@@ -39,15 +39,15 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
   test('类装饰器，实例化多次但不会再次调用记录装饰器参数的回调', async () => {
     const fn = jest.fn();
     const createDE = createDecoratorExpFactory(fn);
-    class Meta {}
-    const m = createDE(Meta);
+    class Meta1 {}
+    const m = createDE(Meta1);
     const param = 22;
     @m(param)
     class A {}
     expect(fn).toBeCalledTimes(1);
     expect(fn).toBeCalledWith(A, {
-      decoratorName: 'meta',
-      metadataClass: Meta,
+      decoratorName: 'meta1',
+      metadataClass: Meta1,
       metadataKind: KindClass,
       metadataParam: param,
       postConstruct: undefined,
@@ -63,8 +63,8 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     const fn = jest.fn();
     const create = createDecoratorExpFactory(fn);
 
-    class Meta {}
-    const m = create(Meta);
+    class Meta2 {}
+    const m = create(Meta2);
     const param = 22;
     class A {
       @m(param)
@@ -74,8 +74,8 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     new A();
     expect(fn).toBeCalledTimes(1);
     expect(fn).toBeCalledWith(A, {
-      decoratorName: 'meta',
-      metadataClass: Meta,
+      decoratorName: 'meta2',
+      metadataClass: Meta2,
       metadataKind: KindField,
       metadataParam: param,
       field: 'f',
@@ -87,8 +87,8 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     const fn = jest.fn();
     const create = createDecoratorExpFactory(fn);
 
-    class Meta {}
-    const m = create(Meta);
+    class Meta3 {}
+    const m = create(Meta3);
     const param = 22;
     class A {
       @m(param)
@@ -98,8 +98,8 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     new A();
     expect(fn).toBeCalledTimes(1);
     expect(fn).toBeCalledWith(A, {
-      decoratorName: 'meta',
-      metadataClass: Meta,
+      decoratorName: 'meta3',
+      metadataClass: Meta3,
       metadataKind: KindMethod,
       metadataParam: param,
       field: 'fn',
@@ -111,8 +111,8 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     const fn = jest.fn();
     const create = createDecoratorExpFactory(fn);
 
-    class Meta {}
-    const m = create(Meta);
+    class Meta4 {}
+    const m = create(Meta4);
     const param = 22;
     class A {
       @m(param)
@@ -122,8 +122,8 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     new A();
     expect(fn).toBeCalledTimes(1);
     expect(fn).toBeCalledWith(A, {
-      decoratorName: 'meta',
-      metadataClass: Meta,
+      decoratorName: 'meta4',
+      metadataClass: Meta4,
       metadataKind: KindField,
       metadataParam: param,
       field: 'f',
@@ -141,8 +141,8 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     const fn = jest.fn();
     const create = createDecoratorExpFactory(fn);
 
-    class Meta {}
-    const m = create(Meta);
+    class Meta5 {}
+    const m = create(Meta5);
     const param = 22;
     class A {
       @m(param)
@@ -152,8 +152,8 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     new A();
     expect(fn).toBeCalledTimes(1);
     expect(fn).toBeCalledWith(A, {
-      decoratorName: 'meta',
-      metadataClass: Meta,
+      decoratorName: 'meta5',
+      metadataClass: Meta5,
       metadataKind: KindMethod,
       metadataParam: param,
       field: 'fn',
@@ -173,8 +173,8 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
       const fn = jest.fn();
       const create = createDecoratorExpFactory(fn);
 
-      class Meta {}
-      const m: () => Decorator<ClassGetterDecoratorContext> = create(Meta);
+      class Meta6 {}
+      const m: () => Decorator<ClassGetterDecoratorContext> = create(Meta6);
 
       class A {
         @m()
@@ -194,8 +194,8 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
       const fn = jest.fn();
       const create = createDecoratorExpFactory(fn);
 
-      class Meta {}
-      const m = create(Meta);
+      class Meta7 {}
+      const m = create(Meta7);
 
       class A {
         @m()

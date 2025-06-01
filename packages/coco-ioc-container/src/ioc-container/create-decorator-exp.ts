@@ -13,6 +13,7 @@ import { get, NAME } from 'shared';
 import { isClass, lowercaseFirstLetter, once } from '../share/util.ts';
 import type { PostConstructFn } from './ioc-component-definition.ts';
 import { addDecoratorParams } from './decorator-params.ts';
+import { registerMetadataCls } from './metadata.ts';
 
 /**
  * @public
@@ -33,6 +34,9 @@ function createDecoratorExpFactory(fn: any) {
         : lowercaseFirstLetter(metadataClsOrName.name);
     let metadataCls =
       typeof metadataClsOrName !== 'string' ? metadataClsOrName : null;
+    if (metadataCls) {
+      registerMetadataCls(metadataCls);
+    }
     function decoratorExpress(userParam: UserParam, decorateSelf?: true) {
       if (__TEST__) {
         get(NAME.exec)?.(decoratorName, userParam);
@@ -46,6 +50,7 @@ function createDecoratorExpFactory(fn: any) {
             if (decorateSelf) {
               if (metadataCls === null) {
                 metadataCls = value;
+                registerMetadataCls(metadataCls);
                 fn(value, {
                   decoratorName,
                   metadataKind: KindClass,

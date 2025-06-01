@@ -11,6 +11,7 @@ import {
   listBeDecoratedClsByClassMetadata,
   listBeDecoratedClsByFieldMetadata,
   listFieldMetadata,
+  metadataClsCollection,
 } from './metadata.ts';
 import {
   get,
@@ -75,6 +76,22 @@ class ApplicationContext {
   public getComponent<T>(id: string): T;
   public getComponent<T>(ClsOrId: Class<T> | string, qualifier?: string): T {
     return getComponent(this, ClsOrId, { qualifier });
+  }
+
+  /**
+   * 通过元数据类名字查找元数据类本身
+   * 框架会经常使用元数据类进行过滤涮选，直接import引入过于麻烦，且经常导致文件循环依赖
+   */
+  public getMetadataCls(name: string) {
+    if (
+      typeof name !== 'string' ||
+      !name.trim() ||
+      !metadataClsCollection.has(name)
+    ) {
+      return null;
+    } else {
+      return metadataClsCollection.get(name);
+    }
   }
 
   /**

@@ -1,8 +1,5 @@
 import {createUpdate, enqueueUpdate, initializeUpdateQueue, processUpdateQueue} from "./ReactFiberClassUpdateQueue";
 import {get, NAME} from "shared";
-// todo coco-reactive-metadata这个引入太丑陋了，fix it
-import { Reactive } from "coco-reactive-metadata";
-import {flushSyncCallbacks} from "./ReactFiberSyncTaskQueue";
 import { Update } from "./ReactFiberFlags";
 
 const classComponentUpdater = {
@@ -30,6 +27,7 @@ function adoptClassInstance(workInProgress, instance) {
 function constructClassInstance(workInProgress, ctor, props) {
   const appCtx = get(NAME.applicationContext);
   const instance = appCtx.getComponent(ctor);
+  const Reactive = appCtx.getMetadataCls('Reactive');
   const fields = get(NAME.getFields)?.(ctor, Reactive, true);
   workInProgress.memoizedState = fields.reduce((prev, field) => {
     prev[field] = instance[field];
@@ -68,6 +66,8 @@ function updateClassInstance(
   newState = workInProgress.memoizedState;
 
   instance.props = newProps;
+  const appCtx = get(NAME.applicationContext);
+  const Reactive = appCtx.getMetadataCls('Reactive');
   const fields = get(NAME.getFields)?.(ctor, Reactive, true);
   for (const field of fields) {
     instance[field] = newState[field]

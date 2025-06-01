@@ -27,7 +27,6 @@ module.exports.rollupTargets = [
       PACKAGE.MVC,
       PACKAGE.MVC_RENDER,
       PACKAGE.REACTIVE,
-      PACKAGE.REACTIVE_METADATA,
       PACKAGE.ROUTER,
       PACKAGE.RECONCILER,
       PACKAGE.WEB,
