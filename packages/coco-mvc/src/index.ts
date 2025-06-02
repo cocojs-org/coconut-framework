@@ -22,7 +22,6 @@ export {
   value,
   createDecoratorExp,
   createDecoratorExpByName,
-  type Option,
   type PostConstructFn,
   type ClassPostConstructFn,
   type MethodPostConstructFn,

@@ -3,7 +3,6 @@ import IocComponentDefinition, {
   type FieldPostConstruct,
   type MethodPostConstruct,
   PostConstruct,
-  PostConstructFn,
 } from './ioc-component-definition.ts';
 import Component, { Scope } from '../metadata/component.ts';
 import { findClassMetadata } from './metadata.ts';

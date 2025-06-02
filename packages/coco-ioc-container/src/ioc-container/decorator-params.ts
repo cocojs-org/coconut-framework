@@ -105,7 +105,7 @@ export function isIncludesClassDecorator(
   return false;
 }
 
-export function get(): Map<any, params[]> {
+export function get(): Map<Class<any>, params[]> {
   return decoratorParamMap;
 }
 

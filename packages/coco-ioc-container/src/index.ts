@@ -20,7 +20,6 @@ export { default as value } from './decorator/value.ts';
 export {
   createDecoratorExp,
   createDecoratorExpByName,
-  type Option,
 } from './ioc-container/create-decorator-exp.ts';
 export {
   type PostConstructFn,

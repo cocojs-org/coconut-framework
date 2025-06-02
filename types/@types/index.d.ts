@@ -6,3 +6,9 @@ declare interface Class<T> {
   new (...args: any): T;
   toString(): string;
 }
+
+declare interface MetadataClass<T> {
+  new (...args: any): T;
+  toString(): string;
+  postConstruct?(): void;
+}

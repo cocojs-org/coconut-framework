@@ -33,7 +33,9 @@ class PropertiesConfig {
       typeof bootComponents === 'object' &&
       bootComponents.toString() === '[object Object]'
     ) {
-      for (const [componentId, value] of Object.entries(bootComponents)) {
+      for (const entity of Object.entries(bootComponents)) {
+        const componentId = entity[0];
+        const value = entity[1];
         if (!!value) {
           boots.push(componentId);
         }

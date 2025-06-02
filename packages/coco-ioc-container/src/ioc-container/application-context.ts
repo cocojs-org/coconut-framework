@@ -141,13 +141,14 @@ class ApplicationContext {
    */
   // 根据装饰器的参数，构建对应的元数据实例
   private buildMetadata() {
-    for (const [beDecoratedCls, list] of get().entries()) {
-      for (const {
-        metadataKind,
-        metadataClass,
-        metadataParam,
-        field,
-      } of list) {
+    for (const entity of get().entries()) {
+      const beDecoratedCls = entity[0];
+      const list = entity[1];
+      for (const p of list) {
+        const metadataKind = p.metadataKind;
+        const metadataClass = p.metadataClass;
+        const metadataParam = p.metadataParam;
+        const field = p.field;
         switch (metadataKind) {
           case KindClass:
             addClassMetadata(beDecoratedCls, metadataClass, metadataParam);
@@ -169,7 +170,9 @@ class ApplicationContext {
   private buildIocComponentDefinition() {
     const bizMetadata = getAllMetadata()[1];
     // 处理@component和带有@component的元数据类
-    for (const [beDecoratedCls, params] of get().entries()) {
+    for (const entity of get().entries()) {
+      const beDecoratedCls = entity[0];
+      const params = entity[1];
       if (bizMetadata.has(beDecoratedCls)) {
         if (isIncludesClassDecorator(beDecoratedCls, Component, 2)) {
           addDefinition(beDecoratedCls);
@@ -213,7 +216,9 @@ class ApplicationContext {
 
   // 为@component添加装饰器参数
   private addAtComponentDecoratorParams() {
-    for (const [beDecoratedCls, params] of get().entries()) {
+    for (const entity of get().entries()) {
+      const beDecoratedCls = entity[0];
+      const params = entity[1];
       if (!isIncludesClassDecorator(beDecoratedCls, Configuration, 1)) {
         continue;
       }
@@ -303,7 +308,9 @@ class ApplicationContext {
 
   private initComponent(bootComponent: Set<Class<any>>) {
     const map = listBeDecoratedClsByFieldMetadata(Init);
-    for (const [beDecoratedCls, { field, metadata }] of map.entries()) {
+    for (const entity of map.entries()) {
+      const beDecoratedCls = entity[0];
+      const field = entity[1].field;
       if (bootComponent.has(beDecoratedCls)) {
         const component = getComponent(this, beDecoratedCls);
         component[field]?.(this);
@@ -313,7 +320,9 @@ class ApplicationContext {
 
   private startComponent(bootComponent: Set<Class<any>>) {
     const map = listBeDecoratedClsByFieldMetadata(Start);
-    for (const [beDecoratedCls, { field, metadata }] of map.entries()) {
+    for (const entity of map.entries()) {
+      const beDecoratedCls = entity[0];
+      const field = entity[1].field;
       if (bootComponent.has(beDecoratedCls)) {
         const component = getComponent(this, beDecoratedCls);
         component[field]?.();
@@ -323,9 +332,13 @@ class ApplicationContext {
 
   private validateTarget() {
     const allDecoratorParams = get();
-    for (const [beDecoratedCls, params] of allDecoratorParams.entries()) {
-      for (const param of params) {
-        const { metadataClass, metadataKind, decoratorName } = param;
+    for (const entity of allDecoratorParams.entries()) {
+      const beDecoratedCls = entity[0];
+      const params = entity[1];
+      for (const p of params) {
+        const metadataClass = p.metadataClass;
+        const metadataKind = p.metadataKind;
+        const decoratorName = p.decoratorName;
         const decoratorDecoratorParams =
           allDecoratorParams.get(metadataClass) || [];
         const find = decoratorDecoratorParams.find(
