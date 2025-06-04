@@ -26,10 +26,10 @@ function adoptClassInstance(workInProgress, instance) {
 }
 
 function constructClassInstance(workInProgress, ctor, props) {
-  const appCtx = getApplication();
-  const instance = appCtx.getComponent(ctor);
-  const Reactive = appCtx.getMetadataCls('Reactive');
-  const fields = appCtx.listFieldByMetadataCls(ctor, Reactive, true);
+  const application = getApplication();
+  const instance = application.getComponent(ctor);
+  const Reactive = application.getMetadataCls('Reactive');
+  const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
   workInProgress.memoizedState = fields.reduce((prev, field) => {
     prev[field] = instance[field];
     return prev;
@@ -67,9 +67,9 @@ function updateClassInstance(
   newState = workInProgress.memoizedState;
 
   instance.props = newProps;
-  const appCtx = getApplication();
-  const Reactive = appCtx.getMetadataCls('Reactive');
-  const fields = appCtx.listFieldByMetadataCls(ctor, Reactive, true);
+  const application = getApplication();
+  const Reactive = application.getMetadataCls('Reactive');
+  const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
   for (const field of fields) {
     instance[field] = newState[field]
   }

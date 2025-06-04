@@ -5,7 +5,7 @@ import { pkgPath, cocoIdxStr, cocoIdxAppJson } from '../../_helper_/pkg-path';
 
 export const appDidMount = jest.fn();
 
-let ApplicationContext;
+let Application;
 let applicationJson;
 let Render;
 let Router;
@@ -14,7 +14,7 @@ let App;
 describe('viewDidMount', () => {
   beforeEach(async () => {
     cli_helper.buildDotCoco(pkgPath(__dirname));
-    ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
+    Application = (await import(cocoIdxStr)).Application;
     applicationJson = (await import(cocoIdxAppJson)).default;
     Render = (await import('coco-mvc')).Render;
     Router = (await import('coco-mvc')).Router;
@@ -30,7 +30,7 @@ describe('viewDidMount', () => {
 
   test('App的viewDidMount被调用', async () => {
     const { container } = _test_helper.mvc.render(
-      ApplicationContext,
+      Application,
       App,
       Render,
       Router,

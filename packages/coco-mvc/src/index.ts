@@ -26,7 +26,7 @@ export {
   type ClassPostConstructFn,
   type MethodPostConstructFn,
   type FieldPostConstructFn,
-  ApplicationContext,
+  Application,
   PropertiesConfig,
   type Decorator,
   type Field,

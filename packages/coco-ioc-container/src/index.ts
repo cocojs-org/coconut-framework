@@ -27,7 +27,7 @@ export {
   type MethodPostConstructFn,
   type FieldPostConstructFn,
 } from './ioc-container/ioc-component-definition.ts';
-export { default as ApplicationContext } from './ioc-container/application-context.ts';
+export { default as Application } from './ioc-container/application.ts';
 export { default as PropertiesConfig } from './ioc-container/properties-config.ts';
 export type { Decorator, Field } from './ioc-container/decorator-context.ts';
 

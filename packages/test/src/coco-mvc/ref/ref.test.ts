@@ -15,7 +15,7 @@ import {
 
 export const mockFn = jest.fn();
 
-let ApplicationContext;
+let Application;
 let applicationJson;
 let Render;
 let Router;
@@ -25,7 +25,7 @@ describe('ref', () => {
   beforeEach(async () => {
     try {
       cli_helper.buildDotCoco(pkgPath(__dirname));
-      ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
+      Application = (await import(cocoIdxStr)).Application;
       applicationJson = (await import(cocoIdxAppJson)).default;
       Render = (await import('coco-mvc')).Render;
       Router = (await import('coco-mvc')).Router;
@@ -44,7 +44,7 @@ describe('ref', () => {
 
   test('支持属性形式绑定浏览器标签或组件', async () => {
     const { container } = _test_helper.mvc.render(
-      ApplicationContext,
+      Application,
       Button,
       Render,
       Router,

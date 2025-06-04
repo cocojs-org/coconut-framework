@@ -1,7 +1,7 @@
 import router from '../decorator/router.ts';
 import Route from '../metadata/route.ts';
 import {
-  type ApplicationContext,
+  type Application,
   constructorParam,
   init,
   start,
@@ -35,8 +35,8 @@ class HistoryRouter extends Router {
   };
 
   @init()
-  init(appCtx: ApplicationContext) {
-    const routeComponentMap = appCtx.getByClassMetadata(Route) as Map<
+  init(application: Application) {
+    const routeComponentMap = application.getByClassMetadata(Route) as Map<
       Class<any>,
       Route
     >;

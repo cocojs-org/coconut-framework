@@ -13,9 +13,9 @@ class ReactiveAutowired extends Metadata {
   value: Function;
 
   static postConstruct = customPostConstruct({
-    init: (metadata: ReactiveAutowired, appCtx, name, enqueueSetState) => {
+    init: (metadata: ReactiveAutowired, application, name, enqueueSetState) => {
       const cls: any = metadata.value;
-      const remote: Remote = appCtx.getComponent(cls)[sym_remote];
+      const remote: Remote = application.getComponent(cls)[sym_remote];
       remote.fork().setEnqueueUpdate(enqueueSetState);
       return remote;
     },

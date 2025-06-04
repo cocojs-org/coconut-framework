@@ -6,7 +6,7 @@ import {
   cocoIdxAppJson,
 } from '../../_helper_/pkg-path.ts';
 
-let ApplicationContext;
+let Application;
 let ApplicationJson;
 let buildError;
 let Child;
@@ -17,7 +17,7 @@ describe('qualifier-1', () => {
       cli_helper.buildDotCoco(pkgPath(__dirname));
       Child = (await import('./src/component/child.ts')).default;
       User = (await import('./src/view/user.tsx')).default;
-      ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
+      Application = (await import(cocoIdxStr)).Application;
       ApplicationJson = (await import(cocoIdxAppJson)).default;
     } catch (e) {
       console.error(e);
@@ -32,8 +32,8 @@ describe('qualifier-1', () => {
   });
 
   test('@autowired注入的组件存在多个子组件，使用动态配置指定一个子组件', async () => {
-    const context = new ApplicationContext(ApplicationJson);
-    const user = context.getComponent(User);
+    const application = new Application(ApplicationJson);
+    const user = application.getComponent(User);
     expect(user.parent instanceof Child).toBe(true);
   });
 });

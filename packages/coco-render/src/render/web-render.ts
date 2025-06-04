@@ -1,6 +1,6 @@
 // @ts-ignore todo fix it
 import { render as renderApp, registerApplication } from 'coconut-web';
-import { type ApplicationContext, init } from 'coco-ioc-container';
+import { type Application, init } from 'coco-ioc-container';
 import render from '../decorator/render.ts';
 import { jsx } from '../jsx-runtime';
 import Render from '../component/render.ts';
@@ -13,7 +13,7 @@ class WebRender extends Render {
   container: HTMLElement;
 
   @init()
-  init(application: ApplicationContext) {
+  init(application: Application) {
     registerApplication(application);
     this.container = document.getElementById('root');
     if (!this.container) {

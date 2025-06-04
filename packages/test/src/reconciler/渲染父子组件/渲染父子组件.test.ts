@@ -9,7 +9,7 @@ import {
 import { _test_helper } from 'coco-mvc';
 import { pkgPath, cocoIdxStr, cocoIdxAppJson } from '../../_helper_/pkg-path';
 
-let ApplicationContext;
+let Application;
 let applicationJson;
 let Render;
 let Router;
@@ -19,7 +19,7 @@ describe('decorator', () => {
   beforeEach(async () => {
     try {
       cli_helper.buildDotCoco(pkgPath(__dirname));
-      ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
+      Application = (await import(cocoIdxStr)).Application;
       applicationJson = (await import(cocoIdxAppJson)).default;
       Render = (await import('coco-mvc')).Render;
       Router = (await import('coco-mvc')).Router;
@@ -38,7 +38,7 @@ describe('decorator', () => {
 
   test('正常渲染父子组件', async () => {
     const { container } = _test_helper.mvc.render(
-      ApplicationContext,
+      Application,
       App,
       Render,
       Router,

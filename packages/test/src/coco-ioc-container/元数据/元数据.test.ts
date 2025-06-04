@@ -2,14 +2,14 @@ import { _test_helper, Component, Target } from 'coco-mvc';
 import { _test_helper as cli_helper } from '@cocojs/cli';
 import { pkgPath, cocoIdxStr } from '../../_helper_/pkg-path';
 
-let ApplicationContext;
+let Application;
 let Button;
 let throwError;
 describe('decorator', () => {
   beforeEach(async () => {
     try {
       cli_helper.buildDotCoco(pkgPath(__dirname));
-      ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
+      Application = (await import(cocoIdxStr)).Application;
       Button = (await import('./src/component/a-button.ts')).default;
     } catch (e) {
       throwError = true;
@@ -22,7 +22,7 @@ describe('decorator', () => {
   });
 
   test('组件类的元数据正确', async () => {
-    const context = new ApplicationContext();
+    const application = new Application();
     const asExpected = _test_helper.iocContainer.checkClassMetadataAsExpected(
       Button,
       [

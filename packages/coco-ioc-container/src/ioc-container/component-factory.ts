@@ -6,7 +6,7 @@ import IocComponentDefinition, {
 } from './ioc-component-definition.ts';
 import Component, { Scope } from '../metadata/component.ts';
 import { findClassMetadata } from './metadata.ts';
-import type ApplicationContext from './application-context.ts';
+import type Application from './application.ts';
 import { KindClass, KindField, KindMethod } from './decorator-context.ts';
 import { isChildClass, uppercaseFirstLetter } from '../share/util.ts';
 
@@ -93,7 +93,7 @@ function addPostConstruct(cls: Class<any>, pc: PostConstruct) {
 
 function getDefinition(
   ClsOrId: Class<any> | Id,
-  appCtx: ApplicationContext,
+  application: Application,
   qualifier?: string
 ) {
   if (typeof ClsOrId === 'string') {
@@ -117,7 +117,7 @@ function getDefinition(
     // 多个子组件
     let _qualifier = qualifier;
     if (!_qualifier && definition) {
-      _qualifier = appCtx.propertiesConfig.getValue(
+      _qualifier = application.propertiesConfig.getValue(
         `${definition.id}.qualifier`
       );
     }
@@ -140,7 +140,7 @@ const singletonInstances: Map<Class<any>, any> = new Map();
  * 如果实例化组件ID，找到要实例化的子组件，也有可能是多子组件的情况下
  */
 function findInstantiateComponent(
-  appCtx: ApplicationContext,
+  application: Application,
   clsOrId: Class<any> | Id,
   qualifier?: string
 ) {
@@ -151,7 +151,7 @@ function findInstantiateComponent(
   if (definition) {
     const definitionOrChildDefinition = getDefinition(
       definition.cls,
-      appCtx,
+      application,
       qualifier
     );
     if (definitionOrChildDefinition) {
@@ -166,17 +166,17 @@ function findInstantiateComponent(
 
 /**
  * 创建一个ioc组件实例
- * @param appCtx applicationContext实例；
+ * @param application 应用实例；
  * @param ClsOrId 通过类定义或Id获取；
  * @param rest 其他参数
  */
 function getComponent<T>(
-  appCtx: ApplicationContext,
+  application: Application,
   ClsOrId: Class<T> | Id,
   rest: { qualifier?: string; newParameters?: any[] } = {}
 ): T {
   const { qualifier, newParameters = [] } = rest;
-  const definition = getDefinition(ClsOrId, appCtx, qualifier);
+  const definition = getDefinition(ClsOrId, application, qualifier);
   if (!definition) {
     if (__TEST__) {
       throw new Error(`can no find component definition:${ClsOrId}`);
@@ -188,7 +188,7 @@ function getComponent<T>(
   if (isSingleton && singletonInstances.has(cls)) {
     return singletonInstances.get(cls);
   }
-  const component = createComponent(appCtx, definition, ...newParameters);
+  const component = createComponent(application, definition, ...newParameters);
   if (isSingleton) {
     singletonInstances.set(cls, component);
   }

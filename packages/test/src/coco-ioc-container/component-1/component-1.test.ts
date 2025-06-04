@@ -2,7 +2,7 @@ import { _test_helper as cli_helper } from '@cocojs/cli';
 import { _test_helper } from 'coco-mvc';
 import { pkgPath, cocoIdxStr } from '../../_helper_/pkg-path';
 
-let ApplicationContext;
+let Application;
 let throwError;
 let User;
 let Button;
@@ -14,7 +14,7 @@ describe('decorator', () => {
       User = (await import('./src/component/user.ts')).default;
       Button = (await import('./src/component/button.ts')).default;
       Theme = (await import('./src/component/theme.ts')).default;
-      ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
+      Application = (await import(cocoIdxStr)).Application;
     } catch (e) {
       console.error(e);
       throwError = true;
@@ -28,22 +28,22 @@ describe('decorator', () => {
   });
 
   test('直接传入要注册的ioc组件', async () => {
-    const context = new ApplicationContext();
-    const user = context.getComponent(User);
+    const application = new Application();
+    const user = application.getComponent(User);
     expect(user).toBeTruthy();
   });
 
   test('通过对象传入要注册的ioc组件，默认singleton模式', async () => {
-    const context = new ApplicationContext();
-    const t1 = context.getComponent(Theme);
-    const t2 = context.getComponent(Theme);
+    const application = new Application();
+    const t1 = application.getComponent(Theme);
+    const t2 = application.getComponent(Theme);
     expect(t1 === t2).toBe(true);
   });
 
   test('通过对象传入要注册的ioc组件，可以设置prototype模式', async () => {
-    const context = new ApplicationContext();
-    const b1 = context.getComponent(Button);
-    const b2 = context.getComponent(Button);
+    const application = new Application();
+    const b1 = application.getComponent(Button);
+    const b2 = application.getComponent(Button);
     expect(b1 === b2).toBe(false);
   });
 });

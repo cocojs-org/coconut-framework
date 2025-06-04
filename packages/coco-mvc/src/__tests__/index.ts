@@ -1,12 +1,12 @@
-import { type ApplicationContext } from 'coco-ioc-container';
+import { type Application } from 'coco-ioc-container';
 
-let ctx: ApplicationContext;
+let ctx: Application;
 let container: HTMLDivElement;
 let renderIns: any;
 
 /**
  *
- * @param ApplicationContext
+ * @param Application
  * @param ViewComponent
  * @param RenderCls
  * @param HistoryRouterCls
@@ -14,7 +14,7 @@ let renderIns: any;
  * @param applicationJson
  */
 function doStart(
-  ApplicationContext: Class<ApplicationContext>,
+  Application: Class<Application>,
   ViewComponent: any,
   RenderCls: Class<any>,
   HistoryRouterCls: Class<any>,
@@ -23,7 +23,7 @@ function doStart(
 ) {
   if (!ctx) {
     // 初次渲染
-    ctx = new ApplicationContext(applicationJson);
+    ctx = new Application(applicationJson);
     renderIns = ctx.getComponent(RenderCls);
   }
   if (scene === 'no-router' && ViewComponent) {
@@ -33,14 +33,14 @@ function doStart(
 }
 
 function render(
-  ApplicationContext: Class<ApplicationContext>,
+  Application: Class<Application>,
   ViewComponent: any,
   Render: Class<any>,
   HistoryRouter: Class<any>,
   applicationJson: Record<string, any>
 ) {
   return doStart(
-    ApplicationContext,
+    Application,
     ViewComponent,
     Render,
     HistoryRouter,
@@ -50,13 +50,13 @@ function render(
 }
 
 function start(
-  ApplicationContext: Class<ApplicationContext>,
+  Application: Class<Application>,
   Render: Class<any>,
   HistoryRouter: Class<any>,
   applicationJson: Record<string, any>
 ) {
   return doStart(
-    ApplicationContext,
+    Application,
     undefined,
     Render,
     HistoryRouter,

@@ -1,9 +1,4 @@
-import {
-  type ApplicationContext,
-  Metadata,
-  target,
-  Target,
-} from 'coco-ioc-container';
+import { type Application, Metadata, target, Target } from 'coco-ioc-container';
 import Subscriber from '../memoized/subscriber.ts';
 
 /**
@@ -13,7 +8,7 @@ import Subscriber from '../memoized/subscriber.ts';
 class Memoized extends Metadata {
   static postConstruct(
     metadata: Memoized,
-    appCtx: ApplicationContext,
+    application: Application,
     name: string
   ) {
     const fn = this[name];

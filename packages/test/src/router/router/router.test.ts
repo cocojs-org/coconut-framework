@@ -7,7 +7,7 @@ import {
   cocoIdxAppJson,
 } from '../../_helper_/pkg-path.ts';
 
-let ApplicationContext;
+let Application;
 let applicationJson;
 let Render;
 let Router;
@@ -15,7 +15,7 @@ let throwError;
 describe('router', () => {
   beforeEach(async () => {
     cli_helper.buildDotCoco(pkgPath(__dirname));
-    ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
+    Application = (await import(cocoIdxStr)).Application;
     applicationJson = (await import(cocoIdxAppJson)).default;
     Render = (await import('coco-mvc')).Render;
     Router = (await import('coco-mvc')).Router;
@@ -30,7 +30,7 @@ describe('router', () => {
 
   test('路由切换，页面也会重新渲染', async () => {
     const { container, ctx } = _test_helper.mvc.start(
-      ApplicationContext,
+      Application,
       Render,
       Router,
       applicationJson

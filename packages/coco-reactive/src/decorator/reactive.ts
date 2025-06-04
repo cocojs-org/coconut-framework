@@ -1,6 +1,6 @@
 import {
   createDecoratorExp,
-  type ApplicationContext,
+  type Application,
   type Decorator,
 } from 'coco-ioc-container';
 import Reactive from '../metadata/reactive.ts';

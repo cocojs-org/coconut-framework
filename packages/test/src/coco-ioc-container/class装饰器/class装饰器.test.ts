@@ -5,13 +5,13 @@ import { decoratorName as b } from './src/decorator/b';
 import Button from './src/component/Button';
 import { pkgPath, cocoIdxStr } from '../../_helper_/pkg-path';
 
-let ApplicationContext;
+let Application;
 
 describe('class装饰器', () => {
   beforeEach(async () => {
     // TEST.decorator.reset();
     cli_helper.buildDotCoco(pkgPath(__dirname));
-    ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
+    Application = (await import(cocoIdxStr)).Application;
   });
 
   afterEach(async () => {
@@ -20,8 +20,8 @@ describe('class装饰器', () => {
   });
 
   test('一个类的多个类装饰器执行顺序', async () => {
-    const context = new ApplicationContext();
-    context.getComponent(Button);
+    const application = new Application();
+    application.getComponent(Button);
     const isExpected = _test_helper.iocContainer.expectInOrder([
       { type: 'exec', name: a },
       { type: 'exec', name: b },

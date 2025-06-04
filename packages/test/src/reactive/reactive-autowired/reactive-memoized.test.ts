@@ -15,7 +15,7 @@ import {
 } from '@testing-library/dom';
 import { _test_helper } from 'coco-mvc';
 
-let ApplicationContext;
+let Application;
 let applicationJson;
 let Render;
 let Router;
@@ -34,7 +34,7 @@ describe('store', () => {
   beforeEach(async () => {
     try {
       cli_helper.buildDotCoco(pkgPath(__dirname));
-      ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
+      Application = (await import(cocoIdxStr)).Application;
       applicationJson = (await import(cocoIdxAppJson)).default;
       Render = (await import('coco-mvc')).Render;
       Router = (await import('coco-mvc')).Router;
@@ -62,7 +62,7 @@ describe('store', () => {
 
   test('不同的组件注入不同的实例', async () => {
     const { ctx } = _test_helper.mvc.render(
-      ApplicationContext,
+      Application,
       Page,
       Render,
       Router,
@@ -78,7 +78,7 @@ describe('store', () => {
 
   test('一个组件修改了store的reactive属性，其他组件也会同步更新', async () => {
     const { container } = _test_helper.mvc.render(
-      ApplicationContext,
+      Application,
       Page,
       Render,
       Router,
@@ -97,7 +97,7 @@ describe('store', () => {
 
   test('单个组件内，memoized可以依赖reactiveAutowired，也可以取消依赖', async () => {
     const { container } = _test_helper.mvc.render(
-      ApplicationContext,
+      Application,
       Page1,
       Render,
       Router,
@@ -131,7 +131,7 @@ describe('store', () => {
 
   test('单个组件内部，memoized a 依赖memoized b, memoized b取消依赖reactiveAutowired，再修改reactiveAutowired，memoized a也不会重新计算', async () => {
     const { container } = _test_helper.mvc.render(
-      ApplicationContext,
+      Application,
       Page2,
       Render,
       Router,

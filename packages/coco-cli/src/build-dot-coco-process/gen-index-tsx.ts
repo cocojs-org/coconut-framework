@@ -32,14 +32,14 @@ function appendExport(importStatements: string[]) {
   const pre = ``;
 
   const append = `
-import { ApplicationContext } from "coco-mvc";
+import { Application } from "coco-mvc";
 import applicationJson from "./application.json";
-export { ApplicationContext };
+export { Application };
 
 ${
   process.env.NODE_ENV === 'test'
-    ? `// 测试时由测试用例启动ApplicationContext`
-    : `new ApplicationContext(applicationJson)`
+    ? `// 测试时由测试用例启动Application`
+    : `new Application(applicationJson)`
 }
   `;
   return pre.concat(importStatements.join('\n')).concat(append);

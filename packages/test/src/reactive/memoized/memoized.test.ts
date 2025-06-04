@@ -7,7 +7,7 @@ import {
 } from '../../_helper_/pkg-path.ts';
 import { getByText, queryAllByRole, waitFor } from '@testing-library/dom';
 
-let ApplicationContext;
+let Application;
 let applicationJson;
 let Render;
 let Router;
@@ -24,7 +24,7 @@ describe('memoized', () => {
   beforeEach(async () => {
     try {
       cli_helper.buildDotCoco(pkgPath(__dirname));
-      ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
+      Application = (await import(cocoIdxStr)).Application;
       applicationJson = (await import(cocoIdxAppJson)).default;
       Render = (await import('coco-mvc')).Render;
       Router = (await import('coco-mvc')).Router;
@@ -50,7 +50,7 @@ describe('memoized', () => {
 
   test('memoized直接依赖reactive，且可以缓存上次的值', async () => {
     const { container } = _test_helper.mvc.render(
-      ApplicationContext,
+      Application,
       Button,
       Render,
       Router,
@@ -74,7 +74,7 @@ describe('memoized', () => {
 
   test('memoized a依赖reactive a，memoized b依赖memoized a，当reactive a更新时，memoized b也能更新', async () => {
     const { container } = _test_helper.mvc.render(
-      ApplicationContext,
+      Application,
       Button1,
       Render,
       Router,
@@ -92,7 +92,7 @@ describe('memoized', () => {
 
   test('memoized取消依赖reactive时，再修改reactive，memoized不会重新计算', async () => {
     const { container } = _test_helper.mvc.render(
-      ApplicationContext,
+      Application,
       Button2,
       Render,
       Router,
@@ -130,7 +130,7 @@ describe('memoized', () => {
 
   test('memoized a 依赖memoized b, memoized b取消依赖reactive，再修改reactive，memoized a也不会重新计算', async () => {
     const { container } = _test_helper.mvc.render(
-      ApplicationContext,
+      Application,
       Button3,
       Render,
       Router,

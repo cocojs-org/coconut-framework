@@ -2,13 +2,13 @@ import { _test_helper as cli_helper } from '@cocojs/cli';
 import { _test_helper } from 'coco-mvc';
 import { pkgPath, cocoIdxStr } from '../../_helper_/pkg-path';
 
-let ApplicationContext;
+let Application;
 let throwError;
 describe('不能同时添加2个component的复合装饰器', () => {
   beforeEach(async () => {
     try {
       cli_helper.buildDotCoco(pkgPath(__dirname));
-      ApplicationContext = (await import(cocoIdxStr)).ApplicationContext;
+      Application = (await import(cocoIdxStr)).Application;
     } catch (e) {
       throwError = true;
     }

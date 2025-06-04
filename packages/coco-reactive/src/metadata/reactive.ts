@@ -1,9 +1,4 @@
-import {
-  type ApplicationContext,
-  Metadata,
-  target,
-  Target,
-} from 'coco-ioc-container';
+import { type Application, Metadata, target, Target } from 'coco-ioc-container';
 import Publisher from '../memoized/publisher.ts';
 import Subscriber from '../memoized/subscriber.ts';
 import { get, NAME } from 'shared';
@@ -14,7 +9,7 @@ export function customPostConstruct(hooks?: {
    */
   init?: (
     metadata: Reactive,
-    appCtx: ApplicationContext,
+    application: Application,
     name: string,
     enqueueSetState: (v: any) => void
   ) => any;
@@ -29,13 +24,13 @@ export function customPostConstruct(hooks?: {
 }) {
   return function postConstruct(
     metadata: Reactive,
-    appCtx: ApplicationContext,
+    application: Application,
     name: string
   ) {
     const enqueueSetState = (v: any) => {
       get(NAME.enqueueSetState)?.(this, name, v);
     };
-    const initRtn = hooks?.init?.(metadata, appCtx, name, enqueueSetState);
+    const initRtn = hooks?.init?.(metadata, application, name, enqueueSetState);
     let _value: any = hooks?.initValue ? hooks.initValue(initRtn) : this[name];
     const publisher = new Publisher(name);
     Object.defineProperty(this, name, {

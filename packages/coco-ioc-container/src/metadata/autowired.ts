@@ -1,7 +1,7 @@
 import Target from './target.ts';
 import target from '../decorator/target.ts';
 import Metadata from './abstract/metadata.ts';
-import type ApplicationContext from '../ioc-container/application-context.ts';
+import type Application from '../ioc-container/application.ts';
 
 /**
  * @public
@@ -12,10 +12,10 @@ class Autowired extends Metadata {
 
   static postConstruct(
     metadata: Autowired,
-    appCtx: ApplicationContext,
+    application: Application,
     name: string
   ) {
-    this[name] = appCtx.getComponentForAutowired(
+    this[name] = application.getComponentForAutowired(
       metadata.value,
       this.constructor as Class<any>,
       name

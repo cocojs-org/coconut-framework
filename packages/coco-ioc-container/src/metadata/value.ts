@@ -1,7 +1,7 @@
 import Target from './target.ts';
 import target from '../decorator/target.ts';
 import Metadata from './abstract/metadata.ts';
-import type ApplicationContext from '../ioc-container/application-context.ts';
+import type Application from '../ioc-container/application.ts';
 
 /**
  * @public
@@ -12,14 +12,14 @@ class Value extends Metadata {
 
   static postConstruct(
     metadata: Value,
-    appCtx: ApplicationContext,
+    application: Application,
     name: string
   ) {
     const path = metadata.value;
     if (typeof path !== 'string' || !path.trim()) {
       return;
     }
-    this[name] = appCtx.propertiesConfig.getValue(path);
+    this[name] = application.propertiesConfig.getValue(path);
   }
 }
 

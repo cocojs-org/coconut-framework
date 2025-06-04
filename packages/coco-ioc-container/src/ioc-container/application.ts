@@ -41,9 +41,10 @@ import { Init, Start, Target, Qualifier } from '../metadata/index.ts';
 import PropertiesConfig from './properties-config.ts';
 
 /**
+ * 表示一个web应用实例
  * @public
  */
-class ApplicationContext {
+class Application {
   propertiesConfig: PropertiesConfig;
 
   constructor(jsonConfig: Record<string, any> = {}) {
@@ -369,4 +370,4 @@ class ApplicationContext {
   }
 }
 
-export default ApplicationContext;
+export default Application;
