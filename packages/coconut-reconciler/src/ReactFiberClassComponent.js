@@ -1,6 +1,7 @@
 import {createUpdate, enqueueUpdate, initializeUpdateQueue, processUpdateQueue} from "./ReactFiberClassUpdateQueue";
 import {get, NAME} from "shared";
 import { Update } from "./ReactFiberFlags";
+import { getApplication } from './coco-ioc-container/index';
 
 const classComponentUpdater = {
   enqueueSetState(inst, field, payload, callback) {
@@ -25,10 +26,10 @@ function adoptClassInstance(workInProgress, instance) {
 }
 
 function constructClassInstance(workInProgress, ctor, props) {
-  const appCtx = get(NAME.applicationContext);
+  const appCtx = getApplication();
   const instance = appCtx.getComponent(ctor);
   const Reactive = appCtx.getMetadataCls('Reactive');
-  const fields = get(NAME.getFields)?.(ctor, Reactive, true);
+  const fields = appCtx.listFieldByMetadataCls(ctor, Reactive, true);
   workInProgress.memoizedState = fields.reduce((prev, field) => {
     prev[field] = instance[field];
     return prev;
@@ -66,9 +67,9 @@ function updateClassInstance(
   newState = workInProgress.memoizedState;
 
   instance.props = newProps;
-  const appCtx = get(NAME.applicationContext);
+  const appCtx = getApplication();
   const Reactive = appCtx.getMetadataCls('Reactive');
-  const fields = get(NAME.getFields)?.(ctor, Reactive, true);
+  const fields = appCtx.listFieldByMetadataCls(ctor, Reactive, true);
   for (const field of fields) {
     instance[field] = newState[field]
   }

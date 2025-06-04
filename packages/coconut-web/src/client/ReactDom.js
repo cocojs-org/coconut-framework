@@ -2,7 +2,7 @@ import { listenToAllSupportedEvents } from '../events/DOMPluginEventSystem';
 
 export * from './ReactDomComponent.js'
 export * from './ReactDomHostConfig.js'
-import {flushSync, updateContainer, createContainer} from 'coconut-reconciler';
+import {flushSync, updateContainer, createContainer, registerApplication, unregisterApplication} from 'coconut-reconciler';
 
 function legacyCreateRootFromDOMContainer(container, children) {
   const root = createContainer(container)
@@ -35,3 +35,4 @@ function legacyRenderSubtreeIntoContainer(
 export function render(element, container) {
   return legacyRenderSubtreeIntoContainer(null, element, container, null);
 }
+export { registerApplication, unregisterApplication }

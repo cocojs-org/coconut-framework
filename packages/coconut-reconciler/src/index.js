@@ -10,6 +10,7 @@ export function updateRender(instance) {
 }
 
 export { classComponentUpdater, flushSync, updateContainer, createContainer, finishQueueingConcurrentUpdates, isRenderPhase }
+export { registerApplication, unregisterApplication } from './coco-ioc-container/index'
 
 register(NAME.isRenderPhase, isRenderPhase);
 register(NAME.enqueueSetState, classComponentUpdater.enqueueSetState);

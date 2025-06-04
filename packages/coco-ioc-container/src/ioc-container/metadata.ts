@@ -1,6 +1,5 @@
 import Metadata, { createMetadata } from '../metadata/abstract/metadata.ts';
 import { type Field } from './decorator-context.ts';
-import { register, NAME } from 'shared';
 
 // 元数据类本身的集合
 const metadataClsCollection: Map<string, Metadata> = new Map();
@@ -216,7 +215,6 @@ function listFieldByMetadataCls(
   }
   return fields;
 }
-register(NAME.getFields, listFieldByMetadataCls);
 
 // 找到特定类装饰器
 function listBeDecoratedClsByClassMetadata(

@@ -11,6 +11,7 @@ import {
   listBeDecoratedClsByClassMetadata,
   listBeDecoratedClsByFieldMetadata,
   listFieldMetadata,
+  listFieldByMetadataCls,
   metadataClsCollection,
 } from './metadata.ts';
 import {
@@ -35,7 +36,6 @@ import {
   lowercaseFirstLetter,
 } from '../share/util.ts';
 import Configuration from '../metadata/configuration.ts';
-import { register, NAME } from 'shared';
 import ConstructorParam from '../metadata/constructor-param.ts';
 import { Init, Start, Target, Qualifier } from '../metadata/index.ts';
 import PropertiesConfig from './properties-config.ts';
@@ -55,12 +55,8 @@ class ApplicationContext {
       this.buildMetadata();
       this.buildIocComponentDefinition();
     }
-    // 清空装饰器参数记录
+    // todo 不用清空装饰器参数记录
     clearDecoratorParams();
-    {
-      // todo 想办法去掉NAME.applicationContext
-      register(NAME.applicationContext, this);
-    }
     {
       this.bootComponent();
     }
@@ -120,6 +116,8 @@ class ApplicationContext {
   public getByClassMetadata(metadataClass: Class<any>) {
     return listBeDecoratedClsByClassMetadata(metadataClass);
   }
+
+  public listFieldByMetadataCls = listFieldByMetadataCls;
 
   /**
    * 实例化所有业务类（非元数据类），拿到field和method装饰器参数
