@@ -2,7 +2,7 @@ import { listenToAllSupportedEvents } from '../events/DOMPluginEventSystem';
 
 export * from './ReactDomComponent.js'
 export * from './ReactDomHostConfig.js'
-import {flushSync, updateContainer, createContainer, registerApplication, unregisterApplication} from 'coconut-reconciler';
+import {flushSync, updateContainer, createContainer, getPublicRootInstance, registerApplication, unregisterApplication} from 'coconut-reconciler';
 
 function legacyCreateRootFromDOMContainer(container, children) {
   const root = createContainer(container)
@@ -25,11 +25,12 @@ function legacyRenderSubtreeIntoContainer(
   const maybeRoot = container._reactRootContainer;
   let root;
   if (!maybeRoot) {
-    legacyCreateRootFromDOMContainer(container, children);
+    root = legacyCreateRootFromDOMContainer(container, children);
   } else {
     root = maybeRoot;
     updateContainer(children, root, parentComponent, callback);
   }
+  return getPublicRootInstance(root);
 }
 
 export function render(element, container) {

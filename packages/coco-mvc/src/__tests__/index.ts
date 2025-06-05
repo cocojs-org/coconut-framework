@@ -24,6 +24,7 @@ function doStart(
   if (!ctx) {
     // 初次渲染
     ctx = new Application(applicationJson);
+    ctx.start();
     renderIns = ctx.getComponent(RenderCls);
   }
   if (scene === 'no-router' && ViewComponent) {

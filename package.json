@@ -7,10 +7,11 @@
     "build-cli-dts": "tsc --build packages/coco-cli && pnpm --filter @cocojs/cli api-extractor",
     "build": "pnpm run run-build-script && pnpm run build-dts && pnpm run build-cli-dts",
     "build:test": "pnpm run run-build-script:test && pnpm run build-dts && pnpm run build-cli-dts",
-    "jest": "jest -c ./scripts/jest/jest.config.js",
+    "jest:coconut": "jest -c ./scripts/jest/jest.config.js",
+    "jest:react": "jest -c ./scripts/jest/jest.react.config.js",
     "prettier": "prettier --write 'packages/**/*.*'",
     "prettier:check": "prettier --check 'packages/**/*.*'",
-    "test": "pnpm run build:test && pnpm run jest",
+    "test": "pnpm run build:test && pnpm run jest:coconut && pnpm run jest:react",
     "_modifyPkgVersion": "node scripts/publish/modify-pkg-version.js",
     "updateVersion": "pnpm run test && pnpm run _modifyPkgVersion",
     "prepare": "husky install && ts-patch install -s"

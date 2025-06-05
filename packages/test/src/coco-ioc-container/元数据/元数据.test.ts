@@ -23,6 +23,7 @@ describe('decorator', () => {
 
   test('组件类的元数据正确', async () => {
     const application = new Application();
+    application.start();
     const asExpected = _test_helper.iocContainer.checkClassMetadataAsExpected(
       Button,
       [

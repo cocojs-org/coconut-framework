@@ -5,20 +5,23 @@ module.exports = {
   cache: false,
   maxConcurrency: 1,
   testEnvironment: 'jsdom',
-  testMatch: ['**/*.test.ts'],
-  testPathIgnorePatterns: [
-    '<rootDir>/packages/coconut-reconciler/',
-    '<rootDir>/packages/coconut-web/',
-  ],
+  testMatch: ['**/packages/coconut-web/**/*-test.jsx'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transform: {
-    '\\.[jt]sx?$': '<rootDir>/scripts/jest/transformer.js',
+    '\\.[jt]sx?$': [
+      'babel-jest',
+      {
+        configFile: path.join(__dirname, './babel.config.js'),
+      },
+    ],
   },
   moduleNameMapper: {
     'coco-mvc/jsx-runtime$': '<rootDir>/packages/coco-mvc/dist/jsx.cjs.js',
     'coco-mvc$': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
-    '@cocojs/cli$': '<rootDir>/packages/coco-cli/dist/index.js',
+    'coconut-reconciler': '<rootDir>/packages/coconut-reconciler/src/index.js',
     shared$: '<rootDir>/packages/shared/src/index.ts',
+    ReactFiberHostConfig$:
+      '<rootDir>/packages/coconut-web/src/client/ReactDomHostConfig.js',
   },
   globals: {
     __DEV__: false,

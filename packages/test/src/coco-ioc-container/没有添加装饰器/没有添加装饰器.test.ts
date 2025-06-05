@@ -20,6 +20,7 @@ describe('ioc-container', () => {
     let throwError = false;
     try {
       const application = new Application();
+      application.start();
       application.getComponent(Space);
     } catch (e) {
       throwError = true;

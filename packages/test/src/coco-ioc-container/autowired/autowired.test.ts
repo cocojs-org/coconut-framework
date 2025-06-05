@@ -33,6 +33,7 @@ describe('autowired', () => {
 
   test('可以拿到注册的view组件，且拿到的实例也是不同的', async () => {
     const application = new Application();
+    application.start();
     const userInfo1 = application.getComponent(UserInfo);
     const userInfo2 = application.getComponent(UserInfo);
     expect(userInfo1.button instanceof Button).toBe(true);
@@ -42,6 +43,7 @@ describe('autowired', () => {
 
   test('可以拿到注册的view组件，且可以拿到单例组件', async () => {
     const application = new Application();
+    application.start();
     const userInfo1 = application.getComponent(UserInfo);
     const userInfo2 = application.getComponent(UserInfo);
     expect(userInfo1.theme instanceof Theme).toBe(true);
@@ -50,6 +52,7 @@ describe('autowired', () => {
 
   test('可以拿到@component注册的组件，默认是单例组件', async () => {
     const application = new Application();
+    application.start();
     const userInfo1 = application.getComponent(UserInfo);
     const userInfo2 = application.getComponent(UserInfo);
     expect(userInfo1.user instanceof User).toBe(true);
@@ -58,6 +61,7 @@ describe('autowired', () => {
 
   test('可以拿到@component注册的组件，也支持每次返回新的实例', async () => {
     const application = new Application();
+    application.start();
     const userInfo1 = application.getComponent(UserInfo);
     const userInfo2 = application.getComponent(UserInfo);
     expect(userInfo1.computer instanceof Computer).toBe(true);

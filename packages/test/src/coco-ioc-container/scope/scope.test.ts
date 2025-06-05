@@ -28,6 +28,7 @@ describe('decorator', () => {
 
   test('默认singleton模式', async () => {
     const application = new Application();
+    application.start();
     const s1 = application.getComponent(DefaultValue);
     const s2 = application.getComponent(DefaultValue);
     expect(s1 === s2).toBe(true);
@@ -35,6 +36,7 @@ describe('decorator', () => {
 
   test('支持显式singleton', async () => {
     const application = new Application();
+    application.start();
     const s1 = application.getComponent(Single);
     const s2 = application.getComponent(Single);
     expect(s1 === s2).toBe(true);
@@ -42,6 +44,7 @@ describe('decorator', () => {
 
   test('支持设置prototype', async () => {
     const application = new Application();
+    application.start();
     const p1 = application.getComponent(Prototype);
     const p2 = application.getComponent(Prototype);
     expect(p1 === p2).toBe(false);

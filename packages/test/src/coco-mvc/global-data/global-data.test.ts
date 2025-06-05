@@ -20,6 +20,7 @@ describe('global-data', () => {
 
   test('可以获取到globalData，并且是同一引用', async () => {
     const application = new Application();
+    application.start();
     const btn = application.getComponent(Button);
     const btn1 = application.getComponent(Button1);
     expect(btn).not.toBe(btn1);

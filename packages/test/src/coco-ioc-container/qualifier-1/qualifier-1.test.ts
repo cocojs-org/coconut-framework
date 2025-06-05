@@ -33,6 +33,7 @@ describe('qualifier-1', () => {
 
   test('@autowired注入的组件存在多个子组件，使用动态配置指定一个子组件', async () => {
     const application = new Application(ApplicationJson);
+    application.start();
     const user = application.getComponent(User);
     expect(user.parent instanceof Child).toBe(true);
   });

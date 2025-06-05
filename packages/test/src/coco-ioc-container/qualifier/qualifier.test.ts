@@ -34,6 +34,7 @@ describe('qualifier', () => {
     let error = false;
     try {
       const application = new Application();
+      application.start();
       application.getComponent(UserInfo);
     } catch (e) {
       error = true;
@@ -45,6 +46,7 @@ describe('qualifier', () => {
     let error = false;
     try {
       const application = new Application();
+      application.start();
       application.getComponent(WrongQualifierId);
     } catch (e) {
       error = true;
@@ -54,6 +56,7 @@ describe('qualifier', () => {
 
   test('@autowired注入的组件存在多个子组件，使用@qualifier指定一个子组件', async () => {
     const application = new Application();
+    application.start();
     const user = application.getComponent(User);
     expect(user.parent instanceof Child).toBe(true);
   });

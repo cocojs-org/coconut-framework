@@ -22,6 +22,7 @@ describe('decorator', () => {
 
   test('类的postConstruct调用是从下往上的', async () => {
     const application = new Application();
+    application.start();
     application.getComponent(Button);
     expect(mockFn).toHaveBeenCalledTimes(2);
     expect(mockFn.mock.calls[0][0]).toBe('b');

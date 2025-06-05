@@ -21,6 +21,7 @@ describe('class装饰器', () => {
 
   test('一个类的多个类装饰器执行顺序', async () => {
     const application = new Application();
+    application.start();
     application.getComponent(Button);
     const isExpected = _test_helper.iocContainer.expectInOrder([
       { type: 'exec', name: a },

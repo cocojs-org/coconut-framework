@@ -49,6 +49,13 @@ class Application {
 
   constructor(jsonConfig: Record<string, any> = {}) {
     this.propertiesConfig = new PropertiesConfig(jsonConfig);
+  }
+
+  /**
+   * 在项目中，所以的组件都已经收集到coco/index里面了，所以不需要进行组件收集；
+   * 在测试时，组件是在执行到对应的行装饰器才会执行，所以需要先收集在启动。
+   */
+  public start() {
     {
       this.addFieldOrMethodDecoratorParams();
       this.addAtComponentDecoratorParams();

@@ -33,12 +33,14 @@ describe('decorator', () => {
 
   test('直接传入要注册的ioc组件', async () => {
     const application = new Application();
+    application.start();
     const user = application.getComponent(User);
     expect(user).toBeTruthy();
   });
 
   test('通过对象传入要注册的ioc组件，默认singleton模式', async () => {
     const application = new Application();
+    application.start();
     const t1 = application.getComponent(Theme);
     const t2 = application.getComponent(Theme);
     expect(t1 === t2).toBe(true);
@@ -46,6 +48,7 @@ describe('decorator', () => {
 
   test('通过对象传入要注册的ioc组件，可以设置prototype模式', async () => {
     const application = new Application();
+    application.start();
     const b1 = application.getComponent(Button);
     const b2 = application.getComponent(Button);
     expect(b1 === b2).toBe(false);
