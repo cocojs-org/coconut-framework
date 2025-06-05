@@ -29,13 +29,13 @@ describe('router', () => {
   });
 
   test('路由切换，页面也会重新渲染', async () => {
-    const { container, ctx } = _test_helper.mvc.start(
+    const { container, application } = _test_helper.mvc.start(
       Application,
       Render,
       Router,
       applicationJson
     );
-    const router = ctx.getComponent(Router);
+    const router = application.getComponent(Router);
     router.navigateTo('/');
     await waitFor(async () => {
       expect(getByText(container, 'index page')).toBeTruthy();

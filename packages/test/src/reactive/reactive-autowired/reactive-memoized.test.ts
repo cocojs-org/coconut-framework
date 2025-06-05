@@ -61,15 +61,15 @@ describe('store', () => {
   });
 
   test('不同的组件注入不同的实例', async () => {
-    const { ctx } = _test_helper.mvc.render(
+    const { application } = _test_helper.mvc.render(
       Application,
       Page,
       Render,
       Router,
       applicationJson
     );
-    const form = ctx.getComponent(Form);
-    const detail = ctx.getComponent(Detail);
+    const form = application.getComponent(Form);
+    const detail = application.getComponent(Detail);
     // todo userInfo是否需要是UserInfo的实例
     expect(form.userInfo).toBeInstanceOf(UserInfo);
     expect(detail.userInfo).toBeInstanceOf(UserInfo);

@@ -1,6 +1,6 @@
 import { type Application } from 'coco-ioc-container';
 
-let ctx: Application;
+let application: Application;
 let container: HTMLDivElement;
 let renderIns: any;
 
@@ -21,16 +21,16 @@ function doStart(
   scene: 'use-router' | 'no-router',
   applicationJson?: Record<string, any>
 ) {
-  if (!ctx) {
+  if (!application) {
     // 初次渲染
-    ctx = new Application(applicationJson);
-    ctx.start();
-    renderIns = ctx.getComponent(RenderCls);
+    application = new Application(applicationJson);
+    application.start();
+    renderIns = application.getComponent(RenderCls);
   }
   if (scene === 'no-router' && ViewComponent) {
     renderIns.render(ViewComponent);
   }
-  return { ctx, container: renderIns.container };
+  return { application, container: renderIns.container };
 }
 
 function render(
@@ -67,7 +67,7 @@ function start(
 }
 
 function cleanRender() {
-  ctx = undefined;
+  application = undefined;
   container = undefined;
   renderIns = undefined;
 }
