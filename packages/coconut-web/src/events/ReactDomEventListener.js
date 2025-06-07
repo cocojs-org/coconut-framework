@@ -1,10 +1,11 @@
 import getListener from './getListener';
-
+import { topLevelEventsToReactNames } from './DOMEventProperties';
 
 function dispatchEvent(domEventName, container, nativeEvent) {
   let currentTarget = nativeEvent.target;
   while (currentTarget !== null && currentTarget !== container) {
-    const handler = getListener(currentTarget, 'onClick');
+    const reactName = topLevelEventsToReactNames.get(domEventName);
+    const handler = getListener(currentTarget, reactName);
     handler?.()
     currentTarget = currentTarget.parentElement;
   }

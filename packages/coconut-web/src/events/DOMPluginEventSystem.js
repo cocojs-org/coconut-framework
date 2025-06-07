@@ -1,6 +1,9 @@
 import { allNativeEvents } from './EventRegistry';
 import { createEventListenerWrapperWithPriority } from './ReactDomEventListener';
 import { addEventCaptureListener } from './EventListener';
+import * as SimpleEventPlugin from './plugins/SimpleEventPlugin';
+
+SimpleEventPlugin.registerEvents();
 
 const listeningMarker =
   '_reactListening' +
@@ -31,6 +34,5 @@ export function listenToNativeEvent(
   domEventName,
   target
 ) {
-
   addTrappedEventListener(target, domEventName);
 }

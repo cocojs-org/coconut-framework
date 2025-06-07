@@ -1,5 +1,6 @@
 import { render, registerApplication, unregisterApplication } from '../index';
 import { Application, component } from 'coco-mvc'
+import { getByRole, getByText, getRoles, waitFor } from '@testing-library/dom';
 import * as ReactTestUtils from './test-units/ReactTestUnits';
 
 let application
@@ -14,14 +15,14 @@ describe('ReactDOM', () => {
   })
 
   test('allows a DOM element to be used with a string', () => {
-    const element = <div className={'foo'} />;
     application.start();
+    const element = <div className={'foo'} />;
     const node = ReactTestUtils.renderIntoDocument(element);
     expect(node.tagName).toBe('DIV');
   });
 
-  xtest('should bubble onSubmit', () => {
-    const container = document.createElement('div');
+  test('should bubble onSubmit', async () => {
+    const container = document.createElement('p');
     let count = 0;
     let buttonRef;
 
@@ -30,7 +31,7 @@ describe('ReactDOM', () => {
       render(){
         return <div
           onSubmit={event => {
-            event.preventDefault();
+            // event.preventDefault();
             count++;
           }}>
           <Child />
@@ -42,8 +43,8 @@ describe('ReactDOM', () => {
     class Child {
       render() {
         return (
-          <form>
-            <input type="submit" ref={button => (buttonRef = button)} />
+          <form role={'form'}>
+            <input type="submit" ref={button => {buttonRef = button}} />
           </form>
         );
       }
@@ -53,9 +54,17 @@ describe('ReactDOM', () => {
     document.body.appendChild(container);
     try {
       render(<Parent />, container);
+      // todo jsdom没有实现requestSubmit，这里先不然form执行默认操作
+      // 否则报Error: Not implemented: HTMLFormElement.prototype.requestSubmit
+      const form = getByRole(container, 'form');
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+      });
+      expect(buttonRef).toBeTruthy()
       buttonRef.click();
-      console.info('eeee', container.innerHTML);
-      expect(count).toBe(1);
+      await waitFor(async () => {
+        expect(count).toBe(1);
+      });
     } finally {
       document.body.removeChild(container);
     }
