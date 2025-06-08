@@ -8,19 +8,23 @@
  * @emails react-core
  */
 import { render, registerApplication, unregisterApplication } from '../index';
-import { Application, component, view } from 'coco-mvc'
 import { getByRole, getByText, getRoles, waitFor } from '@testing-library/dom';
 import * as ReactTestUtils from './test-units/ReactTestUnits';
 
+let Application
 let application
+let view
 describe('ReactDOM', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    Application = (await import('coco-mvc')).Application;
+    view = (await import('coco-mvc')).view
     application = new Application();
     registerApplication(application);
   })
 
   afterEach(() => {
     unregisterApplication();
+    jest.resetModules();
   })
 
   it('should bubble onSubmit', async () => {
@@ -28,7 +32,7 @@ describe('ReactDOM', () => {
     let count = 0;
     let buttonRef;
 
-    @component()
+    @view()
     class Parent {
       render(){
         return <div
@@ -41,7 +45,7 @@ describe('ReactDOM', () => {
       }
     }
 
-    @component()
+    @view()
     class Child {
       render() {
         return (
@@ -137,7 +141,7 @@ describe('ReactDOM', () => {
     let input;
     let input2;
 
-    @component()
+    @view()
     class A {
       props
       render() {
