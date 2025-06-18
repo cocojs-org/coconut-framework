@@ -1,8 +1,17 @@
 import setTextContent from "./setTextContent";
 import { setValueForProperty } from './DOMPropertyOperations';
+import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
 
 const CHILDREN = 'children';
 const STYLE = 'style';
+
+let validatePropertiesInDevelopment;
+if (__DEV__) {
+  validatePropertiesInDevelopment = function(type, props) {
+    validateUnknownProperties(type, props);
+  };
+}
+
 
 function setInitialDOMProperties(
   tag,
@@ -32,6 +41,9 @@ export function createTextNode(text) {
 }
 
 export function setInitialProperties(domElement, tag, rawProps) {
+  if (__DEV__) {
+    validatePropertiesInDevelopment(tag, rawProps);
+  }
   const props = rawProps;
   setInitialDOMProperties(tag, domElement, null, props)
 }
@@ -42,6 +54,9 @@ export function diffProperties(
   lastRawProps,
   nextRawProps
 ) {
+  if (__DEV__) {
+    validatePropertiesInDevelopment(tag, rawProps);
+  }
   let updatePayload = null;
   let lastProps = lastRawProps;
   let nextProps = nextRawProps;

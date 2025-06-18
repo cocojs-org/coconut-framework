@@ -35,10 +35,23 @@ describe('ReactDOM unknown attribute', () => {
     expect(el.firstChild.hasAttribute('unknown')).toBe(false);
   }
 
+  function testUnknownAttributeAssignment(givenValue, expectedDOMValue) {
+    const el = document.createElement('div');
+    render(<div unknown="something" />, el);
+    expect(el.firstChild.getAttribute('unknown')).toBe('something');
+    render(<div unknown={givenValue} />, el);
+    expect(el.firstChild.getAttribute('unknown')).toBe(expectedDOMValue);
+  }
+
   describe('unknown attributes', () => {
     it('removes values null and undefined', () => {
       testUnknownAttributeRemoval(null);
       testUnknownAttributeRemoval(undefined);
     });
+
+    it('changes values true, false to null, and also warns once', () => {
+      testUnknownAttributeAssignment(true, null);
+      testUnknownAttributeAssignment(false, null);
+    })
   })
 })
