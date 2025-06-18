@@ -1,6 +1,12 @@
 import {ClassComponent, HostComponent, HostRoot, HostText} from "./ReactWorkTags";
 import { LayoutMask, MutationMask, NoFlags, Placement, Ref, Update } from './ReactFiberFlags';
-import {commitTextUpdate, commitUpdate, removeChild, removeChildFromContainer} from "ReactFiberHostConfig";
+import {
+  commitTextUpdate,
+  commitUpdate,
+  removeChild,
+  removeChildFromContainer,
+  commitMount,
+} from "ReactFiberHostConfig";
 
 let nextEffect = null;
 let inProgressRoot = null;
@@ -367,6 +373,15 @@ function commitLayoutEffectOnFiber(
               prevState
             )
           }
+        }
+        break;
+      }
+      case HostComponent: {
+        const instance = finishedWork.stateNode;
+        if (current === null && finishedWork.flags & Update) {
+         const type = finishedWork.type;
+         const props = finishedWork.memoizedProps;
+         commitMount(instance, type, props);
         }
         break;
       }

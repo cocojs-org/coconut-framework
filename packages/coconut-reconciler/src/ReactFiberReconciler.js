@@ -1,4 +1,4 @@
-import {flushSync, scheduleUpdateOnFiber} from "./ReactFiberWorkLoop";
+import {scheduleUpdateOnFiber} from "./ReactFiberWorkLoop";
 import {createFiberRoot} from "./ReactFiberRoot";
 import {createUpdate, enqueueUpdate} from "./ReactFiberClassUpdateQueue";
 import { HostComponent } from './ReactWorkTags';
@@ -39,5 +39,3 @@ export function getPublicRootInstance(
       return containerFiber.child.stateNode;
   }
 }
-
-export { flushSync }

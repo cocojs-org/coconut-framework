@@ -56,6 +56,17 @@ export function createInstance(type, props) {
 
 export function finalizeInitialChildren(domElement, type, props) {
   setInitialProperties(domElement, type, props);
+  switch (type) {
+    case 'button':
+    case 'input':
+    case 'select':
+    case 'textarea':
+      return !!props.autoFocus;
+    case 'img':
+      return true;
+    default:
+      return false;
+  }
 }
 
 export function removeChild(
@@ -70,4 +81,21 @@ export function removeChildFromContainer(
   child,
 ) {
   container.removeChild(child);
+}
+
+export function commitMount(
+  domElement,
+  type,
+  newProps
+) {
+  switch (type) {
+    case 'button':
+    case 'input':
+    case 'select':
+    case 'textarea':
+      if (newProps.autoFocus) {
+        domElement.focus();
+      }
+      return;
+  }
 }

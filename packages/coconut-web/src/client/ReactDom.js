@@ -2,7 +2,7 @@ import { listenToAllSupportedEvents } from '../events/DOMPluginEventSystem';
 
 export * from './ReactDomComponent.js'
 export * from './ReactDomHostConfig.js'
-import {flushSync, updateContainer, createContainer, getPublicRootInstance, registerApplication, unregisterApplication} from 'coconut-reconciler';
+import {unbatchedUpdates, updateContainer, createContainer, getPublicRootInstance, registerApplication, unregisterApplication} from 'coconut-reconciler';
 
 function legacyCreateRootFromDOMContainer(container, children) {
   const root = createContainer(container)
@@ -10,7 +10,7 @@ function legacyCreateRootFromDOMContainer(container, children) {
 
   listenToAllSupportedEvents(container);
   // Initial mount should not be batched.
-  flushSync(() => {
+  unbatchedUpdates(() => {
     updateContainer(children, root, null, null);
   })
   return root;
@@ -28,7 +28,9 @@ function legacyRenderSubtreeIntoContainer(
     root = legacyCreateRootFromDOMContainer(container, children);
   } else {
     root = maybeRoot;
-    updateContainer(children, root, parentComponent, callback);
+    unbatchedUpdates(() => {
+      updateContainer(children, root, parentComponent, callback);
+    })
   }
   return getPublicRootInstance(root);
 }

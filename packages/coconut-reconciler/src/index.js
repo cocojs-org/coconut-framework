@@ -1,15 +1,15 @@
-import { flushSync, updateContainer, createContainer, getPublicRootInstance } from './ReactFiberReconciler.js';
+import { updateContainer, createContainer, getPublicRootInstance } from './ReactFiberReconciler.js';
 import { finishQueueingConcurrentUpdates } from './ReactFiberConcurrentUpdate.js';
 import { classComponentUpdater } from './ReactFiberClassComponent';
 import { isRenderPhase } from "./ReactFiberWorkLoop";
 import {register, NAME} from "shared";
-import { scheduleUpdateOnFiber } from "./ReactFiberWorkLoop";
+import { scheduleUpdateOnFiber, unbatchedUpdates } from "./ReactFiberWorkLoop";
 
 export function updateRender(instance) {
   throw new Error("todo")
 }
 
-export { classComponentUpdater, flushSync, updateContainer, createContainer, getPublicRootInstance, finishQueueingConcurrentUpdates, isRenderPhase }
+export { classComponentUpdater, unbatchedUpdates, updateContainer, createContainer, getPublicRootInstance, finishQueueingConcurrentUpdates, isRenderPhase }
 export { registerApplication, unregisterApplication } from './coco-ioc-container/index'
 
 register(NAME.isRenderPhase, isRenderPhase);

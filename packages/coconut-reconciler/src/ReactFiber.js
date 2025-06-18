@@ -21,6 +21,7 @@ function FiberNode(tag, pendingProps, key) {
   this.pendingProps = pendingProps;
   this.memoizedProps = null;
   this.memoizedState = null;
+  this.updateQueue = null;
 
   // effects
   this.flags = NoFlags;

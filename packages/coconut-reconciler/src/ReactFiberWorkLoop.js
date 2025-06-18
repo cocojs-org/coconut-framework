@@ -2,15 +2,16 @@ import {beginWork} from "./ReactFiberBeginWork";
 import {Incomplete, NoFlags} from "./ReactFiberFlags";
 import {completeWork} from "./ReactFiberCompleteWork";
 import {unwindWork} from "./ReactFiberUnwindWork";
-import {flushSyncCallbacks, scheduleSyncCallback} from "./ReactFiberSyncTaskQueue";
+import { scheduleCallback } from './ReactFiberSyncTaskQueue';
 import {createWorkInProgress} from "./ReactFiber";
 import {finishQueueingConcurrentUpdates} from "./ReactFiberConcurrentUpdate";
 import { commitLayoutEffects, commitMutationEffects } from './ReactFiberCommitWork';
 
-export const NoContext = /*             */ 0b000;
-const BatchedContext = /*               */ 0b001;
-const RenderContext = /*                */ 0b010;
-const CommitContext = /*                */ 0b100;
+export const NoContext = /*             */ 0b0000000;
+const BatchedContext = /*               */ 0b0000001;
+const RenderContext = /*                */ 0b0010000;
+const CommitContext = /*                */ 0b0100000;
+const LegacyUnbatchedContext = /*       */ 0b0001000;
 
 let executionContext = NoContext;
 let workInProgressRoot = null;
@@ -108,7 +109,7 @@ function commitRootImpl(root) {
 
   const finishedWork = root.finishedWork;
   root.finishedWork = null;
-  root.callbackPriority = false;
+  root.callbackNode = null;
 
   commitMutationEffects(root, finishedWork)
 
@@ -131,24 +132,24 @@ function performSyncWorkOnRoot(root) {
 }
 
 function ensureRootIsScheduled(root) {
+  /**
+   * 我们没有使用lane，所以发现有任务都可以复用
+   */
   // Check if there's an existing task. We may be able to reuse it.
-  if (root.callbackPriority) {
+  if (root.callbackNode) {
     return;
   }
-  scheduleSyncCallback(performSyncWorkOnRoot.bind(null, root))
-  setTimeout(() => {
-    flushSyncCallbacks();
-  })
-  root.callbackPriority = true;
+  root.callbackNode = scheduleCallback('fakePriorityLevel', performSyncWorkOnRoot.bind(null, root))
 }
 
-export function flushSync(fn) {
+export function unbatchedUpdates(fn) {
+  const prevExecutionContext = executionContext;
+  executionContext &= ~BatchedContext;
+  executionContext |= LegacyUnbatchedContext;
   try {
-    if (fn) {
-      return fn();
-    }
+    return fn()
   } finally {
-    flushSyncCallbacks();
+    executionContext = prevExecutionContext;
   }
 }
 
@@ -156,7 +157,16 @@ export function scheduleUpdateOnFiber(
   root,
   fiber
 ) {
-  ensureRootIsScheduled(root)
+  if (
+    // Check if we're inside unbatchedUpdates
+    (executionContext & LegacyUnbatchedContext) !== NoContext &&
+    // Check if we're not already rendering
+    (executionContext & (RenderContext | CommitContext)) === NoContext
+  ) {
+    performSyncWorkOnRoot(root);
+  } else {
+    ensureRootIsScheduled(root)
+  }
 }
 
 export function isRenderPhase() {

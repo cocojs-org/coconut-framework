@@ -108,7 +108,9 @@ function completeWork(
         appendAllChildren(instance, workInProgress)
         workInProgress.stateNode = instance;
 
-        finalizeInitialChildren(instance, type, newProps);
+        if(finalizeInitialChildren(instance, type, newProps)) {
+          markUpdate(workInProgress)
+        }
       }
       bubbleProperties(workInProgress)
       return null;

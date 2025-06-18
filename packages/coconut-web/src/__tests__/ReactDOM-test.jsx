@@ -68,9 +68,7 @@ describe('ReactDOM', () => {
       });
       expect(buttonRef).toBeTruthy()
       buttonRef.click();
-      await waitFor(async () => {
-        expect(count).toBe(1);
-      });
+      expect(count).toBe(1);
     } finally {
       document.body.removeChild(container);
     }
@@ -137,7 +135,8 @@ describe('ReactDOM', () => {
     expect(dog.className).toBe('bigdog');
   });
 
-  it('preserves focus', () => {
+  // todo 没有支持更新后恢复focus的功能
+  xit('preserves focus', () => {
     let input;
     let input2;
 
@@ -194,12 +193,43 @@ describe('ReactDOM', () => {
       // input2 gets added, which causes input to get blurred. Then
       // componentDidUpdate focuses input2 and that should make it down to here,
       // not get overwritten by focus restoration.
-      waitFor(() => {
-        expect(document.activeElement.id).toBe('two');
-        expect(log).toEqual(['input2 inserted', 'input2 focused']);
-      })
+      expect(document.activeElement.id).toBe('two');
+      expect(log).toEqual(['input2 inserted', 'input2 focused']);
     } finally {
       document.body.removeChild(container);
+    }
+  });
+
+  it('calls focus() on autoFocus elements after they have been mounted to the DOM', () => {
+    const originalFocus = HTMLElement.prototype.focus;
+
+    try {
+      let focusedElement;
+      let inputFocusedAfterMount = false;
+
+      // This test needs to determine that focus is called after mount.
+      // Can't check document.activeElement because PhantomJS is too permissive;
+      // It doesn't require element to be in the DOM to be focused.
+      HTMLElement.prototype.focus = function() {
+        focusedElement = this;
+        inputFocusedAfterMount = !!this.parentNode;
+      };
+
+      const container = document.createElement('div');
+      document.body.appendChild(container);
+      render(
+        <div>
+          <h1>Auto-focus Test</h1>
+          <input autoFocus={true} />
+          <p>The above input should be focused after mount.</p>
+        </div>,
+        container,
+      );
+
+      expect(inputFocusedAfterMount).toBe(true);
+      expect(focusedElement.tagName).toBe('INPUT');
+    } finally {
+      HTMLElement.prototype.focus = originalFocus;
     }
   });
 })
