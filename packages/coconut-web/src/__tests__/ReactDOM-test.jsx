@@ -232,4 +232,51 @@ describe('ReactDOM', () => {
       HTMLElement.prototype.focus = originalFocus;
     }
   });
+
+  it("shouldn't fire duplicate event handler while handling other nested dispatch", () => {
+    const actual = [];
+
+    @view()
+    class Wrapper {
+      viewDidMount() {
+        this.ref1.click();
+      }
+
+      render() {
+        return (
+          <div>
+            <div
+              onClick={() => {
+                actual.push('1st node clicked');
+                this.ref2.click();
+              }}
+              ref={ref => (this.ref1 = ref)}
+            />
+            <div
+              onClick={ref => {
+                actual.push("2nd node clicked imperatively from 1st's handler");
+              }}
+              ref={ref => (this.ref2 = ref)}
+            />
+          </div>
+        );
+      }
+    }
+
+    application.start();
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    try {
+      render(<Wrapper />, container);
+
+      const expected = [
+        '1st node clicked',
+        "2nd node clicked imperatively from 1st's handler",
+      ];
+
+      expect(actual).toEqual(expected);
+    } finally {
+      document.body.removeChild(container);
+    }
+  })
 })
