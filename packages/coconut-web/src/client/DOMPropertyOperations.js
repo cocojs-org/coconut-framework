@@ -1,4 +1,4 @@
-import { getPropertyInfo, shouldIgnoreAttribute } from '../shared/DOMProperty';
+import { getPropertyInfo, shouldIgnoreAttribute, shouldRemoveAttribute } from '../shared/DOMProperty';
 
 export function setValueForProperty(
   node,
@@ -12,6 +12,9 @@ export function setValueForProperty(
     return;
   }
 
+  if (shouldRemoveAttribute(name, value, propertyInfo, isCustomComponentTag)) {
+    value = null;
+  }
   if( propertyInfo === null) {
     const attributeName = name;
     if (value === null) {

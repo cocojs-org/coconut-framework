@@ -55,3 +55,14 @@ export function shouldIgnoreAttribute(
   }
   return false;
 }
+
+export function shouldRemoveAttribute(
+  name,
+  value,
+  propertyInfo,
+) {
+  if (value === null || typeof value === 'undefined') {
+    return true
+  }
+  return false;
+}
