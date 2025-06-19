@@ -110,6 +110,9 @@ export function shouldRemoveAttributeWithWarning(
     return false;
   }
   switch (typeof value) {
+    case 'function':
+    case 'symbol':
+      return true;
     case 'boolean': {
       if (isCustomComponentTag) {
         return false;

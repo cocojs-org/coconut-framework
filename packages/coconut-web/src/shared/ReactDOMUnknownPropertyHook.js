@@ -4,7 +4,6 @@ import { getPropertyInfo, shouldRemoveAttributeWithWarning } from './DOMProperty
 let validateProperty = () => {};
 
 if (__DEV__) {
-
   validateProperty = function(tagName, name, value, eventRegistry) {
     const propertyInfo = getPropertyInfo(name);
     if (
@@ -24,6 +23,10 @@ if (__DEV__) {
         );
       }
       return true;
+    }
+
+    if (shouldRemoveAttributeWithWarning(name, value, propertyInfo, false)) {
+      return false;
     }
 
     return true;

@@ -53,5 +53,76 @@ describe('ReactDOM unknown attribute', () => {
       testUnknownAttributeAssignment(true, null);
       testUnknownAttributeAssignment(false, null);
     })
+
+    it('removes unknown attributes that were rendered but are now missing', () => {
+      const el = document.createElement('div');
+      render(<div unknown="something" />, el);
+      expect(el.firstChild.getAttribute('unknown')).toBe('something');
+      render(<div />, el);
+      expect(el.firstChild.hasAttribute('unknown')).toBe(false);
+    });
+
+    it('passes through strings', () => {
+      testUnknownAttributeAssignment('a string', 'a string');
+    });
+
+    it('coerces numbers to strings', () => {
+      testUnknownAttributeAssignment(0, '0');
+      testUnknownAttributeAssignment(-1, '-1');
+      testUnknownAttributeAssignment(42, '42');
+      testUnknownAttributeAssignment(9000.99, '9000.99');
+    });
+
+    it('coerces NaN to strings and warns', () => {
+      testUnknownAttributeAssignment(NaN, 'NaN')
+    });
+
+    it('coerces objects to strings and warns', () => {
+      const lol = {
+        toString() {
+          return 'lol';
+        },
+      };
+
+      testUnknownAttributeAssignment({hello: 'world'}, '[object Object]');
+      testUnknownAttributeAssignment(lol, 'lol');
+    });
+
+    xit('throws with Temporal-like objects', () => {
+      class TemporalLike {
+        valueOf() {
+          // Throwing here is the behavior of ECMAScript "Temporal" date/time API.
+          // See https://tc39.es/proposal-temporal/docs/plaindate.html#valueOf
+          throw new TypeError('prod message');
+        }
+        toString() {
+          return '2020-01-01';
+        }
+      }
+      const test = () =>
+        testUnknownAttributeAssignment(new TemporalLike(), null);
+      expect(() =>
+        expect(test).toThrowError(new TypeError('prod message')),
+      ).toErrorDev(
+        'Warning: The provided `unknown` attribute is an unsupported type TemporalLike.' +
+        ' This value must be coerced to a string before before using it here.',
+      );
+    });
+
+    it('removes symbols and warns', () => {
+      testUnknownAttributeRemoval(Symbol('foo'))
+    });
+
+    it('removes functions and warns', () => {
+      testUnknownAttributeRemoval(function someFunction() {})
+    });
+
+    it('allows camelCase unknown attributes and warns', () => {
+      const el = document.createElement('div');
+
+      render(<div helloWorld="something" />, el)
+
+      expect(el.firstChild.getAttribute('helloworld')).toBe('something');
+    });
   })
 })
