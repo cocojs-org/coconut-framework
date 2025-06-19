@@ -1,5 +1,5 @@
 import setTextContent from "./setTextContent";
-import { setValueForProperty } from './DOMPropertyOperations';
+import { setValueForProperty, setValueForStyles } from './DOMPropertyOperations';
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
 
 const CHILDREN = 'children';
@@ -24,7 +24,9 @@ function setInitialDOMProperties(
       continue;
     }
     const nextProp = nextProps[propKey];
-    if (propKey === CHILDREN) {
+    if (propKey === STYLE){
+      setValueForStyles(domElement, nextProp);
+    } else if (propKey === CHILDREN) {
       if (typeof nextProp === 'string') {
         setTextContent(domElement, nextProp);
       } else if (typeof nextProp === 'number') {
@@ -73,7 +75,15 @@ export function diffProperties(
       continue;
     }
     if (propKey === STYLE) {
-
+      const lastStyle = lastProps[propKey];
+      for (styleName in lastStyle) {
+        if (lastStyle.hasOwnProperty(styleName)) {
+          if (!styleUpdates) {
+            styleUpdates = {};
+          }
+          styleUpdates[styleName] = '';
+        }
+      }
     } else {
       (updatePayload = updatePayload || []).push(propKey, null)
     }
@@ -89,6 +99,41 @@ export function diffProperties(
       continue;
     }
     if (propKey === STYLE) {
+      if (lastProp) {
+        // Unset styles on `lastProp` but not on `nextProp`.
+        for (styleName in lastProp) {
+          if (
+            lastProp.hasOwnProperty(styleName) &&
+            (!nextProp || !nextProp.hasOwnProperty(styleName))
+          ) {
+            if (!styleUpdates) {
+              styleUpdates = {};
+            }
+            styleUpdates[styleName] = '';
+          }
+        }
+        // Update styles that changed since `lastProp`.
+        for (styleName in nextProp) {
+          if (
+            nextProp.hasOwnProperty(styleName) &&
+            lastProp[styleName] !== nextProp[styleName]
+          ) {
+            if (!styleUpdates) {
+              styleUpdates = {};
+            }
+            styleUpdates[styleName] = nextProp[styleName];
+          }
+        }
+      } else {
+        // Relies on `updateStylesByID` not mutating `styleUpdates`.
+        if (!styleUpdates) {
+          if (!updatePayload) {
+            updatePayload = [];
+          }
+          updatePayload.push(propKey, styleUpdates);
+        }
+        styleUpdates = nextProp;
+      }
     } else if (propKey === CHILDREN) {
       if (typeof nextProp === 'string' || typeof nextProp === 'number') {
         (updatePayload = updatePayload || []).push(propKey, '' + nextProp);
@@ -96,6 +141,9 @@ export function diffProperties(
     } else {
       (updatePayload = updatePayload || []).push(propKey, nextProp)
     }
+  }
+  if (styleUpdates) {
+    (updatePayload = updatePayload || []).push(STYLE, styleUpdates);
   }
   return updatePayload;
 }
@@ -112,6 +160,7 @@ function updateDOMProperties(
     const propValue = updatePayload[i + 1];
     const oldPropValue = lastRawProps[propKey];
     if (propKey === STYLE) {
+      setValueForStyles(domElement, propValue);
     } else if (propKey === CHILDREN) {
       setTextContent(domElement, propValue)
     } else {

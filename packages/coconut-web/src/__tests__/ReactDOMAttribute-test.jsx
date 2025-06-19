@@ -1,4 +1,3 @@
-// packages/react-dom/src/__tests__/ReactDOM-test.js
 /**
  * Copyright (c) Facebook, Inc. and its affiliates.
  *
@@ -6,9 +5,10 @@
  * LICENSE file in the root directory of this source tree.
  *
  * @emails react-core
+ *
+ * packages/react-dom/src/__tests__/ReactDOMAttribute-test.js
  */
 import { render, registerApplication, unregisterApplication } from '../index';
-import { getByRole, getByText, getRoles, waitFor } from '@testing-library/dom';
 import * as ReactTestUtils from './test-units/ReactTestUnits';
 
 let Application

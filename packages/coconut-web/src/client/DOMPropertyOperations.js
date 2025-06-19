@@ -1,4 +1,25 @@
 import { getPropertyInfo, shouldIgnoreAttribute, shouldRemoveAttribute } from '../shared/DOMProperty';
+import dangerousStyleValue from '../shared/dangerousStyleValue';
+
+export function setValueForStyles(node, styles) {
+  const style = node.style;
+  for (let styleName in styles) {
+    if (!styles.hasOwnProperty(styleName)) {
+      continue;
+    }
+    const isCustomProperty = styleName.indexOf('--') === 0;
+    const styleValue = dangerousStyleValue(
+      styleName,
+      styles[styleName],
+      isCustomProperty,
+    );
+    if (isCustomProperty) {
+      style.setProperty(styleName, styleValue);
+    } else {
+      style[styleName] = styleValue;
+    }
+  }
+}
 
 export function setValueForProperty(
   node,
@@ -15,7 +36,7 @@ export function setValueForProperty(
   if (shouldRemoveAttribute(name, value, propertyInfo, isCustomComponentTag)) {
     value = null;
   }
-  if( propertyInfo === null) {
+  if(propertyInfo === null) {
     const attributeName = name;
     if (value === null) {
       node.removeAttribute(attributeName);
