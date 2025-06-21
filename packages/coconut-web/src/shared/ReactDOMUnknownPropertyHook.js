@@ -5,6 +5,31 @@ let validateProperty = () => {};
 
 if (__DEV__) {
   validateProperty = function(tagName, name, value, eventRegistry) {
+
+    if (eventRegistry !== null) {
+      const lowerCasedName = name.toLowerCase();
+      const {
+        registrationNameDependencies,
+        possibleRegistrationNames,
+      } = eventRegistry;
+      if (registrationNameDependencies.hasOwnProperty(name)) {
+        return true;
+      }
+      const registrationName = possibleRegistrationNames.hasOwnProperty(
+        lowerCasedName,
+      )
+        ? possibleRegistrationNames[lowerCasedName]
+        : null;
+      if (registrationName != null) {
+        console.error(
+          'Invalid event handler property `%s`. Did you mean `%s`?',
+          name,
+          registrationName,
+        );
+        return true;
+      }
+    }
+
     const propertyInfo = getPropertyInfo(name);
     if (
       typeof value === 'boolean' &&
@@ -41,6 +66,22 @@ const warnUnknownProperties = function(type, props, eventRegistry) {
       if (!isValid) {
         unknownProps.push(key);
       }
+    }
+    const unknownPropString = unknownProps
+      .map(prop => '`' + prop + '`')
+      .join(', ');
+    if (unknownProps.length === 1) {
+      console.error(
+        'Invalid value for prop %s on <%s> tag. Either remove it from the element, or pass a string or number value to keep it in the DOM. For details, see https://reactjs.org/link/attribute-behavior ',
+        unknownPropString,
+        type,
+      );
+    } else if (unknownProps.length > 1) {
+      console.error(
+        'Invalid values for props %s on <%s> tag. Either remove them from the element, or pass a string or number value to keep them in the DOM. For details, see https://reactjs.org/link/attribute-behavior ',
+        unknownPropString,
+        type,
+      );
     }
   }
 }

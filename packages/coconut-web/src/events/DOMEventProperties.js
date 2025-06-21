@@ -19,4 +19,6 @@ export function registerSimpleEvents() {
     const capitalizedEvent = eventName[0].toUpperCase() + eventName.slice(1);
     registerSimpleEvent(domEventName, 'on' + capitalizedEvent);
   }
+
+  registerSimpleEvent('dblclick', 'onDoubleClick');
 }

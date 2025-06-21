@@ -1,3 +1,7 @@
+import {
+  registrationNameDependencies,
+  possibleRegistrationNames,
+} from '../events/EventRegistry';
 import setTextContent from "./setTextContent";
 import { setValueForProperty, setValueForStyles } from './DOMPropertyOperations';
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
@@ -8,7 +12,10 @@ const STYLE = 'style';
 let validatePropertiesInDevelopment;
 if (__DEV__) {
   validatePropertiesInDevelopment = function(type, props) {
-    validateUnknownProperties(type, props);
+    validateUnknownProperties(type, props, {
+      registrationNameDependencies,
+      possibleRegistrationNames,
+    });
   };
 }
 
@@ -25,6 +32,13 @@ function setInitialDOMProperties(
     }
     const nextProp = nextProps[propKey];
     if (propKey === STYLE){
+      if (__DEV__) {
+        if (nextProp) {
+          // Freeze the next style object so that we can assume it won't be
+          // mutated. We have already warned for this in the past.
+          Object.freeze(nextProp);
+        }
+      }
       setValueForStyles(domElement, nextProp);
     } else if (propKey === CHILDREN) {
       if (typeof nextProp === 'string') {
@@ -57,7 +71,7 @@ export function diffProperties(
   nextRawProps
 ) {
   if (__DEV__) {
-    validatePropertiesInDevelopment(tag, rawProps);
+    validatePropertiesInDevelopment(tag, nextRawProps);
   }
   let updatePayload = null;
   let lastProps = lastRawProps;
@@ -99,6 +113,13 @@ export function diffProperties(
       continue;
     }
     if (propKey === STYLE) {
+      if (__DEV__) {
+        if (nextProp) {
+          // Freeze the next style object so that we can assume it won't be
+          // mutated. We have already warned for this in the past.
+          Object.freeze(nextProp);
+        }
+      }
       if (lastProp) {
         // Unset styles on `lastProp` but not on `nextProp`.
         for (styleName in lastProp) {

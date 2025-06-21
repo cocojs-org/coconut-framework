@@ -24,7 +24,7 @@ module.exports = {
       '<rootDir>/packages/coconut-web/src/client/ReactDomHostConfig.js',
   },
   globals: {
-    __DEV__: false,
+    __DEV__: true,
     __TEST__: true,
   },
 };
