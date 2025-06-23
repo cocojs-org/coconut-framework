@@ -4,6 +4,8 @@ import { classComponentUpdater } from './ReactFiberClassComponent';
 import { isRenderPhase } from "./ReactFiberWorkLoop";
 import {register, NAME} from "shared";
 import { scheduleUpdateOnFiber, unbatchedUpdates } from "./ReactFiberWorkLoop";
+import { reference } from './ReactFiberThrow';
+reference();
 
 export function updateRender(instance) {
   throw new Error("todo")

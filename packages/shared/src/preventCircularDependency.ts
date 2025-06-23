@@ -10,6 +10,7 @@ export const NAME = {
   apply: 'apply',
   exec: 'exec',
   Component: 'Component',
+  throwException: 'throwException',
 };
 
 export function register(name: string, fn: any) {

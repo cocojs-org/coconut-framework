@@ -4,8 +4,8 @@
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
  */
-
 import {isUnitlessNumber} from './CSSProperty';
+import {checkCSSPropertyStringCoercion} from 'shared';
 
 /**
  * Convert a value into the proper css writable value. The style name `name`
@@ -41,6 +41,9 @@ function dangerousStyleValue(name, value, isCustomProperty) {
     return value + 'px'; // Presumes implicit 'px' suffix for unitless numbers
   }
 
+  if(__DEV__) {
+    checkCSSPropertyStringCoercion(value, name);
+  }
   return ('' + value).trim();
 }
 

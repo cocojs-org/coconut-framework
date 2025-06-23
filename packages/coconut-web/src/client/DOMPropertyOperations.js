@@ -1,5 +1,6 @@
 import { getPropertyInfo, shouldIgnoreAttribute, shouldRemoveAttribute } from '../shared/DOMProperty';
 import dangerousStyleValue from '../shared/dangerousStyleValue';
+import warnValidStyle from '../shared/warnValidStyle';
 
 export function setValueForStyles(node, styles) {
   const style = node.style;
@@ -8,6 +9,11 @@ export function setValueForStyles(node, styles) {
       continue;
     }
     const isCustomProperty = styleName.indexOf('--') === 0;
+    if (__DEV__) {
+      if (!isCustomProperty) {
+        warnValidStyle(styleName, styles[styleName]);
+      }
+    }
     const styleValue = dangerousStyleValue(
       styleName,
       styles[styleName],

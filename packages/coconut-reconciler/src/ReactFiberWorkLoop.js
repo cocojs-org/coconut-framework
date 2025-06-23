@@ -1,11 +1,13 @@
 import {beginWork} from "./ReactFiberBeginWork";
-import {Incomplete, NoFlags} from "./ReactFiberFlags";
+import { HostEffectMask, Incomplete, NoFlags } from './ReactFiberFlags';
 import {completeWork} from "./ReactFiberCompleteWork";
 import {unwindWork} from "./ReactFiberUnwindWork";
 import { scheduleCallback } from './ReactFiberSyncTaskQueue';
 import {createWorkInProgress} from "./ReactFiber";
 import {finishQueueingConcurrentUpdates} from "./ReactFiberConcurrentUpdate";
 import { commitLayoutEffects, commitMutationEffects } from './ReactFiberCommitWork';
+import { get, NAME } from 'shared';
+
 
 export const NoContext = /*             */ 0b0000000;
 const BatchedContext = /*               */ 0b0000001;
@@ -16,6 +18,17 @@ const LegacyUnbatchedContext = /*       */ 0b0001000;
 let executionContext = NoContext;
 let workInProgressRoot = null;
 let workInProgress = null;
+
+let hasUncaughtError = false;
+let firstUncaughtError = null;
+
+function prepareToThrowUncaughtError(error) {
+  if (!hasUncaughtError) {
+    hasUncaughtError = true;
+    firstUncaughtError = error;
+  }
+}
+export const onUncaughtError = prepareToThrowUncaughtError;
 
 function performUnitOfWork(unitOfWork) {
   const current = unitOfWork.alternate;
@@ -44,6 +57,15 @@ function completeUnitOfWork(unitOfWork) {
       }
     } else {
       const next = unwindWork(current, completedWork);
+      if (next !== null) {
+        // If completing this work spawned new work, do that next. We'll come
+        // back here again.
+        // Since we're restarting, remove anything that is not a host effect
+        // from the effect tag.
+        next.flags &= HostEffectMask;
+        workInProgress = next;
+        return;
+      }
 
       if (returnFiber !== null) {
         returnFiber.flags |= Incomplete;
@@ -76,11 +98,43 @@ function prepareFreshStack(root) {
   const rootWorkInProgress = createWorkInProgress(root.current, null);
   workInProgress = rootWorkInProgress;
 
-
   finishQueueingConcurrentUpdates();
   return workInProgress
 }
 
+function handleError(root, thrownValue) {
+  do {
+    let erroredWork = workInProgress;
+    try {
+      if (erroredWork === null || erroredWork.return === null) {
+        workInProgress = null;
+        return;
+      }
+      const throwException = get(NAME.throwException);
+      throwException?.(
+        root,
+        erroredWork.return,
+        erroredWork,
+        thrownValue,
+      );
+      completeUnitOfWork(erroredWork);
+    } catch (yetAnotherThrownValue) {
+      console.info('yetAnotherThrownValue', yetAnotherThrownValue);
+      thrownValue = yetAnotherThrownValue;
+      if (workInProgress === erroredWork && erroredWork !== null) {
+        // If this boundary has already errored, then we had trouble processing
+        // the error. Bubble it to the next boundary.
+        erroredWork = erroredWork.return;
+        workInProgress = erroredWork;
+      } else {
+        erroredWork = workInProgress;
+      }
+      continue;
+    }
+    // Return to the normal work loop.
+    return;
+  } while (true)
+}
 
 function renderRootSync(root) {
   const prevExecutionContext = executionContext;
@@ -94,9 +148,8 @@ function renderRootSync(root) {
     try {
       workLoopSync();
       break;
-    } catch (e) {
-      console.error(e)
-      break;
+    } catch (thrownValue) {
+      handleError(root, thrownValue)
     }
   } while (true)
 
@@ -115,7 +168,14 @@ function commitRootImpl(root) {
 
   root.current = finishedWork;
 
-  commitLayoutEffects(finishedWork, root)
+  commitLayoutEffects(finishedWork, root);
+
+  if (hasUncaughtError) {
+    hasUncaughtError = false;
+    const error = firstUncaughtError;
+    firstUncaughtError = null;
+    throw error;
+  }
 }
 
 function commitRoot(root) {
@@ -147,7 +207,7 @@ export function unbatchedUpdates(fn) {
   executionContext &= ~BatchedContext;
   executionContext |= LegacyUnbatchedContext;
   try {
-    return fn()
+    fn()
   } finally {
     executionContext = prevExecutionContext;
   }

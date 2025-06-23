@@ -16,17 +16,21 @@ import * as ReactTestUtils from './test-units/ReactTestUnits';
 let Application
 let application
 let view
+let consoleSpy
 describe('ReactDOMComponent', () => {
   beforeEach(async () => {
     Application = (await import('coco-mvc')).Application;
     view = (await import('coco-mvc')).view
     application = new Application();
     registerApplication(application);
+    consoleSpy = jest.spyOn(console, 'error');
+    consoleSpy.mockImplementation(() => {})
   })
 
   afterEach(() => {
     unregisterApplication();
     jest.resetModules();
+    consoleSpy.mockRestore();
   })
 
   describe('updateDOM', () => {
@@ -151,8 +155,6 @@ describe('ReactDOMComponent', () => {
     });
 
     it('should warn for unknown prop', () => {
-      const consoleSpy = jest.spyOn(console, 'error');
-      consoleSpy.mockImplementation(() => {})
       const container = document.createElement('div');
       render(<div foo={() => {}} />, container)
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -160,13 +162,9 @@ describe('ReactDOMComponent', () => {
         '`foo`',
         'div',
       );
-      consoleSpy.mockRestore();
     });
 
     it('should group multiple unknown prop warnings together', () => {
-      const consoleSpy = jest.spyOn(console, 'error');
-      consoleSpy.mockImplementation(() => {})
-
       const container = document.createElement('div');
       render(<div foo={() => {}} baz={() => {}} />, container);
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -174,14 +172,9 @@ describe('ReactDOMComponent', () => {
         '`foo`, `baz`',
         'div',
       );
-
-      consoleSpy.mockRestore();
     });
 
     it('should warn for onDblClick prop', () => {
-      const consoleSpy = jest.spyOn(console, 'error');
-      consoleSpy.mockImplementation(() => {})
-
       const container = document.createElement('div');
       render(<div onDblClick={() => {}} />, container);
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -189,7 +182,81 @@ describe('ReactDOMComponent', () => {
         'onDblClick',
         'onDoubleClick'
       );
-      consoleSpy.mockRestore();
+    });
+
+    it('should warn for unknown string event handlers', () => {
+      const container = document.createElement('div');
+      render(<div onUnknown='alert("hack")' />, container);
+      expect(consoleSpy.mock.calls[0]).toEqual([
+        'Unknown event handler property `%s`. It will be ignored.',
+        'onUnknown'
+        ]
+      );
+      expect(container.firstChild.hasAttribute('onUnknown')).toBe(false);
+      expect(container.firstChild.onUnknown).toBe(undefined);
+      render(<div onunknown={function() {}} />, container);
+      expect(consoleSpy.mock.calls[1]).toEqual(['Unknown event handler property `%s`. It will be ignored.', 'onunknown']);
+      expect(container.firstChild.hasAttribute('onunknown')).toBe(false);
+      expect(container.firstChild.onunknown).toBe(undefined);
+      render(<div on-unknown={function() {}} />, container);
+      expect(consoleSpy.mock.calls[2]).toEqual(['Unknown event handler property `%s`. It will be ignored.','on-unknown']);
+      expect(container.firstChild.hasAttribute('on-unknown')).toBe(false);
+      expect(container.firstChild['on-unknown']).toBe(undefined);
+    })
+
+    it('should warn for badly cased React attributes', () => {
+      const container = document.createElement('div');
+      render(<div CHILDREN="5" />, container)
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Invalid DOM property `%s`. Did you mean `%s`?',
+        'CHILDREN',
+        'children',
+      );
+      expect(container.firstChild.getAttribute('CHILDREN')).toBe('5');
+    });
+
+    it('should not warn for "0" as a unitless style value', () => {
+      @view()
+      class Component {
+        render() {
+          return <div style={{margin: '0'}} />;
+        }
+      }
+      application.start()
+      ReactTestUtils.renderIntoDocument(<Component />);
+    });
+
+    it('should warn nicely about NaN in style', () => {
+      const style = {fontSize: NaN};
+      const div = document.createElement('div');
+      render(<span style={style} />, div);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '`NaN` is an invalid value for the `%s` css style property.',
+        'fontSize',
+      );
+      render(<span style={style} />, div);
+    });
+
+    it('throws with Temporal-like objects as style values', () => {
+      class TemporalLike {
+        valueOf() {
+          // Throwing here is the behavior of ECMAScript "Temporal" date/time API.
+          // See https://tc39.es/proposal-temporal/docs/plaindate.html#valueOf
+          throw new TypeError('prod message');
+        }
+        toString() {
+          return '2020-01-01';
+        }
+      }
+      const style = {fontSize: new TemporalLike()};
+      const div = document.createElement('div');
+      const test = () => render(<span style={style} />, div);
+      expect(test).toThrow();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'The provided `%s` CSS property is an unsupported type %s. This value must be coerced to a string before before using it here.',
+        `fontSize`,
+        'TemporalLike',
+      );
     });
   })
 })

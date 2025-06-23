@@ -1,13 +1,16 @@
 import isCustomComponent from './isCustomComponent';
 import { getPropertyInfo, shouldRemoveAttributeWithWarning } from './DOMProperty';
+import possibleStandardNames from './possibleStandardNames';
 
 let validateProperty = () => {};
 
 if (__DEV__) {
+  const EVENT_NAME_REGEX = /^on./;
+
   validateProperty = function(tagName, name, value, eventRegistry) {
 
+    const lowerCasedName = name.toLowerCase();
     if (eventRegistry !== null) {
-      const lowerCasedName = name.toLowerCase();
       const {
         registrationNameDependencies,
         possibleRegistrationNames,
@@ -28,9 +31,28 @@ if (__DEV__) {
         );
         return true;
       }
+      if (EVENT_NAME_REGEX.test(name)) {
+        console.error(
+          'Unknown event handler property `%s`. It will be ignored.',
+          name,
+        );
+        return true;
+      }
     }
 
     const propertyInfo = getPropertyInfo(name);
+
+    if (possibleStandardNames.hasOwnProperty(lowerCasedName)) {
+      const standardName = possibleStandardNames[lowerCasedName];
+      if (standardName !== name) {
+        console.error(
+          'Invalid DOM property `%s`. Did you mean `%s`?',
+          name,
+          standardName,
+        );
+        return true;
+      }
+    }
     if (
       typeof value === 'boolean' &&
       shouldRemoveAttributeWithWarning(name, value, propertyInfo, false)

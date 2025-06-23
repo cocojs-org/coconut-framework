@@ -7,6 +7,7 @@ import {
   removeChildFromContainer,
   commitMount,
 } from "ReactFiberHostConfig";
+import { commitUpdateQueue } from './ReactFiberClassUpdateQueue';
 
 let nextEffect = null;
 let inProgressRoot = null;
@@ -230,7 +231,7 @@ function commitReconciliationEffects(finishedWork) {
     try {
       commitPlacement(finishedWork)
     } catch (e) {
-
+      console.info('eeeee', e);
     }
     finishedWork.flags &= ~Placement
   }
@@ -373,6 +374,22 @@ function commitLayoutEffectOnFiber(
               prevState
             )
           }
+        }
+        break;
+      }
+      case HostRoot: {
+        const updateQueue = finishedWork.updateQueue;
+        if (updateQueue !== null) {
+          let instance = null;
+          if (finishedWork.child !== null) {
+            switch (finishedWork.child.type) {
+              case HostComponent: {
+                instance = finishedWork.child.stateNode;
+                break;
+              }
+            }
+          }
+          commitUpdateQueue(finishedWork, updateQueue, instance);
         }
         break;
       }
