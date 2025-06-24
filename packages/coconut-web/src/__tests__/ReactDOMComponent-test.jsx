@@ -258,5 +258,119 @@ describe('ReactDOMComponent', () => {
         'TemporalLike',
       );
     });
+
+    it('should update styles if initially null', () => {
+      let styles = null;
+      const container = document.createElement('div');
+      render(<div style={styles} />, container);
+
+      const stubStyle = container.firstChild.style;
+
+      styles = {display: 'block'};
+
+      render(<div style={styles} />, container);
+      expect(stubStyle.display).toEqual('block');
+    });
+
+    it('should update styles if updated to null multiple times', () => {
+      let styles = null;
+      const container = document.createElement('div');
+      render(<div style={styles} />, container);
+
+      styles = {display: 'block'};
+      const stubStyle = container.firstChild.style;
+
+      render(<div style={styles} />, container);
+      expect(stubStyle.display).toEqual('block');
+
+      render(<div style={null} />, container);
+      expect(stubStyle.display).toEqual('');
+
+      render(<div style={styles} />, container);
+      expect(stubStyle.display).toEqual('block');
+
+      render(<div style={null} />, container);
+      expect(stubStyle.display).toEqual('');
+    });
+
+    it('should render null and undefined as empty but print other falsy values', () => {
+      const container = document.createElement('div');
+
+      render(
+        <div dangerouslySetInnerHTML={{__html: 'textContent'}} />,
+        container,
+      );
+      expect(container.textContent).toEqual('textContent');
+
+      render(<div dangerouslySetInnerHTML={{__html: 0}} />, container);
+      expect(container.textContent).toEqual('0');
+
+      render(
+        <div dangerouslySetInnerHTML={{__html: false}} />,
+        container,
+      );
+      expect(container.textContent).toEqual('false');
+
+      render(
+        <div dangerouslySetInnerHTML={{__html: ''}} />,
+        container,
+      );
+      expect(container.textContent).toEqual('');
+
+      render(
+        <div dangerouslySetInnerHTML={{__html: null}} />,
+        container,
+      );
+      expect(container.textContent).toEqual('');
+
+      render(
+        <div dangerouslySetInnerHTML={{__html: undefined}} />,
+        container,
+      );
+      expect(container.textContent).toEqual('');
+    });
+
+    it('should remove attributes', () => {
+      const container = document.createElement('div');
+      render(<img height="17" />, container);
+
+      expect(container.firstChild.hasAttribute('height')).toBe(true);
+      render(<img />, container);
+      expect(container.firstChild.hasAttribute('height')).toBe(false);
+    });
+
+    it('should remove properties', () => {
+      const container = document.createElement('div');
+      render(<div className="monkey" />, container);
+
+      expect(container.firstChild.className).toEqual('monkey');
+      render(<div />, container);
+      expect(container.firstChild.className).toEqual('');
+    });
+
+    it('should not set null/undefined attributes', () => {
+      const container = document.createElement('div');
+      // Initial render.
+      render(<img src={null} data-foo={undefined} />, container);
+      const node = container.firstChild;
+      expect(node.hasAttribute('src')).toBe(false);
+      expect(node.hasAttribute('data-foo')).toBe(false);
+      // Update in one direction.
+      render(<img src={undefined} data-foo={null} />, container);
+      expect(node.hasAttribute('src')).toBe(false);
+      expect(node.hasAttribute('data-foo')).toBe(false);
+      // Update in another direction.
+      render(<img src={null} data-foo={undefined} />, container);
+      expect(node.hasAttribute('src')).toBe(false);
+      expect(node.hasAttribute('data-foo')).toBe(false);
+      // Removal.
+      render(<img />, container);
+      expect(node.hasAttribute('src')).toBe(false);
+      expect(node.hasAttribute('data-foo')).toBe(false);
+      // Addition.
+      render(<img src={undefined} data-foo={null} />, container);
+      expect(node.hasAttribute('src')).toBe(false);
+      expect(node.hasAttribute('data-foo')).toBe(false);
+    })
   })
 })

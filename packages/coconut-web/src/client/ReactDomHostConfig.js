@@ -4,7 +4,10 @@ import {updateFiberProps} from './ReactDomComponentTree';
 export function shouldSetTextContent(type, props) {
   return (
     typeof props.children === 'string' ||
-    typeof props.children === 'number'
+    typeof props.children === 'number' ||
+    (typeof props.dangerouslySetInnerHTML === 'object' &&
+      props.dangerouslySetInnerHTML !== null &&
+      props.dangerouslySetInnerHTML.__html != null)
   );
 }
 

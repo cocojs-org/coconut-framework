@@ -6,8 +6,10 @@ import setTextContent from "./setTextContent";
 import { setValueForProperty, setValueForStyles } from './DOMPropertyOperations';
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
 
+const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CHILDREN = 'children';
 const STYLE = 'style';
+const HTML = '__html';
 
 let validatePropertiesInDevelopment;
 if (__DEV__) {
@@ -40,6 +42,11 @@ function setInitialDOMProperties(
         }
       }
       setValueForStyles(domElement, nextProp);
+    } else if (propKey === DANGEROUSLY_SET_INNER_HTML){
+      const nextHtml = nextProp ? nextProp[HTML] : undefined;
+      if (nextHtml != null) {
+        domElement.innerHTML = nextHtml;
+      }
     } else if (propKey === CHILDREN) {
       if (typeof nextProp === 'string') {
         setTextContent(domElement, nextProp);
@@ -98,6 +105,8 @@ export function diffProperties(
           styleUpdates[styleName] = '';
         }
       }
+    } else if (propKey === DANGEROUSLY_SET_INNER_HTML || propKey === CHILDREN) {
+      // Noop. This is handled by the clear text mechanism.
     } else {
       (updatePayload = updatePayload || []).push(propKey, null)
     }
@@ -155,6 +164,17 @@ export function diffProperties(
         }
         styleUpdates = nextProp;
       }
+    } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
+      const nextHtml = nextProp ? nextProp[HTML] : undefined;
+      const lastHtml = lastProp ? lastProp[HTML] : undefined;
+      if (nextHtml != null) {
+        if (lastHtml !== nextHtml) {
+          (updatePayload = updatePayload || []).push(propKey, nextHtml);
+        }
+      } else {
+        // TODO: It might be too late to clear this if we have children
+        // inserted already.
+      }
     } else if (propKey === CHILDREN) {
       if (typeof nextProp === 'string' || typeof nextProp === 'number') {
         (updatePayload = updatePayload || []).push(propKey, '' + nextProp);
@@ -182,6 +202,8 @@ function updateDOMProperties(
     const oldPropValue = lastRawProps[propKey];
     if (propKey === STYLE) {
       setValueForStyles(domElement, propValue);
+    } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
+      domElement.innerHTML = propValue;
     } else if (propKey === CHILDREN) {
       setTextContent(domElement, propValue)
     } else {
