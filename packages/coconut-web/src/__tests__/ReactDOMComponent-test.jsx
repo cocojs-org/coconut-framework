@@ -372,5 +372,99 @@ describe('ReactDOMComponent', () => {
       expect(node.hasAttribute('src')).toBe(false);
       expect(node.hasAttribute('data-foo')).toBe(false);
     })
+
+    it('should apply React-specific aliases to HTML elements', () => {
+      const container = document.createElement('div');
+      render(<form acceptCharset="foo" />, container);
+      const node = container.firstChild;
+      // Test attribute initialization.
+      expect(node.getAttribute('accept-charset')).toBe('foo');
+      expect(node.hasAttribute('acceptCharset')).toBe(false);
+      // Test attribute update.
+      render(<form acceptCharset="boo" />, container);
+      expect(node.getAttribute('accept-charset')).toBe('boo');
+      expect(node.hasAttribute('acceptCharset')).toBe(false);
+      // Test attribute removal by setting to null.
+      render(<form acceptCharset={null} />, container);
+      expect(node.hasAttribute('accept-charset')).toBe(false);
+      expect(node.hasAttribute('acceptCharset')).toBe(false);
+      // Restore.
+      render(<form acceptCharset="foo" />, container);
+      expect(node.getAttribute('accept-charset')).toBe('foo');
+      expect(node.hasAttribute('acceptCharset')).toBe(false);
+      // Test attribute removal by setting to undefined.
+      render(<form acceptCharset={undefined} />, container);
+      expect(node.hasAttribute('accept-charset')).toBe(false);
+      expect(node.hasAttribute('acceptCharset')).toBe(false);
+      // Restore.
+      render(<form acceptCharset="foo" />, container);
+      expect(node.getAttribute('accept-charset')).toBe('foo');
+      expect(node.hasAttribute('acceptCharset')).toBe(false);
+      // Test attribute removal.
+      render(<form />, container);
+      expect(node.hasAttribute('accept-charset')).toBe(false);
+      expect(node.hasAttribute('acceptCharset')).toBe(false);
+    });
+
+    it('should apply React-specific aliases to SVG elements', () => {
+      const container = document.createElement('div');
+      render(<svg arabicForm="foo" />, container);
+      const node = container.firstChild;
+      // Test attribute initialization.
+      expect(node.getAttribute('arabic-form')).toBe('foo');
+      expect(node.hasAttribute('arabicForm')).toBe(false);
+      // Test attribute update.
+      render(<svg arabicForm="boo" />, container);
+      expect(node.getAttribute('arabic-form')).toBe('boo');
+      expect(node.hasAttribute('arabicForm')).toBe(false);
+      // Test attribute removal by setting to null.
+      render(<svg arabicForm={null} />, container);
+      expect(node.hasAttribute('arabic-form')).toBe(false);
+      expect(node.hasAttribute('arabicForm')).toBe(false);
+      // Restore.
+      render(<svg arabicForm="foo" />, container);
+      expect(node.getAttribute('arabic-form')).toBe('foo');
+      expect(node.hasAttribute('arabicForm')).toBe(false);
+      // Test attribute removal by setting to undefined.
+      render(<svg arabicForm={undefined} />, container);
+      expect(node.hasAttribute('arabic-form')).toBe(false);
+      expect(node.hasAttribute('arabicForm')).toBe(false);
+      // Restore.
+      render(<svg arabicForm="foo" />, container);
+      expect(node.getAttribute('arabic-form')).toBe('foo');
+      expect(node.hasAttribute('arabicForm')).toBe(false);
+      // Test attribute removal.
+      render(<svg />, container);
+      expect(node.hasAttribute('arabic-form')).toBe(false);
+      expect(node.hasAttribute('arabicForm')).toBe(false);
+    });
+
+    it('should properly update custom attributes on custom elements', () => {
+      const container = document.createElement('div');
+      render(<some-custom-element foo="bar" />, container);
+      render(<some-custom-element bar="buzz" />, container);
+      const node = container.firstChild;
+      expect(node.hasAttribute('foo')).toBe(false);
+      expect(node.getAttribute('bar')).toBe('buzz');
+    });
+
+    it('should not apply React-specific aliases to custom elements', () => {
+      const container = document.createElement('div');
+      render(<some-custom-element arabicForm="foo" />, container);
+      const node = container.firstChild;
+      // Should not get transformed to arabic-form as SVG would be.
+      expect(node.getAttribute('arabicForm')).toBe('foo');
+      expect(node.hasAttribute('arabic-form')).toBe(false);
+      // Test attribute update.
+      render(<some-custom-element arabicForm="boo" />, container);
+      expect(node.getAttribute('arabicForm')).toBe('boo');
+      // Test attribute removal and addition.
+      render(<some-custom-element acceptCharset="buzz" />, container);
+      // Verify the previous attribute was removed.
+      expect(node.hasAttribute('arabicForm')).toBe(false);
+      // Should not get transformed to accept-charset as HTML would be.
+      expect(node.getAttribute('acceptCharset')).toBe('buzz');
+      expect(node.hasAttribute('accept-charset')).toBe(false);
+    });
   })
 })

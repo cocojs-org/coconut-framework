@@ -32,17 +32,16 @@ export function setValueForProperty(
   name,
   value,
   isCustomComponentTag,
-  oldValue,
 ) {
   const propertyInfo = getPropertyInfo(name);
-  if (shouldIgnoreAttribute(name, propertyInfo)) {
+  if (shouldIgnoreAttribute(name, propertyInfo, isCustomComponentTag)) {
     return;
   }
 
   if (shouldRemoveAttribute(name, value, propertyInfo, isCustomComponentTag)) {
     value = null;
   }
-  if(propertyInfo === null) {
+  if(isCustomComponentTag || propertyInfo === null) {
     const attributeName = name;
     if (value === null) {
       node.removeAttribute(attributeName);

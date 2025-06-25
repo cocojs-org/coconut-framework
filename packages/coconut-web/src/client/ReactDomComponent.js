@@ -3,6 +3,7 @@ import {
   possibleRegistrationNames,
 } from '../events/EventRegistry';
 import setTextContent from "./setTextContent";
+import isCustomComponent from '../shared/isCustomComponent';
 import { setValueForProperty, setValueForStyles } from './DOMPropertyOperations';
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
 
@@ -26,7 +27,8 @@ function setInitialDOMProperties(
   tag,
   domElement,
   rootContainerElement,
-  nextProps
+  nextProps,
+  isCustomComponentTag
 ) {
   for (const propKey in nextProps) {
     if (!nextProps.hasOwnProperty(propKey)) {
@@ -54,7 +56,7 @@ function setInitialDOMProperties(
         setTextContent(domElement, '' + nextProp);
       }
     } else if (nextProp != null) {
-      setValueForProperty(domElement, propKey, nextProp, false)
+      setValueForProperty(domElement, propKey, nextProp, isCustomComponentTag)
     }
   }
 }
@@ -64,11 +66,12 @@ export function createTextNode(text) {
 }
 
 export function setInitialProperties(domElement, tag, rawProps) {
+  const isCustomComponentTag = isCustomComponent(tag, rawProps);
   if (__DEV__) {
     validatePropertiesInDevelopment(tag, rawProps);
   }
   const props = rawProps;
-  setInitialDOMProperties(tag, domElement, null, props)
+  setInitialDOMProperties(tag, domElement, null, props, isCustomComponentTag);
 }
 
 export function diffProperties(
@@ -194,12 +197,10 @@ function updateDOMProperties(
   updatePayload,
   wasCustomComponentTag,
   isCustomComponentTag,
-  lastRawProps,
 ) {
   for (let i = 0; i < updatePayload.length; i += 2) {
     const propKey = updatePayload[i];
     const propValue = updatePayload[i + 1];
-    const oldPropValue = lastRawProps[propKey];
     if (propKey === STYLE) {
       setValueForStyles(domElement, propValue);
     } else if (propKey === DANGEROUSLY_SET_INNER_HTML) {
@@ -207,7 +208,7 @@ function updateDOMProperties(
     } else if (propKey === CHILDREN) {
       setTextContent(domElement, propValue)
     } else {
-      setValueForProperty(domElement, propKey, propValue, false, oldPropValue);
+      setValueForProperty(domElement, propKey, propValue, isCustomComponentTag);
     }
   }
 }
@@ -219,11 +220,12 @@ export function updateProperties(
   lastRawProps,
   nextRawProps
 ) {
+  const wasCustomComponentTag = isCustomComponent(tag, lastRawProps);
+  const isCustomComponentTag = isCustomComponent(tag, nextRawProps);
   updateDOMProperties(
     domElement,
     updatePayload,
-    false,
-    false,
-    lastRawProps,
+    wasCustomComponentTag,
+    isCustomComponentTag,
   )
 }
