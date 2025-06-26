@@ -1,5 +1,6 @@
 import {createTextNode, setInitialProperties, diffProperties, updateProperties} from "./ReactDomComponent";
 import {updateFiberProps} from './ReactDomComponentTree';
+import setTextContent from './setTextContent';
 
 export function shouldSetTextContent(type, props) {
   return (
@@ -101,4 +102,8 @@ export function commitMount(
       }
       return;
   }
+}
+
+export function resetTextContent(domElement) {
+  setTextContent(domElement, '');
 }

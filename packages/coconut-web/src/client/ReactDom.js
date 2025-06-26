@@ -38,4 +38,18 @@ function legacyRenderSubtreeIntoContainer(
 export function render(element, container) {
   return legacyRenderSubtreeIntoContainer(null, element, container, null);
 }
+
+export function unmountComponentAtNode(container) {
+  if (container._reactRootContainer) {
+    unbatchedUpdates(() => {
+      legacyRenderSubtreeIntoContainer(null, null, container, () => {
+        container._reactRootContainer = null;
+      });
+    })
+    return true;
+  }
+
+  return false;
+}
+
 export { registerApplication, unregisterApplication }

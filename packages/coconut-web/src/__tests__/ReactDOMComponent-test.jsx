@@ -10,17 +10,19 @@
  */
 'use strict';
 
-import { render, registerApplication, unregisterApplication } from '../index';
+import { render, unmountComponentAtNode, registerApplication, unregisterApplication, cleanCache } from '../index';
 import * as ReactTestUtils from './test-units/ReactTestUnits';
 
 let Application
 let application
+let jsx
 let view
 let consoleSpy
 describe('ReactDOMComponent', () => {
   beforeEach(async () => {
     Application = (await import('coco-mvc')).Application;
     view = (await import('coco-mvc')).view
+    jsx = (await import('coco-mvc/jsx-runtime')).jsx;
     application = new Application();
     registerApplication(application);
     consoleSpy = jest.spyOn(console, 'error');
@@ -28,6 +30,7 @@ describe('ReactDOMComponent', () => {
   })
 
   afterEach(() => {
+    cleanCache();
     unregisterApplication();
     jest.resetModules();
     consoleSpy.mockRestore();
@@ -465,6 +468,210 @@ describe('ReactDOMComponent', () => {
       // Should not get transformed to accept-charset as HTML would be.
       expect(node.getAttribute('acceptCharset')).toBe('buzz');
       expect(node.hasAttribute('accept-charset')).toBe(false);
+    });
+
+    it('should clear a single style prop when changing `style`', () => {
+      let styles = {display: 'none', color: 'red'};
+      const container = document.createElement('div');
+      render(<div style={styles} />, container);
+
+      const stubStyle = container.firstChild.style;
+
+      styles = {color: 'green'};
+      render(<div style={styles} />, container);
+      expect(stubStyle.display).toEqual('');
+      expect(stubStyle.color).toEqual('green');
+    });
+
+    it('should reject attribute key injection attack on mount for regular DOM', () => {
+      for (let i = 0; i < 3; i++) {
+        const container = document.createElement('div');
+        render(
+          jsx(
+            'div',
+            {'blah" onclick="beevil" noise="hi': 'selected'},
+            null,
+          ),
+          container,
+        );
+        expect(container.firstChild.attributes.length).toBe(0);
+        unmountComponentAtNode(container);
+        render(
+          jsx(
+            'div',
+            {'></div><script>alert("hi")</script>': 'selected'},
+            null,
+          ),
+          container,
+        );
+        expect(container.firstChild.attributes.length).toBe(0);
+      }
+      expect(consoleSpy.mock.calls[0]).toEqual([
+        'Invalid attribute name: `%s`',
+        'blah" onclick="beevil" noise="hi',
+      ]);
+      expect(consoleSpy.mock.calls[1]).toEqual([
+        'Invalid attribute name: `%s`',
+        '></div><script>alert("hi")</script>',
+      ]);
+    });
+
+    it('should reject attribute key injection attack on mount for custom elements', () => {
+      for (let i = 0; i < 3; i++) {
+        const container = document.createElement('div');
+        render(
+          jsx(
+            'x-foo-component',
+            {'blah" onclick="beevil" noise="hi': 'selected'},
+            null,
+          ),
+          container,
+        );
+        expect(container.firstChild.attributes.length).toBe(0);
+        unmountComponentAtNode(container);
+        render(
+          jsx(
+            'x-foo-component',
+            {'></x-foo-component><script>alert("hi")</script>': 'selected'},
+            null,
+          ),
+          container,
+        );
+        expect(container.firstChild.attributes.length).toBe(0);
+      }
+      expect(consoleSpy.mock.calls[0]).toEqual([
+        'Invalid attribute name: `%s`',
+        'blah" onclick="beevil" noise="hi',
+      ]);
+      expect(consoleSpy.mock.calls[1]).toEqual([
+        'Invalid attribute name: `%s`',
+        '></x-foo-component><script>alert("hi")</script>',
+      ]);
+    });
+
+    it('should reject attribute key injection attack on update for regular DOM', () => {
+      for (let i = 0; i < 3; i++) {
+        const container = document.createElement('div');
+        const beforeUpdate = jsx('div', {}, null);
+        render(beforeUpdate, container);
+        render(
+          jsx(
+            'div',
+            {'blah" onclick="beevil" noise="hi': 'selected'},
+            null,
+          ),
+          container,
+        );
+        expect(container.firstChild.attributes.length).toBe(0);
+        render(
+          jsx(
+            'div',
+            {'></div><script>alert("hi")</script>': 'selected'},
+            null,
+          ),
+          container,
+        );
+        expect(container.firstChild.attributes.length).toBe(0);
+      }
+      expect(consoleSpy.mock.calls[0]).toEqual([
+        'Invalid attribute name: `%s`',
+        'blah" onclick="beevil" noise="hi',
+      ]);
+      expect(consoleSpy.mock.calls[1]).toEqual([
+        'Invalid attribute name: `%s`',
+        '></div><script>alert("hi")</script>',
+      ]);
+    });
+
+    it('should reject attribute key injection attack on update for custom elements', () => {
+      for (let i = 0; i < 3; i++) {
+        const container = document.createElement('div');
+        const beforeUpdate = jsx('x-foo-component', {}, null);
+        render(beforeUpdate, container);
+        render(
+          jsx(
+            'x-foo-component',
+            {'blah" onclick="beevil" noise="hi': 'selected'},
+            null,
+          ),
+          container,
+        );
+        expect(container.firstChild.attributes.length).toBe(0);
+        render(
+          jsx(
+            'x-foo-component',
+            {'></x-foo-component><script>alert("hi")</script>': 'selected'},
+            null,
+          ),
+          container,
+        );
+        expect(container.firstChild.attributes.length).toBe(0);
+      }
+      expect(consoleSpy.mock.calls[0]).toEqual([
+        'Invalid attribute name: `%s`',
+        'blah" onclick="beevil" noise="hi',
+      ]);
+      expect(consoleSpy.mock.calls[1]).toEqual([
+        'Invalid attribute name: `%s`',
+        '></x-foo-component><script>alert("hi")</script>',
+      ]);
+    });
+
+    it('should update arbitrary attributes for tags containing dashes', () => {
+      const container = document.createElement('div');
+
+      const beforeUpdate = jsx('x-foo-component', {}, null);
+      render(beforeUpdate, container);
+
+      const afterUpdate = <x-foo-component myattr="myval" />;
+      render(afterUpdate, container);
+
+      expect(container.childNodes[0].getAttribute('myattr')).toBe('myval');
+    });
+
+    it('should clear all the styles when removing `style`', () => {
+      const styles = {display: 'none', color: 'red'};
+      const container = document.createElement('div');
+      render(<div style={styles} />, container);
+
+      const stubStyle = container.firstChild.style;
+
+      render(<div />, container);
+      expect(stubStyle.display).toEqual('');
+      expect(stubStyle.color).toEqual('');
+    });
+
+    it('should update styles when `style` changes from null to object', () => {
+      const container = document.createElement('div');
+      const styles = {color: 'red'};
+      render(<div style={styles} />, container);
+      render(<div />, container);
+      render(<div style={styles} />, container);
+
+      const stubStyle = container.firstChild.style;
+      expect(stubStyle.color).toEqual('red');
+    });
+
+    it('should not reset innerHTML for when children is null', () => {
+      const container = document.createElement('div');
+      render(<div />, container);
+      container.firstChild.innerHTML = 'bonjour';
+      expect(container.firstChild.innerHTML).toEqual('bonjour');
+
+      render(<div />, container);
+      expect(container.firstChild.innerHTML).toEqual('bonjour');
+    });
+
+    it('should reset innerHTML when switching from a direct text child to an empty child', () => {
+      const transitionToValues = [null, undefined, false];
+      transitionToValues.forEach(transitionToValue => {
+        const container = document.createElement('div');
+        render(<div>bonjour</div>, container);
+        expect(container.firstChild.innerHTML).toEqual('bonjour');
+
+        render(<div>{null}</div>, container);
+        expect(container.firstChild.innerHTML).toEqual('');
+      });
     });
   })
 })

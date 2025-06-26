@@ -1,4 +1,9 @@
-import { getPropertyInfo, shouldIgnoreAttribute, shouldRemoveAttribute } from '../shared/DOMProperty';
+import {
+  getPropertyInfo,
+  isAttributeNameSafe,
+  shouldIgnoreAttribute,
+  shouldRemoveAttribute,
+} from '../shared/DOMProperty';
 import dangerousStyleValue from '../shared/dangerousStyleValue';
 import warnValidStyle from '../shared/warnValidStyle';
 
@@ -42,11 +47,13 @@ export function setValueForProperty(
     value = null;
   }
   if(isCustomComponentTag || propertyInfo === null) {
-    const attributeName = name;
-    if (value === null) {
-      node.removeAttribute(attributeName);
-    } else {
-      node.setAttribute(attributeName, '' + value);
+    if (isAttributeNameSafe(name)) {
+      const attributeName = name;
+      if (value === null) {
+        node.removeAttribute(attributeName);
+      } else {
+        node.setAttribute(attributeName, '' + value);
+      }
     }
     return;
   }

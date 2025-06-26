@@ -1,6 +1,7 @@
 import {ClassComponent, HostComponent, HostRoot, HostText} from "./ReactWorkTags";
-import { LayoutMask, MutationMask, NoFlags, Placement, Ref, Update } from './ReactFiberFlags';
+import { ContentReset, LayoutMask, MutationMask, NoFlags, Placement, Ref, Update } from './ReactFiberFlags';
 import {
+  resetTextContent,
   commitTextUpdate,
   commitUpdate,
   removeChild,
@@ -196,6 +197,12 @@ function commitPlacement(finishedWork) {
   switch (parentFiber.tag) {
     case HostComponent: {
       const parent = parentFiber.stateNode;
+      if (parentFiber.flags & ContentReset) {
+        // Reset the text content of the parent before doing any insertions
+        resetTextContent(parent);
+        // Clear ContentReset from the effect tag
+        parentFiber.flags &= ~ContentReset;
+      }
       const before = getHostSibling(finishedWork);
       insertOrAppendPlacementNodeIntoContainer(finishedWork, before, parent)
       break;
@@ -247,6 +254,14 @@ function commitMutationEffectsOnFiber(
       recursivelyTraverseMutationEffects(root, finishedWork)
       commitReconciliationEffects(finishedWork)
 
+      if (finishedWork.flags & ContentReset) {
+        const instance = finishedWork.stateNode;
+        try {
+          resetTextContent(instance);
+        } catch (error) {
+          // todo captureCommitPhaseError(finishedWork, finishedWork.return, error);
+        }
+      }
       if (flags & Update) {
         const instance = finishedWork.stateNode;
         if (instance !== null) {

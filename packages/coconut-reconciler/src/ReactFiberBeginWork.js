@@ -3,7 +3,7 @@ import {ClassComponent, HostComponent, HostRoot, HostText} from "./ReactWorkTags
 import {constructClassInstance, mountClassInstance, updateClassInstance} from "./ReactFiberClassComponent";
 import {cloneUpdateQueue, processUpdateQueue} from "./ReactFiberClassUpdateQueue";
 import {shouldSetTextContent} from "ReactFiberHostConfig";
-import { Ref } from './ReactFiberFlags';
+import { ContentReset, Ref } from './ReactFiberFlags';
 
 export function reconcileChildren(
   current,
@@ -95,7 +95,15 @@ function updateHostComponent(
 
   const isDirectTextChild = shouldSetTextContent(type, nextProps);
   if (isDirectTextChild) {
+    // We special case a direct text child of a host node. This is a common
+    // case. We won't handle it as a reified child. We will instead handle
+    // this in the host environment that also has access to this prop. That
+    // avoids allocating another HostText fiber and traversing it.
     nextChildren = null;
+  } else if (prevProps !== null && shouldSetTextContent(type, prevProps)) {
+    // If we're switching from a direct text child to a normal child, or to
+    // empty, we need to schedule the text content to be reset.
+    workInProgress.flags |= ContentReset;
   }
 
   markRef(current, workInProgress);
