@@ -1,4 +1,5 @@
 import {
+  BOOLEAN,
   getPropertyInfo,
   isAttributeNameSafe,
   shouldIgnoreAttribute,
@@ -54,6 +55,17 @@ export function setValueForProperty(
       } else {
         node.setAttribute(attributeName, '' + value);
       }
+    }
+    return;
+  }
+  const { mustUseProperty } = propertyInfo;
+  if (mustUseProperty) {
+    const {propertyName} = propertyInfo;
+    if (value === null) {
+      const { type } = propertyInfo;
+      node[propertyName] = type === BOOLEAN ? false : '';
+    } else {
+      node[propertyName] = value;
     }
     return;
   }

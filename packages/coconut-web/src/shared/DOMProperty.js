@@ -76,6 +76,31 @@ const properties = {};
   );
 });
 
+// These are the few React props that we set as DOM properties
+// rather than attributes. These are all booleans.
+[
+  'checked',
+  // Note: `option.selected` is not updated if `select.multiple` is
+  // disabled with `removeAttribute`. We have special logic for handling this.
+  'multiple',
+  'muted',
+  'selected',
+
+  // NOTE: if you add a camelCased prop to this list,
+  // you'll need to set attributeName to name.toLowerCase()
+  // instead in the assignment below.
+].forEach(name => {
+  properties[name] = new PropertyInfoRecord(
+    name,
+    BOOLEAN,
+    true, // mustUseProperty
+    name, // attributeName
+    null, // attributeNamespace
+    false, // sanitizeURL
+    false, // removeEmptyString
+  );
+});
+
 export function getPropertyInfo(name) {
   return properties.hasOwnProperty(name) ? properties[name] : null;
 }

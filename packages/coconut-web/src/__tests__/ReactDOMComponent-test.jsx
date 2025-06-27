@@ -673,5 +673,236 @@ describe('ReactDOMComponent', () => {
         expect(container.firstChild.innerHTML).toEqual('');
       });
     });
+
+    it('should empty element when removing innerHTML', () => {
+      const container = document.createElement('div');
+      render(
+        <div dangerouslySetInnerHTML={{__html: ':)'}} />,
+        container,
+      );
+
+      expect(container.firstChild.innerHTML).toEqual(':)');
+      render(<div />, container);
+      expect(container.firstChild.innerHTML).toEqual('');
+    });
+
+    it('should transition from string content to innerHTML', () => {
+      const container = document.createElement('div');
+      render(<div>hello</div>, container);
+
+      expect(container.firstChild.innerHTML).toEqual('hello');
+      render(
+        <div dangerouslySetInnerHTML={{__html: 'goodbye'}} />,
+        container,
+      );
+      expect(container.firstChild.innerHTML).toEqual('goodbye');
+    });
+
+    it('should transition from innerHTML to string content', () => {
+      const container = document.createElement('div');
+      render(
+        <div dangerouslySetInnerHTML={{__html: 'bonjour'}} />,
+        container,
+      );
+
+      expect(container.firstChild.innerHTML).toEqual('bonjour');
+      render(<div>adieu</div>, container);
+      expect(container.firstChild.innerHTML).toEqual('adieu');
+    });
+
+    it('should transition from innerHTML to children in nested el', () => {
+      const container = document.createElement('div');
+      render(
+        <div>
+          <div dangerouslySetInnerHTML={{__html: 'bonjour'}} />
+        </div>,
+        container,
+      );
+
+      expect(container.textContent).toEqual('bonjour');
+      render(
+        <div>
+          <div>
+            <span>adieu</span>
+          </div>
+        </div>,
+        container,
+      );
+      expect(container.textContent).toEqual('adieu');
+    });
+
+    it('should transition from children to innerHTML in nested el', () => {
+      const container = document.createElement('div');
+      render(
+        <div>
+          <div>
+            <span>adieu</span>
+          </div>
+        </div>,
+        container,
+      );
+
+      expect(container.textContent).toEqual('adieu');
+      render(
+        <div>
+          <div dangerouslySetInnerHTML={{__html: 'bonjour'}} />
+        </div>,
+        container,
+      );
+      expect(container.textContent).toEqual('bonjour');
+    });
+
+    it('should not incur unnecessary DOM mutations for attributes', () => {
+      const container = document.createElement('div');
+      render(<div id="" />, container);
+
+      const node = container.firstChild;
+      const nodeSetAttribute = node.setAttribute;
+      node.setAttribute = jest.fn();
+      node.setAttribute.mockImplementation(nodeSetAttribute);
+
+      const nodeRemoveAttribute = node.removeAttribute;
+      node.removeAttribute = jest.fn();
+      node.removeAttribute.mockImplementation(nodeRemoveAttribute);
+
+      render(<div id="" />, container);
+      expect(node.setAttribute).toHaveBeenCalledTimes(0);
+      expect(node.removeAttribute).toHaveBeenCalledTimes(0);
+
+      render(<div id="foo" />, container);
+      expect(node.setAttribute).toHaveBeenCalledTimes(1);
+      expect(node.removeAttribute).toHaveBeenCalledTimes(0);
+
+      render(<div id="foo" />, container);
+      expect(node.setAttribute).toHaveBeenCalledTimes(1);
+      expect(node.removeAttribute).toHaveBeenCalledTimes(0);
+
+      render(<div />, container);
+      expect(node.setAttribute).toHaveBeenCalledTimes(1);
+      expect(node.removeAttribute).toHaveBeenCalledTimes(1);
+
+      render(<div id="" />, container);
+      expect(node.setAttribute).toHaveBeenCalledTimes(2);
+      expect(node.removeAttribute).toHaveBeenCalledTimes(1);
+
+      render(<div />, container);
+      expect(node.setAttribute).toHaveBeenCalledTimes(2);
+      expect(node.removeAttribute).toHaveBeenCalledTimes(2);
+    });
+
+    it('should not incur unnecessary DOM mutations for string properties', () => {
+      const container = document.createElement('div');
+      render(<div value="" />, container);
+
+      const node = container.firstChild;
+
+      const nodeValueSetter = jest.fn();
+
+      const oldSetAttribute = node.setAttribute.bind(node);
+      node.setAttribute = function(key, value) {
+        oldSetAttribute(key, value);
+        nodeValueSetter(key, value);
+      };
+
+      render(<div value="foo" />, container);
+      expect(nodeValueSetter).toHaveBeenCalledTimes(1);
+
+      render(<div value="foo" />, container);
+      expect(nodeValueSetter).toHaveBeenCalledTimes(1);
+
+      render(<div />, container);
+      expect(nodeValueSetter).toHaveBeenCalledTimes(1);
+
+      render(<div value={null} />, container);
+      expect(nodeValueSetter).toHaveBeenCalledTimes(1);
+
+      render(<div value="" />, container);
+      expect(nodeValueSetter).toHaveBeenCalledTimes(2);
+
+      render(<div />, container);
+      expect(nodeValueSetter).toHaveBeenCalledTimes(2);
+    });
+
+    it('should not incur unnecessary DOM mutations for boolean properties', () => {
+      const container = document.createElement('div');
+      render(<div checked={true} />, container);
+
+      const node = container.firstChild;
+      let nodeValue = true;
+      const nodeValueSetter = jest.fn();
+      Object.defineProperty(node, 'checked', {
+        get: function() {
+          return nodeValue;
+        },
+        set: nodeValueSetter.mockImplementation(function(newValue) {
+          nodeValue = newValue;
+        }),
+      });
+
+      render(<div checked={true} />, container);
+      expect(nodeValueSetter).toHaveBeenCalledTimes(0);
+
+      render(<div />, container);
+      expect(nodeValueSetter).toHaveBeenCalledTimes(1);
+
+      render(<div checked={false} />, container);
+      expect(nodeValueSetter).toHaveBeenCalledTimes(2);
+
+      render(<div checked={true} />, container);
+      expect(nodeValueSetter).toHaveBeenCalledTimes(3);
+    });
+
+    it('should not update when switching between null/undefined', () => {
+      const container = document.createElement('div');
+      const node = render(<div />, container);
+
+      const setter = jest.fn();
+      node.setAttribute = setter;
+
+      render(<div dir={null} />, container);
+      render(<div dir={undefined} />, container);
+      render(<div />, container);
+      expect(setter).toHaveBeenCalledTimes(0);
+      render(<div dir="ltr" />, container);
+      expect(setter).toHaveBeenCalledTimes(1);
+    });
+
+    it('handles multiple child updates without interference', () => {
+      // This test might look like it's just testing ReactMultiChild but the
+      // last bug in this was actually in DOMChildrenOperations so this test
+      // needs to be in some DOM-specific test file.
+      const container = document.createElement('div');
+
+      // ABCD
+      render(
+        <div>
+          <div key="one">
+            <div key="A">A</div>
+            <div key="B">B</div>
+          </div>
+          <div key="two">
+            <div key="C">C</div>
+            <div key="D">D</div>
+          </div>
+        </div>,
+        container,
+      );
+      // BADC
+      render(
+        <div>
+          <div key="one">
+            <div key="B">B</div>
+            <div key="A">A</div>
+          </div>
+          <div key="two">
+            <div key="D">D</div>
+            <div key="C">C</div>
+          </div>
+        </div>,
+        container,
+      );
+
+      expect(container.textContent).toBe('BADC');
+    });
   })
 })
