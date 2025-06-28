@@ -6,14 +6,27 @@ import setTextContent from "./setTextContent";
 import isCustomComponent from '../shared/isCustomComponent';
 import { setValueForProperty, setValueForStyles } from './DOMPropertyOperations';
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
+import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
 
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CHILDREN = 'children';
 const STYLE = 'style';
 const HTML = '__html';
 
+let warnedUnknownTags;
+
 let validatePropertiesInDevelopment;
 if (__DEV__) {
+  warnedUnknownTags = {
+    // There are working polyfills for <dialog>. Let people use it.
+    dialog: true,
+    // Electron ships a custom <webview> tag to display external web content in
+    // an isolated frame and process.
+    // This tag is not present in non Electron environments such as JSDom which
+    // is often used for testing purposes.
+    // @see https://electronjs.org/docs/api/webview-tag
+    webview: true,
+  };
   validatePropertiesInDevelopment = function(type, props) {
     validateUnknownProperties(type, props, {
       registrationNameDependencies,
@@ -59,6 +72,51 @@ function setInitialDOMProperties(
       setValueForProperty(domElement, propKey, nextProp, isCustomComponentTag)
     }
   }
+}
+
+export function createElement(type, props, parentNamespace) {
+  let isCustomComponentTag;
+  let domElement;
+  let namespaceURI = parentNamespace;
+  if (namespaceURI === HTML_NAMESPACE) {
+    namespaceURI = getIntrinsicNamespace(namespaceURI);
+  }
+  if (namespaceURI === HTML_NAMESPACE) {
+    if (__DEV__) {
+      isCustomComponentTag = isCustomComponent(type, props)
+      // Should this check be gated by parent namespace? Not sure we want to
+      // allow <SVG> or <mATH>.
+      if (!isCustomComponentTag && type !== type.toLowerCase()) {
+        console.error(
+          '<%s /> is using incorrect casing. ' +
+          'Use PascalCase for React components, ' +
+          'or lowercase for HTML elements.',
+          type,
+        );
+      }
+    }
+    domElement = document.createElement(type);
+  }
+
+  if (__DEV__) {
+    if (namespaceURI === HTML_NAMESPACE) {
+      if (
+        !isCustomComponentTag &&
+        Object.prototype.toString.call(domElement) === '[object HTMLUnknownElement]' &&
+        !Object.hasOwnProperty.call(warnedUnknownTags, type)
+      ) {
+        warnedUnknownTags[type] = true;
+        console.error(
+          'The tag <%s> is unrecognized in this browser. ' +
+          'If you meant to render a React component, start its name with ' +
+          'an uppercase letter.',
+          type,
+        );
+      }
+    }
+  }
+
+  return domElement;
 }
 
 export function createTextNode(text) {

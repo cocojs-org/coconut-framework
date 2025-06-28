@@ -40,6 +40,14 @@ if (__DEV__) {
       }
     }
 
+    if (lowerCasedName === 'aria') {
+      console.error(
+        'The `aria` attribute is reserved for future use in React. ' +
+        'Pass individual `aria-` attributes instead.',
+      );
+      return true;
+    }
+
     const propertyInfo = getPropertyInfo(name);
 
     if (possibleStandardNames.hasOwnProperty(lowerCasedName)) {

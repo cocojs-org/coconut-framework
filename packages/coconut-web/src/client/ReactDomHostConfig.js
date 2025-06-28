@@ -1,6 +1,13 @@
-import {createTextNode, setInitialProperties, diffProperties, updateProperties} from "./ReactDomComponent";
+import {
+  createTextNode,
+  setInitialProperties,
+  diffProperties,
+  updateProperties,
+  createElement,
+} from './ReactDomComponent';
 import {updateFiberProps} from './ReactDomComponentTree';
 import setTextContent from './setTextContent';
+import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
 
 export function shouldSetTextContent(type, props) {
   return (
@@ -53,7 +60,11 @@ export function commitUpdate(
 }
 
 export function createInstance(type, props) {
-  const domElement = document.createElement(type, props);
+  const domElement = createElement(
+    type,
+    props,
+    HTML_NAMESPACE, // 先写死，后续扩展
+  );
   updateFiberProps(domElement, props);
   return domElement;
 }

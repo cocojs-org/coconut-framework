@@ -905,4 +905,107 @@ describe('ReactDOMComponent', () => {
       expect(container.textContent).toBe('BADC');
     });
   })
+
+  describe('mountComponent', () => {
+    let mountComponent;
+
+    beforeEach(() => {
+      mountComponent = function(props) {
+        const container = document.createElement('div');
+        render(<div {...props} />, container);
+      };
+    });
+
+    it('should work error event on <source> element', () => {
+      const container = document.createElement('div');
+      render(
+        <video>
+          <source
+            src="http://example.org/video"
+            type="video/mp4"
+            onError={e => console.error('onError called')}
+          />
+        </video>,
+        container,
+      );
+
+      const errorEvent = document.createEvent('Event');
+      errorEvent.initEvent('error', false, false);
+      container.getElementsByTagName('source')[0].dispatchEvent(errorEvent);
+
+      if (__DEV__) {
+        expect(consoleSpy).toHaveBeenCalledTimes(1);
+        expect(consoleSpy).toHaveBeenCalledWith('onError called');
+      }
+    });
+
+    it('should warn on upper case HTML tags, not SVG nor custom tags', () => {
+      ReactTestUtils.renderIntoDocument(
+        jsx('svg', null, jsx('PATH')),
+      );
+      ReactTestUtils.renderIntoDocument(jsx('CUSTOM-TAG'));
+
+      ReactTestUtils.renderIntoDocument(jsx('IMG'));
+      expect(consoleSpy).toHaveBeenCalledWith(
+        '<%s /> is using incorrect casing. ' +
+        'Use PascalCase for React components, ' +
+        'or lowercase for HTML elements.',
+        'IMG'
+      );
+    });
+
+    it('should warn on props reserved for future use', () => {
+      ReactTestUtils.renderIntoDocument(<div aria="hello" />),
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'The `aria` attribute is reserved for future use in React. ' +
+        'Pass individual `aria-` attributes instead.',
+      );
+    });
+
+    it('should warn if the tag is unrecognized', () => {
+      let realToString;
+      try {
+        realToString = Object.prototype.toString;
+        const wrappedToString = function() {
+          // Emulate browser behavior which is missing in jsdom
+          if (this instanceof window.HTMLUnknownElement) {
+            return '[object HTMLUnknownElement]';
+          }
+          return realToString.apply(this, arguments);
+        };
+        Object.prototype.toString = wrappedToString; // eslint-disable-line no-extend-native
+        ReactTestUtils.renderIntoDocument(<bar />);
+        expect(consoleSpy.mock.calls[0]).toEqual(
+          [
+            "The tag <%s> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.",
+            "bar",
+          ]
+        );
+        // Test deduplication
+        ReactTestUtils.renderIntoDocument(<foo />);
+        expect(consoleSpy.mock.calls[1]).toEqual(
+          [
+            "The tag <%s> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.",
+            "foo",
+          ]
+        );
+        ReactTestUtils.renderIntoDocument(<foo />);
+        ReactTestUtils.renderIntoDocument(<time />);
+        // Corner case. Make sure out deduplication logic doesn't break with weird tag.
+        ReactTestUtils.renderIntoDocument(<hasOwnProperty />);
+        expect(consoleSpy.mock.calls[2]).toEqual([
+          '<%s /> is using incorrect casing. ' +
+          'Use PascalCase for React components, ' +
+          'or lowercase for HTML elements.',
+          'hasOwnProperty'
+        ]);
+        expect(consoleSpy.mock.calls[3]).toEqual([
+          "The tag <%s> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.",
+          'hasOwnProperty',
+        ])
+      } finally {
+        Object.prototype.toString = realToString; // eslint-disable-line no-extend-native
+      }
+    });
+  })
 })
