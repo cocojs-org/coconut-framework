@@ -17,7 +17,7 @@ let Application
 let application
 let jsx
 let view
-let consoleSpy
+let consoleErrorSpy
 let consoleLogSpy
 describe('ReactDOMComponent', () => {
   beforeEach(async () => {
@@ -26,8 +26,8 @@ describe('ReactDOMComponent', () => {
     jsx = (await import('coco-mvc/jsx-runtime')).jsx;
     application = new Application();
     registerApplication(application);
-    consoleSpy = jest.spyOn(console, 'error');
-    consoleSpy.mockImplementation(() => {})
+    consoleErrorSpy = jest.spyOn(console, 'error');
+    consoleErrorSpy.mockImplementation(() => {})
     consoleLogSpy = jest.spyOn(console, 'log');
     consoleLogSpy.mockImplementation(() => {})
   })
@@ -36,7 +36,7 @@ describe('ReactDOMComponent', () => {
     cleanCache();
     unregisterApplication();
     jest.resetModules();
-    consoleSpy.mockRestore();
+    consoleErrorSpy.mockRestore();
     consoleLogSpy.mockRestore();
   })
 
@@ -164,7 +164,7 @@ describe('ReactDOMComponent', () => {
     it('should warn for unknown prop', () => {
       const container = document.createElement('div');
       render(<div foo={() => {}} />, container)
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         `Invalid value for prop %s on <%s> tag. Either remove it from the element, or pass a string or number value to keep it in the DOM. For details, see https://reactjs.org/link/attribute-behavior `,
         '`foo`',
         'div',
@@ -174,7 +174,7 @@ describe('ReactDOMComponent', () => {
     it('should group multiple unknown prop warnings together', () => {
       const container = document.createElement('div');
       render(<div foo={() => {}} baz={() => {}} />, container);
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Invalid values for props %s on <%s> tag. Either remove them from the element, or pass a string or number value to keep them in the DOM. For details, see https://reactjs.org/link/attribute-behavior ',
         '`foo`, `baz`',
         'div',
@@ -184,7 +184,7 @@ describe('ReactDOMComponent', () => {
     it('should warn for onDblClick prop', () => {
       const container = document.createElement('div');
       render(<div onDblClick={() => {}} />, container);
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Invalid event handler property `%s`. Did you mean `%s`?',
         'onDblClick',
         'onDoubleClick'
@@ -194,7 +194,7 @@ describe('ReactDOMComponent', () => {
     it('should warn for unknown string event handlers', () => {
       const container = document.createElement('div');
       render(<div onUnknown='alert("hack")' />, container);
-      expect(consoleSpy.mock.calls[0]).toEqual([
+      expect(consoleErrorSpy.mock.calls[0]).toEqual([
         'Unknown event handler property `%s`. It will be ignored.',
         'onUnknown'
         ]
@@ -202,11 +202,11 @@ describe('ReactDOMComponent', () => {
       expect(container.firstChild.hasAttribute('onUnknown')).toBe(false);
       expect(container.firstChild.onUnknown).toBe(undefined);
       render(<div onunknown={function() {}} />, container);
-      expect(consoleSpy.mock.calls[1]).toEqual(['Unknown event handler property `%s`. It will be ignored.', 'onunknown']);
+      expect(consoleErrorSpy.mock.calls[1]).toEqual(['Unknown event handler property `%s`. It will be ignored.', 'onunknown']);
       expect(container.firstChild.hasAttribute('onunknown')).toBe(false);
       expect(container.firstChild.onunknown).toBe(undefined);
       render(<div on-unknown={function() {}} />, container);
-      expect(consoleSpy.mock.calls[2]).toEqual(['Unknown event handler property `%s`. It will be ignored.','on-unknown']);
+      expect(consoleErrorSpy.mock.calls[2]).toEqual(['Unknown event handler property `%s`. It will be ignored.','on-unknown']);
       expect(container.firstChild.hasAttribute('on-unknown')).toBe(false);
       expect(container.firstChild['on-unknown']).toBe(undefined);
     })
@@ -214,7 +214,7 @@ describe('ReactDOMComponent', () => {
     it('should warn for badly cased React attributes', () => {
       const container = document.createElement('div');
       render(<div CHILDREN="5" />, container)
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Invalid DOM property `%s`. Did you mean `%s`?',
         'CHILDREN',
         'children',
@@ -237,7 +237,7 @@ describe('ReactDOMComponent', () => {
       const style = {fontSize: NaN};
       const div = document.createElement('div');
       render(<span style={style} />, div);
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         '`NaN` is an invalid value for the `%s` css style property.',
         'fontSize',
       );
@@ -259,7 +259,7 @@ describe('ReactDOMComponent', () => {
       const div = document.createElement('div');
       const test = () => render(<span style={style} />, div);
       expect(test).toThrow();
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         'The provided `%s` CSS property is an unsupported type %s. This value must be coerced to a string before before using it here.',
         `fontSize`,
         'TemporalLike',
@@ -510,11 +510,11 @@ describe('ReactDOMComponent', () => {
         );
         expect(container.firstChild.attributes.length).toBe(0);
       }
-      expect(consoleSpy.mock.calls[0]).toEqual([
+      expect(consoleErrorSpy.mock.calls[0]).toEqual([
         'Invalid attribute name: `%s`',
         'blah" onclick="beevil" noise="hi',
       ]);
-      expect(consoleSpy.mock.calls[1]).toEqual([
+      expect(consoleErrorSpy.mock.calls[1]).toEqual([
         'Invalid attribute name: `%s`',
         '></div><script>alert("hi")</script>',
       ]);
@@ -543,11 +543,11 @@ describe('ReactDOMComponent', () => {
         );
         expect(container.firstChild.attributes.length).toBe(0);
       }
-      expect(consoleSpy.mock.calls[0]).toEqual([
+      expect(consoleErrorSpy.mock.calls[0]).toEqual([
         'Invalid attribute name: `%s`',
         'blah" onclick="beevil" noise="hi',
       ]);
-      expect(consoleSpy.mock.calls[1]).toEqual([
+      expect(consoleErrorSpy.mock.calls[1]).toEqual([
         'Invalid attribute name: `%s`',
         '></x-foo-component><script>alert("hi")</script>',
       ]);
@@ -577,11 +577,11 @@ describe('ReactDOMComponent', () => {
         );
         expect(container.firstChild.attributes.length).toBe(0);
       }
-      expect(consoleSpy.mock.calls[0]).toEqual([
+      expect(consoleErrorSpy.mock.calls[0]).toEqual([
         'Invalid attribute name: `%s`',
         'blah" onclick="beevil" noise="hi',
       ]);
-      expect(consoleSpy.mock.calls[1]).toEqual([
+      expect(consoleErrorSpy.mock.calls[1]).toEqual([
         'Invalid attribute name: `%s`',
         '></div><script>alert("hi")</script>',
       ]);
@@ -611,11 +611,11 @@ describe('ReactDOMComponent', () => {
         );
         expect(container.firstChild.attributes.length).toBe(0);
       }
-      expect(consoleSpy.mock.calls[0]).toEqual([
+      expect(consoleErrorSpy.mock.calls[0]).toEqual([
         'Invalid attribute name: `%s`',
         'blah" onclick="beevil" noise="hi',
       ]);
-      expect(consoleSpy.mock.calls[1]).toEqual([
+      expect(consoleErrorSpy.mock.calls[1]).toEqual([
         'Invalid attribute name: `%s`',
         '></x-foo-component><script>alert("hi")</script>',
       ]);
@@ -938,8 +938,8 @@ describe('ReactDOMComponent', () => {
       container.getElementsByTagName('source')[0].dispatchEvent(errorEvent);
 
       if (__DEV__) {
-        expect(consoleSpy).toHaveBeenCalledTimes(1);
-        expect(consoleSpy).toHaveBeenCalledWith('onError called');
+        expect(consoleErrorSpy).toHaveBeenCalledTimes(1);
+        expect(consoleErrorSpy).toHaveBeenCalledWith('onError called');
       }
     });
 
@@ -950,7 +950,7 @@ describe('ReactDOMComponent', () => {
       ReactTestUtils.renderIntoDocument(jsx('CUSTOM-TAG'));
 
       ReactTestUtils.renderIntoDocument(jsx('IMG'));
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         '<%s /> is using incorrect casing. ' +
         'Use PascalCase for React components, ' +
         'or lowercase for HTML elements.',
@@ -960,7 +960,7 @@ describe('ReactDOMComponent', () => {
 
     it('should warn on props reserved for future use', () => {
       ReactTestUtils.renderIntoDocument(<div aria="hello" />),
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         'The `aria` attribute is reserved for future use in React. ' +
         'Pass individual `aria-` attributes instead.',
       );
@@ -979,7 +979,7 @@ describe('ReactDOMComponent', () => {
         };
         Object.prototype.toString = wrappedToString; // eslint-disable-line no-extend-native
         ReactTestUtils.renderIntoDocument(<bar />);
-        expect(consoleSpy.mock.calls[0]).toEqual(
+        expect(consoleErrorSpy.mock.calls[0]).toEqual(
           [
             "The tag <%s> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.",
             "bar",
@@ -987,7 +987,7 @@ describe('ReactDOMComponent', () => {
         );
         // Test deduplication
         ReactTestUtils.renderIntoDocument(<foo />);
-        expect(consoleSpy.mock.calls[1]).toEqual(
+        expect(consoleErrorSpy.mock.calls[1]).toEqual(
           [
             "The tag <%s> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.",
             "foo",
@@ -997,13 +997,13 @@ describe('ReactDOMComponent', () => {
         ReactTestUtils.renderIntoDocument(<time />);
         // Corner case. Make sure out deduplication logic doesn't break with weird tag.
         ReactTestUtils.renderIntoDocument(<hasOwnProperty />);
-        expect(consoleSpy.mock.calls[2]).toEqual([
+        expect(consoleErrorSpy.mock.calls[2]).toEqual([
           '<%s /> is using incorrect casing. ' +
           'Use PascalCase for React components, ' +
           'or lowercase for HTML elements.',
           'hasOwnProperty'
         ]);
-        expect(consoleSpy.mock.calls[3]).toEqual([
+        expect(consoleErrorSpy.mock.calls[3]).toEqual([
           "The tag <%s> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.",
           'hasOwnProperty',
         ])
@@ -1045,7 +1045,7 @@ describe('ReactDOMComponent', () => {
 
     it('should validate against use of innerHTML', () => {
       mountComponent({innerHTML: '<span>Hi Jim!</span>'});
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Directly setting property `innerHTML` is not permitted. ' +
         'For more information, lookup documentation on `dangerouslySetInnerHTML`.',
       );
@@ -1053,7 +1053,7 @@ describe('ReactDOMComponent', () => {
 
     it('should validate against use of innerHTML without case sensitivity', () => {
       mountComponent({innerhtml: '<span>Hi Jim!</span>'});
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Directly setting property `innerHTML` is not permitted. ' +
         'For more information, lookup documentation on `dangerouslySetInnerHTML`.',
       );
@@ -1085,7 +1085,7 @@ describe('ReactDOMComponent', () => {
 
     it('should warn about contentEditable and children', () => {
       mountComponent({contentEditable: true, children: ''});
-      expect(consoleSpy).toHaveBeenCalledWith(
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
         'A component is `contentEditable` and contains `children` managed by ' +
         'React. It is now your responsibility to guarantee that none of ' +
         'those nodes are unexpectedly modified or duplicated. This is ' +
