@@ -150,6 +150,8 @@ export function diffProperties(
   let lastProps = lastRawProps;
   let nextProps = nextRawProps;
 
+  assertValidProps(tag, nextProps);
+
   let propKey;
   let styleName;
   let styleUpdates;

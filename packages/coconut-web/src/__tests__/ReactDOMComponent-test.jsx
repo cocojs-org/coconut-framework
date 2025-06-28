@@ -1194,4 +1194,95 @@ describe('ReactDOMComponent', () => {
       expect(onError).toHaveBeenCalledTimes(1);
     });
   })
+
+  describe('updateComponent', () => {
+    let container;
+
+    beforeEach(() => {
+      container = document.createElement('div');
+    });
+
+    it('should warn against children for void elements', () => {
+      render(<input />, container);
+
+      expect(function() {
+        render(<input>children</input>, container);
+      }).toThrow(
+        'input is a void element tag and must neither have `children` nor use ' +
+        '`dangerouslySetInnerHTML`.',
+      );
+    });
+
+    it('should warn against dangerouslySetInnerHTML for void elements', () => {
+      render(<input />, container);
+
+      expect(function() {
+        render(
+          <input dangerouslySetInnerHTML={{__html: 'content'}} />,
+          container,
+        );
+      }).toThrowError(
+        'input is a void element tag and must neither have `children` nor use ' +
+        '`dangerouslySetInnerHTML`.',
+      );
+    });
+
+    it('should validate against multiple children props', () => {
+      render(<div />, container);
+
+      expect(function() {
+        render(
+          <div children="" dangerouslySetInnerHTML={{__html: ''}} />,
+          container,
+        );
+      }).toThrowError(
+        'Can only set one of `children` or `props.dangerouslySetInnerHTML`.',
+      );
+    });
+
+    it('should warn about contentEditable and children', () => {
+      render(
+        <div contentEditable={true}>
+          <div />
+        </div>,
+        container,
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'A component is `contentEditable` and contains `children` managed by ' +
+        'React. It is now your responsibility to guarantee that none of ' +
+        'those nodes are unexpectedly modified or duplicated. This is ' +
+        'probably not intentional.',
+      );
+    });
+
+    it('should validate against invalid styles', () => {
+      render(<div />, container);
+
+      expect(function() {
+        render(<div style={1} />, container);
+      }).toThrow(
+        'The `style` prop expects a mapping from style properties to values, ' +
+        "not a string. For example, style={{marginRight: spacing + 'em'}} " +
+        'when using JSX.',
+      );
+    });
+
+    it('should report component containing invalid styles', () => {
+      @view()
+      class Animal {
+        render() {
+          return <div style={1} />;
+        }
+      }
+
+      application.start();
+      expect(() => {
+        render(<Animal />, container);
+      }).toThrowError(
+        'The `style` prop expects a mapping from style properties to values, ' +
+        "not a string. For example, style={{marginRight: spacing + 'em'}} " +
+        'when using JSX.',
+      );
+    });
+  })
 })
