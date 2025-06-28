@@ -1007,5 +1007,94 @@ describe('ReactDOMComponent', () => {
         Object.prototype.toString = realToString; // eslint-disable-line no-extend-native
       }
     });
+
+    it('should throw on children for void elements', () => {
+      const container = document.createElement('div');
+      expect(() => {
+        render(<input>children</input>, container);
+      }).toThrow(
+        'input is a void element tag and must neither have `children` nor ' +
+        'use `dangerouslySetInnerHTML`.',
+      )
+    });
+
+    it('should throw on dangerouslySetInnerHTML for void elements', () => {
+      const container = document.createElement('div');
+      expect(() => {
+        render(
+          <input dangerouslySetInnerHTML={{__html: 'content'}} />,
+          container,
+        );
+      }).toThrow(
+        'input is a void element tag and must neither have `children` nor ' +
+        'use `dangerouslySetInnerHTML`.',
+      );
+    });
+
+    it('should validate against multiple children props', () => {
+      expect(function() {
+        mountComponent({children: '', dangerouslySetInnerHTML: ''});
+      }).toThrow(
+        'Can only set one of `children` or `props.dangerouslySetInnerHTML`.',
+      );
+    });
+
+    it('should validate against use of innerHTML', () => {
+      mountComponent({innerHTML: '<span>Hi Jim!</span>'});
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Directly setting property `innerHTML` is not permitted. ' +
+        'For more information, lookup documentation on `dangerouslySetInnerHTML`.',
+      );
+    });
+
+    it('should validate against use of innerHTML without case sensitivity', () => {
+      mountComponent({innerhtml: '<span>Hi Jim!</span>'});
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Directly setting property `innerHTML` is not permitted. ' +
+        'For more information, lookup documentation on `dangerouslySetInnerHTML`.',
+      );
+    });
+
+    it('should validate use of dangerouslySetInnerHTML', () => {
+      expect(function() {
+        mountComponent({dangerouslySetInnerHTML: '<span>Hi Jim!</span>'});
+      }).toThrow(
+        '`props.dangerouslySetInnerHTML` must be in the form `{__html: ...}`. ' +
+        'Please visit https://reactjs.org/link/dangerously-set-inner-html for more information.',
+      );
+    });
+
+    it('should validate use of dangerouslySetInnerHTML', () => {
+      expect(function() {
+        mountComponent({dangerouslySetInnerHTML: {foo: 'bar'}});
+      }).toThrowError(
+        '`props.dangerouslySetInnerHTML` must be in the form `{__html: ...}`. ' +
+        'Please visit https://reactjs.org/link/dangerously-set-inner-html for more information.',
+      );
+    });
+
+    it('should allow {__html: null}', () => {
+      expect(function() {
+        mountComponent({dangerouslySetInnerHTML: {__html: null}});
+      }).not.toThrow();
+    });
+
+    it('should warn about contentEditable and children', () => {
+      mountComponent({contentEditable: true, children: ''});
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'A component is `contentEditable` and contains `children` managed by ' +
+        'React. It is now your responsibility to guarantee that none of ' +
+        'those nodes are unexpectedly modified or duplicated. This is ' +
+        'probably not intentional.',
+      );
+    });
+
+    it('should respect suppressContentEditableWarning', () => {
+      mountComponent({
+        contentEditable: true,
+        children: '',
+        suppressContentEditableWarning: true,
+      });
+    });
   })
 })

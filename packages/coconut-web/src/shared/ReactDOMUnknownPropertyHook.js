@@ -40,6 +40,14 @@ if (__DEV__) {
       }
     }
 
+    if (lowerCasedName === 'innerhtml') {
+      console.error(
+        'Directly setting property `innerHTML` is not permitted. ' +
+        'For more information, lookup documentation on `dangerouslySetInnerHTML`.',
+      );
+      return true;
+    }
+
     if (lowerCasedName === 'aria') {
       console.error(
         'The `aria` attribute is reserved for future use in React. ' +

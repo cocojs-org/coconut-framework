@@ -4,6 +4,7 @@ import {
 } from '../events/EventRegistry';
 import setTextContent from "./setTextContent";
 import isCustomComponent from '../shared/isCustomComponent';
+import assertValidProps from '../shared/assertValidProps';
 import { setValueForProperty, setValueForStyles } from './DOMPropertyOperations';
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
 import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
@@ -130,6 +131,9 @@ export function setInitialProperties(domElement, tag, rawProps) {
     validatePropertiesInDevelopment(tag, rawProps);
   }
   const props = rawProps;
+
+  assertValidProps(tag, props);
+
   setInitialDOMProperties(tag, domElement, null, props, isCustomComponentTag);
 }
 
