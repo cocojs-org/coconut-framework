@@ -1,3 +1,4 @@
+import { hasOwnProperty } from 'shared';
 // A reserved attribute.
 // It is handled by React separately and shouldn't be written to the DOM.
 export const RESERVED = 0;
@@ -33,10 +34,10 @@ const illegalAttributeNameCache = {};
 const validatedAttributeNameCache = {};
 
 export function isAttributeNameSafe(attributeName) {
-  if (validatedAttributeNameCache.hasOwnProperty(attributeName)) {
+  if (hasOwnProperty.call(validatedAttributeNameCache, attributeName)) {
     return true;
   }
-  if (illegalAttributeNameCache.hasOwnProperty(attributeName)) {
+  if (hasOwnProperty.call(illegalAttributeNameCache, attributeName)) {
     return false;
   }
   if (VALID_ATTRIBUTE_NAME_REGEX.test(attributeName)) {

@@ -7,6 +7,7 @@ import isCustomComponent from '../shared/isCustomComponent';
 import { setValueForProperty, setValueForStyles } from './DOMPropertyOperations';
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
 import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
+import { hasOwnProperty } from 'shared';
 
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CHILDREN = 'children';
@@ -103,7 +104,7 @@ export function createElement(type, props, parentNamespace) {
       if (
         !isCustomComponentTag &&
         Object.prototype.toString.call(domElement) === '[object HTMLUnknownElement]' &&
-        !Object.hasOwnProperty.call(warnedUnknownTags, type)
+        !hasOwnProperty.call(warnedUnknownTags, type)
       ) {
         warnedUnknownTags[type] = true;
         console.error(
