@@ -5,7 +5,8 @@ export const topLevelEventsToReactNames = new Map();
 const simpleEventPluginEvents = [
   'click',
   'submit',
-  'error'
+  'error',
+  'load',
 ]
 
 function registerSimpleEvent(domEventName, reactName) {

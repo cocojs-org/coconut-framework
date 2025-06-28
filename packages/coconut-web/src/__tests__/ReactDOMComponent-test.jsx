@@ -18,6 +18,7 @@ let application
 let jsx
 let view
 let consoleSpy
+let consoleLogSpy
 describe('ReactDOMComponent', () => {
   beforeEach(async () => {
     Application = (await import('coco-mvc')).Application;
@@ -27,6 +28,8 @@ describe('ReactDOMComponent', () => {
     registerApplication(application);
     consoleSpy = jest.spyOn(console, 'error');
     consoleSpy.mockImplementation(() => {})
+    consoleLogSpy = jest.spyOn(console, 'log');
+    consoleLogSpy.mockImplementation(() => {})
   })
 
   afterEach(() => {
@@ -34,6 +37,7 @@ describe('ReactDOMComponent', () => {
     unregisterApplication();
     jest.resetModules();
     consoleSpy.mockRestore();
+    consoleLogSpy.mockRestore();
   })
 
   describe('updateDOM', () => {
@@ -1095,6 +1099,99 @@ describe('ReactDOMComponent', () => {
         children: '',
         suppressContentEditableWarning: true,
       });
+    });
+
+    it('should validate against invalid styles', () => {
+      expect(function() {
+        mountComponent({style: 'display: none'});
+      }).toThrowError(
+        'The `style` prop expects a mapping from style properties to values, ' +
+        "not a string. For example, style={{marginRight: spacing + 'em'}} " +
+        'when using JSX.',
+      );
+    });
+
+    it('should throw for children on void elements', () => {
+      @view()
+      class X {
+        render() {
+          return <input>moo</input>;
+        }
+      }
+
+      application.start();
+      const container = document.createElement('div');
+      expect(() => {
+        render(<X />, container);
+      }).toThrowError(
+        'input is a void element tag and must neither have `children` ' +
+        'nor use `dangerouslySetInnerHTML`.',
+      );
+    });
+
+    it('should work load and error events on <image> element in SVG', () => {
+      const container = document.createElement('div');
+      render(
+        <svg>
+          <image
+            xlinkHref="http://example.org/image"
+            onError={e => console.log('onError called')}
+            onLoad={e => console.log('onLoad called')}
+          />
+        </svg>,
+        container,
+      );
+
+      const loadEvent = document.createEvent('Event');
+      const errorEvent = document.createEvent('Event');
+
+      loadEvent.initEvent('load', false, false);
+      errorEvent.initEvent('error', false, false);
+
+      container.getElementsByTagName('image')[0].dispatchEvent(errorEvent);
+      container.getElementsByTagName('image')[0].dispatchEvent(loadEvent);
+
+      if (__DEV__) {
+        expect(consoleLogSpy).toHaveBeenCalledTimes(2);
+        expect(consoleLogSpy.mock.calls[0]).toEqual(['onError called']);
+        expect(consoleLogSpy.mock.calls[1]).toEqual(['onLoad called']);
+      }
+    });
+
+    it('should receive a load event on <link> elements', () => {
+      const container = document.createElement('div');
+      const onLoad = jest.fn();
+
+      render(
+        <link href="http://example.org/link" onLoad={onLoad} />,
+        container,
+      );
+
+      const loadEvent = document.createEvent('Event');
+      const link = container.getElementsByTagName('link')[0];
+
+      loadEvent.initEvent('load', false, false);
+      link.dispatchEvent(loadEvent);
+
+      expect(onLoad).toHaveBeenCalledTimes(1);
+    });
+
+    it('should receive an error event on <link> elements', () => {
+      const container = document.createElement('div');
+      const onError = jest.fn();
+
+      render(
+        <link href="http://example.org/link" onError={onError} />,
+        container,
+      );
+
+      const errorEvent = document.createEvent('Event');
+      const link = container.getElementsByTagName('link')[0];
+
+      errorEvent.initEvent('error', false, false);
+      link.dispatchEvent(errorEvent);
+
+      expect(onError).toHaveBeenCalledTimes(1);
     });
   })
 })

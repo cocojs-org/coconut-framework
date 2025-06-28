@@ -57,6 +57,14 @@ function assertValidProps(tag, props) {
       );
     }
   }
+
+  if (props.style != null && typeof props.style !== 'object') {
+    throw new Error(
+      'The `style` prop expects a mapping from style properties to values, ' +
+      "not a string. For example, style={{marginRight: spacing + 'em'}} when " +
+      'using JSX.',
+    );
+  }
 }
 
 export default assertValidProps;
