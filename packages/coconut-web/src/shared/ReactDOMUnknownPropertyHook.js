@@ -10,6 +10,15 @@ if (__DEV__) {
   validateProperty = function(tagName, name, value, eventRegistry) {
 
     const lowerCasedName = name.toLowerCase();
+    if (lowerCasedName === 'onfocusin' || lowerCasedName === 'onfocusout') {
+      console.error(
+        'React uses onFocus and onBlur instead of onFocusIn and onFocusOut. ' +
+        'All React events are normalized to bubble, so onFocusIn and onFocusOut ' +
+        'are not needed/supported by React.',
+      );
+      return true;
+    }
+
     if (eventRegistry !== null) {
       const {
         registrationNameDependencies,

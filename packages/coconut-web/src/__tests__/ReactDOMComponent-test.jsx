@@ -1405,5 +1405,202 @@ describe('ReactDOMComponent', () => {
         ]
       );
     });
+
+    it('should warn about incorrect casing on properties', () => {
+      ReactTestUtils.renderIntoDocument(
+        jsx('input', {type: 'text', tabindex: '1'}),
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Invalid DOM property `%s`. Did you mean `%s`?",
+        "tabindex",
+        "tabIndex"
+      );
+    });
+
+    it('should warn about incorrect casing on event handlers', () => {
+      ReactTestUtils.renderIntoDocument(
+        jsx('input', {type: 'text', oninput: '1'}),
+      );
+      expect(consoleErrorSpy.mock.calls[0]).toEqual([
+          "Unknown event handler property `%s`. It will be ignored.",
+          "oninput"
+        ]
+      );
+      ReactTestUtils.renderIntoDocument(
+        jsx('input', {type: 'text', onKeydown: '1'}),
+      );
+      expect(consoleErrorSpy.mock.calls[1]).toEqual(
+        [
+          "Unknown event handler property `%s`. It will be ignored.",
+          'onKeydown',
+        ]
+      );
+    });
+
+    it('should warn about class', () => {
+      ReactTestUtils.renderIntoDocument(
+        jsx('div', {class: 'muffins'}),
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Invalid DOM property `%s`. Did you mean `%s`?", "class", "className"
+      );
+    });
+
+    it('should warn about props that are no longer supported', () => {
+      ReactTestUtils.renderIntoDocument(<div />);
+
+      ReactTestUtils.renderIntoDocument(<div onFocusIn={() => {}} />);
+      expect(consoleErrorSpy.mock.calls[0]).toEqual(
+        [
+          'React uses onFocus and onBlur instead of onFocusIn and onFocusOut. ' +
+          'All React events are normalized to bubble, so onFocusIn and onFocusOut ' +
+          'are not needed/supported by React.'
+        ]
+      );
+      ReactTestUtils.renderIntoDocument(<div onFocusOut={() => {}} />);
+      expect(consoleErrorSpy.mock.calls[1]).toEqual(
+        [
+          'React uses onFocus and onBlur instead of onFocusIn and onFocusOut. ' +
+          'All React events are normalized to bubble, so onFocusIn and onFocusOut ' +
+          'are not needed/supported by React.'
+        ]
+      );
+    });
+
+    it('should warn about props that are no longer supported without case sensitivity', () => {
+      ReactTestUtils.renderIntoDocument(<div />);
+      ReactTestUtils.renderIntoDocument(<div onfocusin={() => {}} />);
+      expect(consoleErrorSpy.mock.calls[0]).toEqual(
+        [
+          'React uses onFocus and onBlur instead of onFocusIn and onFocusOut. ' +
+          'All React events are normalized to bubble, so onFocusIn and onFocusOut ' +
+          'are not needed/supported by React.'
+        ]
+      );
+      ReactTestUtils.renderIntoDocument(<div onfocusout={() => {}} />);
+      expect(consoleErrorSpy.mock.calls[1]).toEqual(
+        [
+          'React uses onFocus and onBlur instead of onFocusIn and onFocusOut. ' +
+          'All React events are normalized to bubble, so onFocusIn and onFocusOut ' +
+          'are not needed/supported by React.'
+        ]
+      );
+    });
+
+    it('gives source code refs for unknown prop warning', () => {
+      ReactTestUtils.renderIntoDocument(<div class="paladin" />);
+      expect(consoleErrorSpy.mock.calls[0]).toEqual([
+        "Invalid DOM property `%s`. Did you mean `%s`?",
+        "class",
+        "className"
+      ]);
+      ReactTestUtils.renderIntoDocument(<input type="text" onclick="1" />);
+      expect(consoleErrorSpy.mock.calls[1]).toEqual(
+        ["Invalid event handler property `%s`. Did you mean `%s`?", "onclick", "onClick"]
+      );
+    });
+
+    it('gives source code refs for unknown prop warning for update render', () => {
+      const container = document.createElement('div');
+
+      ReactTestUtils.renderIntoDocument(<div className="paladin" />, container);
+      ReactTestUtils.renderIntoDocument(<div class="paladin" />, container),
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Invalid DOM property `%s`. Did you mean `%s`?',
+        'class',
+        'className'
+      );
+    });
+
+    it('gives source code refs for unknown prop warning for exact elements', () => {
+      ReactTestUtils.renderIntoDocument(
+        <div className="foo1">
+          <span class="foo2" />
+          <div onClick={() => {}} />
+          <strong onclick={() => {}} />
+          <div className="foo5" />
+          <div className="foo6" />
+        </div>,
+      );
+      expect(consoleErrorSpy.mock.calls[0]).toEqual([
+        "Invalid DOM property `%s`. Did you mean `%s`?", "class", "className"
+      ]);
+      expect(consoleErrorSpy.mock.calls[1]).toEqual([
+        "Invalid event handler property `%s`. Did you mean `%s`?", "onclick", "onClick"
+      ]);
+    });
+
+    it('gives source code refs for unknown prop warning for exact elements in composition', () => {
+      const container = document.createElement('div');
+
+      @view()
+      class Parent {
+        render() {
+          return (
+            <div>
+              <Child1 />
+              <Child2 />
+              <Child3 />
+              <Child4 />
+            </div>
+          );
+        }
+      }
+
+      @view()
+      class Child1 {
+        render() {
+          return <span class="paladin">Child1</span>;
+        }
+      }
+
+      @view()
+      class Child2 {
+        render() {
+          return <div>Child2</div>;
+        }
+      }
+
+      @view()
+      class Child3 {
+        render() {
+          return <strong onclick="1">Child3</strong>;
+        }
+      }
+
+      @view()
+      class Child4 {
+        render() {
+          return <div>Child4</div>;
+        }
+      }
+
+      application.start();
+      ReactTestUtils.renderIntoDocument(<Parent />, container),
+        expect(consoleErrorSpy.mock.calls[0]).toEqual([
+          "Invalid DOM property `%s`. Did you mean `%s`?", "class", "className"
+        ]);
+      expect(consoleErrorSpy.mock.calls[1]).toEqual([
+        "Invalid event handler property `%s`. Did you mean `%s`?", "onclick", "onClick"
+      ]);
+    });
+
+    it('should suggest property name if available', () => {
+      expect(() =>
+        ReactTestUtils.renderIntoDocument(
+          React.createElement('label', {for: 'test'}),
+        ),
+      ).toErrorDev(
+        'Warning: Invalid DOM property `for`. Did you mean `htmlFor`?\n    in label',
+      );
+
+      expect(() =>
+        ReactTestUtils.renderIntoDocument(
+          React.createElement('input', {type: 'text', autofocus: true}),
+        ),
+      ).toErrorDev(
+        'Warning: Invalid DOM property `autofocus`. Did you mean `autoFocus`?\n    in input',
+      );
+    });
   })
 })
