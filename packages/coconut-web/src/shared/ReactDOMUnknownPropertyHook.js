@@ -1,5 +1,5 @@
 import isCustomComponent from './isCustomComponent';
-import { getPropertyInfo, RESERVED, shouldRemoveAttributeWithWarning } from './DOMProperty';
+import { BOOLEAN, getPropertyInfo, RESERVED, shouldRemoveAttributeWithWarning } from './DOMProperty';
 import possibleStandardNames from './possibleStandardNames';
 
 let validateProperty = () => {};
@@ -117,12 +117,47 @@ if (__DEV__) {
           value,
           name,
         );
+      } else {
+        console.error(
+          'Received `%s` for a non-boolean attribute `%s`.\n\n' +
+          'If you want to write it to the DOM, pass a string instead: ' +
+          '%s="%s" or %s={value.toString()}.\n\n' +
+          'If you used to conditionally omit it with %s={condition && value}, ' +
+          'pass %s={condition ? value : undefined} instead.',
+          value,
+          name,
+          name,
+          value,
+          name,
+          name,
+          name,
+        );
       }
       return true;
     }
 
     if (shouldRemoveAttributeWithWarning(name, value, propertyInfo, false)) {
       return false;
+    }
+
+    if (
+      (value === 'false' || value === 'true') &&
+      propertyInfo !== null &&
+      propertyInfo.type === BOOLEAN
+    ) {
+      console.error(
+        'Received the string `%s` for the boolean attribute `%s`. ' +
+        '%s ' +
+        'Did you mean %s={%s}?',
+        value,
+        name,
+        value === 'false'
+          ? 'The browser will interpret it as a truthy value.'
+          : 'Although this works, it will not work as expected if you pass the string "false".',
+        name,
+        value,
+      );
+      return true;
     }
 
     return true;

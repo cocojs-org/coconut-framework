@@ -1834,4 +1834,198 @@ describe('ReactDOMComponent', () => {
       expect(el.getAttribute('size')).toBe('30');
     });
   })
+
+  describe('Object stringification', function() {
+    it('allows objects on known properties', function() {
+      const el = ReactTestUtils.renderIntoDocument(<div acceptCharset={{}} />);
+      expect(el.getAttribute('accept-charset')).toBe('[object Object]');
+    });
+
+    it('should pass objects as attributes if they define toString', () => {
+      const obj = {
+        toString() {
+          return 'hello';
+        },
+      };
+      const container = document.createElement('div');
+
+      render(<img src={obj} />, container);
+      expect(container.firstChild.src).toBe('http://localhost/hello');
+
+      render(<svg arabicForm={obj} />, container);
+      expect(container.firstChild.getAttribute('arabic-form')).toBe('hello');
+
+      render(<div unknown={obj} />, container);
+      expect(container.firstChild.getAttribute('unknown')).toBe('hello');
+    });
+
+    it('passes objects on known SVG attributes if they do not define toString', () => {
+      const obj = {};
+      const container = document.createElement('div');
+
+      render(<svg arabicForm={obj} />, container);
+      expect(container.firstChild.getAttribute('arabic-form')).toBe(
+        '[object Object]',
+      );
+    });
+
+    it('passes objects on custom attributes if they do not define toString', () => {
+      const obj = {};
+      const container = document.createElement('div');
+
+      render(<div unknown={obj} />, container);
+      expect(container.firstChild.getAttribute('unknown')).toBe(
+        '[object Object]',
+      );
+    });
+
+    it('allows objects that inherit a custom toString method', function() {
+      const parent = {toString: () => 'hello.jpg'};
+      const child = Object.create(parent);
+      const el = ReactTestUtils.renderIntoDocument(<img src={child} />);
+
+      expect(el.src).toBe('http://localhost/hello.jpg');
+    });
+
+    it('assigns ajaxify (an important internal FB attribute)', function() {
+      const options = {toString: () => 'ajaxy'};
+      const el = ReactTestUtils.renderIntoDocument(<div ajaxify={options} />);
+
+      expect(el.getAttribute('ajaxify')).toBe('ajaxy');
+    });
+  })
+
+  describe('String boolean attributes', function() {
+    it('does not assign string boolean attributes for custom attributes', function() {
+      let el = ReactTestUtils.renderIntoDocument(<div whatever={true} />);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Received `%s` for a non-boolean attribute `%s`.\n\n' +
+        'If you want to write it to the DOM, pass a string instead: ' +
+        '%s="%s" or %s={value.toString()}.',
+        true,
+        "whatever",
+        "whatever",
+        true,
+        "whatever"
+      );
+
+      expect(el.hasAttribute('whatever')).toBe(false);
+    });
+
+    it('stringifies the boolean true for allowed attributes', function() {
+      const el = ReactTestUtils.renderIntoDocument(<div spellCheck={true} />);
+
+      expect(el.getAttribute('spellCheck')).toBe('true');
+    });
+
+    it('stringifies the boolean false for allowed attributes', function() {
+      const el = ReactTestUtils.renderIntoDocument(<div spellCheck={false} />);
+
+      expect(el.getAttribute('spellCheck')).toBe('false');
+    });
+
+    it('stringifies implicit booleans for allowed attributes', function() {
+      // eslint-disable-next-line react/jsx-boolean-value
+      const el = ReactTestUtils.renderIntoDocument(<div spellCheck />);
+
+      expect(el.getAttribute('spellCheck')).toBe('true');
+    });
+  })
+
+  describe('Boolean attributes', function() {
+    it('warns on the ambiguous string value "false"', function() {
+      let el = ReactTestUtils.renderIntoDocument(<div hidden="false" />);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Received the string `%s` for the boolean attribute `%s`. ' +
+        '%s ' +
+        'Did you mean %s={%s}?',
+        'false',
+        'hidden',
+        "The browser will interpret it as a truthy value.",
+        'hidden',
+        'false'
+      );
+
+      expect(el.getAttribute('hidden')).toBe('');
+    });
+
+    it('warns on the potentially-ambiguous string value "true"', function() {
+      let el = ReactTestUtils.renderIntoDocument(<div hidden="true" />);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Received the string `%s` for the boolean attribute `%s`. %s Did you mean %s={%s}?",
+        "true",
+        "hidden",
+        "Although this works, it will not work as expected if you pass the string \"false\".",
+        "hidden",
+        "true"
+      );
+
+      expect(el.getAttribute('hidden')).toBe('');
+    });
+  })
+
+  describe('Hyphenated SVG elements', function() {
+    it('the font-face element is not a custom element', function() {
+      let el = ReactTestUtils.renderIntoDocument(
+        <svg>
+          <font-face x-height={false} />
+        </svg>,
+      );
+      expect(consoleErrorSpy.mock.calls[1]).toEqual([
+        "Invalid DOM property `%s`. Did you mean `%s`?", "x-height", "xHeight"
+      ]);
+
+      expect(el.querySelector('font-face').hasAttribute('x-height')).toBe(
+        false,
+      );
+    });
+
+    it('the font-face element does not allow unknown boolean values', function() {
+      let el = ReactTestUtils.renderIntoDocument(
+        <svg>
+          <font-face whatever={false} />
+        </svg>,
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Received `%s` for a non-boolean attribute `%s`.\n\n' +
+        'If you want to write it to the DOM, pass a string instead: ' +
+        '%s="%s" or %s={value.toString()}.\n\n' +
+        'If you used to conditionally omit it with %s={condition && value}, ' +
+        'pass %s={condition ? value : undefined} instead.',
+        false, "whatever", "whatever", false, "whatever", "whatever", "whatever"
+      );
+
+      expect(el.querySelector('font-face').hasAttribute('whatever')).toBe(
+        false,
+      );
+    });
+  })
+
+  describe('Custom elements', () => {
+    it('does not strip unknown boolean attributes', () => {
+      const container = document.createElement('div');
+      render(<some-custom-element foo={true} />, container);
+      const node = container.firstChild;
+      expect(node.getAttribute('foo')).toBe('true');
+      render(<some-custom-element foo={false} />, container);
+      expect(node.getAttribute('foo')).toBe('false');
+      render(<some-custom-element />, container);
+      expect(node.hasAttribute('foo')).toBe(false);
+      render(<some-custom-element foo={true} />, container);
+      expect(node.hasAttribute('foo')).toBe(true);
+    });
+
+    it('does not strip the on* attributes', () => {
+      const container = document.createElement('div');
+      render(<some-custom-element onx="bar" />, container);
+      const node = container.firstChild;
+      expect(node.getAttribute('onx')).toBe('bar');
+      render(<some-custom-element onx="buzz" />, container);
+      expect(node.getAttribute('onx')).toBe('buzz');
+      render(<some-custom-element />, container);
+      expect(node.hasAttribute('onx')).toBe(false);
+      render(<some-custom-element onx="bar" />, container);
+      expect(node.getAttribute('onx')).toBe('bar');
+    });
+  })
 })

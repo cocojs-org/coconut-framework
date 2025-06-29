@@ -77,6 +77,61 @@ const properties = {};
   );
 });
 
+// These are "enumerated" HTML attributes that accept "true" and "false".
+// In React, we let users pass `true` and `false` even though technically
+// these aren't boolean attributes (they are coerced to strings).
+['contentEditable', 'draggable', 'spellCheck', 'value'].forEach(name => {
+  properties[name] = new PropertyInfoRecord(
+    name,
+    BOOLEANISH_STRING,
+    false, // mustUseProperty
+    name.toLowerCase(), // attributeName
+    null, // attributeNamespace
+    false, // sanitizeURL
+    false, // removeEmptyString
+  );
+});
+
+// These are HTML boolean attributes.
+[
+  'allowFullScreen',
+  'async',
+  // Note: there is a special case that prevents it from being written to the DOM
+  // on the client side because the browsers are inconsistent. Instead we call focus().
+  'autoFocus',
+  'autoPlay',
+  'controls',
+  'default',
+  'defer',
+  'disabled',
+  'disablePictureInPicture',
+  'disableRemotePlayback',
+  'formNoValidate',
+  'hidden',
+  'loop',
+  'noModule',
+  'noValidate',
+  'open',
+  'playsInline',
+  'readOnly',
+  'required',
+  'reversed',
+  'scoped',
+  'seamless',
+  // Microdata
+  'itemScope',
+].forEach(name => {
+  properties[name] = new PropertyInfoRecord(
+    name,
+    BOOLEAN,
+    false, // mustUseProperty
+    name.toLowerCase(), // attributeName
+    null, // attributeNamespace
+    false, // sanitizeURL
+    false, // removeEmptyString
+  );
+});
+
 // These are the few React props that we set as DOM properties
 // rather than attributes. These are all booleans.
 [

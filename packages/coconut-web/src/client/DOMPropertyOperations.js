@@ -73,7 +73,11 @@ export function setValueForProperty(
   if (value === null) {
     node.removeAttribute(attributeName)
   } else {
+    const {type} = propertyInfo;
     let attributeValue = value;
+    if (type === BOOLEAN) {
+      attributeValue = '';
+    }
     node.setAttribute(attributeName, attributeValue)
   }
 }
