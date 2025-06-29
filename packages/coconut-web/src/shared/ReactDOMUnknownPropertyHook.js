@@ -1,5 +1,5 @@
 import isCustomComponent from './isCustomComponent';
-import { getPropertyInfo, shouldRemoveAttributeWithWarning } from './DOMProperty';
+import { getPropertyInfo, RESERVED, shouldRemoveAttributeWithWarning } from './DOMProperty';
 import possibleStandardNames from './possibleStandardNames';
 
 let validateProperty = () => {};
@@ -65,7 +65,17 @@ if (__DEV__) {
       return true;
     }
 
+    if (typeof value === 'number' && isNaN(value)) {
+      console.error(
+        'Received NaN for the `%s` attribute. If this is expected, cast ' +
+        'the value to a string.',
+        name,
+      );
+      return true;
+    }
+
     const propertyInfo = getPropertyInfo(name);
+    const isReserved = propertyInfo !== null && propertyInfo.type === RESERVED;
 
     if (possibleStandardNames.hasOwnProperty(lowerCasedName)) {
       const standardName = possibleStandardNames[lowerCasedName];
@@ -77,7 +87,21 @@ if (__DEV__) {
         );
         return true;
       }
+    } else if (!isReserved && name !== lowerCasedName) {
+      // Unknown attributes should have lowercase casing since that's how they
+      // will be cased anyway with server rendering.
+      console.error(
+        'React does not recognize the `%s` prop on a DOM element. If you ' +
+        'intentionally want it to appear in the DOM as a custom ' +
+        'attribute, spell it as lowercase `%s` instead. ' +
+        'If you accidentally passed it from a parent component, remove ' +
+        'it from the DOM element.',
+        name,
+        lowerCasedName,
+      );
+      return true;
     }
+
     if (
       typeof value === 'boolean' &&
       shouldRemoveAttributeWithWarning(name, value, propertyInfo, false)

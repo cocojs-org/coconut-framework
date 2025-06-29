@@ -1586,21 +1586,252 @@ describe('ReactDOMComponent', () => {
     });
 
     it('should suggest property name if available', () => {
-      expect(() =>
-        ReactTestUtils.renderIntoDocument(
-          React.createElement('label', {for: 'test'}),
-        ),
-      ).toErrorDev(
-        'Warning: Invalid DOM property `for`. Did you mean `htmlFor`?\n    in label',
+      ReactTestUtils.renderIntoDocument(
+        jsx('label', {for: 'test'})
+      );
+      expect(consoleErrorSpy.mock.calls[0]).toEqual([
+          'Invalid DOM property `%s`. Did you mean `%s`?',
+          'for',
+          'htmlFor'
+      ]
       );
 
-      expect(() =>
-        ReactTestUtils.renderIntoDocument(
-          React.createElement('input', {type: 'text', autofocus: true}),
-        ),
-      ).toErrorDev(
-        'Warning: Invalid DOM property `autofocus`. Did you mean `autoFocus`?\n    in input',
+      ReactTestUtils.renderIntoDocument(
+        jsx('input', {type: 'text', autofocus: true})
       );
+      expect(consoleErrorSpy.mock.calls[1]).toEqual([
+          'Invalid DOM property `%s`. Did you mean `%s`?',
+          'autofocus',
+          'autoFocus'
+        ]
+      );
+    });
+  })
+
+  describe('whitespace', () => {
+    it('renders innerHTML and preserves whitespace', () => {
+      const container = document.createElement('div');
+      const html = '\n  \t  <span>  \n  testContent  \t  </span>  \n  \t';
+      const elem = <div dangerouslySetInnerHTML={{__html: html}} />;
+
+      render(elem, container);
+      expect(container.firstChild.innerHTML).toBe(html);
+    });
+
+    it('render and then updates innerHTML and preserves whitespace', () => {
+      const container = document.createElement('div');
+      const html = '\n  \t  <span>  \n  testContent1  \t  </span>  \n  \t';
+      const elem = <div dangerouslySetInnerHTML={{__html: html}} />;
+      render(elem, container);
+
+      const html2 = '\n  \t  <div>  \n  testContent2  \t  </div>  \n  \t';
+      const elem2 = <div dangerouslySetInnerHTML={{__html: html2}} />;
+      render(elem2, container);
+
+      expect(container.firstChild.innerHTML).toBe(html2);
+    });
+  })
+
+  describe('Attributes with aliases', function() {
+    it('sets aliased attributes on HTML attributes', function() {
+      let el = ReactTestUtils.renderIntoDocument(<div class="test" />);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Invalid DOM property `%s`. Did you mean `%s`?',
+        'class',
+        'className'
+      );
+      expect(el.className).toBe('test');
+    });
+
+    it('sets incorrectly cased aliased attributes on HTML attributes with a warning', function() {
+      let el = ReactTestUtils.renderIntoDocument(<div cLASS="test" />);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Invalid DOM property `%s`. Did you mean `%s`?',
+        'cLASS',
+        'className'
+      );
+      expect(el.className).toBe('test');
+    });
+
+    it('sets aliased attributes on SVG elements with a warning', function() {
+      let el = ReactTestUtils.renderIntoDocument(
+        <svg>
+          <text arabic-form="initial" />
+        </svg>,
+      );
+      expect(consoleErrorSpy.mock.calls[1]).toEqual([
+          'Invalid DOM property `%s`. Did you mean `%s`?',
+          'arabic-form',
+          'arabicForm'
+        ]
+      );
+
+      const text = el.querySelector('text');
+      expect(text.hasAttribute('arabic-form')).toBe(true);
+    });
+
+    it('updates aliased attributes on custom elements', function() {
+      const container = document.createElement('div');
+      render(<div is="custom-element" class="foo" />, container);
+      render(<div is="custom-element" class="bar" />, container);
+
+      expect(container.firstChild.getAttribute('class')).toBe('bar');
+    });
+  })
+
+  describe('Custom attributes', function() {
+    it('allows assignment of custom attributes with string values', function() {
+      const el = ReactTestUtils.renderIntoDocument(<div whatever="30" />);
+
+      expect(el.getAttribute('whatever')).toBe('30');
+    });
+
+    it('removes custom attributes', function() {
+      const container = document.createElement('div');
+      render(<div whatever="30" />, container);
+
+      expect(container.firstChild.getAttribute('whatever')).toBe('30');
+
+      render(<div whatever={null} />, container);
+
+      expect(container.firstChild.hasAttribute('whatever')).toBe(false);
+    });
+
+    it('does not assign a boolean custom attributes as a string', function() {
+      let el = ReactTestUtils.renderIntoDocument(<div whatever={true} />);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Received `%s` for a non-boolean attribute `%s`.\n\n' +
+        'If you want to write it to the DOM, pass a string instead: ' +
+        '%s="%s" or %s={value.toString()}.',
+        true,
+        'whatever',
+        "whatever",
+        true,
+        "whatever"
+      );
+
+      expect(el.hasAttribute('whatever')).toBe(false);
+    });
+
+    it('does not assign an implicit boolean custom attributes', function() {
+      let el = ReactTestUtils.renderIntoDocument(<div whatever />);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Received `%s` for a non-boolean attribute `%s`.\n\n' +
+        'If you want to write it to the DOM, pass a string instead: ' +
+        '%s="%s" or %s={value.toString()}.',
+        true,
+        'whatever',
+        "whatever",
+        true,
+        "whatever"
+      );
+
+      expect(el.hasAttribute('whatever')).toBe(false);
+    });
+
+    it('assigns a numeric custom attributes as a string', function() {
+      const el = ReactTestUtils.renderIntoDocument(<div whatever={3} />);
+
+      expect(el.getAttribute('whatever')).toBe('3');
+    });
+
+    it('will not assign a function custom attributes', function() {
+      let el = ReactTestUtils.renderIntoDocument(<div whatever={() => {}} />);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Invalid value for prop %s on <%s> tag. Either remove it from the element, or pass a string or number value to keep it in the DOM. For details, see https://reactjs.org/link/attribute-behavior ",
+        "`whatever`",
+        "div"
+      );
+
+      expect(el.hasAttribute('whatever')).toBe(false);
+    });
+
+    it('will assign an object custom attributes', function() {
+      const el = ReactTestUtils.renderIntoDocument(<div whatever={{}} />);
+      expect(el.getAttribute('whatever')).toBe('[object Object]');
+    });
+
+    it('allows Temporal-like objects as HTML (they are not coerced to strings first)', function() {
+      class TemporalLike {
+        valueOf() {
+          // Throwing here is the behavior of ECMAScript "Temporal" date/time API.
+          // See https://tc39.es/proposal-temporal/docs/plaindate.html#valueOf
+          throw new TypeError('prod message');
+        }
+        toString() {
+          return '2020-01-01';
+        }
+      }
+
+      // `dangerouslySetInnerHTML` is never coerced to a string, so won't throw
+      // even with a Temporal-like object.
+      const container = document.createElement('div');
+      render(
+        <div dangerouslySetInnerHTML={{__html: new TemporalLike()}} />,
+        container,
+      );
+      expect(container.firstChild.innerHTML).toEqual('2020-01-01');
+    });
+
+    it('allows cased data attributes', function() {
+      let el = ReactTestUtils.renderIntoDocument(<div data-fooBar="true" />);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'React does not recognize the `%s` prop on a DOM element. If you ' +
+        'intentionally want it to appear in the DOM as a custom ' +
+        'attribute, spell it as lowercase `%s` instead. ' +
+        'If you accidentally passed it from a parent component, remove ' +
+        'it from the DOM element.',
+        'data-fooBar',
+        'data-foobar'
+      );
+      expect(el.getAttribute('data-foobar')).toBe('true');
+    });
+
+    it('allows cased custom attributes', function() {
+      let el = ReactTestUtils.renderIntoDocument(<div fooBar="true" />);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'React does not recognize the `%s` prop on a DOM element. If you ' +
+        'intentionally want it to appear in the DOM as a custom ' +
+        'attribute, spell it as lowercase `%s` instead. ' +
+        'If you accidentally passed it from a parent component, remove ' +
+        'it from the DOM element.',
+        'fooBar',
+        'foobar'
+      );
+      expect(el.getAttribute('foobar')).toBe('true');
+    });
+
+    it('warns on NaN attributes', function() {
+      let el = ReactTestUtils.renderIntoDocument(<div whatever={NaN} />);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Received NaN for the `%s` attribute. If this is ' +
+        'expected, cast the value to a string.',
+        'whatever'
+      );
+
+      expect(el.getAttribute('whatever')).toBe('NaN');
+    });
+
+    it('removes a property when it becomes invalid', function() {
+      const container = document.createElement('div');
+      render(<div whatever={0} />, container);
+      render(<div whatever={() => {}} />, container);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Invalid value for prop %s on <%s> tag. Either remove it from the element, or pass a string or number value to keep it in the DOM. For details, see https://reactjs.org/link/attribute-behavior ',
+        '`whatever`',
+        'div'
+      );
+      const el = container.firstChild;
+      expect(el.hasAttribute('whatever')).toBe(false);
+    });
+
+    it('warns on bad casing of known HTML attributes', function() {
+      let el = ReactTestUtils.renderIntoDocument(<div SiZe="30" />);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        "Invalid DOM property `%s`. Did you mean `%s`?", "SiZe", "size"
+      );
+
+      expect(el.getAttribute('size')).toBe('30');
     });
   })
 })
