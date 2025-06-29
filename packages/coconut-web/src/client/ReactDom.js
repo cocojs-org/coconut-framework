@@ -1,8 +1,19 @@
 import { listenToAllSupportedEvents } from '../events/DOMPluginEventSystem';
+import {
+  ELEMENT_NODE,
+} from '../shared/HTMLNodeType';
 
 export * from './ReactDomComponent.js'
 export * from './ReactDomHostConfig.js'
-import {unbatchedUpdates, updateContainer, createContainer, getPublicRootInstance, registerApplication, unregisterApplication} from 'coconut-reconciler';
+import {
+  unbatchedUpdates,
+  updateContainer,
+  createContainer,
+  getPublicRootInstance,
+  findHostInstance,
+  registerApplication,
+  unregisterApplication
+} from 'coconut-reconciler';
 
 function legacyCreateRootFromDOMContainer(container, children) {
   const root = createContainer(container)
@@ -50,6 +61,16 @@ export function unmountComponentAtNode(container) {
   }
 
   return false;
+}
+
+export function findDOMNode(componentOrElement) {
+  if (componentOrElement == null) {
+    return null;
+  }
+  if (componentOrElement.nodeType === ELEMENT_NODE) {
+    return componentOrElement;
+  }
+  return findHostInstance(componentOrElement);
 }
 
 export { registerApplication, unregisterApplication }

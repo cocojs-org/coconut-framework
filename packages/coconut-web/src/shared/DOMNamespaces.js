@@ -20,3 +20,19 @@ export function getIntrinsicNamespace(type) {
       return HTML_NAMESPACE;
   }
 }
+
+export function getChildNamespace(
+  parentNamespace,
+  type,
+) {
+  if (parentNamespace == null || parentNamespace === HTML_NAMESPACE) {
+    // No (or default) parent namespace: potential entry point.
+    return getIntrinsicNamespace(type);
+  }
+  if (parentNamespace === SVG_NAMESPACE && type === 'foreignObject') {
+    // We're leaving SVG.
+    return HTML_NAMESPACE;
+  }
+  // By default, pass namespace below.
+  return parentNamespace;
+}

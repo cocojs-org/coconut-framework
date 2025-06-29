@@ -10,7 +10,7 @@
  */
 'use strict';
 
-import { render, unmountComponentAtNode, registerApplication, unregisterApplication, cleanCache } from '../index';
+import { render, unmountComponentAtNode, findDOMNode, registerApplication, unregisterApplication, cleanCache } from '../index';
 import * as ReactTestUtils from './test-units/ReactTestUnits';
 
 let Application
@@ -1282,6 +1282,61 @@ describe('ReactDOMComponent', () => {
         'The `style` prop expects a mapping from style properties to values, ' +
         "not a string. For example, style={{marginRight: spacing + 'em'}} " +
         'when using JSX.',
+      );
+    });
+  })
+
+  describe('unmountComponent', () => {
+    it('unmounts children before unsetting DOM node info', () => {
+      @view()
+      class Inner {
+        render() {
+          return <span />;
+        }
+
+        viewWillUnmount() {
+          // Should not throw
+          expect(findDOMNode(this).nodeName).toBe('SPAN');
+        }
+      }
+
+      application.start();
+      const container = document.createElement('div');
+      render(
+        <div>
+          <Inner />
+        </div>,
+        container,
+      );
+      unmountComponentAtNode(container);
+    })
+  })
+
+  describe('tag sanitization', () => {
+    it('should throw when an invalid tag name is used', () => {
+      const hackzor = jsx('script tag');
+      expect(() => ReactTestUtils.renderIntoDocument(hackzor)).toThrow();
+    });
+
+    it('should throw when an attack vector is used', () => {
+      const hackzor = jsx('div><img /><div');
+      expect(() => ReactTestUtils.renderIntoDocument(hackzor)).toThrow();
+    });
+  })
+
+  describe('nesting validation', () => {
+    it('warns on invalid nesting', () => {
+      ReactTestUtils.renderIntoDocument(
+        <div>
+          <tr />
+          <tr />
+        </div>,
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'validateDOMNesting(...): %s cannot appear as a child of <%s>.%s%s',
+        '<tr>',
+        'div',
+        '', ''
       );
     });
   })

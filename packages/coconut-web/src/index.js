@@ -2,6 +2,7 @@
 export {
   render,
   unmountComponentAtNode,
+  findDOMNode,
   registerApplication,
   unregisterApplication,
 } from './client/ReactDom'

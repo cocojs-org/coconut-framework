@@ -7,7 +7,9 @@ import {
 } from './ReactDomComponent';
 import {updateFiberProps} from './ReactDomComponentTree';
 import setTextContent from './setTextContent';
-import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
+import { getChildNamespace, getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
+import { validateDOMNesting, updatedAncestorInfo } from './validateDOMNesting';
+import { COMMENT_NODE, DOCUMENT_NODE } from '../shared/HTMLNodeType';
 
 export function shouldSetTextContent(type, props) {
   return (
@@ -59,7 +61,15 @@ export function commitUpdate(
   updateFiberProps(domElement, newProps);
 }
 
-export function createInstance(type, props) {
+export function createInstance(
+  type,
+  props,
+  hostContext
+) {
+  if (__DEV__) {
+    const hostContextDev = hostContext;
+    validateDOMNesting(type, null, hostContextDev.ancestorInfo);
+  }
   const domElement = createElement(
     type,
     props,
@@ -117,4 +127,51 @@ export function commitMount(
 
 export function resetTextContent(domElement) {
   setTextContent(domElement, '');
+}
+
+export function getRootHostContext(rootContainerInstance) {
+  let type;
+  let namespace;
+  const nodeType = rootContainerInstance.nodeType;
+  switch (nodeType) {
+    case DOCUMENT_NODE: {
+      type = '#document';
+      const root = rootContainerInstance.documentElement;
+      namespace = root ? root.namespaceURI : getChildNamespace(null, '');
+      break;
+    }
+    default: {
+      const container =
+        nodeType === COMMENT_NODE
+          ? rootContainerInstance.parentNode
+          : rootContainerInstance;
+      const ownNamespace = container.namespaceURI || null;
+      type = container.tagName;
+      namespace = getChildNamespace(ownNamespace, type);
+      break;
+    }
+  }
+  if (__DEV__) {
+    const validatedTag = type.toLowerCase();
+    const ancestorInfo = updatedAncestorInfo(null, validatedTag);
+    return {namespace, ancestorInfo};
+  }
+  return namespace;
+}
+
+export function getChildHostContext(
+  parentHostContext,
+  type
+) {
+  if (__DEV__) {
+    const parentHostContextDev = parentHostContext;
+    const namespace = getChildNamespace(parentHostContextDev.namespace, type);
+    const ancestorInfo = updatedAncestorInfo(
+      parentHostContextDev.ancestorInfo,
+      type,
+    );
+    return {namespace, ancestorInfo};
+  }
+  const parentNamespace = parentHostContext;
+  return getChildNamespace(parentHostContext, type);
 }

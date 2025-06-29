@@ -4,6 +4,7 @@ import {constructClassInstance, mountClassInstance, updateClassInstance} from ".
 import {cloneUpdateQueue, processUpdateQueue} from "./ReactFiberClassUpdateQueue";
 import {shouldSetTextContent} from "ReactFiberHostConfig";
 import { ContentReset, Ref } from './ReactFiberFlags';
+import { pushHostContainer, pushHostContext } from './ReactFiberHostContext';
 
 export function reconcileChildren(
   current,
@@ -45,7 +46,14 @@ function finishClassComponent(
   return workInProgress.child;
 }
 
+function pushHostRootContainer(workInProgress) {
+  const root = workInProgress.stateNode;
+  pushHostContainer(workInProgress, root.containerInfo);
+}
+
 function updateHostRoot(current, workInProgress) {
+  pushHostRootContainer(workInProgress);
+
   const nextProps = workInProgress.pendingProps;
   cloneUpdateQueue(current, workInProgress);
   processUpdateQueue(workInProgress, nextProps, null);
@@ -87,6 +95,8 @@ function updateHostComponent(
   current,
   workInProgress
 ) {
+  pushHostContext(workInProgress);
+
   const type = workInProgress.type;
   const nextProps = workInProgress.pendingProps;
   const prevProps = current !== null ? current.memoizedProps : null;

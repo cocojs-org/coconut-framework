@@ -1,6 +1,7 @@
 import {ClassComponent, HostComponent, HostRoot, HostText} from "./ReactWorkTags";
 import {createInstance, finalizeInitialChildren, createTextInstance, prepareUpdate} from "ReactFiberHostConfig";
 import {NoFlags, Update} from "./ReactFiberFlags";
+import { getHostContext, popHostContainer, popHostContext } from './ReactFiberHostContext';
 
 function markUpdate(workInProgress) {
   workInProgress.flags |= Update;
@@ -83,6 +84,7 @@ function completeWork(
   const newProps = workInProgress.pendingProps;
   switch (workInProgress.tag) {
     case HostRoot: {
+      popHostContainer(workInProgress);
       bubbleProperties(workInProgress)
       return null;
     }
@@ -91,6 +93,7 @@ function completeWork(
       return null
     }
     case HostComponent: {
+      popHostContext(workInProgress);
       const type = workInProgress.type;
       if (current !== null && workInProgress.stateNode !== null) {
         updateHostComponent(
@@ -100,9 +103,11 @@ function completeWork(
           newProps,
         )
       } else {
+        const currentHostContext = getHostContext();
         const instance = createInstance(
           type,
-          newProps
+          newProps,
+          currentHostContext,
         )
 
         appendAllChildren(instance, workInProgress)

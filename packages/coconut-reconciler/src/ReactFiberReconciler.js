@@ -2,6 +2,7 @@ import {scheduleUpdateOnFiber} from "./ReactFiberWorkLoop";
 import {createFiberRoot} from "./ReactFiberRoot";
 import {createUpdate, enqueueUpdate} from "./ReactFiberClassUpdateQueue";
 import { HostComponent } from './ReactWorkTags';
+import { findCurrentHostFiber } from './ReactFiberTreeReflection';
 
 
 export function createContainer(
@@ -23,6 +24,25 @@ export function updateContainer(
   if (root !== null) {
     scheduleUpdateOnFiber(root, current);
   }
+}
+
+export function findHostInstance(component) {
+  const fiber = component._reactInternals; // const fiber = getInstance(inst)
+  if (fiber === undefined) {
+    if (typeof component.render === 'function') {
+      throw new Error('Unable to find node on an unmounted component.');
+    } else {
+      const keys = Object.keys(component).join(',');
+      throw new Error(
+        `Argument appears to not be a ReactComponent. Keys: ${keys}`,
+      );
+    }
+  }
+  const hostFiber = findCurrentHostFiber(fiber);
+  if (hostFiber === null) {
+    return null;
+  }
+  return hostFiber.stateNode;
 }
 
 export function getPublicRootInstance(
