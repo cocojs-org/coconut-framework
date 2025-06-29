@@ -126,7 +126,8 @@ function completeWork(
         const oldText = current.memoizedProps;
         updateHostText(current, workInProgress, oldText, newText);
       } else {
-        workInProgress.stateNode = createTextInstance(newText);
+        const currentHostContext = getHostContext();
+        workInProgress.stateNode = createTextInstance(newText, currentHostContext);
       }
       bubbleProperties(workInProgress)
       return null;

@@ -36,8 +36,13 @@ export function prepareUpdate(
 }
 
 export function createTextInstance(
-  text
+  text,
+  hostContext
 ) {
+  if (__DEV__) {
+    const hostContextDev = hostContext;
+    validateDOMNesting(null, text, hostContextDev.ancestorInfo);
+  }
   const textNode = createTextNode(text);
   return textNode;
 }
@@ -69,6 +74,17 @@ export function createInstance(
   if (__DEV__) {
     const hostContextDev = hostContext;
     validateDOMNesting(type, null, hostContextDev.ancestorInfo);
+    if (
+      typeof props.children === 'string' ||
+      typeof props.children === 'number'
+    ) {
+      const string = '' + props.children;
+      const ownAncestorInfo = updatedAncestorInfo(
+        hostContextDev.ancestorInfo,
+        type
+      );
+      validateDOMNesting(null, string, ownAncestorInfo);
+    }
   }
   const domElement = createElement(
     type,

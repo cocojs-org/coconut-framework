@@ -28,18 +28,6 @@ function getFromMap(Cls: Class<any>) {
     Object.getPrototypeOf(Cls) === Metadata
       ? metadataForMetadata.get(Cls)
       : metadataForBizClass.get(Cls);
-  if (!value) {
-    if (__DEV__) {
-      console.error(
-        `未注册的组件：`,
-        Cls,
-        Object.getPrototypeOf(Cls),
-        Metadata,
-        metadataForMetadata,
-        metadataForBizClass
-      );
-    }
-  }
   return value;
 }
 
@@ -124,6 +112,9 @@ function addFieldOrMethodMetadata(
 function listClassMetadata(Cls: Class<any>, findMetadataCls?: Class<any>) {
   const value = getFromMap(Cls);
   if (!value) {
+    if (__DEV__) {
+      console.error(`未注册的组件：`, Cls);
+    }
     return [];
   }
 
@@ -145,6 +136,9 @@ function listFieldMetadata(
 ) {
   const value = getFromMap(Cls);
   if (!value) {
+    if (__DEV__) {
+      console.error(`未注册的组件：`, Cls);
+    }
     return [];
   }
   return value.fieldMetadata.get(field).filter((i) => {
