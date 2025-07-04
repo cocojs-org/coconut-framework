@@ -108,6 +108,7 @@ function completeWork(
           type,
           newProps,
           currentHostContext,
+          workInProgress,
         )
 
         appendAllChildren(instance, workInProgress)

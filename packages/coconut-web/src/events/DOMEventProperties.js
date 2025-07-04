@@ -7,6 +7,7 @@ const simpleEventPluginEvents = [
   'submit',
   'error',
   'load',
+  'mouseOut',
 ]
 
 function registerSimpleEvent(domEventName, reactName) {

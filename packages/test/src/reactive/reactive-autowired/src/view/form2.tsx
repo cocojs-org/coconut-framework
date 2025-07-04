@@ -53,7 +53,7 @@ class Form2 {
         <button onClick={this.handleChangeShow}>update show</button>
         <button onClick={this.handleClick}>update name</button>
         <button onClick={this.onAddScore}>click to add score</button>
-        <input>{this.myLabel()}</input>
+        <span role="span">{this.myLabel()}</span>
       </div>
     );
   }

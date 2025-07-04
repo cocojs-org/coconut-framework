@@ -2,9 +2,10 @@ import { getFiberCurrentPropsFromNode } from '../client/ReactDomComponentTree';
 
 
 export default function getListener(
-  stateNode,
+  inst,
   registrationName
 ) {
+  const stateNode = inst.stateNode;
   if (stateNode === null) {
     return null;
   }

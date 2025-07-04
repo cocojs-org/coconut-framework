@@ -22,6 +22,8 @@ module.exports = {
     shared$: '<rootDir>/packages/shared/src/index.ts',
     ReactFiberHostConfig$:
       '<rootDir>/packages/coconut-web/src/client/ReactDomHostConfig.js',
+    'reconciler-ReactWorkTags$':
+      '<rootDir>/packages/coconut-reconciler/src/ReactWorkTags.js',
   },
   globals: {
     __DEV__: true,

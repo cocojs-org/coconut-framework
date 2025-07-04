@@ -5,7 +5,7 @@ import {
   updateProperties,
   createElement,
 } from './ReactDomComponent';
-import {updateFiberProps} from './ReactDomComponentTree';
+import { precacheFiberNode, updateFiberProps } from './ReactDomComponentTree';
 import setTextContent from './setTextContent';
 import { getChildNamespace, getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
 import { validateDOMNesting, updatedAncestorInfo } from './validateDOMNesting';
@@ -69,7 +69,8 @@ export function commitUpdate(
 export function createInstance(
   type,
   props,
-  hostContext
+  hostContext,
+  internalInstanceHandle,
 ) {
   if (__DEV__) {
     const hostContextDev = hostContext;
@@ -91,6 +92,7 @@ export function createInstance(
     props,
     HTML_NAMESPACE, // 先写死，后续扩展
   );
+  precacheFiberNode(internalInstanceHandle, domElement);
   updateFiberProps(domElement, props);
   return domElement;
 }

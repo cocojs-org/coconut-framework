@@ -37,7 +37,7 @@ class Form1 {
       <div>
         <button onClick={this.handleChangeUse}>update userUserInfo</button>
         <button onClick={this.handleClick}>update name</button>
-        <input>{this.text()}</input>;
+        <span role={'span'}>{this.text()}</span>;
       </div>
     );
   }

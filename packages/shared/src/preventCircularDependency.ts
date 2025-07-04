@@ -11,6 +11,7 @@ export const NAME = {
   exec: 'exec',
   Component: 'Component',
   throwException: 'throwException',
+  dispatchEventForPluginEventSystem: 'dispatchEventForPluginEventSystem',
 };
 
 export function register(name: string, fn: any) {

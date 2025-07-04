@@ -5,6 +5,7 @@ const packages = path.join(__dirname, '../../packages');
 const mvc = path.join(packages, './coco-mvc/src/index.ts')
 const render = path.join(packages, './coco-render/src/index.ts')
 const reconciler = path.join(packages, './coconut-reconciler/src/index.js')
+const reconcilerReactWorkTags = path.join(packages, './coconut-reconciler/src/ReactWorkTags.js')
 const web = path.join(packages, './coconut-web/src/index.js')
 const iocContainer = path.join(packages, './coco-ioc-container/src/index.ts')
 const iocContainerTestHelper = path.join(packages, './coco-ioc-container/src/__tests__/index.ts')
@@ -18,6 +19,7 @@ const PACKAGE = {
   MVC: 'coco-mvc',
   MVC_RENDER: 'coco-render',
   RECONCILER: 'coconut-reconciler',
+  RECONCILER_REACT_WORK_TAGS: 'reconciler-ReactWorkTags',
   WEB: 'coconut-web',
   IOC_CONTAINER: 'coco-ioc-container',
   IOC_CONTAINER_TEST_HELPER: 'coco-ioc-container-test-helper',
@@ -31,6 +33,7 @@ const pathMap = {
   [PACKAGE.MVC]: mvc,
   [PACKAGE.MVC_RENDER]: render,
   [PACKAGE.RECONCILER]: reconciler,
+  [PACKAGE.RECONCILER_REACT_WORK_TAGS]: reconcilerReactWorkTags,
   [PACKAGE.WEB]: web,
   [PACKAGE.IOC_CONTAINER]: iocContainer,
   [PACKAGE.IOC_CONTAINER_TEST_HELPER]: iocContainerTestHelper,

@@ -84,7 +84,7 @@ describe('store', () => {
       Router,
       applicationJson
     );
-    const input = getByRole(container, 'textbox');
+    const input = getByRole(container, 'button');
     expect(getByText(input, 'input:张三')).toBeTruthy();
     const heading = getByRole(container, 'heading');
     expect(getByText(heading, '展示:张三')).toBeTruthy();
@@ -104,7 +104,7 @@ describe('store', () => {
       applicationJson
     );
     const buttons = getAllByRole(container, 'button');
-    const input = getByRole(container, 'textbox');
+    const input = getByRole(container, 'span');
     expect(getByText(input, 'input:张三')).toBeTruthy();
     const heading = getByRole(container, 'heading');
     expect(getByText(heading, '展示:张三')).toBeTruthy();
@@ -138,7 +138,7 @@ describe('store', () => {
       applicationJson
     );
     const buttons = getAllByRole(container, 'button');
-    const input = getByRole(container, 'textbox');
+    const input = getByRole(container, 'span');
     expect(getByText(input, '张三:1分')).toBeTruthy();
     const heading = getByRole(container, 'heading');
     expect(getByText(heading, '展示:张三')).toBeTruthy();

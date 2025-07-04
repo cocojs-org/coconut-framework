@@ -16,7 +16,9 @@ class Form {
   }
 
   render() {
-    return <input onClick={this.handleClick}>input:{this.userInfo.name}</input>;
+    return (
+      <button onClick={this.handleClick}>input:{this.userInfo.name}</button>
+    );
   }
 }
 

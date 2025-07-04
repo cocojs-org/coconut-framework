@@ -14,9 +14,11 @@ import {
   registerApplication,
   unregisterApplication
 } from 'coconut-reconciler';
+import { markContainerAsRoot, unmarkContainerAsRoot } from './ReactDomComponentTree';
 
 function legacyCreateRootFromDOMContainer(container, children) {
   const root = createContainer(container)
+  markContainerAsRoot(root.current, container);
   container._reactRootContainer = root;
 
   listenToAllSupportedEvents(container);
@@ -55,6 +57,7 @@ export function unmountComponentAtNode(container) {
     unbatchedUpdates(() => {
       legacyRenderSubtreeIntoContainer(null, null, container, () => {
         container._reactRootContainer = null;
+        unmarkContainerAsRoot(container);
       });
     })
     return true;
