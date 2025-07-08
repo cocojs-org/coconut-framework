@@ -58,6 +58,13 @@ export { default as webApplication } from './decorator/web-application.ts';
 import { _test_helper as _test_helper_mvc } from './__tests__';
 import { _test_helper as _test_helper_iocContainer } from 'coco-ioc-container';
 import { _test_helper as _test_helper_render } from 'coco-render';
+export {
+  render,
+  findDOMNode,
+  registerApplication,
+  unregisterApplication,
+  cleanCache,
+} from 'coconut-web';
 
 /**
  * @public

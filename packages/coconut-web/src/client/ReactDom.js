@@ -6,7 +6,8 @@ import {
 export * from './ReactDomComponent.js'
 export * from './ReactDomHostConfig.js'
 import {
-  unbatchedUpdates,
+  batchedUpdates,
+  flushSync,
   updateContainer,
   createContainer,
   getPublicRootInstance,
@@ -15,6 +16,11 @@ import {
   unregisterApplication
 } from 'coconut-reconciler';
 import { markContainerAsRoot, unmarkContainerAsRoot } from './ReactDomComponentTree';
+import {setBatchingImplementation} from '../events/ReactDOMUpdateBatching';
+
+setBatchingImplementation(
+  batchedUpdates,
+);
 
 function legacyCreateRootFromDOMContainer(container, children) {
   const root = createContainer(container)
@@ -23,7 +29,7 @@ function legacyCreateRootFromDOMContainer(container, children) {
 
   listenToAllSupportedEvents(container);
   // Initial mount should not be batched.
-  unbatchedUpdates(() => {
+  flushSync(() => {
     updateContainer(children, root, null, null);
   })
   return root;
@@ -41,7 +47,7 @@ function legacyRenderSubtreeIntoContainer(
     root = legacyCreateRootFromDOMContainer(container, children);
   } else {
     root = maybeRoot;
-    unbatchedUpdates(() => {
+    flushSync(() => {
       updateContainer(children, root, parentComponent, callback);
     })
   }
@@ -54,7 +60,7 @@ export function render(element, container) {
 
 export function unmountComponentAtNode(container) {
   if (container._reactRootContainer) {
-    unbatchedUpdates(() => {
+    flushSync(() => {
       legacyRenderSubtreeIntoContainer(null, null, container, () => {
         container._reactRootContainer = null;
         unmarkContainerAsRoot(container);
