@@ -1,8 +1,8 @@
-import { render } from '../../client/ReactDom';
+import cocoMvc from 'coco-mvc';
 
 function renderIntoDocument(element) {
   const div = document.createElement('div');
-  return render(element, div);
+  return cocoMvc.render(element, div);
 }
 
 export {

@@ -8,23 +8,24 @@
  *
  * packages/react-dom/src/__tests__/ReactDOM-test.js
  */
-import { render, registerApplication, unregisterApplication } from '../index';
 import { getByRole, getByText, getRoles, waitFor } from '@testing-library/dom';
 import * as ReactTestUtils from './test-units/ReactTestUnits';
 
+let cocoMvc;
 let Application
 let application
 let view
 describe('ReactDOM', () => {
   beforeEach(async () => {
+    cocoMvc = (await import('coco-mvc'));
     Application = (await import('coco-mvc')).Application;
     view = (await import('coco-mvc')).view
     application = new Application();
-    registerApplication(application);
+    cocoMvc.registerApplication(application);
   })
 
   afterEach(() => {
-    unregisterApplication();
+    cocoMvc.unregisterApplication();
     jest.resetModules();
   })
 
@@ -60,7 +61,7 @@ describe('ReactDOM', () => {
     application.start();
     document.body.appendChild(container);
     try {
-      render(<Parent />, container);
+      cocoMvc.render(<Parent />, container);
       // todo jsdom没有实现requestSubmit，这里先不然form执行默认操作
       // 否则报Error: Not implemented: HTMLFormElement.prototype.requestSubmit
       const form = getByRole(container, 'form');
@@ -169,7 +170,7 @@ describe('ReactDOM', () => {
     const container = document.createElement('div');
     document.body.appendChild(container);
     try {
-      render(<A showTwo={false} />, container);
+      cocoMvc.render(<A showTwo={false} />, container);
       input.focus();
 
       // When the second input is added, let's simulate losing focus, which is
@@ -190,7 +191,7 @@ describe('ReactDOM', () => {
       });
 
       expect(document.activeElement.id).toBe('one');
-      render(<A showTwo={true} />, container);
+      cocoMvc.render(<A showTwo={true} />, container);
       // input2 gets added, which causes input to get blurred. Then
       // componentDidUpdate focuses input2 and that should make it down to here,
       // not get overwritten by focus restoration.
@@ -218,7 +219,7 @@ describe('ReactDOM', () => {
 
       const container = document.createElement('div');
       document.body.appendChild(container);
-      render(
+      cocoMvc.render(
         <div>
           <h1>Auto-focus Test</h1>
           <input autoFocus={true} />
@@ -268,7 +269,7 @@ describe('ReactDOM', () => {
     const container = document.createElement('div');
     document.body.appendChild(container);
     try {
-      render(<Wrapper />, container);
+      cocoMvc.render(<Wrapper />, container);
 
       const expected = [
         '1st node clicked',
