@@ -8,38 +8,37 @@
  *
  * packages/react-dom/src/__tests__/ReactDOMAttribute-test.js
  */
-import { render, registerApplication, unregisterApplication } from '../index';
-import * as ReactTestUtils from './test-units/ReactTestUnits';
-
+let cocoMvc;
 let Application
 let application
 let view
 describe('ReactDOM unknown attribute', () => {
   beforeEach(async () => {
+    cocoMvc = (await import('coco-mvc'));
     Application = (await import('coco-mvc')).Application;
     view = (await import('coco-mvc')).view
     application = new Application();
-    registerApplication(application);
+    cocoMvc.registerApplication(application);
   })
 
   afterEach(() => {
-    unregisterApplication();
+    cocoMvc.unregisterApplication();
     jest.resetModules();
   })
 
   function testUnknownAttributeRemoval(givenValue) {
     const el = document.createElement('div');
-    render(<div unknown="something" />, el);
+    cocoMvc.render(<div unknown="something" />, el);
     expect(el.firstChild.getAttribute('unknown')).toBe('something');
-    render(<div unknown={givenValue} />, el);
+    cocoMvc.render(<div unknown={givenValue} />, el);
     expect(el.firstChild.hasAttribute('unknown')).toBe(false);
   }
 
   function testUnknownAttributeAssignment(givenValue, expectedDOMValue) {
     const el = document.createElement('div');
-    render(<div unknown="something" />, el);
+    cocoMvc.render(<div unknown="something" />, el);
     expect(el.firstChild.getAttribute('unknown')).toBe('something');
-    render(<div unknown={givenValue} />, el);
+    cocoMvc.render(<div unknown={givenValue} />, el);
     expect(el.firstChild.getAttribute('unknown')).toBe(expectedDOMValue);
   }
 
@@ -56,9 +55,9 @@ describe('ReactDOM unknown attribute', () => {
 
     it('removes unknown attributes that were rendered but are now missing', () => {
       const el = document.createElement('div');
-      render(<div unknown="something" />, el);
+      cocoMvc.render(<div unknown="something" />, el);
       expect(el.firstChild.getAttribute('unknown')).toBe('something');
-      render(<div />, el);
+      cocoMvc.render(<div />, el);
       expect(el.firstChild.hasAttribute('unknown')).toBe(false);
     });
 
@@ -120,7 +119,7 @@ describe('ReactDOM unknown attribute', () => {
     it('allows camelCase unknown attributes and warns', () => {
       const el = document.createElement('div');
 
-      render(<div helloWorld="something" />, el)
+      cocoMvc.render(<div helloWorld="something" />, el)
 
       expect(el.firstChild.getAttribute('helloworld')).toBe('something');
     });
