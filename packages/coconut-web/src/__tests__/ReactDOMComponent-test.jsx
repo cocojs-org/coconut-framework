@@ -10,9 +10,9 @@
  */
 'use strict';
 
-import { render, unmountComponentAtNode, findDOMNode, registerApplication, unregisterApplication, cleanCache } from '../index';
 import * as ReactTestUtils from './test-units/ReactTestUnits';
 
+let cocoMvc
 let Application
 let application
 let jsx
@@ -21,11 +21,12 @@ let consoleErrorSpy
 let consoleLogSpy
 describe('ReactDOMComponent', () => {
   beforeEach(async () => {
+    cocoMvc = (await import('coco-mvc'));
     Application = (await import('coco-mvc')).Application;
     view = (await import('coco-mvc')).view
     jsx = (await import('coco-mvc/jsx-runtime')).jsx;
     application = new Application();
-    registerApplication(application);
+    cocoMvc.registerApplication(application);
     consoleErrorSpy = jest.spyOn(console, 'error');
     consoleErrorSpy.mockImplementation(() => {})
     consoleLogSpy = jest.spyOn(console, 'log');
@@ -33,8 +34,8 @@ describe('ReactDOMComponent', () => {
   })
 
   afterEach(() => {
-    cleanCache();
-    unregisterApplication();
+    cocoMvc.cleanCache();
+    cocoMvc.unregisterApplication();
     jest.resetModules();
     consoleErrorSpy.mockRestore();
     consoleLogSpy.mockRestore();
@@ -43,19 +44,19 @@ describe('ReactDOMComponent', () => {
   describe('updateDOM', () => {
     it('should handle className', () => {
       const container = document.createElement('div');
-      render(<div style={{}} />, container);
+      cocoMvc.render(<div style={{}} />, container);
 
-      render(<div className={'foo'} />, container);
+      cocoMvc.render(<div className={'foo'} />, container);
       expect(container.firstChild.className).toEqual('foo');
-      render(<div className={'bar'} />, container);
+      cocoMvc.render(<div className={'bar'} />, container);
       expect(container.firstChild.className).toEqual('bar');
-      render(<div className={null} />, container);
+      cocoMvc.render(<div className={null} />, container);
       expect(container.firstChild.className).toEqual('');
     });
 
     it('should gracefully handle various style value types', () => {
       const container = document.createElement('div');
-      render(<div style={{}} />, container);
+      cocoMvc.render(<div style={{}} />, container);
       const stubStyle = container.firstChild.style;
 
       // set initial style
@@ -65,7 +66,7 @@ describe('ReactDOMComponent', () => {
         top: 2,
         fontFamily: 'Arial',
       };
-      render(<div style={setup} />, container);
+      cocoMvc.render(<div style={setup} />, container);
       expect(stubStyle.display).toEqual('block');
       expect(stubStyle.left).toEqual('1px');
       expect(stubStyle.top).toEqual('2px');
@@ -73,7 +74,7 @@ describe('ReactDOMComponent', () => {
 
       // reset the style to their default state
       const reset = {display: '', left: null, top: false, fontFamily: true};
-      render(<div style={reset} />, container);
+      cocoMvc.render(<div style={reset} />, container);
       expect(stubStyle.display).toEqual('');
       expect(stubStyle.left).toEqual('');
       expect(stubStyle.top).toEqual('');
@@ -109,7 +110,7 @@ describe('ReactDOMComponent', () => {
         },
       };
       const container = document.createElement('div');
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
 
       const stubStyle = container.firstChild.style;
       stubStyle.display = styles.display;
@@ -117,26 +118,26 @@ describe('ReactDOMComponent', () => {
 
       styles.display = 'block';
 
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
       expect(stubStyle.display).toEqual('none');
       expect(stubStyle.fontFamily).toEqual('Arial');
       expect(stubStyle.lineHeight).toEqual('1.2');
 
       styles.fontFamily = 'Helvetica';
 
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
       expect(stubStyle.display).toEqual('none');
       expect(stubStyle.fontFamily).toEqual('Arial');
       expect(stubStyle.lineHeight).toEqual('1.2');
 
       styles.lineHeight = 0.5;
 
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
       expect(stubStyle.display).toEqual('none');
       expect(stubStyle.fontFamily).toEqual('Arial');
       expect(stubStyle.lineHeight).toEqual('1.2');
 
-      render(<div style={undefined} />, container);
+      cocoMvc.render(<div style={undefined} />, container);
       expect(stubStyle.display).toBe('');
       expect(stubStyle.fontFamily).toBe('');
       expect(stubStyle.lineHeight).toBe('');
@@ -155,7 +156,7 @@ describe('ReactDOMComponent', () => {
       }
 
       application.start();
-      ReactTestUtils.renderIntoDocument(<App />);
+      ReactTestUtils.renderIntoDocument(<App />, cocoMvc);
       if (__DEV__) {
         expect(() => (style.position = 'absolute')).toThrow()
       }
@@ -163,7 +164,7 @@ describe('ReactDOMComponent', () => {
 
     it('should warn for unknown prop', () => {
       const container = document.createElement('div');
-      render(<div foo={() => {}} />, container)
+      cocoMvc.render(<div foo={() => {}} />, container)
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         `Invalid value for prop %s on <%s> tag. Either remove it from the element, or pass a string or number value to keep it in the DOM. For details, see https://reactjs.org/link/attribute-behavior `,
         '`foo`',
@@ -173,7 +174,7 @@ describe('ReactDOMComponent', () => {
 
     it('should group multiple unknown prop warnings together', () => {
       const container = document.createElement('div');
-      render(<div foo={() => {}} baz={() => {}} />, container);
+      cocoMvc.render(<div foo={() => {}} baz={() => {}} />, container);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Invalid values for props %s on <%s> tag. Either remove them from the element, or pass a string or number value to keep them in the DOM. For details, see https://reactjs.org/link/attribute-behavior ',
         '`foo`, `baz`',
@@ -183,7 +184,7 @@ describe('ReactDOMComponent', () => {
 
     it('should warn for onDblClick prop', () => {
       const container = document.createElement('div');
-      render(<div onDblClick={() => {}} />, container);
+      cocoMvc.render(<div onDblClick={() => {}} />, container);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Invalid event handler property `%s`. Did you mean `%s`?',
         'onDblClick',
@@ -193,7 +194,7 @@ describe('ReactDOMComponent', () => {
 
     it('should warn for unknown string event handlers', () => {
       const container = document.createElement('div');
-      render(<div onUnknown='alert("hack")' />, container);
+      cocoMvc.render(<div onUnknown='alert("hack")' />, container);
       expect(consoleErrorSpy.mock.calls[0]).toEqual([
         'Unknown event handler property `%s`. It will be ignored.',
         'onUnknown'
@@ -201,11 +202,11 @@ describe('ReactDOMComponent', () => {
       );
       expect(container.firstChild.hasAttribute('onUnknown')).toBe(false);
       expect(container.firstChild.onUnknown).toBe(undefined);
-      render(<div onunknown={function() {}} />, container);
+      cocoMvc.render(<div onunknown={function() {}} />, container);
       expect(consoleErrorSpy.mock.calls[1]).toEqual(['Unknown event handler property `%s`. It will be ignored.', 'onunknown']);
       expect(container.firstChild.hasAttribute('onunknown')).toBe(false);
       expect(container.firstChild.onunknown).toBe(undefined);
-      render(<div on-unknown={function() {}} />, container);
+      cocoMvc.render(<div on-unknown={function() {}} />, container);
       expect(consoleErrorSpy.mock.calls[2]).toEqual(['Unknown event handler property `%s`. It will be ignored.','on-unknown']);
       expect(container.firstChild.hasAttribute('on-unknown')).toBe(false);
       expect(container.firstChild['on-unknown']).toBe(undefined);
@@ -213,7 +214,7 @@ describe('ReactDOMComponent', () => {
 
     it('should warn for badly cased React attributes', () => {
       const container = document.createElement('div');
-      render(<div CHILDREN="5" />, container)
+      cocoMvc.render(<div CHILDREN="5" />, container)
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Invalid DOM property `%s`. Did you mean `%s`?',
         'CHILDREN',
@@ -230,18 +231,18 @@ describe('ReactDOMComponent', () => {
         }
       }
       application.start()
-      ReactTestUtils.renderIntoDocument(<Component />);
+      ReactTestUtils.renderIntoDocument(<Component />, cocoMvc);
     });
 
     it('should warn nicely about NaN in style', () => {
       const style = {fontSize: NaN};
       const div = document.createElement('div');
-      render(<span style={style} />, div);
+      cocoMvc.render(<span style={style} />, div);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         '`NaN` is an invalid value for the `%s` css style property.',
         'fontSize',
       );
-      render(<span style={style} />, div);
+      cocoMvc.render(<span style={style} />, div);
     });
 
     it('throws with Temporal-like objects as style values', () => {
@@ -257,7 +258,7 @@ describe('ReactDOMComponent', () => {
       }
       const style = {fontSize: new TemporalLike()};
       const div = document.createElement('div');
-      const test = () => render(<span style={style} />, div);
+      const test = () => cocoMvc.render(<span style={style} />, div);
       expect(test).toThrow();
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'The provided `%s` CSS property is an unsupported type %s. This value must be coerced to a string before before using it here.',
@@ -269,68 +270,68 @@ describe('ReactDOMComponent', () => {
     it('should update styles if initially null', () => {
       let styles = null;
       const container = document.createElement('div');
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
 
       const stubStyle = container.firstChild.style;
 
       styles = {display: 'block'};
 
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
       expect(stubStyle.display).toEqual('block');
     });
 
     it('should update styles if updated to null multiple times', () => {
       let styles = null;
       const container = document.createElement('div');
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
 
       styles = {display: 'block'};
       const stubStyle = container.firstChild.style;
 
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
       expect(stubStyle.display).toEqual('block');
 
-      render(<div style={null} />, container);
+      cocoMvc.render(<div style={null} />, container);
       expect(stubStyle.display).toEqual('');
 
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
       expect(stubStyle.display).toEqual('block');
 
-      render(<div style={null} />, container);
+      cocoMvc.render(<div style={null} />, container);
       expect(stubStyle.display).toEqual('');
     });
 
     it('should render null and undefined as empty but print other falsy values', () => {
       const container = document.createElement('div');
 
-      render(
+      cocoMvc.render(
         <div dangerouslySetInnerHTML={{__html: 'textContent'}} />,
         container,
       );
       expect(container.textContent).toEqual('textContent');
 
-      render(<div dangerouslySetInnerHTML={{__html: 0}} />, container);
+      cocoMvc.render(<div dangerouslySetInnerHTML={{__html: 0}} />, container);
       expect(container.textContent).toEqual('0');
 
-      render(
+      cocoMvc.render(
         <div dangerouslySetInnerHTML={{__html: false}} />,
         container,
       );
       expect(container.textContent).toEqual('false');
 
-      render(
+      cocoMvc.render(
         <div dangerouslySetInnerHTML={{__html: ''}} />,
         container,
       );
       expect(container.textContent).toEqual('');
 
-      render(
+      cocoMvc.render(
         <div dangerouslySetInnerHTML={{__html: null}} />,
         container,
       );
       expect(container.textContent).toEqual('');
 
-      render(
+      cocoMvc.render(
         <div dangerouslySetInnerHTML={{__html: undefined}} />,
         container,
       );
@@ -339,117 +340,117 @@ describe('ReactDOMComponent', () => {
 
     it('should remove attributes', () => {
       const container = document.createElement('div');
-      render(<img height="17" />, container);
+      cocoMvc.render(<img height="17" />, container);
 
       expect(container.firstChild.hasAttribute('height')).toBe(true);
-      render(<img />, container);
+      cocoMvc.render(<img />, container);
       expect(container.firstChild.hasAttribute('height')).toBe(false);
     });
 
     it('should remove properties', () => {
       const container = document.createElement('div');
-      render(<div className="monkey" />, container);
+      cocoMvc.render(<div className="monkey" />, container);
 
       expect(container.firstChild.className).toEqual('monkey');
-      render(<div />, container);
+      cocoMvc.render(<div />, container);
       expect(container.firstChild.className).toEqual('');
     });
 
     it('should not set null/undefined attributes', () => {
       const container = document.createElement('div');
       // Initial render.
-      render(<img src={null} data-foo={undefined} />, container);
+      cocoMvc.render(<img src={null} data-foo={undefined} />, container);
       const node = container.firstChild;
       expect(node.hasAttribute('src')).toBe(false);
       expect(node.hasAttribute('data-foo')).toBe(false);
       // Update in one direction.
-      render(<img src={undefined} data-foo={null} />, container);
+      cocoMvc.render(<img src={undefined} data-foo={null} />, container);
       expect(node.hasAttribute('src')).toBe(false);
       expect(node.hasAttribute('data-foo')).toBe(false);
       // Update in another direction.
-      render(<img src={null} data-foo={undefined} />, container);
+      cocoMvc.render(<img src={null} data-foo={undefined} />, container);
       expect(node.hasAttribute('src')).toBe(false);
       expect(node.hasAttribute('data-foo')).toBe(false);
       // Removal.
-      render(<img />, container);
+      cocoMvc.render(<img />, container);
       expect(node.hasAttribute('src')).toBe(false);
       expect(node.hasAttribute('data-foo')).toBe(false);
       // Addition.
-      render(<img src={undefined} data-foo={null} />, container);
+      cocoMvc.render(<img src={undefined} data-foo={null} />, container);
       expect(node.hasAttribute('src')).toBe(false);
       expect(node.hasAttribute('data-foo')).toBe(false);
     })
 
     it('should apply React-specific aliases to HTML elements', () => {
       const container = document.createElement('div');
-      render(<form acceptCharset="foo" />, container);
+      cocoMvc.render(<form acceptCharset="foo" />, container);
       const node = container.firstChild;
       // Test attribute initialization.
       expect(node.getAttribute('accept-charset')).toBe('foo');
       expect(node.hasAttribute('acceptCharset')).toBe(false);
       // Test attribute update.
-      render(<form acceptCharset="boo" />, container);
+      cocoMvc.render(<form acceptCharset="boo" />, container);
       expect(node.getAttribute('accept-charset')).toBe('boo');
       expect(node.hasAttribute('acceptCharset')).toBe(false);
       // Test attribute removal by setting to null.
-      render(<form acceptCharset={null} />, container);
+      cocoMvc.render(<form acceptCharset={null} />, container);
       expect(node.hasAttribute('accept-charset')).toBe(false);
       expect(node.hasAttribute('acceptCharset')).toBe(false);
       // Restore.
-      render(<form acceptCharset="foo" />, container);
+      cocoMvc.render(<form acceptCharset="foo" />, container);
       expect(node.getAttribute('accept-charset')).toBe('foo');
       expect(node.hasAttribute('acceptCharset')).toBe(false);
       // Test attribute removal by setting to undefined.
-      render(<form acceptCharset={undefined} />, container);
+      cocoMvc.render(<form acceptCharset={undefined} />, container);
       expect(node.hasAttribute('accept-charset')).toBe(false);
       expect(node.hasAttribute('acceptCharset')).toBe(false);
       // Restore.
-      render(<form acceptCharset="foo" />, container);
+      cocoMvc.render(<form acceptCharset="foo" />, container);
       expect(node.getAttribute('accept-charset')).toBe('foo');
       expect(node.hasAttribute('acceptCharset')).toBe(false);
       // Test attribute removal.
-      render(<form />, container);
+      cocoMvc.render(<form />, container);
       expect(node.hasAttribute('accept-charset')).toBe(false);
       expect(node.hasAttribute('acceptCharset')).toBe(false);
     });
 
     it('should apply React-specific aliases to SVG elements', () => {
       const container = document.createElement('div');
-      render(<svg arabicForm="foo" />, container);
+      cocoMvc.render(<svg arabicForm="foo" />, container);
       const node = container.firstChild;
       // Test attribute initialization.
       expect(node.getAttribute('arabic-form')).toBe('foo');
       expect(node.hasAttribute('arabicForm')).toBe(false);
       // Test attribute update.
-      render(<svg arabicForm="boo" />, container);
+      cocoMvc.render(<svg arabicForm="boo" />, container);
       expect(node.getAttribute('arabic-form')).toBe('boo');
       expect(node.hasAttribute('arabicForm')).toBe(false);
       // Test attribute removal by setting to null.
-      render(<svg arabicForm={null} />, container);
+      cocoMvc.render(<svg arabicForm={null} />, container);
       expect(node.hasAttribute('arabic-form')).toBe(false);
       expect(node.hasAttribute('arabicForm')).toBe(false);
       // Restore.
-      render(<svg arabicForm="foo" />, container);
+      cocoMvc.render(<svg arabicForm="foo" />, container);
       expect(node.getAttribute('arabic-form')).toBe('foo');
       expect(node.hasAttribute('arabicForm')).toBe(false);
       // Test attribute removal by setting to undefined.
-      render(<svg arabicForm={undefined} />, container);
+      cocoMvc.render(<svg arabicForm={undefined} />, container);
       expect(node.hasAttribute('arabic-form')).toBe(false);
       expect(node.hasAttribute('arabicForm')).toBe(false);
       // Restore.
-      render(<svg arabicForm="foo" />, container);
+      cocoMvc.render(<svg arabicForm="foo" />, container);
       expect(node.getAttribute('arabic-form')).toBe('foo');
       expect(node.hasAttribute('arabicForm')).toBe(false);
       // Test attribute removal.
-      render(<svg />, container);
+      cocoMvc.render(<svg />, container);
       expect(node.hasAttribute('arabic-form')).toBe(false);
       expect(node.hasAttribute('arabicForm')).toBe(false);
     });
 
     it('should properly update custom attributes on custom elements', () => {
       const container = document.createElement('div');
-      render(<some-custom-element foo="bar" />, container);
-      render(<some-custom-element bar="buzz" />, container);
+      cocoMvc.render(<some-custom-element foo="bar" />, container);
+      cocoMvc.render(<some-custom-element bar="buzz" />, container);
       const node = container.firstChild;
       expect(node.hasAttribute('foo')).toBe(false);
       expect(node.getAttribute('bar')).toBe('buzz');
@@ -457,16 +458,16 @@ describe('ReactDOMComponent', () => {
 
     it('should not apply React-specific aliases to custom elements', () => {
       const container = document.createElement('div');
-      render(<some-custom-element arabicForm="foo" />, container);
+      cocoMvc.render(<some-custom-element arabicForm="foo" />, container);
       const node = container.firstChild;
       // Should not get transformed to arabic-form as SVG would be.
       expect(node.getAttribute('arabicForm')).toBe('foo');
       expect(node.hasAttribute('arabic-form')).toBe(false);
       // Test attribute update.
-      render(<some-custom-element arabicForm="boo" />, container);
+      cocoMvc.render(<some-custom-element arabicForm="boo" />, container);
       expect(node.getAttribute('arabicForm')).toBe('boo');
       // Test attribute removal and addition.
-      render(<some-custom-element acceptCharset="buzz" />, container);
+      cocoMvc.render(<some-custom-element acceptCharset="buzz" />, container);
       // Verify the previous attribute was removed.
       expect(node.hasAttribute('arabicForm')).toBe(false);
       // Should not get transformed to accept-charset as HTML would be.
@@ -477,12 +478,12 @@ describe('ReactDOMComponent', () => {
     it('should clear a single style prop when changing `style`', () => {
       let styles = {display: 'none', color: 'red'};
       const container = document.createElement('div');
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
 
       const stubStyle = container.firstChild.style;
 
       styles = {color: 'green'};
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
       expect(stubStyle.display).toEqual('');
       expect(stubStyle.color).toEqual('green');
     });
@@ -490,7 +491,7 @@ describe('ReactDOMComponent', () => {
     it('should reject attribute key injection attack on mount for regular DOM', () => {
       for (let i = 0; i < 3; i++) {
         const container = document.createElement('div');
-        render(
+        cocoMvc.render(
           jsx(
             'div',
             {'blah" onclick="beevil" noise="hi': 'selected'},
@@ -499,8 +500,8 @@ describe('ReactDOMComponent', () => {
           container,
         );
         expect(container.firstChild.attributes.length).toBe(0);
-        unmountComponentAtNode(container);
-        render(
+        cocoMvc.unmountComponentAtNode(container);
+        cocoMvc.render(
           jsx(
             'div',
             {'></div><script>alert("hi")</script>': 'selected'},
@@ -523,7 +524,7 @@ describe('ReactDOMComponent', () => {
     it('should reject attribute key injection attack on mount for custom elements', () => {
       for (let i = 0; i < 3; i++) {
         const container = document.createElement('div');
-        render(
+        cocoMvc.render(
           jsx(
             'x-foo-component',
             {'blah" onclick="beevil" noise="hi': 'selected'},
@@ -532,8 +533,8 @@ describe('ReactDOMComponent', () => {
           container,
         );
         expect(container.firstChild.attributes.length).toBe(0);
-        unmountComponentAtNode(container);
-        render(
+        cocoMvc.unmountComponentAtNode(container);
+        cocoMvc.render(
           jsx(
             'x-foo-component',
             {'></x-foo-component><script>alert("hi")</script>': 'selected'},
@@ -557,8 +558,8 @@ describe('ReactDOMComponent', () => {
       for (let i = 0; i < 3; i++) {
         const container = document.createElement('div');
         const beforeUpdate = jsx('div', {}, null);
-        render(beforeUpdate, container);
-        render(
+        cocoMvc.render(beforeUpdate, container);
+        cocoMvc.render(
           jsx(
             'div',
             {'blah" onclick="beevil" noise="hi': 'selected'},
@@ -567,7 +568,7 @@ describe('ReactDOMComponent', () => {
           container,
         );
         expect(container.firstChild.attributes.length).toBe(0);
-        render(
+        cocoMvc.render(
           jsx(
             'div',
             {'></div><script>alert("hi")</script>': 'selected'},
@@ -591,8 +592,8 @@ describe('ReactDOMComponent', () => {
       for (let i = 0; i < 3; i++) {
         const container = document.createElement('div');
         const beforeUpdate = jsx('x-foo-component', {}, null);
-        render(beforeUpdate, container);
-        render(
+        cocoMvc.render(beforeUpdate, container);
+        cocoMvc.render(
           jsx(
             'x-foo-component',
             {'blah" onclick="beevil" noise="hi': 'selected'},
@@ -601,7 +602,7 @@ describe('ReactDOMComponent', () => {
           container,
         );
         expect(container.firstChild.attributes.length).toBe(0);
-        render(
+        cocoMvc.render(
           jsx(
             'x-foo-component',
             {'></x-foo-component><script>alert("hi")</script>': 'selected'},
@@ -625,10 +626,10 @@ describe('ReactDOMComponent', () => {
       const container = document.createElement('div');
 
       const beforeUpdate = jsx('x-foo-component', {}, null);
-      render(beforeUpdate, container);
+      cocoMvc.render(beforeUpdate, container);
 
       const afterUpdate = <x-foo-component myattr="myval" />;
-      render(afterUpdate, container);
+      cocoMvc.render(afterUpdate, container);
 
       expect(container.childNodes[0].getAttribute('myattr')).toBe('myval');
     });
@@ -636,11 +637,11 @@ describe('ReactDOMComponent', () => {
     it('should clear all the styles when removing `style`', () => {
       const styles = {display: 'none', color: 'red'};
       const container = document.createElement('div');
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
 
       const stubStyle = container.firstChild.style;
 
-      render(<div />, container);
+      cocoMvc.render(<div />, container);
       expect(stubStyle.display).toEqual('');
       expect(stubStyle.color).toEqual('');
     });
@@ -648,9 +649,9 @@ describe('ReactDOMComponent', () => {
     it('should update styles when `style` changes from null to object', () => {
       const container = document.createElement('div');
       const styles = {color: 'red'};
-      render(<div style={styles} />, container);
-      render(<div />, container);
-      render(<div style={styles} />, container);
+      cocoMvc.render(<div style={styles} />, container);
+      cocoMvc.render(<div />, container);
+      cocoMvc.render(<div style={styles} />, container);
 
       const stubStyle = container.firstChild.style;
       expect(stubStyle.color).toEqual('red');
@@ -658,11 +659,11 @@ describe('ReactDOMComponent', () => {
 
     it('should not reset innerHTML for when children is null', () => {
       const container = document.createElement('div');
-      render(<div />, container);
+      cocoMvc.render(<div />, container);
       container.firstChild.innerHTML = 'bonjour';
       expect(container.firstChild.innerHTML).toEqual('bonjour');
 
-      render(<div />, container);
+      cocoMvc.render(<div />, container);
       expect(container.firstChild.innerHTML).toEqual('bonjour');
     });
 
@@ -670,32 +671,32 @@ describe('ReactDOMComponent', () => {
       const transitionToValues = [null, undefined, false];
       transitionToValues.forEach(transitionToValue => {
         const container = document.createElement('div');
-        render(<div>bonjour</div>, container);
+        cocoMvc.render(<div>bonjour</div>, container);
         expect(container.firstChild.innerHTML).toEqual('bonjour');
 
-        render(<div>{null}</div>, container);
+        cocoMvc.render(<div>{null}</div>, container);
         expect(container.firstChild.innerHTML).toEqual('');
       });
     });
 
     it('should empty element when removing innerHTML', () => {
       const container = document.createElement('div');
-      render(
+      cocoMvc.render(
         <div dangerouslySetInnerHTML={{__html: ':)'}} />,
         container,
       );
 
       expect(container.firstChild.innerHTML).toEqual(':)');
-      render(<div />, container);
+      cocoMvc.render(<div />, container);
       expect(container.firstChild.innerHTML).toEqual('');
     });
 
     it('should transition from string content to innerHTML', () => {
       const container = document.createElement('div');
-      render(<div>hello</div>, container);
+      cocoMvc.render(<div>hello</div>, container);
 
       expect(container.firstChild.innerHTML).toEqual('hello');
-      render(
+      cocoMvc.render(
         <div dangerouslySetInnerHTML={{__html: 'goodbye'}} />,
         container,
       );
@@ -704,19 +705,19 @@ describe('ReactDOMComponent', () => {
 
     it('should transition from innerHTML to string content', () => {
       const container = document.createElement('div');
-      render(
+      cocoMvc.render(
         <div dangerouslySetInnerHTML={{__html: 'bonjour'}} />,
         container,
       );
 
       expect(container.firstChild.innerHTML).toEqual('bonjour');
-      render(<div>adieu</div>, container);
+      cocoMvc.render(<div>adieu</div>, container);
       expect(container.firstChild.innerHTML).toEqual('adieu');
     });
 
     it('should transition from innerHTML to children in nested el', () => {
       const container = document.createElement('div');
-      render(
+      cocoMvc.render(
         <div>
           <div dangerouslySetInnerHTML={{__html: 'bonjour'}} />
         </div>,
@@ -724,7 +725,7 @@ describe('ReactDOMComponent', () => {
       );
 
       expect(container.textContent).toEqual('bonjour');
-      render(
+      cocoMvc.render(
         <div>
           <div>
             <span>adieu</span>
@@ -737,7 +738,7 @@ describe('ReactDOMComponent', () => {
 
     it('should transition from children to innerHTML in nested el', () => {
       const container = document.createElement('div');
-      render(
+      cocoMvc.render(
         <div>
           <div>
             <span>adieu</span>
@@ -747,7 +748,7 @@ describe('ReactDOMComponent', () => {
       );
 
       expect(container.textContent).toEqual('adieu');
-      render(
+      cocoMvc.render(
         <div>
           <div dangerouslySetInnerHTML={{__html: 'bonjour'}} />
         </div>,
@@ -758,7 +759,7 @@ describe('ReactDOMComponent', () => {
 
     it('should not incur unnecessary DOM mutations for attributes', () => {
       const container = document.createElement('div');
-      render(<div id="" />, container);
+      cocoMvc.render(<div id="" />, container);
 
       const node = container.firstChild;
       const nodeSetAttribute = node.setAttribute;
@@ -769,34 +770,34 @@ describe('ReactDOMComponent', () => {
       node.removeAttribute = jest.fn();
       node.removeAttribute.mockImplementation(nodeRemoveAttribute);
 
-      render(<div id="" />, container);
+      cocoMvc.render(<div id="" />, container);
       expect(node.setAttribute).toHaveBeenCalledTimes(0);
       expect(node.removeAttribute).toHaveBeenCalledTimes(0);
 
-      render(<div id="foo" />, container);
+      cocoMvc.render(<div id="foo" />, container);
       expect(node.setAttribute).toHaveBeenCalledTimes(1);
       expect(node.removeAttribute).toHaveBeenCalledTimes(0);
 
-      render(<div id="foo" />, container);
+      cocoMvc.render(<div id="foo" />, container);
       expect(node.setAttribute).toHaveBeenCalledTimes(1);
       expect(node.removeAttribute).toHaveBeenCalledTimes(0);
 
-      render(<div />, container);
+      cocoMvc.render(<div />, container);
       expect(node.setAttribute).toHaveBeenCalledTimes(1);
       expect(node.removeAttribute).toHaveBeenCalledTimes(1);
 
-      render(<div id="" />, container);
+      cocoMvc.render(<div id="" />, container);
       expect(node.setAttribute).toHaveBeenCalledTimes(2);
       expect(node.removeAttribute).toHaveBeenCalledTimes(1);
 
-      render(<div />, container);
+      cocoMvc.render(<div />, container);
       expect(node.setAttribute).toHaveBeenCalledTimes(2);
       expect(node.removeAttribute).toHaveBeenCalledTimes(2);
     });
 
     it('should not incur unnecessary DOM mutations for string properties', () => {
       const container = document.createElement('div');
-      render(<div value="" />, container);
+      cocoMvc.render(<div value="" />, container);
 
       const node = container.firstChild;
 
@@ -808,28 +809,28 @@ describe('ReactDOMComponent', () => {
         nodeValueSetter(key, value);
       };
 
-      render(<div value="foo" />, container);
+      cocoMvc.render(<div value="foo" />, container);
       expect(nodeValueSetter).toHaveBeenCalledTimes(1);
 
-      render(<div value="foo" />, container);
+      cocoMvc.render(<div value="foo" />, container);
       expect(nodeValueSetter).toHaveBeenCalledTimes(1);
 
-      render(<div />, container);
+      cocoMvc.render(<div />, container);
       expect(nodeValueSetter).toHaveBeenCalledTimes(1);
 
-      render(<div value={null} />, container);
+      cocoMvc.render(<div value={null} />, container);
       expect(nodeValueSetter).toHaveBeenCalledTimes(1);
 
-      render(<div value="" />, container);
+      cocoMvc.render(<div value="" />, container);
       expect(nodeValueSetter).toHaveBeenCalledTimes(2);
 
-      render(<div />, container);
+      cocoMvc.render(<div />, container);
       expect(nodeValueSetter).toHaveBeenCalledTimes(2);
     });
 
     it('should not incur unnecessary DOM mutations for boolean properties', () => {
       const container = document.createElement('div');
-      render(<div checked={true} />, container);
+      cocoMvc.render(<div checked={true} />, container);
 
       const node = container.firstChild;
       let nodeValue = true;
@@ -843,31 +844,31 @@ describe('ReactDOMComponent', () => {
         }),
       });
 
-      render(<div checked={true} />, container);
+      cocoMvc.render(<div checked={true} />, container);
       expect(nodeValueSetter).toHaveBeenCalledTimes(0);
 
-      render(<div />, container);
+      cocoMvc.render(<div />, container);
       expect(nodeValueSetter).toHaveBeenCalledTimes(1);
 
-      render(<div checked={false} />, container);
+      cocoMvc.render(<div checked={false} />, container);
       expect(nodeValueSetter).toHaveBeenCalledTimes(2);
 
-      render(<div checked={true} />, container);
+      cocoMvc.render(<div checked={true} />, container);
       expect(nodeValueSetter).toHaveBeenCalledTimes(3);
     });
 
     it('should not update when switching between null/undefined', () => {
       const container = document.createElement('div');
-      const node = render(<div />, container);
+      const node = cocoMvc.render(<div />, container);
 
       const setter = jest.fn();
       node.setAttribute = setter;
 
-      render(<div dir={null} />, container);
-      render(<div dir={undefined} />, container);
-      render(<div />, container);
+      cocoMvc.render(<div dir={null} />, container);
+      cocoMvc.render(<div dir={undefined} />, container);
+      cocoMvc.render(<div />, container);
       expect(setter).toHaveBeenCalledTimes(0);
-      render(<div dir="ltr" />, container);
+      cocoMvc.render(<div dir="ltr" />, container);
       expect(setter).toHaveBeenCalledTimes(1);
     });
 
@@ -878,7 +879,7 @@ describe('ReactDOMComponent', () => {
       const container = document.createElement('div');
 
       // ABCD
-      render(
+      cocoMvc.render(
         <div>
           <div key="one">
             <div key="A">A</div>
@@ -892,7 +893,7 @@ describe('ReactDOMComponent', () => {
         container,
       );
       // BADC
-      render(
+      cocoMvc.render(
         <div>
           <div key="one">
             <div key="B">B</div>
@@ -916,13 +917,13 @@ describe('ReactDOMComponent', () => {
     beforeEach(() => {
       mountComponent = function(props) {
         const container = document.createElement('div');
-        render(<div {...props} />, container);
+        cocoMvc.render(<div {...props} />, container);
       };
     });
 
     it('should work error event on <source> element', () => {
       const container = document.createElement('div');
-      render(
+      cocoMvc.render(
         <video>
           <source
             src="http://example.org/video"
@@ -946,10 +947,11 @@ describe('ReactDOMComponent', () => {
     it('should warn on upper case HTML tags, not SVG nor custom tags', () => {
       ReactTestUtils.renderIntoDocument(
         jsx('svg', null, jsx('PATH')),
+        cocoMvc
       );
-      ReactTestUtils.renderIntoDocument(jsx('CUSTOM-TAG'));
+      ReactTestUtils.renderIntoDocument(jsx('CUSTOM-TAG'), cocoMvc);
 
-      ReactTestUtils.renderIntoDocument(jsx('IMG'));
+      ReactTestUtils.renderIntoDocument(jsx('IMG'), cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         '<%s /> is using incorrect casing. ' +
         'Use PascalCase for React components, ' +
@@ -959,7 +961,7 @@ describe('ReactDOMComponent', () => {
     });
 
     it('should warn on props reserved for future use', () => {
-      ReactTestUtils.renderIntoDocument(<div aria="hello" />),
+      ReactTestUtils.renderIntoDocument(<div aria="hello" />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'The `aria` attribute is reserved for future use in React. ' +
         'Pass individual `aria-` attributes instead.',
@@ -978,7 +980,7 @@ describe('ReactDOMComponent', () => {
           return realToString.apply(this, arguments);
         };
         Object.prototype.toString = wrappedToString; // eslint-disable-line no-extend-native
-        ReactTestUtils.renderIntoDocument(<bar />);
+        ReactTestUtils.renderIntoDocument(<bar />, cocoMvc);
         expect(consoleErrorSpy.mock.calls[0]).toEqual(
           [
             "The tag <%s> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.",
@@ -986,17 +988,17 @@ describe('ReactDOMComponent', () => {
           ]
         );
         // Test deduplication
-        ReactTestUtils.renderIntoDocument(<foo />);
+        ReactTestUtils.renderIntoDocument(<foo />, cocoMvc);
         expect(consoleErrorSpy.mock.calls[1]).toEqual(
           [
             "The tag <%s> is unrecognized in this browser. If you meant to render a React component, start its name with an uppercase letter.",
             "foo",
           ]
         );
-        ReactTestUtils.renderIntoDocument(<foo />);
-        ReactTestUtils.renderIntoDocument(<time />);
+        ReactTestUtils.renderIntoDocument(<foo />, cocoMvc);
+        ReactTestUtils.renderIntoDocument(<time />, cocoMvc);
         // Corner case. Make sure out deduplication logic doesn't break with weird tag.
-        ReactTestUtils.renderIntoDocument(<hasOwnProperty />);
+        ReactTestUtils.renderIntoDocument(<hasOwnProperty />, cocoMvc);
         expect(consoleErrorSpy.mock.calls[2]).toEqual([
           '<%s /> is using incorrect casing. ' +
           'Use PascalCase for React components, ' +
@@ -1015,7 +1017,7 @@ describe('ReactDOMComponent', () => {
     it('should throw on children for void elements', () => {
       const container = document.createElement('div');
       expect(() => {
-        render(<input>children</input>, container);
+        cocoMvc.render(<input>children</input>, container);
       }).toThrow(
         'input is a void element tag and must neither have `children` nor ' +
         'use `dangerouslySetInnerHTML`.',
@@ -1025,7 +1027,7 @@ describe('ReactDOMComponent', () => {
     it('should throw on dangerouslySetInnerHTML for void elements', () => {
       const container = document.createElement('div');
       expect(() => {
-        render(
+        cocoMvc.render(
           <input dangerouslySetInnerHTML={{__html: 'content'}} />,
           container,
         );
@@ -1122,7 +1124,7 @@ describe('ReactDOMComponent', () => {
       application.start();
       const container = document.createElement('div');
       expect(() => {
-        render(<X />, container);
+        cocoMvc.render(<X />, container);
       }).toThrowError(
         'input is a void element tag and must neither have `children` ' +
         'nor use `dangerouslySetInnerHTML`.',
@@ -1131,7 +1133,7 @@ describe('ReactDOMComponent', () => {
 
     it('should work load and error events on <image> element in SVG', () => {
       const container = document.createElement('div');
-      render(
+      cocoMvc.render(
         <svg>
           <image
             xlinkHref="http://example.org/image"
@@ -1162,7 +1164,7 @@ describe('ReactDOMComponent', () => {
       const container = document.createElement('div');
       const onLoad = jest.fn();
 
-      render(
+      cocoMvc.render(
         <link href="http://example.org/link" onLoad={onLoad} />,
         container,
       );
@@ -1180,8 +1182,11 @@ describe('ReactDOMComponent', () => {
       const container = document.createElement('div');
       const onError = jest.fn();
 
-      render(
-        <link href="http://example.org/link" onError={onError} />,
+      cocoMvc.render(
+        <link href="http://example.org/link" onError={() => {
+          console.info('onError called');
+          onError();
+        }} />,
         container,
       );
 
@@ -1203,10 +1208,10 @@ describe('ReactDOMComponent', () => {
     });
 
     it('should warn against children for void elements', () => {
-      render(<input />, container);
+      cocoMvc.render(<input />, container);
 
       expect(function() {
-        render(<input>children</input>, container);
+        cocoMvc.render(<input>children</input>, container);
       }).toThrow(
         'input is a void element tag and must neither have `children` nor use ' +
         '`dangerouslySetInnerHTML`.',
@@ -1214,10 +1219,10 @@ describe('ReactDOMComponent', () => {
     });
 
     it('should warn against dangerouslySetInnerHTML for void elements', () => {
-      render(<input />, container);
+      cocoMvc.render(<input />, container);
 
       expect(function() {
-        render(
+        cocoMvc.render(
           <input dangerouslySetInnerHTML={{__html: 'content'}} />,
           container,
         );
@@ -1228,10 +1233,10 @@ describe('ReactDOMComponent', () => {
     });
 
     it('should validate against multiple children props', () => {
-      render(<div />, container);
+      cocoMvc.render(<div />, container);
 
       expect(function() {
-        render(
+        cocoMvc.render(
           <div children="" dangerouslySetInnerHTML={{__html: ''}} />,
           container,
         );
@@ -1241,7 +1246,7 @@ describe('ReactDOMComponent', () => {
     });
 
     it('should warn about contentEditable and children', () => {
-      render(
+      cocoMvc.render(
         <div contentEditable={true}>
           <div />
         </div>,
@@ -1256,10 +1261,10 @@ describe('ReactDOMComponent', () => {
     });
 
     it('should validate against invalid styles', () => {
-      render(<div />, container);
+      cocoMvc.render(<div />, container);
 
       expect(function() {
-        render(<div style={1} />, container);
+        cocoMvc.render(<div style={1} />, container);
       }).toThrow(
         'The `style` prop expects a mapping from style properties to values, ' +
         "not a string. For example, style={{marginRight: spacing + 'em'}} " +
@@ -1277,7 +1282,7 @@ describe('ReactDOMComponent', () => {
 
       application.start();
       expect(() => {
-        render(<Animal />, container);
+        cocoMvc.render(<Animal />, container);
       }).toThrowError(
         'The `style` prop expects a mapping from style properties to values, ' +
         "not a string. For example, style={{marginRight: spacing + 'em'}} " +
@@ -1296,31 +1301,31 @@ describe('ReactDOMComponent', () => {
 
         viewWillUnmount() {
           // Should not throw
-          expect(findDOMNode(this).nodeName).toBe('SPAN');
+          expect(cocoMvc.findDOMNode(this).nodeName).toBe('SPAN');
         }
       }
 
       application.start();
       const container = document.createElement('div');
-      render(
+      cocoMvc.render(
         <div>
           <Inner />
         </div>,
         container,
       );
-      unmountComponentAtNode(container);
+      cocoMvc.unmountComponentAtNode(container);
     })
   })
 
   describe('tag sanitization', () => {
     it('should throw when an invalid tag name is used', () => {
       const hackzor = jsx('script tag');
-      expect(() => ReactTestUtils.renderIntoDocument(hackzor)).toThrow();
+      expect(() => ReactTestUtils.renderIntoDocument(hackzor, cocoMvc)).toThrow();
     });
 
     it('should throw when an attack vector is used', () => {
       const hackzor = jsx('div><img /><div');
-      expect(() => ReactTestUtils.renderIntoDocument(hackzor)).toThrow();
+      expect(() => ReactTestUtils.renderIntoDocument(hackzor, cocoMvc)).toThrow();
     });
   })
 
@@ -1331,6 +1336,7 @@ describe('ReactDOMComponent', () => {
           <tr />
           <tr />
         </div>,
+        cocoMvc
       );
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'validateDOMNesting(...): %s cannot appear as a child of <%s>.%s%s',
@@ -1343,7 +1349,7 @@ describe('ReactDOMComponent', () => {
     it('warns on invalid nesting at root', () => {
       const p = document.createElement('p');
 
-      render(
+      cocoMvc.render(
         <span><p /></span>,
         p,
       );
@@ -1375,7 +1381,7 @@ describe('ReactDOMComponent', () => {
 
       application.start();
       const container = document.createElement('div');
-      render(
+      cocoMvc.render(
         <Foo />,
         container,
       );
@@ -1409,6 +1415,7 @@ describe('ReactDOMComponent', () => {
     it('should warn about incorrect casing on properties', () => {
       ReactTestUtils.renderIntoDocument(
         jsx('input', {type: 'text', tabindex: '1'}),
+        cocoMvc
       );
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         "Invalid DOM property `%s`. Did you mean `%s`?",
@@ -1420,6 +1427,7 @@ describe('ReactDOMComponent', () => {
     it('should warn about incorrect casing on event handlers', () => {
       ReactTestUtils.renderIntoDocument(
         jsx('input', {type: 'text', oninput: '1'}),
+        cocoMvc
       );
       expect(consoleErrorSpy.mock.calls[0]).toEqual([
           "Unknown event handler property `%s`. It will be ignored.",
@@ -1428,6 +1436,7 @@ describe('ReactDOMComponent', () => {
       );
       ReactTestUtils.renderIntoDocument(
         jsx('input', {type: 'text', onKeydown: '1'}),
+        cocoMvc
       );
       expect(consoleErrorSpy.mock.calls[1]).toEqual(
         [
@@ -1440,6 +1449,7 @@ describe('ReactDOMComponent', () => {
     it('should warn about class', () => {
       ReactTestUtils.renderIntoDocument(
         jsx('div', {class: 'muffins'}),
+        cocoMvc
       );
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         "Invalid DOM property `%s`. Did you mean `%s`?", "class", "className"
@@ -1447,9 +1457,9 @@ describe('ReactDOMComponent', () => {
     });
 
     it('should warn about props that are no longer supported', () => {
-      ReactTestUtils.renderIntoDocument(<div />);
+      ReactTestUtils.renderIntoDocument(<div />, cocoMvc);
 
-      ReactTestUtils.renderIntoDocument(<div onFocusIn={() => {}} />);
+      ReactTestUtils.renderIntoDocument(<div onFocusIn={() => {}} />, cocoMvc);
       expect(consoleErrorSpy.mock.calls[0]).toEqual(
         [
           'React uses onFocus and onBlur instead of onFocusIn and onFocusOut. ' +
@@ -1457,7 +1467,7 @@ describe('ReactDOMComponent', () => {
           'are not needed/supported by React.'
         ]
       );
-      ReactTestUtils.renderIntoDocument(<div onFocusOut={() => {}} />);
+      ReactTestUtils.renderIntoDocument(<div onFocusOut={() => {}} />, cocoMvc);
       expect(consoleErrorSpy.mock.calls[1]).toEqual(
         [
           'React uses onFocus and onBlur instead of onFocusIn and onFocusOut. ' +
@@ -1468,8 +1478,8 @@ describe('ReactDOMComponent', () => {
     });
 
     it('should warn about props that are no longer supported without case sensitivity', () => {
-      ReactTestUtils.renderIntoDocument(<div />);
-      ReactTestUtils.renderIntoDocument(<div onfocusin={() => {}} />);
+      ReactTestUtils.renderIntoDocument(<div />, cocoMvc);
+      ReactTestUtils.renderIntoDocument(<div onfocusin={() => {}} />, cocoMvc);
       expect(consoleErrorSpy.mock.calls[0]).toEqual(
         [
           'React uses onFocus and onBlur instead of onFocusIn and onFocusOut. ' +
@@ -1477,7 +1487,7 @@ describe('ReactDOMComponent', () => {
           'are not needed/supported by React.'
         ]
       );
-      ReactTestUtils.renderIntoDocument(<div onfocusout={() => {}} />);
+      ReactTestUtils.renderIntoDocument(<div onfocusout={() => {}} />, cocoMvc);
       expect(consoleErrorSpy.mock.calls[1]).toEqual(
         [
           'React uses onFocus and onBlur instead of onFocusIn and onFocusOut. ' +
@@ -1488,13 +1498,13 @@ describe('ReactDOMComponent', () => {
     });
 
     it('gives source code refs for unknown prop warning', () => {
-      ReactTestUtils.renderIntoDocument(<div class="paladin" />);
+      ReactTestUtils.renderIntoDocument(<div class="paladin" />, cocoMvc);
       expect(consoleErrorSpy.mock.calls[0]).toEqual([
         "Invalid DOM property `%s`. Did you mean `%s`?",
         "class",
         "className"
       ]);
-      ReactTestUtils.renderIntoDocument(<input type="text" onclick="1" />);
+      ReactTestUtils.renderIntoDocument(<input type="text" onclick="1" />, cocoMvc);
       expect(consoleErrorSpy.mock.calls[1]).toEqual(
         ["Invalid event handler property `%s`. Did you mean `%s`?", "onclick", "onClick"]
       );
@@ -1503,8 +1513,8 @@ describe('ReactDOMComponent', () => {
     it('gives source code refs for unknown prop warning for update render', () => {
       const container = document.createElement('div');
 
-      ReactTestUtils.renderIntoDocument(<div className="paladin" />, container);
-      ReactTestUtils.renderIntoDocument(<div class="paladin" />, container),
+      ReactTestUtils.renderIntoDocument(<div className="paladin" />, cocoMvc);
+      ReactTestUtils.renderIntoDocument(<div class="paladin" />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Invalid DOM property `%s`. Did you mean `%s`?',
         'class',
@@ -1521,6 +1531,7 @@ describe('ReactDOMComponent', () => {
           <div className="foo5" />
           <div className="foo6" />
         </div>,
+        cocoMvc
       );
       expect(consoleErrorSpy.mock.calls[0]).toEqual([
         "Invalid DOM property `%s`. Did you mean `%s`?", "class", "className"
@@ -1576,7 +1587,7 @@ describe('ReactDOMComponent', () => {
       }
 
       application.start();
-      ReactTestUtils.renderIntoDocument(<Parent />, container),
+      ReactTestUtils.renderIntoDocument(<Parent />, cocoMvc)
         expect(consoleErrorSpy.mock.calls[0]).toEqual([
           "Invalid DOM property `%s`. Did you mean `%s`?", "class", "className"
         ]);
@@ -1587,7 +1598,8 @@ describe('ReactDOMComponent', () => {
 
     it('should suggest property name if available', () => {
       ReactTestUtils.renderIntoDocument(
-        jsx('label', {for: 'test'})
+        jsx('label', {for: 'test'}),
+        cocoMvc
       );
       expect(consoleErrorSpy.mock.calls[0]).toEqual([
           'Invalid DOM property `%s`. Did you mean `%s`?',
@@ -1597,7 +1609,8 @@ describe('ReactDOMComponent', () => {
       );
 
       ReactTestUtils.renderIntoDocument(
-        jsx('input', {type: 'text', autofocus: true})
+        jsx('input', {type: 'text', autofocus: true}),
+        cocoMvc
       );
       expect(consoleErrorSpy.mock.calls[1]).toEqual([
           'Invalid DOM property `%s`. Did you mean `%s`?',
@@ -1614,7 +1627,7 @@ describe('ReactDOMComponent', () => {
       const html = '\n  \t  <span>  \n  testContent  \t  </span>  \n  \t';
       const elem = <div dangerouslySetInnerHTML={{__html: html}} />;
 
-      render(elem, container);
+      cocoMvc.render(elem, container);
       expect(container.firstChild.innerHTML).toBe(html);
     });
 
@@ -1622,11 +1635,11 @@ describe('ReactDOMComponent', () => {
       const container = document.createElement('div');
       const html = '\n  \t  <span>  \n  testContent1  \t  </span>  \n  \t';
       const elem = <div dangerouslySetInnerHTML={{__html: html}} />;
-      render(elem, container);
+      cocoMvc.render(elem, container);
 
       const html2 = '\n  \t  <div>  \n  testContent2  \t  </div>  \n  \t';
       const elem2 = <div dangerouslySetInnerHTML={{__html: html2}} />;
-      render(elem2, container);
+      cocoMvc.render(elem2, container);
 
       expect(container.firstChild.innerHTML).toBe(html2);
     });
@@ -1634,7 +1647,7 @@ describe('ReactDOMComponent', () => {
 
   describe('Attributes with aliases', function() {
     it('sets aliased attributes on HTML attributes', function() {
-      let el = ReactTestUtils.renderIntoDocument(<div class="test" />);
+      let el = ReactTestUtils.renderIntoDocument(<div class="test" />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Invalid DOM property `%s`. Did you mean `%s`?',
         'class',
@@ -1644,7 +1657,7 @@ describe('ReactDOMComponent', () => {
     });
 
     it('sets incorrectly cased aliased attributes on HTML attributes with a warning', function() {
-      let el = ReactTestUtils.renderIntoDocument(<div cLASS="test" />);
+      let el = ReactTestUtils.renderIntoDocument(<div cLASS="test" />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Invalid DOM property `%s`. Did you mean `%s`?',
         'cLASS',
@@ -1658,6 +1671,7 @@ describe('ReactDOMComponent', () => {
         <svg>
           <text arabic-form="initial" />
         </svg>,
+        cocoMvc
       );
       expect(consoleErrorSpy.mock.calls[1]).toEqual([
           'Invalid DOM property `%s`. Did you mean `%s`?',
@@ -1672,8 +1686,8 @@ describe('ReactDOMComponent', () => {
 
     it('updates aliased attributes on custom elements', function() {
       const container = document.createElement('div');
-      render(<div is="custom-element" class="foo" />, container);
-      render(<div is="custom-element" class="bar" />, container);
+      cocoMvc.render(<div is="custom-element" class="foo" />, container);
+      cocoMvc.render(<div is="custom-element" class="bar" />, container);
 
       expect(container.firstChild.getAttribute('class')).toBe('bar');
     });
@@ -1681,24 +1695,24 @@ describe('ReactDOMComponent', () => {
 
   describe('Custom attributes', function() {
     it('allows assignment of custom attributes with string values', function() {
-      const el = ReactTestUtils.renderIntoDocument(<div whatever="30" />);
+      const el = ReactTestUtils.renderIntoDocument(<div whatever="30" />, cocoMvc);
 
       expect(el.getAttribute('whatever')).toBe('30');
     });
 
     it('removes custom attributes', function() {
       const container = document.createElement('div');
-      render(<div whatever="30" />, container);
+      cocoMvc.render(<div whatever="30" />, container);
 
       expect(container.firstChild.getAttribute('whatever')).toBe('30');
 
-      render(<div whatever={null} />, container);
+      cocoMvc.render(<div whatever={null} />, container);
 
       expect(container.firstChild.hasAttribute('whatever')).toBe(false);
     });
 
     it('does not assign a boolean custom attributes as a string', function() {
-      let el = ReactTestUtils.renderIntoDocument(<div whatever={true} />);
+      let el = ReactTestUtils.renderIntoDocument(<div whatever={true} />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Received `%s` for a non-boolean attribute `%s`.\n\n' +
         'If you want to write it to the DOM, pass a string instead: ' +
@@ -1714,7 +1728,7 @@ describe('ReactDOMComponent', () => {
     });
 
     it('does not assign an implicit boolean custom attributes', function() {
-      let el = ReactTestUtils.renderIntoDocument(<div whatever />);
+      let el = ReactTestUtils.renderIntoDocument(<div whatever />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Received `%s` for a non-boolean attribute `%s`.\n\n' +
         'If you want to write it to the DOM, pass a string instead: ' +
@@ -1730,13 +1744,13 @@ describe('ReactDOMComponent', () => {
     });
 
     it('assigns a numeric custom attributes as a string', function() {
-      const el = ReactTestUtils.renderIntoDocument(<div whatever={3} />);
+      const el = ReactTestUtils.renderIntoDocument(<div whatever={3} />, cocoMvc);
 
       expect(el.getAttribute('whatever')).toBe('3');
     });
 
     it('will not assign a function custom attributes', function() {
-      let el = ReactTestUtils.renderIntoDocument(<div whatever={() => {}} />);
+      let el = ReactTestUtils.renderIntoDocument(<div whatever={() => {}} />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         "Invalid value for prop %s on <%s> tag. Either remove it from the element, or pass a string or number value to keep it in the DOM. For details, see https://reactjs.org/link/attribute-behavior ",
         "`whatever`",
@@ -1747,7 +1761,7 @@ describe('ReactDOMComponent', () => {
     });
 
     it('will assign an object custom attributes', function() {
-      const el = ReactTestUtils.renderIntoDocument(<div whatever={{}} />);
+      const el = ReactTestUtils.renderIntoDocument(<div whatever={{}} />, cocoMvc);
       expect(el.getAttribute('whatever')).toBe('[object Object]');
     });
 
@@ -1766,7 +1780,7 @@ describe('ReactDOMComponent', () => {
       // `dangerouslySetInnerHTML` is never coerced to a string, so won't throw
       // even with a Temporal-like object.
       const container = document.createElement('div');
-      render(
+      cocoMvc.render(
         <div dangerouslySetInnerHTML={{__html: new TemporalLike()}} />,
         container,
       );
@@ -1774,7 +1788,7 @@ describe('ReactDOMComponent', () => {
     });
 
     it('allows cased data attributes', function() {
-      let el = ReactTestUtils.renderIntoDocument(<div data-fooBar="true" />);
+      let el = ReactTestUtils.renderIntoDocument(<div data-fooBar="true" />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'React does not recognize the `%s` prop on a DOM element. If you ' +
         'intentionally want it to appear in the DOM as a custom ' +
@@ -1788,7 +1802,7 @@ describe('ReactDOMComponent', () => {
     });
 
     it('allows cased custom attributes', function() {
-      let el = ReactTestUtils.renderIntoDocument(<div fooBar="true" />);
+      let el = ReactTestUtils.renderIntoDocument(<div fooBar="true" />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'React does not recognize the `%s` prop on a DOM element. If you ' +
         'intentionally want it to appear in the DOM as a custom ' +
@@ -1802,7 +1816,7 @@ describe('ReactDOMComponent', () => {
     });
 
     it('warns on NaN attributes', function() {
-      let el = ReactTestUtils.renderIntoDocument(<div whatever={NaN} />);
+      let el = ReactTestUtils.renderIntoDocument(<div whatever={NaN} />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Received NaN for the `%s` attribute. If this is ' +
         'expected, cast the value to a string.',
@@ -1814,8 +1828,8 @@ describe('ReactDOMComponent', () => {
 
     it('removes a property when it becomes invalid', function() {
       const container = document.createElement('div');
-      render(<div whatever={0} />, container);
-      render(<div whatever={() => {}} />, container);
+      cocoMvc.render(<div whatever={0} />, container);
+      cocoMvc.render(<div whatever={() => {}} />, container);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Invalid value for prop %s on <%s> tag. Either remove it from the element, or pass a string or number value to keep it in the DOM. For details, see https://reactjs.org/link/attribute-behavior ',
         '`whatever`',
@@ -1826,7 +1840,7 @@ describe('ReactDOMComponent', () => {
     });
 
     it('warns on bad casing of known HTML attributes', function() {
-      let el = ReactTestUtils.renderIntoDocument(<div SiZe="30" />);
+      let el = ReactTestUtils.renderIntoDocument(<div SiZe="30" />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         "Invalid DOM property `%s`. Did you mean `%s`?", "SiZe", "size"
       );
@@ -1837,7 +1851,7 @@ describe('ReactDOMComponent', () => {
 
   describe('Object stringification', function() {
     it('allows objects on known properties', function() {
-      const el = ReactTestUtils.renderIntoDocument(<div acceptCharset={{}} />);
+      const el = ReactTestUtils.renderIntoDocument(<div acceptCharset={{}} />, cocoMvc);
       expect(el.getAttribute('accept-charset')).toBe('[object Object]');
     });
 
@@ -1849,13 +1863,13 @@ describe('ReactDOMComponent', () => {
       };
       const container = document.createElement('div');
 
-      render(<img src={obj} />, container);
+      cocoMvc.render(<img src={obj} />, container);
       expect(container.firstChild.src).toBe('http://localhost/hello');
 
-      render(<svg arabicForm={obj} />, container);
+      cocoMvc.render(<svg arabicForm={obj} />, container);
       expect(container.firstChild.getAttribute('arabic-form')).toBe('hello');
 
-      render(<div unknown={obj} />, container);
+      cocoMvc.render(<div unknown={obj} />, container);
       expect(container.firstChild.getAttribute('unknown')).toBe('hello');
     });
 
@@ -1863,7 +1877,7 @@ describe('ReactDOMComponent', () => {
       const obj = {};
       const container = document.createElement('div');
 
-      render(<svg arabicForm={obj} />, container);
+      cocoMvc.render(<svg arabicForm={obj} />, container);
       expect(container.firstChild.getAttribute('arabic-form')).toBe(
         '[object Object]',
       );
@@ -1873,7 +1887,7 @@ describe('ReactDOMComponent', () => {
       const obj = {};
       const container = document.createElement('div');
 
-      render(<div unknown={obj} />, container);
+      cocoMvc.render(<div unknown={obj} />, container);
       expect(container.firstChild.getAttribute('unknown')).toBe(
         '[object Object]',
       );
@@ -1882,14 +1896,14 @@ describe('ReactDOMComponent', () => {
     it('allows objects that inherit a custom toString method', function() {
       const parent = {toString: () => 'hello.jpg'};
       const child = Object.create(parent);
-      const el = ReactTestUtils.renderIntoDocument(<img src={child} />);
+      const el = ReactTestUtils.renderIntoDocument(<img src={child} />, cocoMvc);
 
       expect(el.src).toBe('http://localhost/hello.jpg');
     });
 
     it('assigns ajaxify (an important internal FB attribute)', function() {
       const options = {toString: () => 'ajaxy'};
-      const el = ReactTestUtils.renderIntoDocument(<div ajaxify={options} />);
+      const el = ReactTestUtils.renderIntoDocument(<div ajaxify={options} />, cocoMvc);
 
       expect(el.getAttribute('ajaxify')).toBe('ajaxy');
     });
@@ -1897,7 +1911,7 @@ describe('ReactDOMComponent', () => {
 
   describe('String boolean attributes', function() {
     it('does not assign string boolean attributes for custom attributes', function() {
-      let el = ReactTestUtils.renderIntoDocument(<div whatever={true} />);
+      let el = ReactTestUtils.renderIntoDocument(<div whatever={true} />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Received `%s` for a non-boolean attribute `%s`.\n\n' +
         'If you want to write it to the DOM, pass a string instead: ' +
@@ -1913,20 +1927,20 @@ describe('ReactDOMComponent', () => {
     });
 
     it('stringifies the boolean true for allowed attributes', function() {
-      const el = ReactTestUtils.renderIntoDocument(<div spellCheck={true} />);
+      const el = ReactTestUtils.renderIntoDocument(<div spellCheck={true} />, cocoMvc);
 
       expect(el.getAttribute('spellCheck')).toBe('true');
     });
 
     it('stringifies the boolean false for allowed attributes', function() {
-      const el = ReactTestUtils.renderIntoDocument(<div spellCheck={false} />);
+      const el = ReactTestUtils.renderIntoDocument(<div spellCheck={false} />, cocoMvc);
 
       expect(el.getAttribute('spellCheck')).toBe('false');
     });
 
     it('stringifies implicit booleans for allowed attributes', function() {
       // eslint-disable-next-line react/jsx-boolean-value
-      const el = ReactTestUtils.renderIntoDocument(<div spellCheck />);
+      const el = ReactTestUtils.renderIntoDocument(<div spellCheck />, cocoMvc);
 
       expect(el.getAttribute('spellCheck')).toBe('true');
     });
@@ -1934,7 +1948,7 @@ describe('ReactDOMComponent', () => {
 
   describe('Boolean attributes', function() {
     it('warns on the ambiguous string value "false"', function() {
-      let el = ReactTestUtils.renderIntoDocument(<div hidden="false" />);
+      let el = ReactTestUtils.renderIntoDocument(<div hidden="false" />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Received the string `%s` for the boolean attribute `%s`. ' +
         '%s ' +
@@ -1950,7 +1964,7 @@ describe('ReactDOMComponent', () => {
     });
 
     it('warns on the potentially-ambiguous string value "true"', function() {
-      let el = ReactTestUtils.renderIntoDocument(<div hidden="true" />);
+      let el = ReactTestUtils.renderIntoDocument(<div hidden="true" />, cocoMvc);
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         "Received the string `%s` for the boolean attribute `%s`. %s Did you mean %s={%s}?",
         "true",
@@ -1970,6 +1984,7 @@ describe('ReactDOMComponent', () => {
         <svg>
           <font-face x-height={false} />
         </svg>,
+        cocoMvc
       );
       expect(consoleErrorSpy.mock.calls[1]).toEqual([
         "Invalid DOM property `%s`. Did you mean `%s`?", "x-height", "xHeight"
@@ -1985,6 +2000,7 @@ describe('ReactDOMComponent', () => {
         <svg>
           <font-face whatever={false} />
         </svg>,
+        cocoMvc
       );
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'Received `%s` for a non-boolean attribute `%s`.\n\n' +
@@ -2004,27 +2020,27 @@ describe('ReactDOMComponent', () => {
   describe('Custom elements', () => {
     it('does not strip unknown boolean attributes', () => {
       const container = document.createElement('div');
-      render(<some-custom-element foo={true} />, container);
+      cocoMvc.render(<some-custom-element foo={true} />, container);
       const node = container.firstChild;
       expect(node.getAttribute('foo')).toBe('true');
-      render(<some-custom-element foo={false} />, container);
+      cocoMvc.render(<some-custom-element foo={false} />, container);
       expect(node.getAttribute('foo')).toBe('false');
-      render(<some-custom-element />, container);
+      cocoMvc.render(<some-custom-element />, container);
       expect(node.hasAttribute('foo')).toBe(false);
-      render(<some-custom-element foo={true} />, container);
+      cocoMvc.render(<some-custom-element foo={true} />, container);
       expect(node.hasAttribute('foo')).toBe(true);
     });
 
     it('does not strip the on* attributes', () => {
       const container = document.createElement('div');
-      render(<some-custom-element onx="bar" />, container);
+      cocoMvc.render(<some-custom-element onx="bar" />, container);
       const node = container.firstChild;
       expect(node.getAttribute('onx')).toBe('bar');
-      render(<some-custom-element onx="buzz" />, container);
+      cocoMvc.render(<some-custom-element onx="buzz" />, container);
       expect(node.getAttribute('onx')).toBe('buzz');
-      render(<some-custom-element />, container);
+      cocoMvc.render(<some-custom-element />, container);
       expect(node.hasAttribute('onx')).toBe(false);
-      render(<some-custom-element onx="bar" />, container);
+      cocoMvc.render(<some-custom-element onx="bar" />, container);
       expect(node.getAttribute('onx')).toBe('bar');
     });
   })

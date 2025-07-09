@@ -47,9 +47,7 @@ function legacyRenderSubtreeIntoContainer(
     root = legacyCreateRootFromDOMContainer(container, children);
   } else {
     root = maybeRoot;
-    flushSync(() => {
-      updateContainer(children, root, parentComponent, callback);
-    })
+    updateContainer(children, root, parentComponent, callback);
   }
   return getPublicRootInstance(root);
 }

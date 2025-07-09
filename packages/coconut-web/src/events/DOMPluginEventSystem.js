@@ -3,10 +3,11 @@ import { createEventListenerWrapperWithPriority } from './ReactDomEventListener'
 import { addEventBubbleListener } from './EventListener';
 import * as SimpleEventPlugin from './plugins/SimpleEventPlugin';
 import { processDispatchQueue } from './plugins/SimpleEventPlugin';
-import { IS_CAPTURE_PHASE } from './EventSystemFlags';
+import { IS_CAPTURE_PHASE, IS_NON_DELEGATED } from './EventSystemFlags';
 import { HostRoot, HostComponent, HostText } from 'reconciler-ReactWorkTags';
 import { register, NAME } from 'shared';
-import { getClosestInstanceFromNode } from '../client/ReactDomComponentTree';
+import { getClosestInstanceFromNode, getEventListenerSet } from '../client/ReactDomComponentTree';
+import { batchedUpdates } from './ReactDOMUpdateBatching';
 
 SimpleEventPlugin.registerEvents();
 
@@ -97,6 +98,31 @@ export const nonDelegatedEvents = new Set([
   ...mediaEventTypes,
 ]);
 
+export function getListenerSetKey(
+  domEventName,
+  capture,
+) {
+  return `${domEventName}__${capture ? 'capture' : 'bubble'}`;
+}
+
+export function listenToNonDelegatedEvent(
+  domEventName,
+  targetElement
+) {
+  const isCapturePhaseListener = false;
+  const listenerSet = getEventListenerSet(targetElement)
+  const listenerSetKey = getListenerSetKey(domEventName, isCapturePhaseListener)
+  if (!listenerSet.has(listenerSetKey)) {
+    addTrappedEventListener(
+      targetElement,
+      domEventName,
+      IS_NON_DELEGATED,
+      isCapturePhaseListener,
+    );
+    listenerSet.add(listenerSetKey);
+  }
+}
+
 function isMatchingRootContainer(
   grandContainer,
   targetContainer
@@ -153,46 +179,50 @@ export function dispatchEventForPluginEventSystem(
   targetContainer
 ) {
   let ancestorInst = targetInst;
-  if (targetInst !== null) {
-    let node = targetInst;
-    mainLoop: while (true) {
-      if (node === null) {
-        return;
-      }
-      const nodeTag = node.tag;
-      if (nodeTag === HostRoot) {
-        let container = node.stateNode.containerInfo;
-        if (isMatchingRootContainer(container, targetContainer)) {
-          break;
+  if ((eventSystemFlags & IS_NON_DELEGATED) === 0) {
+    if (targetInst !== null) {
+      let node = targetInst;
+      mainLoop: while (true) {
+        if (node === null) {
+          return;
         }
-        // Now we need to find it's corresponding host fiber in the other
-        // tree. To do this we can use getClosestInstanceFromNode, but we
-        // need to validate that the fiber is a host instance, otherwise
-        // we need to traverse up through the DOM till we find the correct
-        // node that is from the other tree.
-        while (container !== null) {
-          const parentNode = getClosestInstanceFromNode(container);
-          if (parentNode === null) {
-            return;
+        const nodeTag = node.tag;
+        if (nodeTag === HostRoot) {
+          let container = node.stateNode.containerInfo;
+          if (isMatchingRootContainer(container, targetContainer)) {
+            break;
           }
-          const parentTag = parentNode.tag;
-          if (parentTag === HostComponent || parentTag === HostText) {
-            node = ancestorInst = parentNode;
-            continue mainLoop;
+          // Now we need to find it's corresponding host fiber in the other
+          // tree. To do this we can use getClosestInstanceFromNode, but we
+          // need to validate that the fiber is a host instance, otherwise
+          // we need to traverse up through the DOM till we find the correct
+          // node that is from the other tree.
+          while (container !== null) {
+            const parentNode = getClosestInstanceFromNode(container);
+            if (parentNode === null) {
+              return;
+            }
+            const parentTag = parentNode.tag;
+            if (parentTag === HostComponent || parentTag === HostText) {
+              node = ancestorInst = parentNode;
+              continue mainLoop;
+            }
+            container = container.parentNode;
           }
-          container = container.parentNode;
         }
+        node = node.return;
       }
-      node = node.return;
     }
   }
 
-  dispatchEventsForPlugins(
-    domEventName,
-    eventSystemFlags,
-    nativeEvent,
-    ancestorInst,
-    targetContainer,
-  )
+  batchedUpdates(() => {
+    dispatchEventsForPlugins(
+      domEventName,
+      eventSystemFlags,
+      nativeEvent,
+      ancestorInst,
+      targetContainer,
+    )
+  })
 }
 register(NAME.dispatchEventForPluginEventSystem, dispatchEventForPluginEventSystem);

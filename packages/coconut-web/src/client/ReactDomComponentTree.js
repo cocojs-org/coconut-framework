@@ -4,6 +4,7 @@ const randomKey = Math.random()
 const internalInstanceKey = '__reactFiber$' + randomKey;
 const internalPropsKey = '__reactProps$' + randomKey;
 const internalContainerInstanceKey = '__reactContainer$' + randomKey;
+const internalEventHandlersKey = '__reactEvents$' + randomKey;
 
 export function precacheFiberNode(
   hostInst,
@@ -23,6 +24,14 @@ export function updateFiberProps(
   props
 ) {
   node[internalPropsKey] = props;
+}
+
+export function getEventListenerSet(node) {
+  let elementListenerSet = node[internalEventHandlersKey];
+  if (elementListenerSet === undefined) {
+    elementListenerSet = node[internalEventHandlersKey] = new Set();
+  }
+  return elementListenerSet;
 }
 
 export function markContainerAsRoot(hostRoot, node) {

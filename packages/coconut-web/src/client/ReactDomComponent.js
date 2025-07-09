@@ -9,6 +9,7 @@ import { setValueForProperty, setValueForStyles } from './DOMPropertyOperations'
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
 import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
 import { hasOwnProperty } from 'shared';
+import { listenToNonDelegatedEvent } from '../events/DOMPluginEventSystem';
 
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CHILDREN = 'children';
@@ -130,7 +131,25 @@ export function setInitialProperties(domElement, tag, rawProps) {
   if (__DEV__) {
     validatePropertiesInDevelopment(tag, rawProps);
   }
-  const props = rawProps;
+  let props;
+  switch (tag) {
+    case 'source':
+      // We listen to this event in case to ensure emulated bubble
+      // listeners still fire for the error event.
+      listenToNonDelegatedEvent('error', domElement);
+      props = rawProps;
+      break;
+    case 'image':
+    case 'link':
+      // We listen to these events in case to ensure emulated bubble
+      // listeners still fire for error and load events.
+      listenToNonDelegatedEvent('error', domElement);
+      listenToNonDelegatedEvent('load', domElement);
+      break;
+    default: {
+      props = rawProps;
+    }
+  }
 
   assertValidProps(tag, props);
 

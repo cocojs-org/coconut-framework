@@ -61,6 +61,7 @@ import { _test_helper as _test_helper_render } from 'coco-render';
 export {
   render,
   findDOMNode,
+  unmountComponentAtNode,
   registerApplication,
   unregisterApplication,
   cleanCache,

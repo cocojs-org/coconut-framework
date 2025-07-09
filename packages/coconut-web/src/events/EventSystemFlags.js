@@ -6,4 +6,5 @@
  *
  */
 
+export const IS_NON_DELEGATED = 1 << 1;
 export const IS_CAPTURE_PHASE = 1 << 2;

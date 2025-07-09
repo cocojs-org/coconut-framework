@@ -79,18 +79,19 @@ describe('ReactDOM', () => {
   it('allows a DOM element to be used with a string', () => {
     application.start();
     const element = <div className={'foo'} />;
-    const node = ReactTestUtils.renderIntoDocument(element);
+    const node = ReactTestUtils.renderIntoDocument(element, cocoMvc);
     expect(node.tagName).toBe('DIV');
   });
 
   it('should allow children to be passed as an argument', () => {
-    const argNode = ReactTestUtils.renderIntoDocument(<div>child</div>);
+    const argNode = ReactTestUtils.renderIntoDocument(<div>child</div>, cocoMvc);
     expect(argNode.innerHTML).toBe('child');
   });
 
   it('should overwrite props.children with children argument', () => {
     const conflictNode = ReactTestUtils.renderIntoDocument(
-      <div children='fakechild'>child</div>
+      <div children='fakechild'>child</div>,
+      cocoMvc
     );
     expect(conflictNode.innerHTML).toBe('child');
   });
@@ -105,6 +106,7 @@ describe('ReactDOM', () => {
         <div key="theDog" className="dog" />,
         <div key="theBird" className="bird" />
       </div>,
+      cocoMvc
     );
     // Warm the cache with theDog
     myDiv = ReactTestUtils.renderIntoDocument(
@@ -112,12 +114,14 @@ describe('ReactDOM', () => {
         <div key="theDog" className="dogbeforedelete" />,
         <div key="theBird" className="bird" />,
       </div>,
+      cocoMvc
     );
     // Remove theDog - this should purge the cache
     myDiv = ReactTestUtils.renderIntoDocument(
       <div>
         <div key="theBird" className="bird" />,
       </div>,
+      cocoMvc
     );
     // Now, put theDog back. It's now a different DOM node.
     myDiv = ReactTestUtils.renderIntoDocument(
@@ -125,6 +129,7 @@ describe('ReactDOM', () => {
         <div key="theDog" className="dog" />,
         <div key="theBird" className="bird" />,
       </div>,
+      cocoMvc
     );
     // Change the className of theDog. It will use the same element
     myDiv = ReactTestUtils.renderIntoDocument(
@@ -132,6 +137,7 @@ describe('ReactDOM', () => {
         <div key="theDog" className="bigdog" />,
         <div key="theBird" className="bird" />,
       </div>,
+      cocoMvc
     );
     const dog = myDiv.childNodes[0];
     expect(dog.className).toBe('bigdog');
