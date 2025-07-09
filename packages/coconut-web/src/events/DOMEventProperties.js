@@ -7,6 +7,8 @@ const simpleEventPluginEvents = [
   'submit',
   'error',
   'load',
+  'invalid',
+  'reset',
   'mouseOut',
 ]
 

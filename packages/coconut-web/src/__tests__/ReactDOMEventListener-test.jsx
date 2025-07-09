@@ -17,6 +17,7 @@ let application
 let jsx
 let view
 let reactive
+let ref;
 let consoleErrorSpy
 let consoleLogSpy
 
@@ -26,6 +27,7 @@ describe('ReactDOMEventListener', () => {
     Application = (await import('coco-mvc')).Application;
     view = (await import('coco-mvc')).view;
     reactive = (await import('coco-mvc')).reactive;
+    ref = (await import('coco-mvc')).ref;
     jsx = (await import('coco-mvc/jsx-runtime')).jsx;
     application = new Application();
     cocoMvc.registerApplication(application);
@@ -214,5 +216,110 @@ describe('ReactDOMEventListener', () => {
       }
     });
   })
+
+  it('should not fire duplicate events for a React DOM tree', () => {
+    const mouseOut = jest.fn();
+    const onMouseOut = event => mouseOut(event.target);
+
+    @view()
+    class Wrapper {
+      @ref()
+      refs
+
+      getInner = () => {
+        return this.refs.current;
+      };
+
+      render() {
+        const inner = <div ref={this.refs}>Inner</div>;
+        return (
+          <div>
+            <div onMouseOut={onMouseOut} id="outer">
+              {inner}
+            </div>
+          </div>
+        );
+      }
+    }
+
+    application.start();
+    const container = document.createElement('div');
+    const instance = cocoMvc.render(<Wrapper />, container);
+
+    document.body.appendChild(container);
+
+    try {
+      const nativeEvent = document.createEvent('Event');
+      nativeEvent.initEvent('mouseout', true, true);
+      instance.getInner().dispatchEvent(nativeEvent);
+
+      expect(mouseOut).toBeCalled();
+      expect(mouseOut).toHaveBeenCalledTimes(1);
+      expect(mouseOut.mock.calls[0][0]).toEqual(instance.getInner());
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  // Regression test for https://github.com/facebook/react/pull/12877
+  it('should not fire form events twice', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    const handleInvalid = jest.fn();
+    const handleReset = jest.fn();
+    const handleSubmit = jest.fn();
+
+    @view()
+    class Wrapper {
+
+      @ref()
+      formRef
+      @ref()
+      inputRef
+
+      render() {
+        return <form ref={this.formRef} onReset={handleReset} onSubmit={handleSubmit}>
+          <input ref={this.inputRef} onInvalid={handleInvalid} />
+        </form>
+      }
+    }
+    application.start();
+    const instance = cocoMvc.render(<Wrapper />, container);
+
+    instance.inputRef.current.dispatchEvent(
+      new Event('invalid', {
+        // https://developer.mozilla.org/en-US/docs/Web/Events/invalid
+        bubbles: false,
+      }),
+    );
+    expect(handleInvalid).toHaveBeenCalledTimes(1);
+
+    instance.formRef.current.dispatchEvent(
+      new Event('reset', {
+        // https://developer.mozilla.org/en-US/docs/Web/Events/reset
+        bubbles: true,
+      }),
+    );
+    expect(handleReset).toHaveBeenCalledTimes(1);
+
+    instance.formRef.current.dispatchEvent(
+      new Event('submit', {
+        // https://developer.mozilla.org/en-US/docs/Web/Events/submit
+        bubbles: true,
+      }),
+    );
+    expect(handleSubmit).toHaveBeenCalledTimes(1);
+
+    instance.formRef.current.dispatchEvent(
+      new Event('submit', {
+        // Might happen on older browsers.
+        bubbles: true,
+      }),
+    );
+    expect(handleSubmit).toHaveBeenCalledTimes(2); // It already fired in this test.
+
+    document.body.removeChild(container);
+  });
 })
 

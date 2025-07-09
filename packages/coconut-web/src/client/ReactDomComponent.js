@@ -145,6 +145,11 @@ export function setInitialProperties(domElement, tag, rawProps) {
       // listeners still fire for error and load events.
       listenToNonDelegatedEvent('error', domElement);
       listenToNonDelegatedEvent('load', domElement);
+      props = rawProps;
+      break;
+    case 'input':
+      listenToNonDelegatedEvent('invalid', domElement);
+      props = rawProps;
       break;
     default: {
       props = rawProps;

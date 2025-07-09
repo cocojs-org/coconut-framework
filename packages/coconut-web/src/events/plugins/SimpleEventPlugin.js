@@ -41,7 +41,10 @@ function executeDispatch(
 ) {
   // const type = event.type || 'unknown-event';
   // domEvent.currentTarget = currentTarget;
-  listener({ currentTarget: currentTarget });
+  listener({
+    target: domEvent.target,
+    currentTarget: currentTarget
+  });
   // domEvent.currentTarget = null;
 }
 
