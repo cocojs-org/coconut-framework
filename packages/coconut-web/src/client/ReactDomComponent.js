@@ -9,7 +9,7 @@ import { setValueForProperty, setValueForStyles } from './DOMPropertyOperations'
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
 import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
 import { hasOwnProperty } from 'shared';
-import { listenToNonDelegatedEvent } from '../events/DOMPluginEventSystem';
+import { listenToNonDelegatedEvent, mediaEventTypes } from '../events/DOMPluginEventSystem';
 
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CHILDREN = 'children';
@@ -70,6 +70,12 @@ function setInitialDOMProperties(
         setTextContent(domElement, nextProp);
       } else if (typeof nextProp === 'number') {
         setTextContent(domElement, '' + nextProp);
+      }
+    } else if (registrationNameDependencies.hasOwnProperty(propKey)) {
+      if (nextProp != null) {
+        if (propKey === 'onScroll'){
+          listenToNonDelegatedEvent('scroll', domElement);
+        }
       }
     } else if (nextProp != null) {
       setValueForProperty(domElement, propKey, nextProp, isCustomComponentTag)
@@ -133,10 +139,38 @@ export function setInitialProperties(domElement, tag, rawProps) {
   }
   let props;
   switch (tag) {
+    case 'dialog':
+      listenToNonDelegatedEvent('cancel', domElement);
+      listenToNonDelegatedEvent('close', domElement);
+      props = rawProps;
+      break;
+    case 'iframe':
+    case 'object':
+    case 'embed':
+      // We listen to this event in case to ensure emulated bubble
+      // listeners still fire for the load event.
+      listenToNonDelegatedEvent('load', domElement);
+      props = rawProps;
+      break;
+    case 'video':
+    case 'audio':
+      // We listen to these events in case to ensure emulated bubble
+      // listeners still fire for all the media events.
+      for (let i = 0; i < mediaEventTypes.length; i++) {
+        listenToNonDelegatedEvent(mediaEventTypes[i], domElement);
+      }
+      props = rawProps;
+      break;
     case 'source':
       // We listen to this event in case to ensure emulated bubble
       // listeners still fire for the error event.
       listenToNonDelegatedEvent('error', domElement);
+      props = rawProps;
+      break;
+    case 'details':
+      // We listen to this event in case to ensure emulated bubble
+      // listeners still fire for the toggle event.
+      listenToNonDelegatedEvent('toggle', domElement);
       props = rawProps;
       break;
     case 'image':
@@ -270,6 +304,12 @@ export function diffProperties(
     } else if (propKey === CHILDREN) {
       if (typeof nextProp === 'string' || typeof nextProp === 'number') {
         (updatePayload = updatePayload || []).push(propKey, '' + nextProp);
+      }
+    } else if (registrationNameDependencies.hasOwnProperty(propKey)) {
+      if (nextProp != null) {
+        if (propKey === 'onScroll') {
+          listenToNonDelegatedEvent('scroll', domElement);
+        }
       }
     } else {
       (updatePayload = updatePayload || []).push(propKey, nextProp)

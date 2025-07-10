@@ -18,11 +18,13 @@ function extractEvents(
   }
 
   const inCapturePhase = (eventSystemFlags & IS_CAPTURE_PHASE) !== 0;
+  const accumulateTargetOnly = !inCapturePhase && (domEventName === 'scroll');
   const listeners = accumulateSinglePhaseListeners(
     targetInst,
     reactName,
     nativeEvent.type,
     inCapturePhase,
+    accumulateTargetOnly,
     nativeEvent
   )
   if (listeners.length > 0) {
@@ -91,6 +93,7 @@ export function accumulateSinglePhaseListeners(
   reactName,
   nativeEventType,
   inCapturePhase,
+  accumulateTargetOnly,
   nativeEvent
 ) {
   const captureName = reactName !== null ? reactName + 'Capture' : null;
@@ -104,12 +107,15 @@ export function accumulateSinglePhaseListeners(
     const {stateNode, tag} = instance;
     if (tag === HostComponent && stateNode !== null) {
       lastHostComponent = stateNode;
-      if (reactName !== null) {
+      if (reactEventName !== null) {
         const listener = getListener(instance, reactEventName);
         if (listener != null) {
           listeners.push(createDispatchListener(instance, listener, lastHostComponent));
         }
       }
+    }
+    if (accumulateTargetOnly) {
+      break;
     }
     instance = instance.return;
   }

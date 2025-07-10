@@ -321,5 +321,614 @@ describe('ReactDOMEventListener', () => {
 
     document.body.removeChild(container);
   });
+
+  // This tests an implementation detail that submit/reset events are listened to
+  // at the document level, which is necessary for event replaying to work.
+  // They bubble in all modern browsers.
+  it('should not receive submit events if native, interim DOM handler prevents it', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    try {
+      const handleSubmit = jest.fn();
+      const handleReset = jest.fn();
+
+      @view()
+      class Wrapper {
+
+        @ref()
+        formRef
+        @ref()
+        interimRef
+
+        render() {
+          return <div ref={this.interimRef}>
+            <form ref={this.formRef} onSubmit={handleSubmit} onReset={handleReset} />
+          </div>
+        }
+      }
+
+      application.start();
+      const instance = cocoMvc.render(<Wrapper />, container);
+
+      instance.interimRef.current.onsubmit = nativeEvent =>
+        nativeEvent.stopPropagation();
+      instance.interimRef.current.onreset = nativeEvent => nativeEvent.stopPropagation();
+
+      instance.formRef.current.dispatchEvent(
+        new Event('submit', {
+          // https://developer.mozilla.org/en-US/docs/Web/Events/submit
+          bubbles: true,
+        }),
+      );
+
+      instance.formRef.current.dispatchEvent(
+        new Event('reset', {
+          // https://developer.mozilla.org/en-US/docs/Web/Events/reset
+          bubbles: true,
+        }),
+      );
+
+      expect(handleSubmit).not.toHaveBeenCalled();
+      expect(handleReset).not.toHaveBeenCalled();
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  it('should dispatch loadstart only for media elements', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    try {
+      const handleImgLoadStart = jest.fn();
+      const handleVideoLoadStart = jest.fn();
+
+      @view()
+      class Wrapper {
+
+        @ref()
+        imgRef
+        @ref()
+        videoRef
+
+        render() {
+          return <div>
+            <img ref={this.imgRef} onLoadStart={handleImgLoadStart} />
+            <video ref={this.videoRef} onLoadStart={() => {
+              handleVideoLoadStart()}
+            } />
+          </div>
+        }
+      }
+
+      application.start();
+      const instance = cocoMvc.render(
+        <Wrapper />,
+        container,
+      );
+
+      // Note for debugging: loadstart currently doesn't fire in Chrome.
+      // https://bugs.chromium.org/p/chromium/issues/detail?id=458851
+      instance.imgRef.current.dispatchEvent(
+        new ProgressEvent('loadstart', {
+          bubbles: false,
+        }),
+      );
+      expect(handleImgLoadStart).toHaveBeenCalledTimes(0);
+
+      instance.videoRef.current.dispatchEvent(
+        new ProgressEvent('loadstart', {
+          bubbles: false,
+        }),
+      );
+      expect(handleVideoLoadStart).toHaveBeenCalledTimes(1);
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  it('should not attempt to listen to unnecessary events on the top level', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    // We'll test this event alone.
+    const handleVideoPlay = jest.fn();
+    const handleVideoPlayDelegated = jest.fn();
+    const mediaEvents = {
+      onAbort() {},
+      onCanPlay() {},
+      onCanPlayThrough() {},
+      onDurationChange() {},
+      onEmptied() {},
+      onEncrypted() {},
+      onEnded() {},
+      onError() {},
+      onLoadedData() {},
+      onLoadedMetadata() {},
+      onLoadStart() {},
+      onPause() {},
+      onPlay() {},
+      onPlaying() {},
+      onProgress() {},
+      onRateChange() {},
+      onResize() {},
+      onSeeked() {},
+      onSeeking() {},
+      onStalled() {},
+      onSuspend() {},
+      onTimeUpdate() {},
+      onVolumeChange() {},
+      onWaiting() {},
+    };
+
+    const originalDocAddEventListener = document.addEventListener;
+    const originalRootAddEventListener = container.addEventListener;
+    document.addEventListener = function(type) {
+      switch (type) {
+        case 'selectionchange':
+          break;
+        default:
+          throw new Error(
+            `Did not expect to add a document-level listener for the "${type}" event.`,
+          );
+      }
+    };
+    container.addEventListener = function(type, fn, options) {
+      if (options && (options === true || options.capture)) {
+        return;
+      }
+      switch (type) {
+        case 'abort':
+        case 'canplay':
+        case 'canplaythrough':
+        case 'durationchange':
+        case 'emptied':
+        case 'encrypted':
+        case 'ended':
+        case 'error':
+        case 'loadeddata':
+        case 'loadedmetadata':
+        case 'loadstart':
+        case 'pause':
+        case 'play':
+        case 'playing':
+        case 'progress':
+        case 'ratechange':
+        case 'resize':
+        case 'seeked':
+        case 'seeking':
+        case 'stalled':
+        case 'suspend':
+        case 'timeupdate':
+        case 'volumechange':
+        case 'waiting':
+          throw new Error(
+            `Did not expect to add a root-level listener for the "${type}" event.`,
+          );
+        default:
+          break;
+      }
+    };
+
+    try {
+      @view()
+      class Wrapper {
+
+        @ref()
+        videoRef
+
+        render() {
+          return <div onPlay={handleVideoPlayDelegated}>
+            <video ref={this.videoRef} {...mediaEvents} onPlay={handleVideoPlay} />
+            <audio {...mediaEvents}>
+              <source {...mediaEvents} />
+            </audio>
+          </div>
+        }
+      }
+      // We expect that mounting this tree will
+      // *not* attach handlers for any top-level events.
+      application.start();
+      const instance = cocoMvc.render(
+        <Wrapper />,
+        container,
+      );
+
+      // Also verify dispatching one of them works
+      instance.videoRef.current.dispatchEvent(
+        new Event('play', {
+          bubbles: false,
+        }),
+      );
+      expect(handleVideoPlay).toHaveBeenCalledTimes(1);
+      // Unlike browsers, we delegate media events.
+      // (This doesn't make a lot of sense but it would be a breaking change not to.)
+      expect(handleVideoPlayDelegated).toHaveBeenCalledTimes(1);
+    } finally {
+      document.addEventListener = originalDocAddEventListener;
+      container.addEventListener = originalRootAddEventListener;
+      document.body.removeChild(container);
+    }
+  });
+
+  it('should dispatch load for embed elements', () => {
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+
+    try {
+      const handleLoad = jest.fn();
+
+      @view()
+      class Wrapper {
+
+        @ref()
+        ref
+
+        render() {
+          return <div>
+            <embed ref={this.ref} onLoad={handleLoad} />
+          </div>
+        }
+      }
+
+      application.start();
+      const instance = cocoMvc.render(
+        <Wrapper />,
+        container,
+      );
+
+      instance.ref.current.dispatchEvent(
+        new ProgressEvent('load', {
+          bubbles: false,
+        }),
+      );
+
+      expect(handleLoad).toHaveBeenCalledTimes(1);
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  // Unlike browsers, we delegate media events.
+  // (This doesn't make a lot of sense but it would be a breaking change not to.)
+  it('should delegate media events even without a direct listener', () => {
+    const container = document.createElement('div');
+    const handleVideoPlayDelegated = jest.fn();
+    document.body.appendChild(container);
+    try {
+      @view()
+      class Wrapper {
+
+        @ref()
+        ref
+
+        render() {
+          return <div onPlay={handleVideoPlayDelegated}>
+            {/* Intentionally no handler on the target: */}
+            <video ref={this.ref} />
+          </div>
+        }
+      }
+
+      application.start();
+      const instance = cocoMvc.render(
+        <Wrapper />,
+        container,
+      );
+      instance.ref.current.dispatchEvent(
+        new Event('play', {
+          bubbles: false,
+        }),
+      );
+      // Regression test: ensure React tree delegation still works
+      // even if the actual DOM element did not have a handler.
+      expect(handleVideoPlayDelegated).toHaveBeenCalledTimes(1);
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  it('should delegate dialog events even without a direct listener', () => {
+    const container = document.createElement('div');
+    const onCancel = jest.fn();
+    const onClose = jest.fn();
+    document.body.appendChild(container);
+    try {
+      @view()
+      class Wrapper {
+
+        @ref()
+        ref
+
+        render() {
+          return <div onCancel={onCancel} onClose={onClose}>
+            {/* Intentionally no handler on the target: */}
+            <dialog ref={this.ref} />
+          </div>
+        }
+      }
+
+      application.start();
+      const instance = cocoMvc.render(
+        <Wrapper />,
+        container,
+      );
+      instance.ref.current.dispatchEvent(
+        new Event('close', {
+          bubbles: false,
+        }),
+      );
+      instance.ref.current.dispatchEvent(
+        new Event('cancel', {
+          bubbles: false,
+        }),
+      );
+      // Regression test: ensure React tree delegation still works
+      // even if the actual DOM element did not have a handler.
+      expect(onCancel).toHaveBeenCalledTimes(1);
+      expect(onClose).toHaveBeenCalledTimes(1);
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  it('should bubble non-native bubbling toggle events', () => {
+    const container = document.createElement('div');
+    const onToggle = jest.fn();
+    document.body.appendChild(container);
+    try {
+      @view()
+      class Wrapper {
+
+        @ref()
+        ref
+
+        render() {
+          return <div onToggle={onToggle}>
+            <details ref={this.ref} onToggle={onToggle} />
+          </div>
+        }
+      }
+
+      application.start();
+      const instance = cocoMvc.render(
+        <Wrapper />,
+        container,
+      );
+      instance.ref.current.dispatchEvent(
+        new Event('toggle', {
+          bubbles: false,
+        }),
+      );
+      expect(onToggle).toHaveBeenCalledTimes(2);
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  it('should bubble non-native bubbling cancel/close events', () => {
+    const container = document.createElement('div');
+    const onCancel = jest.fn();
+    const onClose = jest.fn();
+    document.body.appendChild(container);
+    try {
+      @view()
+      class Wrapper {
+
+        @ref()
+        ref
+
+        render() {
+          return <div onCancel={onCancel} onClose={onClose}>
+            <dialog ref={this.ref} onCancel={onCancel} onClose={onClose} />
+          </div>
+        }
+      }
+
+      application.start();
+      const instance = cocoMvc.render(
+        <Wrapper />,
+        container,
+      );
+      instance.ref.current.dispatchEvent(
+        new Event('cancel', {
+          bubbles: false,
+        }),
+      );
+      instance.ref.current.dispatchEvent(
+        new Event('close', {
+          bubbles: false,
+        }),
+      );
+      expect(onCancel).toHaveBeenCalledTimes(2);
+      expect(onClose).toHaveBeenCalledTimes(2);
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  it('should bubble non-native bubbling media events events', () => {
+    const container = document.createElement('div');
+    const onPlay = jest.fn();
+    document.body.appendChild(container);
+    try {
+      @view()
+      class Wrapper {
+
+        @ref()
+        ref
+
+        render() {
+          return <div onPlay={onPlay}>
+            <video ref={this.ref} onPlay={onPlay} />
+          </div>
+        }
+      }
+
+      application.start();
+      const instance = cocoMvc.render(
+        <Wrapper />,
+        container,
+      );
+      instance.ref.current.dispatchEvent(
+        new Event('play', {
+          bubbles: false,
+        }),
+      );
+      expect(onPlay).toHaveBeenCalledTimes(2);
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  it('should bubble non-native bubbling invalid events', () => {
+    const container = document.createElement('div');
+    const onInvalid = jest.fn();
+    document.body.appendChild(container);
+    try {
+      @view()
+      class Wrapper {
+
+        @ref()
+        ref
+
+        render() {
+          return <form onInvalid={onInvalid}>
+            <input ref={this.ref} onInvalid={onInvalid} />
+          </form>
+        }
+      }
+      application.start();
+      const instance = cocoMvc.render(
+        <Wrapper />,
+        container,
+      );
+      instance.ref.current.dispatchEvent(
+        new Event('invalid', {
+          bubbles: false,
+        }),
+      );
+      expect(onInvalid).toHaveBeenCalledTimes(2);
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  it('should handle non-bubbling capture events correctly', () => {
+    const container = document.createElement('div');
+    const onPlayCapture = jest.fn(e => log.push(e.currentTarget));
+    const log = [];
+    document.body.appendChild(container);
+    try {
+      @view()
+      class Wrapper {
+
+        @ref()
+        outerRef
+        @ref()
+        innerRef
+
+        render() {
+          return <div ref={this.outerRef} onPlayCapture={onPlayCapture}>
+            <div onPlayCapture={onPlayCapture}>
+              <div ref={this.innerRef} onPlayCapture={onPlayCapture} />
+            </div>
+          </div>
+        }
+      }
+
+      application.start();
+      const instance = cocoMvc.render(
+        <Wrapper />,
+        container,
+      );
+      instance.innerRef.current.dispatchEvent(
+        new Event('play', {
+          bubbles: false,
+        }),
+      );
+      expect(onPlayCapture).toHaveBeenCalledTimes(3);
+      expect(log).toEqual([
+        instance.outerRef.current,
+        instance.outerRef.current.firstChild,
+        instance.innerRef.current,
+      ]);
+      instance.outerRef.current.dispatchEvent(
+        new Event('play', {
+          bubbles: false,
+        }),
+      );
+      expect(onPlayCapture).toHaveBeenCalledTimes(4);
+      expect(log).toEqual([
+        instance.outerRef.current,
+        instance.outerRef.current.firstChild,
+        instance.innerRef.current,
+        instance.outerRef.current,
+      ]);
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  // We're moving towards aligning more closely with the browser.
+  // Currently we emulate bubbling for all non-bubbling events except scroll.
+  // We may expand this list in the future, removing emulated bubbling altogether.
+  it('should not emulate bubbling of scroll events', () => {
+    const container = document.createElement('div');
+    const log = [];
+    const onScroll = jest.fn(e =>
+      log.push(['bubble', e.currentTarget.className]),
+    );
+    const onScrollCapture = jest.fn(e =>
+      log.push(['capture', e.currentTarget.className]),
+    );
+    document.body.appendChild(container);
+    try {
+      @view()
+      class Wrapper {
+
+        @ref()
+        ref
+
+        render() {
+          return <div
+            className="grand"
+            onScroll={onScroll}
+            onScrollCapture={onScrollCapture}>
+            <div
+              className="parent"
+              onScroll={onScroll}
+              onScrollCapture={onScrollCapture}>
+              <div
+                className="child"
+                onScroll={onScroll}
+                onScrollCapture={onScrollCapture}
+                ref={this.ref}
+              />
+            </div>
+          </div>
+        }
+      }
+      application.start();
+      const instance = cocoMvc.render(
+        <Wrapper />,
+        container,
+      );
+      instance.ref.current.dispatchEvent(
+        new Event('scroll', {
+          bubbles: false,
+        }),
+      );
+      expect(log).toEqual([
+        ['capture', 'grand'],
+        ['capture', 'parent'],
+        ['capture', 'child'],
+        ['bubble', 'child'],
+      ]);
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
 })
 

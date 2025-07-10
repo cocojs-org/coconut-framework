@@ -1,6 +1,6 @@
 import { allNativeEvents } from './EventRegistry';
 import { createEventListenerWrapperWithPriority } from './ReactDomEventListener';
-import { addEventBubbleListener } from './EventListener';
+import { addEventBubbleListener, addEventCaptureListener } from './EventListener';
 import * as SimpleEventPlugin from './plugins/SimpleEventPlugin';
 import { processDispatchQueue } from './plugins/SimpleEventPlugin';
 import { IS_CAPTURE_PHASE, IS_NON_DELEGATED } from './EventSystemFlags';
@@ -23,9 +23,9 @@ export function listenToAllSupportedEvents(rootContainerElement) {
 
     allNativeEvents.forEach(domEventName => {
       if (!nonDelegatedEvents.has(domEventName)) {
-        listenToNativeEvent(domEventName, true, rootContainerElement)
+        listenToNativeEvent(domEventName, false, rootContainerElement)
       }
-      listenToNativeEvent(domEventName, false, rootContainerElement)
+      listenToNativeEvent(domEventName, true, rootContainerElement)
     })
   }
 }
@@ -38,7 +38,11 @@ function addTrappedEventListener(
 ) {
   let listener = createEventListenerWrapperWithPriority(targetContainer, domEventName, eventSystemFlags)
 
-  addEventBubbleListener(targetContainer, domEventName, listener)
+  if (isCapturePhaseListener) {
+    addEventCaptureListener(targetContainer, domEventName, listener)
+  } else {
+    addEventBubbleListener(targetContainer, domEventName, listener)
+  }
 }
 
 export function listenToNativeEvent(
@@ -46,6 +50,16 @@ export function listenToNativeEvent(
   isCapturePhaseListener,
   target
 ) {
+  if (__DEV__) {
+    if (nonDelegatedEvents.has(domEventName) && !isCapturePhaseListener) {
+      console.error(
+        'Did not expect a listenToNativeEvent() call for "%s" in the bubble phase. ' +
+        'This is a bug in React. Please file an issue.',
+        domEventName,
+      );
+    }
+  }
+
   let eventSystemFlags = 0;
   if (isCapturePhaseListener) {
     eventSystemFlags |= IS_CAPTURE_PHASE;

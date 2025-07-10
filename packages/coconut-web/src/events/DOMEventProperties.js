@@ -3,13 +3,19 @@ import { registerTwoPhaseEvent } from './EventRegistry';
 export const topLevelEventsToReactNames = new Map();
 
 const simpleEventPluginEvents = [
+  'cancel',
   'click',
-  'submit',
+  'close',
   'error',
-  'load',
   'invalid',
-  'reset',
+  'load',
+  'loadStart',
   'mouseOut',
+  'play',
+  'reset',
+  'scroll',
+  'submit',
+  'toggle',
 ]
 
 function registerSimpleEvent(domEventName, reactName) {
