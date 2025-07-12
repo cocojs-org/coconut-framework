@@ -930,5 +930,227 @@ describe('ReactDOMEventListener', () => {
       document.body.removeChild(container);
     }
   });
+
+  // We're moving towards aligning more closely with the browser.
+  // Currently we emulate bubbling for all non-bubbling events except scroll.
+  // We may expand this list in the future, removing emulated bubbling altogether.
+  it('should not emulate bubbling of scroll events (no own handler)', () => {
+    const container = document.createElement('div');
+    const log = [];
+    const onScroll = jest.fn(e =>
+      log.push(['bubble', e.currentTarget.className]),
+    );
+    const onScrollCapture = jest.fn(e =>
+      log.push(['capture', e.currentTarget.className]),
+    );
+    document.body.appendChild(container);
+    try {
+      @view()
+      class Wrapper {
+
+        @ref()
+        ref
+
+        render() {
+          return <div
+            className="grand"
+            onScroll={onScroll}
+            onScrollCapture={onScrollCapture}>
+            <div
+              className="parent"
+              onScroll={onScroll}
+              onScrollCapture={onScrollCapture}>
+              {/* Intentionally no handler on the child: */}
+              <div className="child" ref={this.ref} />
+            </div>
+          </div>
+        }
+      }
+      application.start();
+      const instance = cocoMvc.render(<Wrapper />, container);
+      instance.ref.current.dispatchEvent(
+        new Event('scroll', {
+          bubbles: false,
+        }),
+      );
+      expect(log).toEqual([
+        ['capture', 'grand'],
+        ['capture', 'parent'],
+      ]);
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  it('should subscribe to scroll during updates', () => {
+    const container = document.createElement('div');
+    const log = [];
+    const onScroll = jest.fn(e =>
+      log.push(['bubble', e.currentTarget.className]),
+    );
+    const onScrollCapture = jest.fn(e =>
+      log.push(['capture', e.currentTarget.className]),
+    );
+    document.body.appendChild(container);
+    try {
+      @view()
+      class Empty1 {
+        render() {
+          return <div>
+            <div>
+              <div />
+            </div>
+          </div>
+        }
+      }
+      @view()
+      class Empty2 {
+        @ref()
+        ref
+        render() {
+          return <div>
+            <div>
+              <div ref={this.ref} />
+            </div>
+          </div>
+        }
+      }
+
+      @view()
+      class Wrapper1 {
+
+        @ref()
+        ref
+
+        render() {
+          return <div
+            className="grand"
+            onScroll={e => onScroll(e)}
+            onScrollCapture={e => onScrollCapture(e)}>
+            <div
+              className="parent"
+              onScroll={e => onScroll(e)}
+              onScrollCapture={e => onScrollCapture(e)}>
+              <div
+                className="child"
+                onScroll={e => onScroll(e)}
+                onScrollCapture={e => onScrollCapture(e)}
+                ref={this.ref}
+              />
+            </div>
+          </div>
+        }
+      }
+
+      @view()
+      class Wrapper2 {
+
+        @ref()
+        ref
+
+        render() {
+          return <div
+            className="grand"
+            // Note: these are intentionally inline functions so that
+            // we hit the reattachment codepath instead of bailing out.
+            onScroll={e => onScroll(e)}
+            onScrollCapture={e => onScrollCapture(e)}>
+            <div
+              className="parent"
+              onScroll={e => onScroll(e)}
+              onScrollCapture={e => onScrollCapture(e)}>
+              <div
+                className="child"
+                onScroll={e => onScroll(e)}
+                onScrollCapture={e => onScrollCapture(e)}
+                ref={this.ref}
+              />
+            </div>
+          </div>
+        }
+      }
+
+      application.start();
+      cocoMvc.render(
+        <Empty1 />,
+        container,
+      );
+
+      // Update to attach.
+      const wrapper1 = cocoMvc.render(
+        <Wrapper1 />,
+        container,
+      );
+      wrapper1.ref.current.dispatchEvent(
+        new Event('scroll', {
+          bubbles: false,
+        }),
+      );
+      expect(log).toEqual([
+        ['capture', 'grand'],
+        ['capture', 'parent'],
+        ['capture', 'child'],
+        ['bubble', 'child'],
+      ]);
+
+      // Update to verify deduplication.
+      log.length = 0;
+      const wrapper2 = cocoMvc.render(
+        <Wrapper2 />,
+        container,
+      );
+      wrapper2.ref.current.dispatchEvent(
+        new Event('scroll', {
+          bubbles: false,
+        }),
+      );
+      expect(log).toEqual([
+        ['capture', 'grand'],
+        ['capture', 'parent'],
+        ['capture', 'child'],
+        ['bubble', 'child'],
+      ]);
+
+      // Update to detach.
+      log.length = 0;
+      const empty2 = cocoMvc.render(
+        <Empty2 />,
+        container,
+      );
+      empty2.ref.current.dispatchEvent(
+        new Event('scroll', {
+          bubbles: false,
+        }),
+      );
+      expect(log).toEqual([]);
+    } finally {
+      document.body.removeChild(container);
+    }
+  });
+
+  it('should not subscribe to selectionchange twice', () => {
+    const log = [];
+
+    const originalDocAddEventListener = document.addEventListener;
+    document.addEventListener = function(type, fn, options) {
+      switch (type) {
+        case 'selectionchange':
+          log.push(options);
+          break;
+        default:
+          throw new Error(
+            `Did not expect to add a document-level listener for the "${type}" event.`,
+          );
+      }
+    };
+    try {
+      cocoMvc.render(<input />, document.createElement('div'));
+      cocoMvc.render(<input />, document.createElement('div'));
+    } finally {
+      document.addEventListener = originalDocAddEventListener;
+    }
+
+    expect(log).toEqual([false]);
+  });
 })
 

@@ -8,6 +8,7 @@ import { HostRoot, HostComponent, HostText } from 'reconciler-ReactWorkTags';
 import { register, NAME } from 'shared';
 import { getClosestInstanceFromNode, getEventListenerSet } from '../client/ReactDomComponentTree';
 import { batchedUpdates } from './ReactDOMUpdateBatching';
+import { DOCUMENT_NODE } from '../shared/HTMLNodeType';
 
 SimpleEventPlugin.registerEvents();
 
@@ -20,13 +21,28 @@ const listeningMarker =
 export function listenToAllSupportedEvents(rootContainerElement) {
   if (!rootContainerElement[listeningMarker]) {
     rootContainerElement[listeningMarker] = true;
-
     allNativeEvents.forEach(domEventName => {
-      if (!nonDelegatedEvents.has(domEventName)) {
-        listenToNativeEvent(domEventName, false, rootContainerElement)
+      // We handle selectionchange separately because it
+      // doesn't bubble and needs to be on the document.
+      if (domEventName !== 'selectionchange') {
+        if (!nonDelegatedEvents.has(domEventName)) {
+          listenToNativeEvent(domEventName, false, rootContainerElement)
+        }
+        listenToNativeEvent(domEventName, true, rootContainerElement)
       }
-      listenToNativeEvent(domEventName, true, rootContainerElement)
     })
+    const ownerDocument =
+      rootContainerElement.nodeType === DOCUMENT_NODE
+        ? rootContainerElement
+        : rootContainerElement.ownerDocument;
+    if (ownerDocument !== null) {
+      // The selectionchange event also needs deduplication
+      // but it is attached to the document.
+      if (!ownerDocument[listeningMarker]) {
+        ownerDocument[listeningMarker] = true;
+        listenToNativeEvent('selectionchange', false, ownerDocument);
+      }
+    }
   }
 }
 

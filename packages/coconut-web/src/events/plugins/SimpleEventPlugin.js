@@ -43,7 +43,9 @@ function executeDispatch(
 ) {
   // const type = event.type || 'unknown-event';
   // domEvent.currentTarget = currentTarget;
+  // coconut: 暂时不准备使用合成事件
   listener({
+    type: domEvent.type,
     target: domEvent.target,
     currentTarget: currentTarget
   });
