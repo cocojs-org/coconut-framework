@@ -60,6 +60,616 @@ describe('ReactDOMEventListener', () => {
         },
       });
     });
+
+    it('onContextMenu', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onContextMenu',
+        reactEventType: 'contextmenu',
+        nativeEvent: 'contextmenu',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('contextmenu', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onCopy', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onCopy',
+        reactEventType: 'copy',
+        nativeEvent: 'copy',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('copy', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onCut', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onCut',
+        reactEventType: 'cut',
+        nativeEvent: 'cut',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('cut', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onDoubleClick', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onDoubleClick',
+        reactEventType: 'dblclick',
+        nativeEvent: 'dblclick',
+        dispatch(node) {
+          node.dispatchEvent(
+            new KeyboardEvent('dblclick', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onDrag', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onDrag',
+        reactEventType: 'drag',
+        nativeEvent: 'drag',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('drag', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onDragEnd', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onDragEnd',
+        reactEventType: 'dragend',
+        nativeEvent: 'dragend',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('dragend', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onDragEnter', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onDragEnter',
+        reactEventType: 'dragenter',
+        nativeEvent: 'dragenter',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('dragenter', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onDragExit', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onDragExit',
+        reactEventType: 'dragexit',
+        nativeEvent: 'dragexit',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('dragexit', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onDragLeave', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onDragLeave',
+        reactEventType: 'dragleave',
+        nativeEvent: 'dragleave',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('dragleave', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onDragOver', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onDragOver',
+        reactEventType: 'dragover',
+        nativeEvent: 'dragover',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('dragover', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onDragStart', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onDragStart',
+        reactEventType: 'dragstart',
+        nativeEvent: 'dragstart',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('dragstart', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onDrop', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onDrop',
+        reactEventType: 'drop',
+        nativeEvent: 'drop',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('drop', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onFocus', () => {
+      testNativeBubblingEvent({
+        type: 'input',
+        reactEvent: 'onFocus',
+        reactEventType: 'focus',
+        nativeEvent: 'focusin',
+        dispatch(node) {
+          const e = new Event('focusin', {
+            bubbles: true,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onGotPointerCapture', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onGotPointerCapture',
+        reactEventType: 'gotpointercapture',
+        nativeEvent: 'gotpointercapture',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('gotpointercapture', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onKeyDown', () => {
+      testNativeBubblingEvent({
+        type: 'input',
+        reactEvent: 'onKeyDown',
+        reactEventType: 'keydown',
+        nativeEvent: 'keydown',
+        dispatch(node) {
+          node.dispatchEvent(
+            new KeyboardEvent('keydown', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onKeyPress', () => {
+      testNativeBubblingEvent({
+        type: 'input',
+        reactEvent: 'onKeyPress',
+        reactEventType: 'keypress',
+        nativeEvent: 'keypress',
+        dispatch(node) {
+          node.dispatchEvent(
+            new KeyboardEvent('keypress', {
+              keyCode: 13,
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onKeyUp', () => {
+      testNativeBubblingEvent({
+        type: 'input',
+        reactEvent: 'onKeyUp',
+        reactEventType: 'keyup',
+        nativeEvent: 'keyup',
+        dispatch(node) {
+          node.dispatchEvent(
+            new KeyboardEvent('keyup', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onLostPointerCapture', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onLostPointerCapture',
+        reactEventType: 'lostpointercapture',
+        nativeEvent: 'lostpointercapture',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('lostpointercapture', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onMouseDown', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onMouseDown',
+        reactEventType: 'mousedown',
+        nativeEvent: 'mousedown',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('mousedown', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onMouseOut', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onMouseOut',
+        reactEventType: 'mouseout',
+        nativeEvent: 'mouseout',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('mouseout', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onMouseOver', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onMouseOver',
+        reactEventType: 'mouseover',
+        nativeEvent: 'mouseover',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('mouseover', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onMouseUp', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onMouseUp',
+        reactEventType: 'mouseup',
+        nativeEvent: 'mouseup',
+        dispatch(node) {
+          node.dispatchEvent(
+            new MouseEvent('mouseup', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onPaste', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onPaste',
+        reactEventType: 'paste',
+        nativeEvent: 'paste',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('paste', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onPointerCancel', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onPointerCancel',
+        reactEventType: 'pointercancel',
+        nativeEvent: 'pointercancel',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('pointercancel', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onPointerDown', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onPointerDown',
+        reactEventType: 'pointerdown',
+        nativeEvent: 'pointerdown',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('pointerdown', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onPointerMove', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onPointerMove',
+        reactEventType: 'pointermove',
+        nativeEvent: 'pointermove',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('pointermove', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onPointerOut', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onPointerOut',
+        reactEventType: 'pointerout',
+        nativeEvent: 'pointerout',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('pointerout', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onPointerOver', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onPointerOver',
+        reactEventType: 'pointerover',
+        nativeEvent: 'pointerover',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('pointerover', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onPointerUp', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onPointerUp',
+        reactEventType: 'pointerup',
+        nativeEvent: 'pointerup',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('pointerup', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onReset', () => {
+      testNativeBubblingEvent({
+        type: 'form',
+        reactEvent: 'onReset',
+        reactEventType: 'reset',
+        nativeEvent: 'reset',
+        dispatch(node) {
+          const e = new Event('reset', {
+            bubbles: true,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onSubmit', () => {
+      testNativeBubblingEvent({
+        type: 'form',
+        reactEvent: 'onSubmit',
+        reactEventType: 'submit',
+        nativeEvent: 'submit',
+        dispatch(node) {
+          const e = new Event('submit', {
+            bubbles: true,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onTouchCancel', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onTouchCancel',
+        reactEventType: 'touchcancel',
+        nativeEvent: 'touchcancel',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('touchcancel', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onTouchEnd', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onTouchEnd',
+        reactEventType: 'touchend',
+        nativeEvent: 'touchend',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('touchend', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onTouchMove', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onTouchMove',
+        reactEventType: 'touchmove',
+        nativeEvent: 'touchmove',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('touchmove', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onTouchStart', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onTouchStart',
+        reactEventType: 'touchstart',
+        nativeEvent: 'touchstart',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('touchstart', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
+
+    it('onWheel', () => {
+      testNativeBubblingEvent({
+        type: 'div',
+        reactEvent: 'onWheel',
+        reactEventType: 'wheel',
+        nativeEvent: 'wheel',
+        dispatch(node) {
+          node.dispatchEvent(
+            new Event('wheel', {
+              bubbles: true,
+              cancelable: true,
+            }),
+          );
+        },
+      });
+    });
   })
 
   // Events that bubble in React and in the browser.

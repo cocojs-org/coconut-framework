@@ -6,16 +6,47 @@ const simpleEventPluginEvents = [
   'cancel',
   'click',
   'close',
+  'contextMenu',
+  'copy',
+  'cut',
+  'drag',
+  'dragEnd',
+  'dragEnter',
+  'dragExit',
+  'dragLeave',
+  'dragOver',
+  'dragStart',
+  'drop',
   'error',
+  'gotPointerCapture',
   'invalid',
+  'keyDown',
+  'keyPress',
+  'keyUp',
   'load',
   'loadStart',
+  'lostPointerCapture',
+  'mouseDown',
   'mouseOut',
+  'mouseOver',
+  'mouseUp',
+  'paste',
   'play',
+  'pointerCancel',
+  'pointerDown',
+  'pointerMove',
+  'pointerOut',
+  'pointerOver',
+  'pointerUp',
   'reset',
   'scroll',
   'submit',
+  'touchCancel',
+  'touchEnd',
+  'touchStart',
   'toggle',
+  'touchMove',
+  'wheel',
 ]
 
 function registerSimpleEvent(domEventName, reactName) {
@@ -32,4 +63,5 @@ export function registerSimpleEvents() {
   }
 
   registerSimpleEvent('dblclick', 'onDoubleClick');
+  registerSimpleEvent('focusin', 'onFocus');
 }

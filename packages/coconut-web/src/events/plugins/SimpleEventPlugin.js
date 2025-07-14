@@ -17,6 +17,13 @@ function extractEvents(
     return;
   }
 
+  let reactEventType = domEventName;
+  switch(domEventName) {
+    case 'focusin':
+      reactEventType = 'focus';
+      break;
+  }
+
   const inCapturePhase = (eventSystemFlags & IS_CAPTURE_PHASE) !== 0;
   const accumulateTargetOnly = !inCapturePhase && (domEventName === 'scroll');
   const listeners = accumulateSinglePhaseListeners(
@@ -31,6 +38,7 @@ function extractEvents(
     // todo 这里的event不能使用原生的，也要封装一下
     dispatchQueue.push({
       event: nativeEvent,
+      reactEventType,
       listeners
     });
   }
@@ -40,12 +48,13 @@ function executeDispatch(
   domEvent,
   listener,
   currentTarget,
+  reactEventType,
 ) {
   // const type = event.type || 'unknown-event';
   // domEvent.currentTarget = currentTarget;
   // coconut: 暂时不准备使用合成事件
   listener({
-    type: domEvent.type,
+    type: reactEventType,
     target: domEvent.target,
     currentTarget: currentTarget,
     stopPropagation: () => {
@@ -59,6 +68,7 @@ function processDispatchQueueItemsInOrder(
   domEvent,
   dispatchListeners,
   inCapturePhase,
+  reactEventType,
 ) {
   if (inCapturePhase) {
     for (let i = dispatchListeners.length - 1; i >= 0; i--) {
@@ -66,7 +76,7 @@ function processDispatchQueueItemsInOrder(
       if (domEvent.cancelBubble) {
         return;
       }
-      executeDispatch(domEvent, listener, currentTarget);
+      executeDispatch(domEvent, listener, currentTarget, reactEventType);
     }
   } else {
     for (let i = 0; i < dispatchListeners.length; i++) {
@@ -74,7 +84,7 @@ function processDispatchQueueItemsInOrder(
       if (domEvent.cancelBubble) {
         return;
       }
-      executeDispatch(domEvent, listener, currentTarget);
+      executeDispatch(domEvent, listener, currentTarget, reactEventType);
     }
   }
 }
@@ -82,8 +92,8 @@ function processDispatchQueueItemsInOrder(
 export function processDispatchQueue(dispatchQueue, eventSystemFlags) {
   const inCapturePhase = (eventSystemFlags & IS_CAPTURE_PHASE) !== 0;
   for (let i = 0; i < dispatchQueue.length; i++) {
-    const { event, listeners } = dispatchQueue[i];
-    processDispatchQueueItemsInOrder(event, listeners, inCapturePhase);
+    const { event, listeners, reactEventType } = dispatchQueue[i];
+    processDispatchQueueItemsInOrder(event, listeners, inCapturePhase, reactEventType);
   }
 }
 
