@@ -47,7 +47,10 @@ function executeDispatch(
   listener({
     type: domEvent.type,
     target: domEvent.target,
-    currentTarget: currentTarget
+    currentTarget: currentTarget,
+    stopPropagation: () => {
+      domEvent.stopPropagation();
+    },
   });
   // domEvent.currentTarget = null;
 }
@@ -60,11 +63,17 @@ function processDispatchQueueItemsInOrder(
   if (inCapturePhase) {
     for (let i = dispatchListeners.length - 1; i >= 0; i--) {
       const {instance, currentTarget, listener} = dispatchListeners[i];
+      if (domEvent.cancelBubble) {
+        return;
+      }
       executeDispatch(domEvent, listener, currentTarget);
     }
   } else {
     for (let i = 0; i < dispatchListeners.length; i++) {
       const {instance, currentTarget, listener} = dispatchListeners[i];
+      if (domEvent.cancelBubble) {
+        return;
+      }
       executeDispatch(domEvent, listener, currentTarget);
     }
   }

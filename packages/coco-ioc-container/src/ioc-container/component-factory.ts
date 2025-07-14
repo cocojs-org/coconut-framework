@@ -179,6 +179,7 @@ function getComponent<T>(
   const definition = getDefinition(ClsOrId, application, qualifier);
   if (!definition) {
     if (__TEST__) {
+      console.error('definition', clsDefinitionMap);
       throw new Error(`can no find component definition:${ClsOrId}`);
     }
   }

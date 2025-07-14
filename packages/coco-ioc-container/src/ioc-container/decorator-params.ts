@@ -43,6 +43,7 @@ export function addDecoratorParams(beDecoratedCls: Class<any>, params: params) {
     return;
   }
 
+  // todo 装饰器不应该允许重复添加，但是又需要允许添加类装饰器，field装饰器这样的场景
   if (!decoratorParamMap.has(beDecoratedCls)) {
     decoratorParamMap.set(beDecoratedCls, []);
   }
