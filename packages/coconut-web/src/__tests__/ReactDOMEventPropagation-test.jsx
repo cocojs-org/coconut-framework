@@ -672,6 +672,490 @@ describe('ReactDOMEventListener', () => {
     });
   })
 
+  describe('non-bubbling events that bubble in React', () => {
+    it('onAbort', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onAbort',
+        reactEventType: 'abort',
+        nativeEvent: 'abort',
+        dispatch(node) {
+          const e = new Event('abort', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onCancel', () => {
+      testEmulatedBubblingEvent({
+        type: 'dialog',
+        reactEvent: 'onCancel',
+        reactEventType: 'cancel',
+        nativeEvent: 'cancel',
+        dispatch(node) {
+          const e = new Event('cancel', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onCanPlay', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onCanPlay',
+        reactEventType: 'canplay',
+        nativeEvent: 'canplay',
+        dispatch(node) {
+          const e = new Event('canplay', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onCanPlayThrough', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onCanPlayThrough',
+        reactEventType: 'canplaythrough',
+        nativeEvent: 'canplaythrough',
+        dispatch(node) {
+          const e = new Event('canplaythrough', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onClose', () => {
+      testEmulatedBubblingEvent({
+        type: 'dialog',
+        reactEvent: 'onClose',
+        reactEventType: 'close',
+        nativeEvent: 'close',
+        dispatch(node) {
+          const e = new Event('close', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onDurationChange', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onDurationChange',
+        reactEventType: 'durationchange',
+        nativeEvent: 'durationchange',
+        dispatch(node) {
+          const e = new Event('durationchange', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onEmptied', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onEmptied',
+        reactEventType: 'emptied',
+        nativeEvent: 'emptied',
+        dispatch(node) {
+          const e = new Event('emptied', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onEncrypted', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onEncrypted',
+        reactEventType: 'encrypted',
+        nativeEvent: 'encrypted',
+        dispatch(node) {
+          const e = new Event('encrypted', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onEnded', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onEnded',
+        reactEventType: 'ended',
+        nativeEvent: 'ended',
+        dispatch(node) {
+          const e = new Event('ended', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onError', () => {
+      testEmulatedBubblingEvent({
+        type: 'img',
+        reactEvent: 'onError',
+        reactEventType: 'error',
+        nativeEvent: 'error',
+        dispatch(node) {
+          const e = new Event('error', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onInvalid', () => {
+      testEmulatedBubblingEvent({
+        type: 'input',
+        reactEvent: 'onInvalid',
+        reactEventType: 'invalid',
+        nativeEvent: 'invalid',
+        dispatch(node) {
+          const e = new Event('invalid', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onLoad', () => {
+      testEmulatedBubblingEvent({
+        type: 'img',
+        reactEvent: 'onLoad',
+        reactEventType: 'load',
+        nativeEvent: 'load',
+        dispatch(node) {
+          const e = new Event('load', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onLoadedData', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onLoadedData',
+        reactEventType: 'loadeddata',
+        nativeEvent: 'loadeddata',
+        dispatch(node) {
+          const e = new Event('loadeddata', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onLoadedMetadata', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onLoadedMetadata',
+        reactEventType: 'loadedmetadata',
+        nativeEvent: 'loadedmetadata',
+        dispatch(node) {
+          const e = new Event('loadedmetadata', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onLoadStart', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onLoadStart',
+        reactEventType: 'loadstart',
+        nativeEvent: 'loadstart',
+        dispatch(node) {
+          const e = new Event('loadstart', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onPause', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onPause',
+        reactEventType: 'pause',
+        nativeEvent: 'pause',
+        dispatch(node) {
+          const e = new Event('pause', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onPlay', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onPlay',
+        reactEventType: 'play',
+        nativeEvent: 'play',
+        dispatch(node) {
+          const e = new Event('play', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onPlaying', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onPlaying',
+        reactEventType: 'playing',
+        nativeEvent: 'playing',
+        dispatch(node) {
+          const e = new Event('playing', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onProgress', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onProgress',
+        reactEventType: 'progress',
+        nativeEvent: 'progress',
+        dispatch(node) {
+          const e = new Event('progress', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onRateChange', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onRateChange',
+        reactEventType: 'ratechange',
+        nativeEvent: 'ratechange',
+        dispatch(node) {
+          const e = new Event('ratechange', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onResize', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onResize',
+        reactEventType: 'resize',
+        nativeEvent: 'resize',
+        dispatch(node) {
+          const e = new Event('resize', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onSeeked', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onSeeked',
+        reactEventType: 'seeked',
+        nativeEvent: 'seeked',
+        dispatch(node) {
+          const e = new Event('seeked', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onSeeking', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onSeeking',
+        reactEventType: 'seeking',
+        nativeEvent: 'seeking',
+        dispatch(node) {
+          const e = new Event('seeking', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onStalled', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onStalled',
+        reactEventType: 'stalled',
+        nativeEvent: 'stalled',
+        dispatch(node) {
+          const e = new Event('stalled', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onSuspend', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onSuspend',
+        reactEventType: 'suspend',
+        nativeEvent: 'suspend',
+        dispatch(node) {
+          const e = new Event('suspend', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onTimeUpdate', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onTimeUpdate',
+        reactEventType: 'timeupdate',
+        nativeEvent: 'timeupdate',
+        dispatch(node) {
+          const e = new Event('timeupdate', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+  
+    it('onToggle', () => {
+      testEmulatedBubblingEvent({
+        type: 'details',
+        reactEvent: 'onToggle',
+        reactEventType: 'toggle',
+        nativeEvent: 'toggle',
+        dispatch(node) {
+          const e = new Event('toggle', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+  
+    it('onVolumeChange', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onVolumeChange',
+        reactEventType: 'volumechange',
+        nativeEvent: 'volumechange',
+        dispatch(node) {
+          const e = new Event('volumechange', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+
+    it('onWaiting', () => {
+      testEmulatedBubblingEvent({
+        type: 'video',
+        reactEvent: 'onWaiting',
+        reactEventType: 'waiting',
+        nativeEvent: 'waiting',
+        dispatch(node) {
+          const e = new Event('waiting', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+  })
+
+  describe('non-bubbling events that do not bubble in React', () => {
+    it('onScroll', () => {
+      testNonBubblingEvent({
+        type: 'div',
+        reactEvent: 'onScroll',
+        reactEventType: 'scroll',
+        nativeEvent: 'scroll',
+        dispatch(node) {
+          const e = new Event('scroll', {
+            bubbles: false,
+            cancelable: true,
+          });
+          node.dispatchEvent(e);
+        },
+      });
+    });
+  });
+
   // Events that bubble in React and in the browser.
   // React delegates them to the root.
   function testNativeBubblingEvent(config) {
@@ -764,6 +1248,189 @@ describe('ReactDOMEventListener', () => {
     testNativeStopPropagationInInnerCapturePhase(config, Fixture);
     testNativeStopPropagationInInnerBubblePhase(config, Fixture);
     testNativeStopPropagationInOuterBubblePhase(config, Fixture);
+  }
+
+  // Events that bubble in React but not in the browser.
+  // React attaches them to the elements.
+  function testEmulatedBubblingEvent(config) {
+    @view()
+    class Fixture{
+      props;
+
+      render() {
+        return (
+          <Outer
+            outerRef={this.props.outerRef}
+            outerProps={this.props.outerProps}
+            outerParentRef={this.props.outerParentRef}
+            outerParentProps={this.props.outerParentProps}
+          >
+            <NestedReact>
+              <Inner
+                type={this.props.type}
+                targetRef={this.props.targetRef}
+                targetProps={this.props.targetProps}
+                parentRef={this.props.parentRef}
+                parentProps={this.props.parentProps}
+              />
+            </NestedReact>
+          </Outer>
+        );
+      }
+    }
+
+    @view()
+    class NestedReact {
+      props;
+      innerContainer;
+
+      @ref()
+      ref;
+
+      viewDidMount = () => {
+        this.innerContainer = document.createElement('div');
+        this.ref.current.appendChild(this.innerContainer);
+        cocoMvc.render(this.props.children, this.innerContainer);
+      }
+
+      viewWillUnmount = () => {
+        cocoMvc.unmountComponentAtNode(this.innerContainer);
+        this.ref.current.removeChild(this.innerContainer);
+      }
+
+      render() {
+        return <div ref={this.ref} />;
+      }
+    }
+
+    @view()
+    class Inner {
+      props;
+
+      render() {
+        return (
+          <div {...this.props.parentProps} ref={this.props.parentRef}>
+            <this.props.type {...this.props.targetProps} ref={this.props.targetRef} />
+          </div>
+        );
+      }
+    }
+
+    @view()
+    class Outer {
+      props;
+
+      render() {
+        return (
+          <div {...this.props.outerParentProps} ref={this.props.outerParentRef}>
+            <div {...this.props.outerProps} ref={this.props.outerRef}>
+              {this.props.children}
+            </div>
+          </div>
+        );
+      }
+    }
+
+    application.start();
+    testEmulatedBubblingEventWithTargetListener(config, Fixture);
+    testEmulatedBubblingEventWithoutTargetListener(config, Fixture);
+    testReactStopPropagationInOuterCapturePhase(config, Fixture);
+    testReactStopPropagationInInnerCapturePhase(config, Fixture);
+    testReactStopPropagationInInnerBubblePhase(config, Fixture);
+    testNativeStopPropagationInOuterCapturePhase(config, Fixture);
+    testNativeStopPropagationInInnerCapturePhase(config, Fixture);
+    testNativeStopPropagationInInnerEmulatedBubblePhase(config, Fixture);
+  }
+
+  // Events that don't bubble either in React or in the browser.
+  function testNonBubblingEvent(config) {
+
+    @view()
+    class Fixture{
+      props;
+
+      render() {
+        return (
+          <Outer
+            outerRef={this.props.outerRef}
+            outerProps={this.props.outerProps}
+            outerParentRef={this.props.outerParentRef}
+            outerParentProps={this.props.outerParentProps}
+          >
+            <NestedReact>
+              <Inner
+                type={this.props.type}
+                targetRef={this.props.targetRef}
+                targetProps={this.props.targetProps}
+                parentRef={this.props.parentRef}
+                parentProps={this.props.parentProps}
+              />
+            </NestedReact>
+          </Outer>
+        );
+      }
+    }
+
+    @view()
+    class NestedReact {
+      props;
+      innerContainer;
+
+      @ref()
+      ref;
+
+      viewDidMount = () => {
+        this.innerContainer = document.createElement('div');
+        this.ref.current.appendChild(this.innerContainer);
+        cocoMvc.render(this.props.children, this.innerContainer);
+      }
+
+      viewWillUnmount = () => {
+        cocoMvc.unmountComponentAtNode(this.innerContainer);
+        this.ref.current.removeChild(this.innerContainer);
+      }
+
+      render() {
+        return <div ref={this.ref} />;
+      }
+    }
+
+    @view()
+    class Inner {
+      props;
+
+      render() {
+        return (
+          <div {...this.props.parentProps} ref={this.props.parentRef}>
+            <this.props.type {...this.props.targetProps} ref={this.props.targetRef} />
+          </div>
+        );
+      }
+    }
+
+    @view()
+    class Outer {
+      props;
+
+      render() {
+        return (
+          <div {...this.props.outerParentProps} ref={this.props.outerParentRef}>
+            <div {...this.props.outerProps} ref={this.props.outerRef}>
+              {this.props.children}
+            </div>
+          </div>
+        );
+      }
+    }
+
+    application.start();
+    testNonBubblingEventWithTargetListener(config, Fixture);
+    testNonBubblingEventWithoutTargetListener(config, Fixture);
+    testReactStopPropagationInOuterCapturePhase(config, Fixture);
+    testReactStopPropagationInInnerCapturePhase(config, Fixture);
+    testReactStopPropagationInInnerBubblePhase(config, Fixture);
+    testNativeStopPropagationInOuterCapturePhase(config, Fixture);
+    testNativeStopPropagationInInnerCapturePhase(config, Fixture);
   }
 
   function testNativeBubblingEventWithTargetListener(eventConfig, Fixture) {
@@ -1395,7 +2062,294 @@ describe('ReactDOMEventListener', () => {
     `);
   }
 
+  function testEmulatedBubblingEventWithTargetListener(eventConfig, Fixture) {
+    const log = [];
+    const targetRef = {current: null};
+    render(
+      <Fixture
+        type={eventConfig.type}
+        targetRef={targetRef}
+        targetProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('---- inner');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('---- inner capture');
+          },
+        }}
+        parentProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('--- inner parent');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('--- inner parent capture');
+          },
+        }}
+        outerProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('-- outer');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('-- outer capture');
+          },
+        }}
+        outerParentProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('- outer parent');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            expect(e.type).toBe(eventConfig.reactEventType);
+            log.push('- outer parent capture');
+          },
+        }}
+      />,
+    );
+    expect(log.length).toBe(0);
+    eventConfig.dispatch(targetRef.current);
+    // This event doesn't bubble natively, but React emulates it.
+    // Since the element is created by the inner React, the bubbling
+    // stops at the inner parent and never reaches the outer React.
+    // In the future, we might consider not bubbling these events
+    // at all, in in which case inner parent also wouldn't be logged.
+    expect(log).toEqual(unindent`
+      - outer parent capture
+      -- outer capture
+      --- inner parent capture
+      ---- inner capture
+      ---- inner
+      --- inner parent
+    `);
+  }
 
+  function testEmulatedBubblingEventWithoutTargetListener(eventConfig, Fixture) {
+    const log = [];
+    const targetRef = {current: null};
+    render(
+      <Fixture
+        type={eventConfig.type}
+        targetRef={targetRef}
+        targetProps={
+          {
+            // No listener on the target itself.
+          }
+        }
+        parentProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('--- inner parent');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('--- inner parent capture');
+          },
+        }}
+        outerProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('-- outer');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('-- outer capture');
+          },
+        }}
+        outerParentProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('- outer parent');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            expect(e.type).toBe(eventConfig.reactEventType);
+            log.push('- outer parent capture');
+          },
+        }}
+      />,
+    );
+    expect(log.length).toBe(0);
+    eventConfig.dispatch(targetRef.current);
+    // This event doesn't bubble natively, but React emulates it.
+    // Since the element is created by the inner React, the bubbling
+    // stops at the inner parent and never reaches the outer React.
+    // In the future, we might consider not bubbling these events
+    // at all, in in which case inner parent also wouldn't be logged.
+    expect(log).toEqual(unindent`
+      - outer parent capture
+      -- outer capture
+      --- inner parent capture
+      --- inner parent
+    `);
+  }
+
+  function testNativeStopPropagationInInnerEmulatedBubblePhase(eventConfig, Fixture) {
+    const log = [];
+    const targetRef = {current: null};
+    render(
+      <Fixture
+        type={eventConfig.type}
+        targetRef={node => {
+          targetRef.current = node;
+          if (node) {
+            // No cleanup, assume we render once.
+            node.addEventListener(eventConfig.nativeEvent, e => {
+              log.push('---- inner (native)');
+              e.stopPropagation(); // <---------
+            });
+          }
+        }}
+        targetProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('---- inner');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('---- inner capture');
+          },
+        }}
+        parentProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('--- inner parent');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('--- inner parent capture');
+          },
+        }}
+        outerProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('-- outer');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('-- outer capture');
+          },
+        }}
+        outerParentProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('- outer parent');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            expect(e.type).toBe(eventConfig.reactEventType);
+            log.push('- outer parent capture');
+          },
+        }}
+      />,
+    );
+    expect(log.length).toBe(0);
+    eventConfig.dispatch(targetRef.current);
+    // This event does not natively bubble, so React
+    // attaches the listener directly to the element.
+    // As a result, by the time our custom native listener
+    // fires, it is too late to do anything -- the React
+    // emulated bubbilng has already happened.
+    expect(log).toEqual(unindent`
+      - outer parent capture
+      -- outer capture
+      --- inner parent capture
+      ---- inner capture
+      ---- inner
+      --- inner parent
+      ---- inner (native)
+    `);
+  }
+
+    function testNonBubblingEventWithTargetListener(eventConfig, Fixture) {
+    const log = [];
+    const targetRef = {current: null};
+    render(
+      <Fixture
+        type={eventConfig.type}
+        targetRef={targetRef}
+        targetProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('---- inner');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('---- inner capture');
+          },
+        }}
+        parentProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('--- inner parent');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('--- inner parent capture');
+          },
+        }}
+        outerProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('-- outer');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('-- outer capture');
+          },
+        }}
+        outerParentProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('- outer parent');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            expect(e.type).toBe(eventConfig.reactEventType);
+            log.push('- outer parent capture');
+          },
+        }}
+      />,
+    );
+    expect(log.length).toBe(0);
+    eventConfig.dispatch(targetRef.current);
+    // This event doesn't bubble natively, and React is
+    // not emulating it either. So it only reaches the
+    // target and stops there.
+    expect(log).toEqual(unindent`
+      - outer parent capture
+      -- outer capture
+      --- inner parent capture
+      ---- inner capture
+      ---- inner
+    `);
+  }
+
+  function testNonBubblingEventWithoutTargetListener(eventConfig, Fixture) {
+    const log = [];
+    const targetRef = {current: null};
+    render(
+      <Fixture
+        type={eventConfig.type}
+        targetRef={targetRef}
+        targetProps={
+          {
+            // No listener on the target itself.
+          }
+        }
+        parentProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('--- inner parent');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('--- inner parent capture');
+          },
+        }}
+        outerProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('-- outer');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            log.push('-- outer capture');
+          },
+        }}
+        outerParentProps={{
+          [eventConfig.reactEvent]: e => {
+            log.push('- outer parent');
+          },
+          [eventConfig.reactEvent + 'Capture']: e => {
+            expect(e.type).toBe(eventConfig.reactEventType);
+            log.push('- outer parent capture');
+          },
+        }}
+      />,
+    );
+    expect(log.length).toBe(0);
+    eventConfig.dispatch(targetRef.current);
+    // This event doesn't bubble native, and React doesn't
+    // emulate bubbling either. Since we don't have a target
+    // listener, only capture phase listeners fire.
+    expect(log).toEqual(unindent`
+      - outer parent capture
+      -- outer capture
+      --- inner parent capture
+    `);
+  }
 
   function unindent(str) {
     return str[0]

@@ -173,6 +173,7 @@ export function setInitialProperties(domElement, tag, rawProps) {
       listenToNonDelegatedEvent('toggle', domElement);
       props = rawProps;
       break;
+    case 'img':
     case 'image':
     case 'link':
       // We listen to these events in case to ensure emulated bubble
