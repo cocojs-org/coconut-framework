@@ -1,3 +1,5 @@
+import { HostComponent, HostText, HostRoot } from 'reconciler-ReactWorkTags';
+
 const randomKey = Math.random()
   .toString(36)
   .slice(2);
@@ -63,4 +65,31 @@ export function getClosestInstanceFromNode(targetNode) {
   }
 
   return null
+}
+
+export function getNodeFromInstance(inst) {
+  if (inst.tag === HostComponent || inst.tag === HostText) {
+    // In Fiber this, is just the state node right now. We assume it will be
+    // a host component or host text.
+    return inst.stateNode;
+  }
+  // Without this first invariant, passing a non-DOM-component triggers the next
+  // invariant for a missing parent, which is super confusing.
+  throw new Error('getNodeFromInstance: Invalid argument.');
+}
+
+export function getInstanceFromNode(node) {
+  const inst = node[internalInstanceKey] || node[internalContainerInstanceKey];
+  if (inst) {
+    if (
+      inst.tag === HostComponent ||
+      inst.tag === HostText ||
+      inst.tag === HostRoot
+    ) {
+      return inst;
+    } else {
+      return null;
+    }
+  }
+  return null;
 }

@@ -1,9 +1,18 @@
 // Defaults
+import { needsStateRestore, restoreStateIfNeeded } from './ReactDOMControllerdComponent';
+
 let batchedUpdatesImpl = function(fn, bookkeeping) {
   return fn(bookkeeping);
 };
 
 let isInsideEventHandler = false;
+
+function finishEventHandler() {
+  const controlledComponentsHavePendingUpdates = needsStateRestore();
+  if (controlledComponentsHavePendingUpdates) {
+    restoreStateIfNeeded();
+  }
+}
 
 export function batchedUpdates(fn, a, b) {
   if (isInsideEventHandler) {
@@ -16,6 +25,7 @@ export function batchedUpdates(fn, a, b) {
     return batchedUpdatesImpl(fn, a, b);
   } finally {
     isInsideEventHandler = false;
+    finishEventHandler();
   }
 }
 

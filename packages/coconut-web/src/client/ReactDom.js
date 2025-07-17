@@ -16,8 +16,11 @@ import {
   unregisterApplication
 } from 'coconut-reconciler';
 import { markContainerAsRoot, unmarkContainerAsRoot } from './ReactDomComponentTree';
+import {restoreControlledState} from './ReactDomComponent.js';
 import {setBatchingImplementation} from '../events/ReactDOMUpdateBatching';
+import { setRestoreImplementation } from '../events/ReactDOMControllerdComponent';
 
+setRestoreImplementation(restoreControlledState)
 setBatchingImplementation(
   batchedUpdates,
 );

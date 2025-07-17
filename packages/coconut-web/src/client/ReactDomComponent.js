@@ -6,10 +6,17 @@ import setTextContent from "./setTextContent";
 import isCustomComponent from '../shared/isCustomComponent';
 import assertValidProps from '../shared/assertValidProps';
 import { setValueForProperty, setValueForStyles } from './DOMPropertyOperations';
+import {
+  initWrapperState as ReactDOMInputInitWrapperState,
+  getHostProps as ReactDomInputGetHostProps,
+  postMountWrapper as ReactDOMInputPostMountWrapper,
+  restoreControlledState as ReactDOMInputRestoreControlledState,
+} from './ReactDomInput'
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
 import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
 import { hasOwnProperty } from 'shared';
 import { listenToNonDelegatedEvent, mediaEventTypes } from '../events/DOMPluginEventSystem';
+import { track } from './inputValueTracking';
 
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CHILDREN = 'children';
@@ -183,8 +190,11 @@ export function setInitialProperties(domElement, tag, rawProps) {
       props = rawProps;
       break;
     case 'input':
+      ReactDOMInputInitWrapperState(domElement, rawProps);
+      props = ReactDomInputGetHostProps(domElement, rawProps);
+      // We listen to this event in case to ensure emulated bubble
+      // listeners still fire for the invalid event.
       listenToNonDelegatedEvent('invalid', domElement);
-      props = rawProps;
       break;
     default: {
       props = rawProps;
@@ -194,6 +204,12 @@ export function setInitialProperties(domElement, tag, rawProps) {
   assertValidProps(tag, props);
 
   setInitialDOMProperties(tag, domElement, null, props, isCustomComponentTag);
+
+  switch (tag) {
+    case 'input':
+      track(domElement);
+      ReactDOMInputPostMountWrapper(domElement, rawProps);
+  }
 }
 
 export function diffProperties(
@@ -358,4 +374,16 @@ export function updateProperties(
     wasCustomComponentTag,
     isCustomComponentTag,
   )
+}
+
+export function restoreControlledState(
+  domElement,
+  tag,
+  props
+) {
+  switch (tag) {
+    case 'input':
+      ReactDOMInputRestoreControlledState(domElement, props);
+      return;
+  }
 }

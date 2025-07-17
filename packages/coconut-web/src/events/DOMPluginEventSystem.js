@@ -2,8 +2,9 @@ import { allNativeEvents } from './EventRegistry';
 import { createEventListenerWrapperWithPriority } from './ReactDomEventListener';
 import { addEventBubbleListener, addEventCaptureListener } from './EventListener';
 import * as SimpleEventPlugin from './plugins/SimpleEventPlugin';
+import * as ChangeEventPlugin from './plugins/ChangeEventPlugin';
 import { processDispatchQueue } from './plugins/SimpleEventPlugin';
-import { IS_CAPTURE_PHASE, IS_NON_DELEGATED } from './EventSystemFlags';
+import { IS_CAPTURE_PHASE, IS_NON_DELEGATED, SHOULD_NOT_PROCESS_POLYFILL_EVENT_PLUGINS } from './EventSystemFlags';
 import { HostRoot, HostComponent, HostText } from 'reconciler-ReactWorkTags';
 import { register, NAME } from 'shared';
 import { getClosestInstanceFromNode, getEventListenerSet } from '../client/ReactDomComponentTree';
@@ -11,6 +12,7 @@ import { batchedUpdates } from './ReactDOMUpdateBatching';
 import { DOCUMENT_NODE } from '../shared/HTMLNodeType';
 
 SimpleEventPlugin.registerEvents();
+ChangeEventPlugin.registerEvents();
 
 const listeningMarker =
   '_reactListening' +
@@ -178,6 +180,19 @@ function extractEvents(
     eventSystemFlags,
     targetContainer,
   );
+
+  const shouldProcessPolyfillPlugins = (eventSystemFlags & SHOULD_NOT_PROCESS_POLYFILL_EVENT_PLUGINS) === 0;
+  if (shouldProcessPolyfillPlugins) {
+    ChangeEventPlugin.extractEvents(
+      dispatchQueue,
+      domEventName,
+      targetInst,
+      nativeEvent,
+      nativeEventTarget,
+      eventSystemFlags,
+      targetContainer
+    )
+  }
 }
 
 function dispatchEventsForPlugins(
