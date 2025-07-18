@@ -12,6 +12,8 @@ export const NAME = {
   Component: 'Component',
   throwException: 'throwException',
   dispatchEventForPluginEventSystem: 'dispatchEventForPluginEventSystem',
+  accumulateTwoPhaseListeners: 'accumulateTwoPhaseListeners',
+  accumulateSinglePhaseListeners: 'accumulateSinglePhaseListeners',
 };
 
 export function register(name: string, fn: any) {

@@ -129,4 +129,159 @@ describe('ReactDOMInput', () => {
 
     expect(node.value).toBe('lion');
   });
+
+  it('should control a value in reentrant events', () => {
+    @view()
+    class ControlledInputs {
+      @reactive()
+      state = 'lion';
+      a = null;
+      b = null;
+      switchedFocus = false;
+
+      change(newValue) {
+        this.state = newValue;
+        // Calling focus here will blur the text box which causes a native
+        // change event. Ideally we shouldn't have to fire this ourselves.
+        // Don't remove unless you've verified the fix in #8240 is still covered.
+        dispatchEventOnNode(this.a, 'input');
+        this.b.focus();
+      }
+
+      blur(currentValue) {
+        this.switchedFocus = true;
+        // currentValue should be 'giraffe' here because we should not have
+        // restored it on the target yet.
+        this.state = currentValue;
+      }
+
+      render() {
+        return (
+          <div>
+            <input
+              type="text"
+              ref={n => (this.a = n)}
+              value={this.state.value}
+              onChange={e => this.change(e.target.value)}
+              onBlur={e => this.blur(e.target.value)}
+            />
+            <input type="text" ref={n => (this.b = n)} />
+          </div>
+        );
+      }
+    }
+
+    application.start();
+    const instance = cocoMvc.render(<ControlledInputs />, container);
+
+    // Focus the field so we can later blur it.
+    // Don't remove unless you've verified the fix in #8240 is still covered.
+    instance.a.focus();
+    setUntrackedValue.call(instance.a, 'giraffe');
+    // This must use the native event dispatching. If we simulate, we will
+    // bypass the lazy event attachment system so we won't actually test this.
+    dispatchEventOnNode(instance.a, 'input');
+    dispatchEventOnNode(instance.a, 'blur');
+    dispatchEventOnNode(instance.a, 'focusout');
+
+    expect(instance.a.value).toBe('giraffe');
+    expect(instance.switchedFocus).toBe(true);
+  });
+
+  it('should control values in reentrant events with different targets', () => {
+    @view()
+    class ControlledInputs {
+      @reactive()
+      state = 'lion';
+
+      a = null;
+      b = null;
+      change(newValue) {
+        // This click will change the checkbox's value to false. Then it will
+        // invoke an inner change event. When we finally, flush, we need to
+        // reset the checkbox's value to true since that is its controlled
+        // value.
+        this.b.click();
+      }
+      render() {
+        return (
+          <div>
+            <input
+              type="text"
+              ref={n => (this.a = n)}
+              value="lion"
+              onChange={e => this.change(e.target.value)}
+            />
+            <input
+              type="checkbox"
+              ref={n => (this.b = n)}
+              checked={true}
+              onChange={() => {}}
+            />
+          </div>
+        );
+      }
+    }
+
+    application.start();
+    const instance = cocoMvc.render(<ControlledInputs />, container);
+
+    setUntrackedValue.call(instance.a, 'giraffe');
+    // This must use the native event dispatching. If we simulate, we will
+    // bypass the lazy event attachment system so we won't actually test this.
+    dispatchEventOnNode(instance.a, 'input');
+
+    expect(instance.a.value).toBe('lion');
+    expect(instance.b.checked).toBe(true);
+  });
+
+  describe('switching text inputs between numeric and string numbers', () => {
+    it('does change the number 2 to "2.0" with no change handler', () => {
+      const stub = <input type="text" value={2} onChange={jest.fn()} />;
+      const node = cocoMvc.render(stub, container);
+
+      setUntrackedValue.call(node, '2.0');
+      dispatchEventOnNode(node, 'input');
+
+      expect(node.value).toBe('2');
+      expect(node.getAttribute('value')).toBe('2');
+    });
+
+    it('does change the string "2" to "2.0" with no change handler', () => {
+      const stub = <input type="text" value={'2'} onChange={jest.fn()} />;
+      const node = cocoMvc.render(stub, container);
+
+      setUntrackedValue.call(node, '2.0');
+      dispatchEventOnNode(node, 'input');
+
+      expect(node.value).toBe('2');
+      expect(node.getAttribute('value')).toBe('2');
+    });
+
+    it('changes the number 2 to "2.0" using a change handler', () => {
+      @view()
+      class Stub {
+
+        @reactive()
+        value = 2
+
+        onChange = event => {
+          this.value = event.target.value;
+        };
+        render() {
+          return <input type="text" value={this.value} onChange={this.onChange} />;
+        }
+      }
+
+      application.start();
+      const stub = cocoMvc.render(<Stub />, container);
+      const node = cocoMvc.findDOMNode(stub);
+
+      setUntrackedValue.call(node, '2.0');
+      dispatchEventOnNode(node, 'input');
+
+      expect(node.value).toBe('2.0');
+      expect(node.getAttribute('value')).toBe('2.0');
+    });
+  })
 })

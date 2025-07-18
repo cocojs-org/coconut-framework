@@ -85,4 +85,5 @@ export function registerSimpleEvents() {
 
   registerSimpleEvent('dblclick', 'onDoubleClick');
   registerSimpleEvent('focusin', 'onFocus');
+  registerSimpleEvent('focusout', 'onBlur');
 }

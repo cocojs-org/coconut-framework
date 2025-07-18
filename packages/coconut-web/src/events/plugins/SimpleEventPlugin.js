@@ -1,7 +1,6 @@
 import { registerSimpleEvents, topLevelEventsToReactNames } from '../DOMEventProperties';
 import { IS_CAPTURE_PHASE } from '../EventSystemFlags';
-import getListener from '../getListener';
-import { HostComponent } from 'reconciler-ReactWorkTags';
+import { get as getFromShare, NAME } from 'shared';
 
 function extractEvents(
   dispatchQueue,
@@ -22,10 +21,14 @@ function extractEvents(
     case 'focusin':
       reactEventType = 'focus';
       break;
+    case 'focusout':
+      reactEventType = 'blur';
+      break;
   }
 
   const inCapturePhase = (eventSystemFlags & IS_CAPTURE_PHASE) !== 0;
   const accumulateTargetOnly = !inCapturePhase && (domEventName === 'scroll');
+  const accumulateSinglePhaseListeners = getFromShare(NAME.accumulateSinglePhaseListeners);
   const listeners = accumulateSinglePhaseListeners(
     targetInst,
     reactName,
@@ -43,106 +46,5 @@ function extractEvents(
     });
   }
 }
-
-function executeDispatch(
-  domEvent,
-  listener,
-  currentTarget,
-  reactEventType,
-) {
-  // const type = event.type || 'unknown-event';
-  // domEvent.currentTarget = currentTarget;
-  // coconut: 暂时不准备使用合成事件
-  listener({
-    type: reactEventType,
-    target: domEvent.target,
-    currentTarget: currentTarget,
-    stopPropagation: () => {
-      domEvent.stopPropagation();
-    },
-  });
-  // domEvent.currentTarget = null;
-}
-
-function processDispatchQueueItemsInOrder(
-  domEvent,
-  dispatchListeners,
-  inCapturePhase,
-  reactEventType,
-) {
-  if (inCapturePhase) {
-    for (let i = dispatchListeners.length - 1; i >= 0; i--) {
-      const {instance, currentTarget, listener} = dispatchListeners[i];
-      if (domEvent.cancelBubble) {
-        return;
-      }
-      executeDispatch(domEvent, listener, currentTarget, reactEventType);
-    }
-  } else {
-    for (let i = 0; i < dispatchListeners.length; i++) {
-      const {instance, currentTarget, listener} = dispatchListeners[i];
-      if (domEvent.cancelBubble) {
-        return;
-      }
-      executeDispatch(domEvent, listener, currentTarget, reactEventType);
-    }
-  }
-}
-
-export function processDispatchQueue(dispatchQueue, eventSystemFlags) {
-  const inCapturePhase = (eventSystemFlags & IS_CAPTURE_PHASE) !== 0;
-  for (let i = 0; i < dispatchQueue.length; i++) {
-    const { event, listeners, reactEventType } = dispatchQueue[i];
-    processDispatchQueueItemsInOrder(event, listeners, inCapturePhase, reactEventType);
-  }
-}
-
-function createDispatchListener(
-  instance,
-  listener,
-  currentTarget,
-) {
-  return {
-    instance,
-    listener,
-    currentTarget,
-  };
-}
-
-export function accumulateSinglePhaseListeners(
-  targetFiber,
-  reactName,
-  nativeEventType,
-  inCapturePhase,
-  accumulateTargetOnly,
-  nativeEvent
-) {
-  const captureName = reactName !== null ? reactName + 'Capture' : null;
-  const reactEventName = inCapturePhase ? captureName : reactName;
-  let listeners = [];
-
-  let instance = targetFiber;
-  let lastHostComponent = null;
-
-  while (instance !== null) {
-    const {stateNode, tag} = instance;
-    if (tag === HostComponent && stateNode !== null) {
-      lastHostComponent = stateNode;
-      if (reactEventName !== null) {
-        const listener = getListener(instance, reactEventName);
-        if (listener != null) {
-          listeners.push(createDispatchListener(instance, listener, lastHostComponent));
-        }
-      }
-    }
-    if (accumulateTargetOnly) {
-      break;
-    }
-    instance = instance.return;
-  }
-
-  return listeners;
-}
-
 
 export {registerSimpleEvents as registerEvents, extractEvents};

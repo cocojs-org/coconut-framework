@@ -3,13 +3,13 @@ import { createEventListenerWrapperWithPriority } from './ReactDomEventListener'
 import { addEventBubbleListener, addEventCaptureListener } from './EventListener';
 import * as SimpleEventPlugin from './plugins/SimpleEventPlugin';
 import * as ChangeEventPlugin from './plugins/ChangeEventPlugin';
-import { processDispatchQueue } from './plugins/SimpleEventPlugin';
 import { IS_CAPTURE_PHASE, IS_NON_DELEGATED, SHOULD_NOT_PROCESS_POLYFILL_EVENT_PLUGINS } from './EventSystemFlags';
 import { HostRoot, HostComponent, HostText } from 'reconciler-ReactWorkTags';
 import { register, NAME } from 'shared';
 import { getClosestInstanceFromNode, getEventListenerSet } from '../client/ReactDomComponentTree';
 import { batchedUpdates } from './ReactDOMUpdateBatching';
 import { DOCUMENT_NODE } from '../shared/HTMLNodeType';
+import getListener from './getListener';
 
 SimpleEventPlugin.registerEvents();
 ChangeEventPlugin.registerEvents();
@@ -271,3 +271,132 @@ export function dispatchEventForPluginEventSystem(
   })
 }
 register(NAME.dispatchEventForPluginEventSystem, dispatchEventForPluginEventSystem);
+
+function createDispatchListener(
+  instance,
+  listener,
+  currentTarget,
+) {
+  return {
+    instance,
+    listener,
+    currentTarget,
+  };
+}
+
+export function accumulateSinglePhaseListeners(
+  targetFiber,
+  reactName,
+  nativeEventType,
+  inCapturePhase,
+  accumulateTargetOnly,
+  nativeEvent
+) {
+  const captureName = reactName !== null ? reactName + 'Capture' : null;
+  const reactEventName = inCapturePhase ? captureName : reactName;
+  let listeners = [];
+
+  let instance = targetFiber;
+  let lastHostComponent = null;
+
+  while (instance !== null) {
+    const {stateNode, tag} = instance;
+    if (tag === HostComponent && stateNode !== null) {
+      lastHostComponent = stateNode;
+      if (reactEventName !== null) {
+        const listener = getListener(instance, reactEventName);
+        if (listener != null) {
+          listeners.push(createDispatchListener(instance, listener, lastHostComponent));
+        }
+      }
+    }
+    if (accumulateTargetOnly) {
+      break;
+    }
+    instance = instance.return;
+  }
+
+  return listeners;
+}
+register(NAME.accumulateSinglePhaseListeners, accumulateSinglePhaseListeners);
+
+export function accumulateTwoPhaseListeners(
+  targetFiber,
+  reactName
+) {
+  const captureName = reactName + 'Capture';
+  const listeners = [];
+  let instance = targetFiber;
+
+  while(instance !== null) {
+    const {stateNode, tag} = instance;
+    if (tag === HostComponent && stateNode !== null) {
+      const currentTarget = stateNode;
+      const captureListener = getListener(instance, captureName);
+      if (captureListener != null) {
+        listeners.unshift(createDispatchListener(instance, captureListener, currentTarget));
+      }
+      const bubbleListener = getListener(instance, reactName);
+      if (bubbleListener != null) {
+        listeners.push(createDispatchListener(instance, bubbleListener, currentTarget))
+      }
+    }
+    instance = instance.return;
+  }
+
+  return listeners;
+}
+register(NAME.accumulateTwoPhaseListeners, accumulateTwoPhaseListeners);
+
+function executeDispatch(
+  domEvent,
+  listener,
+  currentTarget,
+  reactEventType,
+) {
+  // const type = event.type || 'unknown-event';
+  // domEvent.currentTarget = currentTarget;
+  // coconut: 暂时不准备使用合成事件
+  listener({
+    type: reactEventType,
+    target: domEvent.target,
+    currentTarget: currentTarget,
+    stopPropagation: () => {
+      domEvent.stopPropagation();
+    },
+  });
+  // domEvent.currentTarget = null;
+}
+
+function processDispatchQueueItemsInOrder(
+  domEvent,
+  dispatchListeners,
+  inCapturePhase,
+  reactEventType,
+) {
+  if (inCapturePhase) {
+    for (let i = dispatchListeners.length - 1; i >= 0; i--) {
+      const {instance, currentTarget, listener} = dispatchListeners[i];
+      if (domEvent.cancelBubble) {
+        return;
+      }
+      executeDispatch(domEvent, listener, currentTarget, reactEventType);
+    }
+  } else {
+    for (let i = 0; i < dispatchListeners.length; i++) {
+      const {instance, currentTarget, listener} = dispatchListeners[i];
+      if (domEvent.cancelBubble) {
+        return;
+      }
+      executeDispatch(domEvent, listener, currentTarget, reactEventType);
+    }
+  }
+}
+
+export function processDispatchQueue(dispatchQueue, eventSystemFlags) {
+  const inCapturePhase = (eventSystemFlags & IS_CAPTURE_PHASE) !== 0;
+  for (let i = 0; i < dispatchQueue.length; i++) {
+    const { event, listeners, reactEventType } = dispatchQueue[i];
+    processDispatchQueueItemsInOrder(event, listeners, inCapturePhase, reactEventType);
+  }
+}

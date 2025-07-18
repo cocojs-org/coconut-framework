@@ -1,6 +1,7 @@
 import { checkControlledValueProps } from '../shared/ReactControlledValuePropTypes';
 import { getToStringValue, toString } from './ToStringValue';
 import { assign } from "shared";
+import { setValueForProperty } from './DOMPropertyOperations';
 
 function isControlled(props) {
   const usesChecked = props.type === 'checkbox' || props.type === 'radio';
@@ -36,8 +37,19 @@ export function initWrapperState(element, props) {
   }
 }
 
+export function updateChecked(element, props) {
+  const node = element;
+  const checked = props.checked;
+  if (checked != null) {
+    setValueForProperty(node, 'checked', checked, false);
+  }
+}
+
 export function updateWrapper(element, props) {
   const node = element;
+
+  updateChecked(element, props);
+
   const value = getToStringValue(props.value);
   const type = props.type;
 
