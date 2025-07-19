@@ -60,3 +60,17 @@ export function checkCSSPropertyStringCoercion(value, propName) {
     return testStringCoercion(value); // throw (to help callers find troubleshooting comments)
   }
 }
+
+export function checkFormFieldValueStringCoercion(value) {
+  if (__DEV__) {
+    if (willCoercionThrow(value)) {
+      console.error(
+        'Form field values (value, checked, defaultValue, or defaultChecked props)' +
+          ' must be strings, not %s.' +
+          ' This value must be coerced to a string before before using it here.',
+        typeName(value)
+      );
+    }
+    return testStringCoercion(value);
+  }
+}

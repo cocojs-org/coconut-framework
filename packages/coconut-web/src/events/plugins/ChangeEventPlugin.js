@@ -4,6 +4,7 @@ import isTextInputElement from '../isTextInputElement';
 import { updateValueIfChanged } from '../../client/inputValueTracking';
 import { enqueueStateRestore } from '../ReactDOMControllerdComponent';
 import { get as getFromShare, NAME } from 'shared';
+import { setDefaultValue } from '../../client/ReactDomInput';
 
 function registerEvents() {
   registerTwoPhaseEvent('onChange', [
@@ -52,6 +53,16 @@ function getTargetInstForInputOrChangeEvent(
   }
 }
 
+function handleControlledInputBlur(node) {
+  const state = node._wrapperState;
+
+  if (!state || !state.controlled || node.type !== 'number') {
+    return;
+  }
+
+  setDefaultValue(node, 'number', node.value);
+}
+
 function createAndAccumulateChangeEvent(
   dispatchQueue,
   inst,
@@ -96,9 +107,12 @@ function extractEvents(
         nativeEvent,
         nativeEventTarget
       )
+      return;
     }
+  }
 
-    return;
+  if (domEventName === 'focusout') {
+    handleControlledInputBlur(targetNode);
   }
 }
 

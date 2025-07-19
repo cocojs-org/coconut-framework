@@ -11,6 +11,7 @@ import {
   getHostProps as ReactDomInputGetHostProps,
   postMountWrapper as ReactDOMInputPostMountWrapper,
   restoreControlledState as ReactDOMInputRestoreControlledState,
+  updateWrapper as ReactDOMInputUpdateWrapper,
 } from './ReactDomInput'
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
 import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
@@ -374,6 +375,12 @@ export function updateProperties(
     wasCustomComponentTag,
     isCustomComponentTag,
   )
+
+  switch (tag) {
+    case 'input':
+      ReactDOMInputUpdateWrapper(domElement, nextRawProps);
+      break;
+  }
 }
 
 export function restoreControlledState(

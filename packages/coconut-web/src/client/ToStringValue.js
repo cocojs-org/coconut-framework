@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+import {checkFormFieldValueStringCoercion} from 'shared';
 
 export function toString(value) {
   return '' + value;
@@ -18,6 +19,9 @@ export function getToStringValue(value) {
     case 'undefined':
       return value;
     case 'object':
+      if (__DEV__) {
+        checkFormFieldValueStringCoercion(value);
+      }
       return value;
     default:
       return '';
