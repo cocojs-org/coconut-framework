@@ -383,7 +383,6 @@ describe('ReactDOMInput', () => {
     expect(node.value).toBe('0');
   });
 
-  // todo 没有forceUpdate方法
   it('only assigns defaultValue if it changes', () => {
     @view()
     class Test {
@@ -407,6 +406,7 @@ describe('ReactDOMInput', () => {
       },
     });
 
+    // todo 没有forceUpdate方法
     // component.forceUpdate();
   });
 
@@ -738,5 +738,222 @@ describe('ReactDOMInput', () => {
 
     expect(node.value).toBe('0.0');
     expect(node.getAttribute('value')).toBe('0.0');
+  });
+
+  it('should properly transition from an empty value to 0', function() {
+    cocoMvc.render(
+      <input type="text" value="" onChange={emptyFunction} />,
+      container,
+    );
+    cocoMvc.render(
+      <input type="text" value={0} onChange={emptyFunction} />,
+      container,
+    );
+
+    const node = container.firstChild;
+    expect(node.value).toBe('0');
+
+    expect(node.defaultValue).toBe('0');
+  });
+
+  it('should properly transition from 0 to an empty value', function() {
+    cocoMvc.render(
+      <input type="text" value={0} onChange={emptyFunction} />,
+      container,
+    );
+    cocoMvc.render(
+      <input type="text" value="" onChange={emptyFunction} />,
+      container,
+    );
+
+    const node = container.firstChild;
+
+    expect(node.value).toBe('');
+    expect(node.defaultValue).toBe('');
+  });
+
+  it('should properly transition a text input from 0 to an empty 0.0', function() {
+    cocoMvc.render(
+      <input type="text" value={0} onChange={emptyFunction} />,
+      container,
+    );
+    cocoMvc.render(
+      <input type="text" value="0.0" onChange={emptyFunction} />,
+      container,
+    );
+
+    const node = container.firstChild;
+
+    expect(node.value).toBe('0.0');
+    expect(node.defaultValue).toBe('0.0');
+  });
+
+  it('should properly transition a number input from "" to 0', function() {
+    cocoMvc.render(
+      <input type="number" value="" onChange={emptyFunction} />,
+      container,
+    );
+    cocoMvc.render(
+      <input type="number" value={0} onChange={emptyFunction} />,
+      container,
+    );
+
+    const node = container.firstChild;
+
+    expect(node.value).toBe('0');
+    expect(node.defaultValue).toBe('0');
+  });
+
+  it('should properly transition a number input from "" to "0"', function() {
+    cocoMvc.render(
+      <input type="number" value="" onChange={emptyFunction} />,
+      container,
+    );
+    cocoMvc.render(
+      <input type="number" value="0" onChange={emptyFunction} />,
+      container,
+    );
+
+    const node = container.firstChild;
+
+    expect(node.value).toBe('0');
+    expect(node.defaultValue).toBe('0');
+  });
+
+  it('should have the correct target value', () => {
+    let handled = false;
+    const handler = function(event) {
+      expect(event.target.nodeName).toBe('INPUT');
+      handled = true;
+    };
+    const stub = <input type="text" value={0} onChange={handler} />;
+    const node = cocoMvc.render(stub, container);
+
+    setUntrackedValue.call(node, 'giraffe');
+
+    dispatchEventOnNode(node, 'input');
+
+    expect(handled).toBe(true);
+  });
+
+  it('should restore uncontrolled inputs to last defaultValue upon reset', () => {
+    const inputRef = {current: null};
+    cocoMvc.render(
+      <form>
+        <input defaultValue="default1" ref={inputRef} />
+        <input type="reset" />
+      </form>,
+      container,
+    );
+    expect(inputRef.current.value).toBe('default1');
+
+    setUntrackedValue.call(inputRef.current, 'changed');
+    dispatchEventOnNode(inputRef.current, 'input');
+    expect(inputRef.current.value).toBe('changed');
+
+    cocoMvc.render(
+      <form>
+        <input defaultValue="default2" ref={inputRef} />
+        <input type="reset" />
+      </form>,
+      container,
+    );
+    expect(inputRef.current.value).toBe('changed');
+
+    container.firstChild.reset();
+    // Note: I don't know if we want to always support this.
+    // But it's current behavior so worth being intentional if we break it.
+    // https://github.com/facebook/react/issues/4618
+    expect(inputRef.current.value).toBe('default2');
+  });
+
+  it('should not set a value for submit buttons unnecessarily', () => {
+    const stub = <input type="submit" />;
+    cocoMvc.render(stub, container);
+    const node = container.firstChild;
+
+    // The value shouldn't be '', or else the button will have no text; it
+    // should have the default "Submit" or "Submit Query" label. Most browsers
+    // report this as not having a `value` attribute at all; IE reports it as
+    // the actual label that the user sees.
+    expect(node.hasAttribute('value')).toBe(false);
+  });
+
+  it('should remove the value attribute on submit inputs when value is updated to undefined', () => {
+    const stub = <input type="submit" value="foo" onChange={emptyFunction} />;
+    cocoMvc.render(stub, container);
+
+    // Not really relevant to this particular test, but changing to undefined
+    // should nonetheless trigger a warning
+    cocoMvc.render(
+      <input type="submit" value={undefined} onChange={emptyFunction} />,
+      container,
+    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'A component is changing a controlled input to be uncontrolled. ' +
+      'This is likely caused by the value changing from a defined to ' +
+      'undefined, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    );
+
+    const node = container.firstChild;
+    expect(node.getAttribute('value')).toBe(null);
+  });
+
+  it('should remove the value attribute on reset inputs when value is updated to undefined', () => {
+    const stub = <input type="reset" value="foo" onChange={emptyFunction} />;
+    cocoMvc.render(stub, container);
+
+    // Not really relevant to this particular test, but changing to undefined
+    // should nonetheless trigger a warning
+    cocoMvc.render(
+      <input type="reset" value={undefined} onChange={emptyFunction} />,
+      container,
+    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'A component is changing a controlled input to be uncontrolled. ' +
+      'This is likely caused by the value changing from a defined to ' +
+      'undefined, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    );
+
+    const node = container.firstChild;
+    expect(node.getAttribute('value')).toBe(null);
+  });
+
+  it('should set a value on a submit input', () => {
+    const stub = <input type="submit" value="banana" />;
+    cocoMvc.render(stub, container);
+    const node = container.firstChild;
+
+    expect(node.getAttribute('value')).toBe('banana');
+  });
+
+  it('should not set an undefined value on a submit input', () => {
+    const stub = <input type="submit" value={undefined} />;
+    cocoMvc.render(stub, container);
+    const node = container.firstChild;
+
+    // Note: it shouldn't be an empty string
+    // because that would erase the "submit" label.
+    expect(node.getAttribute('value')).toBe(null);
+
+    cocoMvc.render(stub, container);
+    expect(node.getAttribute('value')).toBe(null);
+  });
+
+  it('should not set an undefined value on a reset input', () => {
+    const stub = <input type="reset" value={undefined} />;
+    cocoMvc.render(stub, container);
+    const node = container.firstChild;
+
+    // Note: it shouldn't be an empty string
+    // because that would erase the "reset" label.
+    expect(node.getAttribute('value')).toBe(null);
+
+    cocoMvc.render(stub, container);
+    expect(node.getAttribute('value')).toBe(null);
   });
 })

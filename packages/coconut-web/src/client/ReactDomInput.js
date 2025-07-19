@@ -84,6 +84,11 @@ export function updateWrapper(element, props) {
     } else if (node.value !== toString(value)) {
       node.value = toString(value);
     }
+  } else if (type === 'submit' || type === 'reset') {
+    // Submit/reset inputs need the attribute removed completely to avoid
+    // blank-text buttons.
+    node.removeAttribute('value');
+    return;
   }
 
   if (props.hasOwnProperty('value')) {
