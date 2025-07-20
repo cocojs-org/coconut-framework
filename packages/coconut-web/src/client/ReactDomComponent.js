@@ -11,9 +11,11 @@ import {
   getHostProps as ReactDomInputGetHostProps,
   postMountWrapper as ReactDOMInputPostMountWrapper,
   restoreControlledState as ReactDOMInputRestoreControlledState,
+  updateChecked as ReactDOMInputUpdateChecked,
   updateWrapper as ReactDOMInputUpdateWrapper,
 } from './ReactDomInput'
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
+import { validateProperties as validateInputProperties } from '../shared/ReactDOMNullinputValuePropHook';
 import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
 import { hasOwnProperty } from 'shared';
 import { listenToNonDelegatedEvent, mediaEventTypes } from '../events/DOMPluginEventSystem';
@@ -39,6 +41,7 @@ if (__DEV__) {
     webview: true,
   };
   validatePropertiesInDevelopment = function(type, props) {
+    validateInputProperties(type, props);
     validateUnknownProperties(type, props, {
       registrationNameDependencies,
       possibleRegistrationNames,
@@ -367,6 +370,14 @@ export function updateProperties(
   lastRawProps,
   nextRawProps
 ) {
+  if (
+    tag === 'input' &&
+    nextRawProps.type === 'radio' &&
+    nextRawProps.name != null
+  ) {
+    ReactDOMInputUpdateChecked(domElement, nextRawProps);
+  }
+
   const wasCustomComponentTag = isCustomComponent(tag, lastRawProps);
   const isCustomComponentTag = isCustomComponent(tag, nextRawProps);
   updateDOMProperties(

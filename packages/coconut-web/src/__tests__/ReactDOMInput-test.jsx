@@ -956,4 +956,820 @@ describe('ReactDOMInput', () => {
     cocoMvc.render(stub, container);
     expect(node.getAttribute('value')).toBe(null);
   });
+
+  it('should not set a null value on a submit input', () => {
+    const stub = <input type="submit" value={null} />;
+    cocoMvc.render(stub, container);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      '`value` prop on `%s` should not be null. ' +
+      'Consider using an empty string to clear the component or `undefined` ' +
+      'for uncontrolled components.',
+      'input',
+    );
+    const node = container.firstChild;
+
+    // Note: it shouldn't be an empty string
+    // because that would erase the "submit" label.
+    expect(node.getAttribute('value')).toBe(null);
+
+    cocoMvc.render(stub, container);
+    expect(node.getAttribute('value')).toBe(null);
+  });
+
+  it('should not set a null value on a reset input', () => {
+    const stub = <input type="reset" value={null} />;
+    cocoMvc.render(stub, container);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      '`value` prop on `%s` should not be null. ' +
+      'Consider using an empty string to clear the component or `undefined` ' +
+      'for uncontrolled components.',
+      'input',
+    );
+    const node = container.firstChild;
+
+    // Note: it shouldn't be an empty string
+    // because that would erase the "reset" label.
+    expect(node.getAttribute('value')).toBe(null);
+
+    cocoMvc.render(stub, container);
+    expect(node.getAttribute('value')).toBe(null);
+  });
+
+  it('should set a value on a reset input', () => {
+    const stub = <input type="reset" value="banana" />;
+    cocoMvc.render(stub, container);
+    const node = container.firstChild;
+
+    expect(node.getAttribute('value')).toBe('banana');
+  });
+
+  it('should set an empty string value on a submit input', () => {
+    const stub = <input type="submit" value="" />;
+    cocoMvc.render(stub, container);
+    const node = container.firstChild;
+
+    expect(node.getAttribute('value')).toBe('');
+  });
+
+  it('should set an empty string value on a reset input', () => {
+    const stub = <input type="reset" value="" />;
+    cocoMvc.render(stub, container);
+    const node = container.firstChild;
+
+    expect(node.getAttribute('value')).toBe('');
+  });
+
+  it('should control radio buttons', () => {
+    @view()
+    class RadioGroup {
+      @ref()
+      aRef
+      @ref()
+      bRef
+      @ref()
+      cRef
+      render() {
+        return (
+          <div>
+            <input
+              ref={this.aRef}
+              type="radio"
+              name="fruit"
+              checked={true}
+              onChange={emptyFunction}
+            />
+            A
+            <input ref={this.bRef} type="radio" name="fruit" onChange={emptyFunction} />
+            B
+            <form>
+              <input
+                ref={this.cRef}
+                type="radio"
+                name="fruit"
+                defaultChecked={true}
+                onChange={emptyFunction}
+              />
+            </form>
+          </div>
+        );
+      }
+    }
+
+    application.start();
+    const stub = cocoMvc.render(<RadioGroup />, container);
+    const aNode = stub.aRef.current;
+    const bNode = stub.bRef.current;
+    const cNode = stub.cRef.current;
+
+    expect(aNode.checked).toBe(true);
+    expect(bNode.checked).toBe(false);
+    // c is in a separate form and shouldn't be affected at all here
+    expect(cNode.checked).toBe(true);
+
+    expect(aNode.hasAttribute('checked')).toBe(true);
+    expect(bNode.hasAttribute('checked')).toBe(false);
+    expect(cNode.hasAttribute('checked')).toBe(true);
+
+    setUntrackedChecked.call(bNode, true);
+    expect(aNode.checked).toBe(false);
+    expect(cNode.checked).toBe(true);
+
+    // The original 'checked' attribute should be unchanged
+    expect(aNode.hasAttribute('checked')).toBe(true);
+    expect(bNode.hasAttribute('checked')).toBe(false);
+    expect(cNode.hasAttribute('checked')).toBe(true);
+
+    // Now let's run the actual ReactDOMInput change event handler
+    dispatchEventOnNode(bNode, 'click');
+
+    // The original state should have been restored
+    expect(aNode.checked).toBe(true);
+    expect(cNode.checked).toBe(true);
+  });
+
+  it('should check the correct radio when the selected name moves', () => {
+    @view()
+    class App {
+      @reactive()
+      updated = false;
+      onClick = () => {
+        this.updated = true;
+      };
+      render() {
+        const radioName = this.updated ? 'secondName' : 'firstName';
+        return (
+          <div>
+            <button type="button" onClick={this.onClick} />
+            <input
+              type="radio"
+              name={radioName}
+              onChange={emptyFunction}
+              checked={this.updated === true}
+            />
+            <input
+              type="radio"
+              name={radioName}
+              onChange={emptyFunction}
+              checked={this.updated === false}
+            />
+          </div>
+        );
+      }
+    }
+
+    application.start();
+    const stub = cocoMvc.render(<App />, container);
+    const buttonNode = cocoMvc.findDOMNode(stub).childNodes[0];
+    const firstRadioNode = cocoMvc.findDOMNode(stub).childNodes[1];
+    expect(firstRadioNode.checked).toBe(false);
+    dispatchEventOnNode(buttonNode, 'click');
+    expect(firstRadioNode.checked).toBe(true);
+  });
+
+  it('should control radio buttons if the tree updates during render', () => {
+    const sharedParent = container;
+    const container1 = document.createElement('div');
+    const container2 = document.createElement('div');
+
+    sharedParent.appendChild(container1);
+
+    let aNode;
+    let bNode;
+    @view()
+    class ComponentA {
+      @reactive()
+      changed = false;
+      handleChange = () => {
+        this.changed = true;
+      };
+      viewDidUpdate() {
+        sharedParent.appendChild(container2);
+      }
+      viewDidMount() {
+        cocoMvc.render(<ComponentB />, container2);
+      }
+      render() {
+        return (
+          <div>
+            <input
+              ref={n => (aNode = n)}
+              type="radio"
+              name="fruit"
+              checked={false}
+              onChange={this.handleChange}
+            />
+            A
+          </div>
+        );
+      }
+    }
+
+    @view()
+    class ComponentB {
+      render() {
+        return (
+          <div>
+            <input
+              ref={n => (bNode = n)}
+              type="radio"
+              name="fruit"
+              checked={true}
+              onChange={emptyFunction}
+            />
+            B
+          </div>
+        );
+      }
+    }
+
+    application.start();
+    cocoMvc.render(<ComponentA />, container1);
+
+    expect(aNode.checked).toBe(false);
+    expect(bNode.checked).toBe(true);
+
+    setUntrackedChecked.call(aNode, true);
+    // This next line isn't necessary in a proper browser environment, but
+    // jsdom doesn't uncheck the others in a group (because they are not yet
+    // sharing a parent), which makes this whole test a little less effective.
+    setUntrackedChecked.call(bNode, false);
+
+    // Now let's run the actual ReactDOMInput change event handler
+    dispatchEventOnNode(aNode, 'click');
+
+    // The original state should have been restored
+    expect(aNode.checked).toBe(false);
+    expect(bNode.checked).toBe(true);
+  });
+
+  it('should warn with value and no onChange handler and readOnly specified', () => {
+    cocoMvc.render(
+      <input type="text" value="zoink" readOnly={true} />,
+      container,
+    );
+    cocoMvc.unmountComponentAtNode(container);
+
+    cocoMvc.render(
+      <input type="text" value="zoink" readOnly={false} />,
+      container,
+    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'You provided a `value` prop to a form field without an ' +
+      '`onChange` handler. This will render a read-only field. If ' +
+      'the field should be mutable use `defaultValue`. Otherwise, ' +
+      'set either `onChange` or `readOnly`.',
+    );
+  });
+
+  it('should have a this value of undefined if bind is not used', () => {
+    expect.assertions(1);
+    const unboundInputOnChange = function() {
+      expect(this).toBe(undefined);
+    };
+
+    const stub = <input type="text" onChange={unboundInputOnChange} />;
+    const node = cocoMvc.render(stub, container);
+
+    setUntrackedValue.call(node, 'giraffe');
+    dispatchEventOnNode(node, 'input');
+  });
+
+  it('should update defaultValue to empty string', () => {
+    cocoMvc.render(<input type="text" defaultValue={'foo'} />, container);
+    cocoMvc.render(<input type="text" defaultValue={''} />, container);
+    expect(container.firstChild.defaultValue).toBe('');
+  });
+
+  it('should warn if value is null', () => {
+    cocoMvc.render(<input type="text" value={null} />, container);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      '`value` prop on `%s` should not be null. ' +
+      'Consider using an empty string to clear the component or `undefined` ' +
+      'for uncontrolled components.',
+      'input',
+    );
+    cocoMvc.unmountComponentAtNode(container);
+
+    cocoMvc.render(<input type="text" value={null} />, container);
+  });
+
+  it('should warn if checked and defaultChecked props are specified', () => {
+    cocoMvc.render(
+      <input
+        type="radio"
+        checked={true}
+        defaultChecked={true}
+        readOnly={true}
+      />,
+      container,
+    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      '%s contains an input of type %s with both checked and defaultChecked props. ' +
+      'Input elements must be either controlled or uncontrolled ' +
+      '(specify either the checked prop, or the defaultChecked prop, but not ' +
+      'both). Decide between using a controlled or uncontrolled input ' +
+      'element and remove one of these props. More info: ' +
+      'https://reactjs.org/link/controlled-components',
+      'A component',
+      'radio',
+    )
+    cocoMvc.unmountComponentAtNode(container);
+
+    cocoMvc.render(
+      <input
+        type="radio"
+        checked={true}
+        defaultChecked={true}
+        readOnly={true}
+      />,
+      container,
+    );
+  });
+
+  it('should warn if value and defaultValue props are specified', () => {
+    cocoMvc.render(
+      <input type="text" value="foo" defaultValue="bar" readOnly={true} />,
+      container,
+    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      '%s contains an input of type %s with both value and defaultValue props. ' +
+      'Input elements must be either controlled or uncontrolled ' +
+      '(specify either the value prop, or the defaultValue prop, but not ' +
+      'both). Decide between using a controlled or uncontrolled input ' +
+      'element and remove one of these props. More info: ' +
+      'https://reactjs.org/link/controlled-components',
+      'A component',
+      'text',
+    );
+    cocoMvc.unmountComponentAtNode(container);
+
+    cocoMvc.render(
+      <input type="text" value="foo" defaultValue="bar" readOnly={true} />,
+      container,
+    );
+  });
+
+  it('should warn if controlled input switches to uncontrolled (value is undefined)', () => {
+    const stub = (
+      <input type="text" value="controlled" onChange={emptyFunction} />
+    );
+    cocoMvc.render(stub, container);
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+    cocoMvc.render(<input type="text" />, container);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'A component is changing a controlled input to be uncontrolled. ' +
+      'This is likely caused by the value changing from a defined to ' +
+      'undefined, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    );
+  });
+
+  it('should warn if controlled input switches to uncontrolled (value is null)', () => {
+    const stub = (
+      <input type="text" value="controlled" onChange={emptyFunction} />
+    );
+    cocoMvc.render(stub, container);
+    expect(consoleErrorSpy).not.toHaveBeenCalled();
+    cocoMvc.render(<input type="text" value={null} />, container);
+    expect(consoleErrorSpy.mock.calls[0]).toEqual(
+      [
+        '`value` prop on `%s` should not be null. ' +
+        'Consider using an empty string to clear the component or `undefined` ' +
+        'for uncontrolled components.',
+        'input',
+      ]
+    );
+    expect(consoleErrorSpy.mock.calls[1]).toEqual([
+      'A component is changing a controlled input to be uncontrolled. ' +
+      'This is likely caused by the value changing from a defined to ' +
+      'undefined, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    ])
+  });
+
+  it('should warn if controlled input switches to uncontrolled with defaultValue', () => {
+    const stub = (
+      <input type="text" value="controlled" onChange={emptyFunction} />
+    );
+    cocoMvc.render(stub, container);
+    cocoMvc.render(
+      <input type="text" defaultValue="uncontrolled" />,
+      container,
+    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'A component is changing a controlled input to be uncontrolled. ' +
+      'This is likely caused by the value changing from a defined to ' +
+      'undefined, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    );
+  });
+
+  it('should warn if uncontrolled input (value is undefined) switches to controlled', () => {
+    const stub = <input type="text" />;
+    cocoMvc.render(stub, container);
+    cocoMvc.render(<input type="text" value="controlled" />, container);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'A component is changing an uncontrolled input to be controlled. ' +
+      'This is likely caused by the value changing from undefined to ' +
+      'a defined value, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    )
+  });
+
+  it('should warn if uncontrolled input (value is null) switches to controlled', () => {
+    const stub = <input type="text" value={null} />;
+    cocoMvc.render(stub, container);
+    expect(consoleErrorSpy.mock.calls[0]).toEqual(
+      [
+        '`value` prop on `%s` should not be null. ' +
+        'Consider using an empty string to clear the component or `undefined` ' +
+        'for uncontrolled components.',
+        'input',
+      ]
+    );
+    cocoMvc.render(<input type="text" value="controlled" />, container);
+    expect(consoleErrorSpy.mock.calls[1]).toEqual(
+      [
+        'A component is changing an uncontrolled input to be controlled. ' +
+        'This is likely caused by the value changing from undefined to ' +
+        'a defined value, which should not happen. ' +
+        'Decide between using a controlled or uncontrolled input ' +
+        'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+      ]
+    )
+  });
+
+  it('should warn if controlled checkbox switches to uncontrolled (checked is undefined)', () => {
+    const stub = (
+      <input type="checkbox" checked={true} onChange={emptyFunction} />
+    );
+    cocoMvc.render(stub, container);
+    cocoMvc.render(<input type="checkbox" />, container);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'A component is changing a controlled input to be uncontrolled. ' +
+      'This is likely caused by the value changing from a defined to ' +
+      'undefined, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    );
+  });
+
+  it('should warn if controlled checkbox switches to uncontrolled (checked is null)', () => {
+    const stub = (
+      <input type="checkbox" checked={true} onChange={emptyFunction} />
+    );
+    cocoMvc.render(stub, container);
+    cocoMvc.render(<input type="checkbox" checked={null} />, container);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'A component is changing a controlled input to be uncontrolled. ' +
+      'This is likely caused by the value changing from a defined to ' +
+      'undefined, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    );
+  });
+
+  it('should warn if controlled checkbox switches to uncontrolled with defaultChecked', () => {
+    const stub = (
+      <input type="checkbox" checked={true} onChange={emptyFunction} />
+    );
+    cocoMvc.render(stub, container);
+    cocoMvc.render(
+      <input type="checkbox" defaultChecked={true} />,
+      container,
+    );
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'A component is changing a controlled input to be uncontrolled. ' +
+      'This is likely caused by the value changing from a defined to ' +
+      'undefined, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    );
+  });
+
+  it('should warn if uncontrolled checkbox (checked is undefined) switches to controlled', () => {
+    const stub = <input type="checkbox" />;
+    cocoMvc.render(stub, container);
+    cocoMvc.render(<input type="checkbox" checked={true} />, container);
+    expect(consoleErrorSpy.mock.calls[0]).toEqual(
+      [
+        'A component is changing an uncontrolled input to be controlled. ' +
+        'This is likely caused by the value changing from undefined to ' +
+        'a defined value, which should not happen. ' +
+        'Decide between using a controlled or uncontrolled input ' +
+        'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+      ]
+    )
+  });
+
+  it('should warn if uncontrolled checkbox (checked is null) switches to controlled', () => {
+    const stub = <input type="checkbox" checked={null} />;
+    cocoMvc.render(stub, container);
+    cocoMvc.render(<input type="checkbox" checked={true} />, container);
+    expect(consoleErrorSpy.mock.calls[0]).toEqual(
+      [
+        'A component is changing an uncontrolled input to be controlled. ' +
+        'This is likely caused by the value changing from undefined to ' +
+        'a defined value, which should not happen. ' +
+        'Decide between using a controlled or uncontrolled input ' +
+        'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+      ]
+    )
+  });
+
+  it('should warn if controlled radio switches to uncontrolled (checked is undefined)', () => {
+    const stub = <input type="radio" checked={true} onChange={emptyFunction} />;
+    cocoMvc.render(stub, container);
+    cocoMvc.render(<input type="radio" />, container);
+    expect(consoleErrorSpy.mock.calls[0]).toEqual(
+      [
+        'A component is changing a controlled input to be uncontrolled. ' +
+        'This is likely caused by the value changing from a defined to ' +
+        'undefined, which should not happen. ' +
+        'Decide between using a controlled or uncontrolled input ' +
+        'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+      ]
+    )
+  });
+
+  it('should warn if controlled radio switches to uncontrolled (checked is null)', () => {
+    const stub = <input type="radio" checked={true} onChange={emptyFunction} />;
+    cocoMvc.render(stub, container);
+    cocoMvc.render(<input type="radio" checked={null} />, container);
+    expect(consoleErrorSpy.mock.calls[0]).toEqual(
+      [
+        'A component is changing a controlled input to be uncontrolled. ' +
+        'This is likely caused by the value changing from a defined to ' +
+        'undefined, which should not happen. ' +
+        'Decide between using a controlled or uncontrolled input ' +
+        'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+      ]
+    )
+  });
+
+  it('should warn if controlled radio switches to uncontrolled with defaultChecked', () => {
+    const stub = <input type="radio" checked={true} onChange={emptyFunction} />;
+    cocoMvc.render(stub, container);
+    cocoMvc.render(<input type="radio" defaultChecked={true} />, container);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'A component is changing a controlled input to be uncontrolled. ' +
+      'This is likely caused by the value changing from a defined to ' +
+      'undefined, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    )
+  });
+
+  it('should warn if uncontrolled radio (checked is undefined) switches to controlled', () => {
+    const stub = <input type="radio" />;
+    cocoMvc.render(stub, container);
+    cocoMvc.render(<input type="radio" checked={true} />, container);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'A component is changing an uncontrolled input to be controlled. ' +
+      'This is likely caused by the value changing from undefined to ' +
+      'a defined value, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    );
+  });
+
+  it('should warn if uncontrolled radio (checked is null) switches to controlled', () => {
+    const stub = <input type="radio" checked={null} />;
+    cocoMvc.render(stub, container);
+    cocoMvc.render(<input type="radio" checked={true} />, container);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'A component is changing an uncontrolled input to be controlled. ' +
+      'This is likely caused by the value changing from undefined to ' +
+      'a defined value, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    );
+  });
+
+  it('should not warn if radio value changes but never becomes controlled', () => {
+    cocoMvc.render(<input type="radio" value="value" />, container);
+    cocoMvc.render(<input type="radio" />, container);
+    cocoMvc.render(
+      <input type="radio" value="value" defaultChecked={true} />,
+      container,
+    );
+    cocoMvc.render(
+      <input type="radio" value="value" onChange={() => null} />,
+      container,
+    );
+    cocoMvc.render(<input type="radio" />, container);
+  });
+
+  it('should not warn if radio value changes but never becomes uncontrolled', () => {
+    cocoMvc.render(
+      <input type="radio" checked={false} onChange={() => null} />,
+      container,
+    );
+    cocoMvc.render(
+      <input
+        type="radio"
+        value="value"
+        defaultChecked={true}
+        checked={false}
+        onChange={() => null}
+      />,
+      container,
+    );
+  });
+
+  it('should warn if radio checked false changes to become uncontrolled', () => {
+    cocoMvc.render(
+      <input
+        type="radio"
+        value="value"
+        checked={false}
+        onChange={() => null}
+      />,
+      container,
+    );
+    cocoMvc.render(<input type="radio" value="value" />, container);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'A component is changing a controlled input to be uncontrolled. ' +
+      'This is likely caused by the value changing from a defined to ' +
+      'undefined, which should not happen. ' +
+      'Decide between using a controlled or uncontrolled input ' +
+      'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+    )
+  });
+
+  it('sets type, step, min, max before value always', () => {
+    const log = [];
+    const originalCreateElement = document.createElement;
+    jest.spyOn(document, 'createElement').mockImplementation(function(type) {
+      const el = originalCreateElement.apply(this, arguments);
+      let value = '';
+
+      if (type === 'input') {
+        Object.defineProperty(el, 'value', {
+          get: function() {
+            return value;
+          },
+          set: function(val) {
+            value = String(val);
+            log.push('set property value');
+          },
+        });
+        jest.spyOn(el, 'setAttribute').mockImplementation(function(name) {
+          log.push('set attribute ' + name);
+        });
+      }
+      return el;
+    });
+
+    cocoMvc.render(
+      <input
+        value="0"
+        onChange={() => {}}
+        type="range"
+        min="0"
+        max="100"
+        step="1"
+      />,
+      container,
+    );
+
+    expect(log).toEqual([
+      'set attribute type',
+      'set attribute min',
+      'set attribute max',
+      'set attribute step',
+      'set property value',
+    ]);
+    document.createElement = originalCreateElement;
+  });
+
+  it('sets value properly with type coming later in props', () => {
+    const input = cocoMvc.render(<input value="hi" type="radio" />, container);
+    expect(input.value).toBe('hi');
+  });
+
+  it('does not raise a validation warning when it switches types', () => {
+    @view()
+    class Input {
+      @reactive()
+      state = {type: 'number', value: 1000};
+
+      render() {
+        const {value, type} = this.state;
+        return <input onChange={() => {}} type={type} value={value} />;
+      }
+    }
+
+    application.start();
+    const input = cocoMvc.render(<Input />, container);
+    const node = cocoMvc.findDOMNode(input);
+
+    // If the value is set before the type, a validation warning will raise and
+    // the value will not be assigned.
+    input.state = {type: 'text', value: 'Test'};
+    expect(node.value).toEqual('Test');
+  });
+
+  it('resets value of date/time input to fix bugs in iOS Safari', () => {
+    function strify(x) {
+      return JSON.stringify(x, null, 2);
+    }
+
+    const log = [];
+    const originalCreateElement = document.createElement;
+    jest.spyOn(document, 'createElement').mockImplementation(function(type) {
+      const el = originalCreateElement.apply(this, arguments);
+      const getDefaultValue = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        'defaultValue',
+      ).get;
+      const setDefaultValue = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        'defaultValue',
+      ).set;
+      const getValue = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        'value',
+      ).get;
+      const setValue = Object.getOwnPropertyDescriptor(
+        HTMLInputElement.prototype,
+        'value',
+      ).set;
+      if (type === 'input') {
+        Object.defineProperty(el, 'defaultValue', {
+          get: function() {
+            return getDefaultValue.call(this);
+          },
+          set: function(val) {
+            log.push(`node.defaultValue = ${strify(val)}`);
+            setDefaultValue.call(this, val);
+          },
+        });
+        Object.defineProperty(el, 'value', {
+          get: function() {
+            return getValue.call(this);
+          },
+          set: function(val) {
+            log.push(`node.value = ${strify(val)}`);
+            setValue.call(this, val);
+          },
+        });
+        jest.spyOn(el, 'setAttribute').mockImplementation(function(name, val) {
+          log.push(`node.setAttribute(${strify(name)}, ${strify(val)})`);
+        });
+      }
+      return el;
+    });
+
+    cocoMvc.render(<input type="date" defaultValue="1980-01-01" />, container);
+
+    expect(log).toEqual([
+      'node.setAttribute("type", "date")',
+      // value must be assigned before defaultValue. This fixes an issue where the
+      // visually displayed value of date inputs disappears on mobile Safari and Chrome:
+      // https://github.com/facebook/react/issues/7233
+      'node.value = "1980-01-01"',
+      'node.defaultValue = "1980-01-01"',
+    ]);
+    document.createElement = originalCreateElement;
+  });
+
+  xdescribe('assigning the value attribute on controlled inputs', function() {
+    function getTestInput() {
+      @view()
+      class App {
+        props;
+
+        @reactive()
+        value = this.props.value == null ? '' : this.props.value;
+
+        onChange = event => {
+          this.value = event.target.value;
+        };
+        render() {
+          const type = this.props.type;
+          const value = this.value;
+
+          return <input type={type} value={value} onChange={this.onChange} />;
+        }
+      }
+      return App;
+    }
+
+    it('always sets the attribute when values change on text inputs', function() {
+      const Input = getTestInput();
+      application.start();
+      const stub = cocoMvc.render(<Input type="text" />, container);
+      const node = cocoMvc.findDOMNode(stub);
+
+      setUntrackedValue.call(node, '2');
+      dispatchEventOnNode(node, 'input');
+
+      expect(node.getAttribute('value')).toBe('2');
+    });
+  })
 })
