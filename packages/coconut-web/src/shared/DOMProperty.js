@@ -51,7 +51,7 @@ export function isAttributeNameSafe(attributeName) {
   return false;
 }
 
-export function cleanCache () {
+export function cleanCache() {
   for (const key of Object.keys(illegalAttributeNameCache)) {
     delete illegalAttributeNameCache[key];
   }
@@ -186,8 +186,8 @@ function PropertyInfoRecord(
 export function shouldIgnoreAttribute(
   name,
   propertyInfo,
-  isCustomComponentTag
-  ) {
+  isCustomComponentTag,
+) {
   if (propertyInfo !== null) {
     return propertyInfo.type === RESERVED;
   }
@@ -211,7 +211,7 @@ export function shouldRemoveAttribute(
   isCustomComponentTag,
 ) {
   if (value === null || typeof value === 'undefined') {
-    return true
+    return true;
   }
   if (
     shouldRemoveAttributeWithWarning(

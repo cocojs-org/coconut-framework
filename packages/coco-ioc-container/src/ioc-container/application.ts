@@ -73,13 +73,23 @@ class Application {
   /**
    * 根据组件定义返回组件实例，如果存在多个子组件，需要通过qualify指定子组件id
    * @param cls - 类定义
-   * @param qualifier - 如果cls存在多个子类，需要通过qualifier指定子类id
+   * @param option
    */
-  public getComponent<T>(cls: Class<T>, qualifier?: string): T;
+  public getComponent<T>(
+    cls: Class<T>,
+    option?: { constructorParams?: any[]; qualifier?: string }
+  ): T;
   // 根据组件id返回组件实例
-  public getComponent<T>(id: string): T;
-  public getComponent<T>(ClsOrId: Class<T> | string, qualifier?: string): T {
-    return getComponent(this, ClsOrId, { qualifier });
+  public getComponent<T>(id: string, option?: { constructorParams?: any[] }): T;
+  public getComponent<T>(
+    ClsOrId: Class<T> | string,
+    option: { constructorParams?: any[]; qualifier?: string } = {}
+  ): T {
+    const { constructorParams, qualifier } = option;
+    return getComponent(this, ClsOrId, {
+      qualifier,
+      newParameters: constructorParams,
+    });
   }
 
   /**
@@ -118,7 +128,7 @@ class Application {
     if (qualifierMetadata.length) {
       qualifier = qualifierMetadata[0].value;
     }
-    return this.getComponent(Cls, qualifier);
+    return this.getComponent(Cls, { qualifier });
   }
 
   public getByClassMetadata(metadataClass: Class<any>) {

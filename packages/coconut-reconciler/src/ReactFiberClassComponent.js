@@ -33,7 +33,7 @@ function adoptClassInstance(workInProgress, instance) {
 
 function constructClassInstance(workInProgress, ctor, props) {
   const application = getApplication();
-  const instance = application.getComponent(ctor);
+  const instance = application.getComponent(ctor, {constructorParams: [props]});
   const Reactive = application.getMetadataCls('Reactive');
   const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
   workInProgress.memoizedState = fields.reduce((prev, field) => {

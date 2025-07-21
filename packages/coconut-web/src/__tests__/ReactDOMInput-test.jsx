@@ -1738,14 +1738,18 @@ describe('ReactDOMInput', () => {
     document.createElement = originalCreateElement;
   });
 
-  xdescribe('assigning the value attribute on controlled inputs', function() {
+  describe('assigning the value attribute on controlled inputs', function() {
     function getTestInput() {
       @view()
       class App {
-        props;
+        // todo 在构造函数中进行prop赋值的一个问题是框架会使用new进行field装饰器的初始化，这时候是没有入参的。也就是说使用props初始化field和收集field装饰器是矛盾的
+        constructor(props) {
+          this.props = props;
+          this.value = this.props?.value == null ? '' : this.props?.value;
+        }
 
         @reactive()
-        value = this.props.value == null ? '' : this.props.value;
+        value;
 
         onChange = event => {
           this.value = event.target.value;
@@ -1770,6 +1774,87 @@ describe('ReactDOMInput', () => {
       dispatchEventOnNode(node, 'input');
 
       expect(node.getAttribute('value')).toBe('2');
+    });
+
+    it('does not set the value attribute on number inputs if focused', () => {
+      const Input = getTestInput();
+      application.start();
+      const stub = cocoMvc.render(
+        <Input type="number" value="1" />,
+        container,
+      );
+      const node = cocoMvc.findDOMNode(stub);
+
+      node.focus()
+
+      setUntrackedValue.call(node, '2');
+      dispatchEventOnNode(node, 'input');
+
+      expect(node.getAttribute('value')).toBe('1');
+    });
+
+    it('sets the value attribute on number inputs on blur', () => {
+      const Input = getTestInput();
+      application.start();
+      const stub = cocoMvc.render(
+        <Input type="number" value="1" />,
+        container,
+      );
+      const node = cocoMvc.findDOMNode(stub);
+
+      node.focus();
+      setUntrackedValue.call(node, '2');
+      dispatchEventOnNode(node, 'input');
+      // TODO: it is unclear why blur must be triggered twice,
+      // manual testing in the fixtures shows that the active element
+      // is no longer the input, however blur() + a blur event seem to
+      // be the only way to remove focus in JSDOM
+      node.blur();
+      dispatchEventOnNode(node, 'blur');
+      dispatchEventOnNode(node, 'focusout');
+
+      expect(node.value).toBe('2');
+      expect(node.getAttribute('value')).toBe('2');
+    });
+
+    it('an uncontrolled number input will not update the value attribute on blur', () => {
+      const node = cocoMvc.render(
+        <input type="number" defaultValue="1" />,
+        container,
+      );
+
+      node.focus();
+      setUntrackedValue.call(node, 4);
+      dispatchEventOnNode(node, 'input');
+      // TODO: it is unclear why blur must be triggered twice,
+      // manual testing in the fixtures shows that the active element
+      // is no longer the input, however blur() + a blur event seem to
+      // be the only way to remove focus in JSDOM
+      node.blur();
+      dispatchEventOnNode(node, 'blur');
+      dispatchEventOnNode(node, 'focusout');
+
+      expect(node.getAttribute('value')).toBe('1');
+    });
+
+    it('an uncontrolled text input will not update the value attribute on blur', () => {
+      const node = cocoMvc.render(
+        <input type="text" defaultValue="1" />,
+        container,
+      );
+
+      node.focus();
+      setUntrackedValue.call(node, 4);
+      dispatchEventOnNode(node, 'input');
+      // TODO: it is unclear why blur must be triggered twice,
+      // manual testing in the fixtures shows that the active element
+      // is no longer the input, however blur() + a blur event seem to
+      // be the only way to remove focus in JSDOM
+      node.blur();
+      dispatchEventOnNode(node, 'blur');
+      dispatchEventOnNode(node, 'focusout');
+
+      expect(node.getAttribute('value')).toBe('1');
     });
   })
 })

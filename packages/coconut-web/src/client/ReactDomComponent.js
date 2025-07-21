@@ -226,8 +226,19 @@ export function diffProperties(
     validatePropertiesInDevelopment(tag, nextRawProps);
   }
   let updatePayload = null;
-  let lastProps = lastRawProps;
-  let nextProps = nextRawProps;
+  let lastProps;
+  let nextProps;
+  switch (tag) {
+    case 'input':
+      lastProps = ReactDomInputGetHostProps(domElement, lastRawProps);
+      nextProps = ReactDomInputGetHostProps(domElement, nextRawProps);
+      updatePayload = [];
+      break;
+    default:
+      lastProps = lastRawProps;
+      nextProps = nextRawProps;
+      break;
+  }
 
   assertValidProps(tag, nextProps);
 
