@@ -22,10 +22,10 @@ function createDecoratorExpFactory(fn: any) {
       typeof metadataClsOrName === 'string'
         ? metadataClsOrName
         : lowercaseFirstLetter(metadataClsOrName.name);
-    let metadataCls =
+    let MetadataCls =
       typeof metadataClsOrName !== 'string' ? metadataClsOrName : null;
-    if (metadataCls) {
-      registerMetadataCls(metadataCls);
+    if (MetadataCls) {
+      registerMetadataCls(MetadataCls);
     }
     function decoratorExpress(userParam: UserParam, decorateSelf?: true) {
       if (__TEST__) {
@@ -38,9 +38,9 @@ function createDecoratorExpFactory(fn: any) {
         switch (context.kind) {
           case KindClass:
             if (decorateSelf) {
-              if (metadataCls === null) {
-                metadataCls = value;
-                registerMetadataCls(metadataCls);
+              if (MetadataCls === null) {
+                MetadataCls = value;
+                registerMetadataCls(MetadataCls);
                 fn(value, {
                   decoratorName,
                   metadataKind: KindClass,
@@ -53,9 +53,9 @@ function createDecoratorExpFactory(fn: any) {
               fn(value, {
                 decoratorName,
                 metadataKind: KindClass,
-                metadataClass: metadataCls,
+                metadataClass: MetadataCls,
                 metadataParam: userParam,
-                postConstruct: metadataCls.postConstruct,
+                postConstruct: MetadataCls.postConstruct,
               });
             }
             break;
@@ -76,10 +76,10 @@ function createDecoratorExpFactory(fn: any) {
               fn(this.constructor, {
                 decoratorName,
                 metadataKind: context.kind,
-                metadataClass: metadataCls,
+                metadataClass: MetadataCls,
                 metadataParam: userParam,
                 field: context.name as string,
-                postConstruct: metadataCls.postConstruct,
+                postConstruct: MetadataCls.postConstruct,
               });
               break;
             case KindClass:

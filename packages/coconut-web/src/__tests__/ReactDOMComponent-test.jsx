@@ -1184,7 +1184,6 @@ describe('ReactDOMComponent', () => {
 
       cocoMvc.render(
         <link href="http://example.org/link" onError={() => {
-          console.info('onError called');
           onError();
         }} />,
         container,
@@ -1440,8 +1439,9 @@ describe('ReactDOMComponent', () => {
       );
       expect(consoleErrorSpy.mock.calls[1]).toEqual(
         [
-          "Unknown event handler property `%s`. It will be ignored.",
+          'Invalid event handler property `%s`. Did you mean `%s`?',
           'onKeydown',
+          'onKeyDown'
         ]
       );
     });
