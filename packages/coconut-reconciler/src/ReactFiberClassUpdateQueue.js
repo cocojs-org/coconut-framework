@@ -109,7 +109,10 @@ function getStateFromUpdate(
       } else {
         partialState = payload;
       }
-      if (partialState === null || partialState === undefined) {
+      if (field) {
+        // 如果是field，可以允许null或者undefined
+        return partialState;
+      } else if ((partialState === null || partialState === undefined)) {
         // Null and undefined are treated as no-ops.
         return _prevState;
       }

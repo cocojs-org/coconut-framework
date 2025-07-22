@@ -1857,4 +1857,252 @@ describe('ReactDOMInput', () => {
       expect(node.getAttribute('value')).toBe('1');
     });
   })
+
+  describe('setting a controlled input to undefined', () => {
+    let input;
+
+    function renderInputWithStringThenWithUndefined() {
+      let setValueToUndefined;
+
+      @view()
+      class Input {
+        constructor() {
+          setValueToUndefined = () => {
+            this.value = undefined;
+          }
+        }
+
+        @reactive()
+        value = 'first';
+
+        render() {
+          return (
+            <input
+              onChange={e => this.value = e.target.value}
+              value={this.value}
+            />
+          );
+        }
+      }
+
+      application.start();
+      const stub = cocoMvc.render(<Input />, container);
+      input = cocoMvc.findDOMNode(stub);
+      setUntrackedValue.call(input, 'latest');
+      dispatchEventOnNode(input, 'input');
+      setValueToUndefined();
+    }
+
+    it('reverts the value attribute to the initial value', () => {
+      renderInputWithStringThenWithUndefined()
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'A component is changing a controlled input to be uncontrolled. ' +
+        'This is likely caused by the value changing from a defined to ' +
+        'undefined, which should not happen. ' +
+        'Decide between using a controlled or uncontrolled input ' +
+        'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+      )
+      expect(input.getAttribute('value')).toBe('first');
+    });
+
+    it('preserves the value property', () => {
+      renderInputWithStringThenWithUndefined();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'A component is changing a controlled input to be uncontrolled. ' +
+        'This is likely caused by the value changing from a defined to ' +
+        'undefined, which should not happen. ' +
+        'Decide between using a controlled or uncontrolled input ' +
+        'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+      )
+      expect(input.value).toBe('latest');
+    });
+  })
+
+  describe('setting a controlled input to null', () => {
+    let input;
+
+    function renderInputWithStringThenWithNull() {
+      let setValueToNull;
+      @view()
+      class Input {
+        constructor() {
+          setValueToNull = () => {
+            this.value = null;
+          }
+        }
+        @reactive()
+        value = 'first';
+        render() {
+          return (
+            <input
+              onChange={e => this.value = e.target.value}
+              value={this.value}
+            />
+          );
+        }
+      }
+
+      application.start();
+      const stub = cocoMvc.render(<Input />, container);
+      input = cocoMvc.findDOMNode(stub);
+      setUntrackedValue.call(input, 'latest');
+      dispatchEventOnNode(input, 'input');
+      setValueToNull();
+    }
+
+    it('reverts the value attribute to the initial value', () => {
+      renderInputWithStringThenWithNull();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '`value` prop on `%s` should not be null. ' +
+        'Consider using an empty string to clear the component or `undefined` ' +
+        'for uncontrolled components.',
+        'input',
+      );
+      expect(input.getAttribute('value')).toBe('first');
+    });
+
+    it('preserves the value property', () => {
+      renderInputWithStringThenWithNull();
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '`value` prop on `%s` should not be null. ' +
+        'Consider using an empty string to clear the component or `undefined` ' +
+        'for uncontrolled components.',
+        'input',
+      );
+      expect(input.value).toBe('latest');
+    });
+  });
+
+  describe('When given a Symbol value', function() {
+    it('treats initial Symbol value as an empty string', function() {
+      cocoMvc.render(
+        <input value={Symbol('foobar')} onChange={() => {}} />,
+        container,
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        `Invalid value for prop %s on <%s> tag. Either remove it from the element, or pass a string or number value to keep it in the DOM. For details, see https://reactjs.org/link/attribute-behavior `,
+        '`value`',
+        'input',
+      );
+      const node = container.firstChild;
+
+      expect(node.value).toBe('');
+      expect(node.getAttribute('value')).toBe('');
+    });
+
+    it('treats updated Symbol value as an empty string', function() {
+      cocoMvc.render(<input value="foo" onChange={() => {}} />, container);
+      cocoMvc.render(
+        <input value={Symbol('foobar')} onChange={() => {}} />,
+        container,
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        `Invalid value for prop %s on <%s> tag. Either remove it from the element, or pass a string or number value to keep it in the DOM. For details, see https://reactjs.org/link/attribute-behavior `,
+        '`value`',
+        'input',
+      );
+      const node = container.firstChild;
+
+      expect(node.value).toBe('');
+      expect(node.getAttribute('value')).toBe('');
+    });
+
+    it('treats initial Symbol defaultValue as an empty string', function() {
+      cocoMvc.render(<input defaultValue={Symbol('foobar')} />, container);
+      const node = container.firstChild;
+
+      expect(node.value).toBe('');
+      expect(node.getAttribute('value')).toBe('');
+      // TODO: we should warn here.
+    });
+
+    it('treats updated Symbol defaultValue as an empty string', function() {
+      cocoMvc.render(<input defaultValue="foo" />, container);
+      cocoMvc.render(<input defaultValue={Symbol('foobar')} />, container);
+      const node = container.firstChild;
+
+      expect(node.value).toBe('foo');
+      expect(node.getAttribute('value')).toBe('');
+      // TODO: we should warn here.
+    });
+  })
+
+  describe('When given a function value', function() {
+    it('treats initial function value as an empty string', function() {
+      cocoMvc.render(
+        <input value={() => {}} onChange={() => {}} />,
+        container,
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        `Invalid value for prop %s on <%s> tag. Either remove it from the element, or pass a string or number value to keep it in the DOM. For details, see https://reactjs.org/link/attribute-behavior `,
+        '`value`',
+        'input',
+      );
+      const node = container.firstChild;
+
+      expect(node.value).toBe('');
+      expect(node.getAttribute('value')).toBe('');
+    });
+
+    it('treats updated function value as an empty string', function() {
+      cocoMvc.render(<input value="foo" onChange={() => {}} />, container);
+      cocoMvc.render(
+        <input value={() => {}} onChange={() => {}} />,
+        container,
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        `Invalid value for prop %s on <%s> tag. Either remove it from the element, or pass a string or number value to keep it in the DOM. For details, see https://reactjs.org/link/attribute-behavior `,
+        '`value`',
+        'input',
+      );
+      const node = container.firstChild;
+
+      expect(node.value).toBe('');
+      expect(node.getAttribute('value')).toBe('');
+    });
+
+    it('treats initial function defaultValue as an empty string', function() {
+      cocoMvc.render(<input defaultValue={() => {}} />, container);
+      const node = container.firstChild;
+
+      expect(node.value).toBe('');
+      expect(node.getAttribute('value')).toBe('');
+      // TODO: we should warn here.
+    });
+
+    it('treats updated function defaultValue as an empty string', function() {
+      cocoMvc.render(<input defaultValue="foo" />, container);
+      cocoMvc.render(<input defaultValue={() => {}} />, container);
+      const node = container.firstChild;
+
+      expect(node.value).toBe('foo');
+      expect(node.getAttribute('value')).toBe('');
+      // TODO: we should warn here.
+    });
+  })
+
+  describe('checked inputs without a value property', function() {
+    // In absence of a value, radio and checkboxes report a value of "on".
+    // Between 16 and 16.2, we assigned a node's value to it's current
+    // value in order to "dettach" it from defaultValue. This had the unfortunate
+    // side-effect of assigning value="on" to radio and checkboxes
+    it('does not add "on" in absence of value on a checkbox', function() {
+      cocoMvc.render(
+        <input type="checkbox" defaultChecked={true} />,
+        container,
+      );
+      const node = container.firstChild;
+
+      expect(node.value).toBe('on');
+      expect(node.hasAttribute('value')).toBe(false);
+    });
+
+    it('does not add "on" in absence of value on a radio', function() {
+      cocoMvc.render(<input type="radio" defaultChecked={true} />, container);
+      const node = container.firstChild;
+
+      expect(node.value).toBe('on');
+      expect(node.hasAttribute('value')).toBe(false);
+    });
+  })
 })
