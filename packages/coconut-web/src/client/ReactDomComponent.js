@@ -13,7 +13,16 @@ import {
   restoreControlledState as ReactDOMInputRestoreControlledState,
   updateChecked as ReactDOMInputUpdateChecked,
   updateWrapper as ReactDOMInputUpdateWrapper,
-} from './ReactDomInput'
+} from './ReactDomInput';
+import {
+  initWrapperState as ReactDOMSelectInitWrapperState,
+  getHostProps as ReactDOMSelectGetHostProps,
+  postMountWrapper as ReactDOMSelectPostMountWrapper,
+  postUpdateWrapper as ReactDOMSelectPostUpdateWrapper,
+} from './ReactDOMSelect';
+import {
+  postMountWrapper as ReactDOMOptionPostMountWrapper,
+} from './ReactDOMOption';
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
 import { validateProperties as validateInputProperties } from '../shared/ReactDOMNullinputValuePropHook';
 import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
@@ -116,6 +125,14 @@ export function createElement(type, props, parentNamespace) {
       }
     }
     domElement = document.createElement(type);
+    if (type === 'select') {
+      const node = domElement;
+      if (props.multiple) {
+        node.multiple = true;
+      } else if (props.size) {
+        node.size = props.size;
+      }
+    }
   }
 
   if (__DEV__) {
@@ -200,6 +217,10 @@ export function setInitialProperties(domElement, tag, rawProps) {
       // listeners still fire for the invalid event.
       listenToNonDelegatedEvent('invalid', domElement);
       break;
+    case 'select':
+      ReactDOMSelectInitWrapperState(domElement, rawProps);
+      props = ReactDOMSelectGetHostProps(domElement, rawProps);
+      break;
     default: {
       props = rawProps;
     }
@@ -213,6 +234,13 @@ export function setInitialProperties(domElement, tag, rawProps) {
     case 'input':
       track(domElement);
       ReactDOMInputPostMountWrapper(domElement, rawProps);
+      break;
+    case 'option':
+      ReactDOMOptionPostMountWrapper(domElement, rawProps);
+      break;
+    case 'select':
+      ReactDOMSelectPostMountWrapper(domElement, rawProps);
+      break;
   }
 }
 
@@ -400,7 +428,15 @@ export function updateProperties(
 
   switch (tag) {
     case 'input':
+      // Update the wrapper around inputs *after* updating props. This has to
+      // happen after `updateDOMProperties`. Otherwise HTML5 input validations
+      // raise warnings and prevent the new value from being assigned.
       ReactDOMInputUpdateWrapper(domElement, nextRawProps);
+      break;
+    case 'select':
+      // <select> value update needs to occur after <option> children
+      // reconciliation
+      ReactDOMSelectPostUpdateWrapper(domElement, nextRawProps);
       break;
   }
 }
