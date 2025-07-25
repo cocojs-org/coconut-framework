@@ -8,6 +8,11 @@
 import { getToStringValue, toString } from './ToStringValue';
 import { assign } from "shared";
 
+let didWarnValueDefaultValue;
+if (__DEV__) {
+  didWarnValueDefaultValue = false;
+}
+
 /**
  * Implements a <select> host component that allows optionally setting the
  * props `value` and `defaultValue`. If `multiple` is false, the prop must be a
@@ -35,6 +40,23 @@ export function initWrapperState(element, props) {
 
   node._wrapperState = {
     wasMultiple: !!props.multiple,
+  }
+
+  if (__DEV__) {
+    if (
+      props.value !== undefined &&
+      props.defaultValue !== undefined &&
+      !didWarnValueDefaultValue
+    ) {
+      console.error(
+        'Select elements must be either controlled or uncontrolled ' +
+        '(specify either the value prop, or the defaultValue prop, but not ' +
+        'both). Decide between using a controlled or uncontrolled select ' +
+        'element and remove one of these props. More info: ' +
+        'https://reactjs.org/link/controlled-components',
+      );
+      didWarnValueDefaultValue = true;
+    }
   }
 }
 
@@ -72,7 +94,6 @@ function updateOptions(
   propValue,
   setDefaultSelected
 ) {
-  console.info('updateOptions called', node);
   const options = node.options;
   if (multiple) {
     const selectedValues = propValue;

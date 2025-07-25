@@ -7,6 +7,7 @@ import {
 } from '../shared/DOMProperty';
 import dangerousStyleValue from '../shared/dangerousStyleValue';
 import warnValidStyle from '../shared/warnValidStyle';
+import { checkAttributeStringCoercion } from 'shared';
 
 export function setValueForStyles(node, styles) {
   const style = node.style;
@@ -53,6 +54,9 @@ export function setValueForProperty(
       if (value === null) {
         node.removeAttribute(attributeName);
       } else {
+        if (__DEV__) {
+          checkAttributeStringCoercion(value, name);
+        }
         node.setAttribute(attributeName, '' + value);
       }
     }
@@ -77,6 +81,11 @@ export function setValueForProperty(
     let attributeValue = value;
     if (type === BOOLEAN) {
       attributeValue = '';
+    } else {
+      if (__DEV__) {
+        checkAttributeStringCoercion(value, attributeName);
+        attributeValue = '' + value;
+      }
     }
     node.setAttribute(attributeName, attributeValue)
   }

@@ -4,13 +4,17 @@ const RESERVED_PROPS = {
   ref: true,
 };
 
-const h = (component: any, config: Record<any, any>) => {
+const h = (component: any, config: Record<any, any>, maybeKey?: string) => {
   const props = {};
   let ref = null;
   let key = null;
 
   if (config?.ref) {
     ref = config.ref;
+  }
+
+  if (maybeKey) {
+    key = '' + maybeKey;
   }
 
   for (let propName in config) {

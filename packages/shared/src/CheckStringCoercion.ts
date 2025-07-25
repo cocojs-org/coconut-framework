@@ -48,6 +48,20 @@ function willCoercionThrow(value) {
   }
 }
 
+export function checkAttributeStringCoercion(value, attributeName) {
+  if (__DEV__) {
+    if (willCoercionThrow(value)) {
+      console.error(
+        'The provided `%s` attribute is an unsupported type %s.' +
+          ' This value must be coerced to a string before before using it here.',
+        attributeName,
+        typeName(value)
+      );
+      return testStringCoercion(value); // throw (to help callers find troubleshooting comments)
+    }
+  }
+}
+
 export function checkCSSPropertyStringCoercion(value, propName) {
   if (__DEV__) {
     if (willCoercionThrow(value)) {

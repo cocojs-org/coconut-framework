@@ -15,6 +15,9 @@ import {
   updateWrapper as ReactDOMInputUpdateWrapper,
 } from './ReactDomInput';
 import {
+  validateProps as ReactDOMOptionValidateProps
+} from './ReactDOMOption';
+import {
   initWrapperState as ReactDOMSelectInitWrapperState,
   getHostProps as ReactDOMSelectGetHostProps,
   postMountWrapper as ReactDOMSelectPostMountWrapper,
@@ -217,6 +220,10 @@ export function setInitialProperties(domElement, tag, rawProps) {
       // listeners still fire for the invalid event.
       listenToNonDelegatedEvent('invalid', domElement);
       break;
+    case 'option':
+      ReactDOMOptionValidateProps(domElement, rawProps);
+      props = rawProps;
+      break;
     case 'select':
       ReactDOMSelectInitWrapperState(domElement, rawProps);
       props = ReactDOMSelectGetHostProps(domElement, rawProps);
@@ -260,6 +267,11 @@ export function diffProperties(
     case 'input':
       lastProps = ReactDomInputGetHostProps(domElement, lastRawProps);
       nextProps = ReactDomInputGetHostProps(domElement, nextRawProps);
+      updatePayload = [];
+      break;
+    case 'select':
+      lastProps = ReactDOMSelectGetHostProps(domElement, lastRawProps);
+      nextProps = ReactDOMSelectGetHostProps(domElement, nextRawProps);
       updatePayload = [];
       break;
     default:

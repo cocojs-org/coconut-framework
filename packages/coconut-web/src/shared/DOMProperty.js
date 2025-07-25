@@ -62,6 +62,26 @@ export function cleanCache() {
 
 const properties = {};
 
+const reservedProps = [
+  'children',
+  'dangerouslySetInnerHTML',
+  'defaultValue',
+  'defaultChecked',
+  'innerHTML',
+  'style'
+];
+reservedProps.forEach(name => {
+  properties[name] = new PropertyInfoRecord(
+    name,
+    RESERVED,
+    false,
+    name,
+    null,
+    false,
+    false
+  )
+});
+
 [
   ['acceptCharset', 'accept-charset'],
   ['className', 'class'],
