@@ -16,7 +16,7 @@ module.exports = {
     ],
   },
   moduleNameMapper: {
-    'coco-mvc/jsx-runtime$': '<rootDir>/packages/coco-mvc/dist/jsx.cjs.js',
+    'coco-mvc/jsx-runtime$': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
     'coco-mvc$': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
     'coconut-reconciler': '<rootDir>/packages/coconut-reconciler/src/index.js',
     shared$: '<rootDir>/packages/shared/src/index.ts',

@@ -4,6 +4,7 @@ const packages = path.join(__dirname, '../../packages');
 // todo 和tsconfig.json.path放在一起维护
 const mvc = path.join(packages, './coco-mvc/src/index.ts')
 const render = path.join(packages, './coco-render/src/index.ts')
+const react = path.join(packages, './coco-react/index.js')
 const reconciler = path.join(packages, './coconut-reconciler/src/index.js')
 const reconcilerReactWorkTags = path.join(packages, './coconut-reconciler/src/ReactWorkTags.js')
 const web = path.join(packages, './coconut-web/src/index.js')
@@ -18,6 +19,7 @@ const ReactFiberHostConfig = path.join(packages, './coconut-web/src/client/React
 const PACKAGE = {
   MVC: 'coco-mvc',
   MVC_RENDER: 'coco-render',
+  REACT: 'coco-react',
   RECONCILER: 'coconut-reconciler',
   RECONCILER_REACT_WORK_TAGS: 'reconciler-ReactWorkTags',
   WEB: 'coconut-web',
@@ -32,6 +34,7 @@ const PACKAGE = {
 const pathMap = {
   [PACKAGE.MVC]: mvc,
   [PACKAGE.MVC_RENDER]: render,
+  [PACKAGE.REACT]: react,
   [PACKAGE.RECONCILER]: reconciler,
   [PACKAGE.RECONCILER_REACT_WORK_TAGS]: reconcilerReactWorkTags,
   [PACKAGE.WEB]: web,

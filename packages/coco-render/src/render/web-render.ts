@@ -2,7 +2,7 @@
 import { render as renderApp, registerApplication } from 'coconut-web';
 import { type Application, init } from 'coco-ioc-container';
 import render from '../decorator/render.ts';
-import { jsx } from '../jsx-runtime';
+import { jsx } from 'coco-react';
 import Render from '../component/render.ts';
 
 /**

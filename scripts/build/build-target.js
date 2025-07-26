@@ -4,9 +4,6 @@ const packages = path.join(__dirname, '../../packages');
 const cocoMvc = path.join(packages, './coco-mvc');
 const cocoMvcInput = path.join(cocoMvc, './src/index.ts');
 const cocoMvcOutput = path.join(cocoMvc, './dist/coco-mvc.cjs.js');
-const cocoRender = path.join(packages, './coco-render');
-const jsxInput = path.join(cocoRender, './src/jsx-runtime/index.ts');
-const jsxOutput = `${path.join(cocoMvc, './dist')}/jsx.cjs.js`;
 
 const cocoCli = path.join(packages, './coco-cli');
 const cliSrc = path.join(cocoCli, './src/index.ts');
@@ -26,6 +23,7 @@ module.exports.rollupTargets = [
     alias: [
       PACKAGE.MVC,
       PACKAGE.MVC_RENDER,
+      PACKAGE.REACT,
       PACKAGE.REACTIVE,
       PACKAGE.ROUTER,
       PACKAGE.RECONCILER,
@@ -36,13 +34,6 @@ module.exports.rollupTargets = [
       PACKAGE.IOC_CONTAINER,
       PACKAGE.IOC_CONTAINER_TEST_HELPER,
     ],
-  },
-  {
-    input: jsxInput,
-    output: {
-      file: jsxOutput,
-      format: 'cjs',
-    },
   },
   {
     input: cliSrc,

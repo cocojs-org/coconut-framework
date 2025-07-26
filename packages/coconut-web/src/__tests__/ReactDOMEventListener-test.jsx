@@ -28,7 +28,7 @@ describe('ReactDOMEventListener', () => {
     view = (await import('coco-mvc')).view;
     reactive = (await import('coco-mvc')).reactive;
     ref = (await import('coco-mvc')).ref;
-    jsx = (await import('coco-mvc/jsx-runtime')).jsx;
+    jsx = (await import('coco-mvc')).jsx;
     application = new Application();
     cocoMvc.registerApplication(application);
     consoleErrorSpy = jest.spyOn(console, 'error');

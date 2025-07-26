@@ -15,7 +15,7 @@ module.exports = {
     '\\.[jt]sx?$': '<rootDir>/scripts/jest/transformer.js',
   },
   moduleNameMapper: {
-    'coco-mvc/jsx-runtime$': '<rootDir>/packages/coco-mvc/dist/jsx.cjs.js',
+    'coco-mvc/jsx-runtime$': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
     'coco-mvc$': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
     '@cocojs/cli$': '<rootDir>/packages/coco-cli/dist/index.js',
     shared$: '<rootDir>/packages/shared/src/index.ts',

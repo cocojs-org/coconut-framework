@@ -24,7 +24,7 @@ describe('ReactDOMComponent', () => {
     cocoMvc = (await import('coco-mvc'));
     Application = (await import('coco-mvc')).Application;
     view = (await import('coco-mvc')).view
-    jsx = (await import('coco-mvc/jsx-runtime')).jsx;
+    jsx = (await import('coco-mvc')).jsx;
     application = new Application();
     cocoMvc.registerApplication(application);
     consoleErrorSpy = jest.spyOn(console, 'error');

@@ -1,10 +1,10 @@
-import { REACT_ELEMENT_TYPE } from '../../../shared/src';
+import { REACT_ELEMENT_TYPE } from 'shared';
 
 const RESERVED_PROPS = {
   ref: true,
 };
 
-const h = (component: any, config: Record<any, any>, maybeKey?: string) => {
+const h = (component, config, maybeKey) => {
   const props = {};
   let ref = null;
   let key = null;

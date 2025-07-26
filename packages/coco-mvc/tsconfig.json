@@ -9,6 +9,7 @@
       "coco-ioc-container": ["../coco-ioc-container/src"],
       "coco-router": ["../coco-router/src"],
       "coco-reactive": ["../coco-reactive/src"],
+      "coco-react": ["../coco-react/src"],
       "coco-render": ["../coco-render/src"],
       "shared": ["../shared"]
     }
