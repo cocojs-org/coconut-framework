@@ -26,12 +26,20 @@ import {
 import {
   postMountWrapper as ReactDOMOptionPostMountWrapper,
 } from './ReactDOMOption';
+import {
+  initWrapperState as ReactDOMTextareaInitWrapperState,
+  getHostProps as ReactDOMTextareaGetHostProps,
+  postMountWrapper as ReactDOMTextareaPostMountWrapper,
+  updateWrapper as ReactDOMTextareaUpdateWrapper,
+  restoreControlledState as ReactDOMTextareaRestoreControlledState,
+} from './ReactDomTextarea';
 import {validateProperties as validateUnknownProperties} from '../shared/ReactDOMUnknownPropertyHook';
 import { validateProperties as validateInputProperties } from '../shared/ReactDOMNullinputValuePropHook';
 import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
 import { hasOwnProperty } from 'shared';
 import { listenToNonDelegatedEvent, mediaEventTypes } from '../events/DOMPluginEventSystem';
 import { track } from './inputValueTracking';
+import { mkdirIfNotExist } from 'ts-patch/utils';
 
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CHILDREN = 'children';
@@ -228,6 +236,10 @@ export function setInitialProperties(domElement, tag, rawProps) {
       ReactDOMSelectInitWrapperState(domElement, rawProps);
       props = ReactDOMSelectGetHostProps(domElement, rawProps);
       break;
+    case 'textarea':
+      ReactDOMTextareaInitWrapperState(domElement, rawProps);
+      props = ReactDOMTextareaGetHostProps(domElement, rawProps);
+      break;
     default: {
       props = rawProps;
     }
@@ -241,6 +253,10 @@ export function setInitialProperties(domElement, tag, rawProps) {
     case 'input':
       track(domElement);
       ReactDOMInputPostMountWrapper(domElement, rawProps);
+      break;
+    case 'textarea':
+      track(domElement);
+      ReactDOMTextareaPostMountWrapper(domElement, rawProps);
       break;
     case 'option':
       ReactDOMOptionPostMountWrapper(domElement, rawProps);
@@ -272,6 +288,11 @@ export function diffProperties(
     case 'select':
       lastProps = ReactDOMSelectGetHostProps(domElement, lastRawProps);
       nextProps = ReactDOMSelectGetHostProps(domElement, nextRawProps);
+      updatePayload = [];
+      break;
+    case 'textarea':
+      lastProps = ReactDOMTextareaGetHostProps(domElement, lastRawProps);
+      nextProps = ReactDOMTextareaGetHostProps(domElement, nextRawProps);
       updatePayload = [];
       break;
     default:
@@ -445,6 +466,9 @@ export function updateProperties(
       // raise warnings and prevent the new value from being assigned.
       ReactDOMInputUpdateWrapper(domElement, nextRawProps);
       break;
+    case 'textarea':
+      ReactDOMTextareaUpdateWrapper(domElement, nextRawProps);
+      break;
     case 'select':
       // <select> value update needs to occur after <option> children
       // reconciliation
@@ -461,6 +485,9 @@ export function restoreControlledState(
   switch (tag) {
     case 'input':
       ReactDOMInputRestoreControlledState(domElement, props);
+      return;
+    case 'textarea':
+      ReactDOMTextareaRestoreControlledState(domElement, props);
       return;
   }
 }

@@ -13,6 +13,7 @@ import { COMMENT_NODE, DOCUMENT_NODE } from '../shared/HTMLNodeType';
 
 export function shouldSetTextContent(type, props) {
   return (
+    type === 'textarea' ||
     typeof props.children === 'string' ||
     typeof props.children === 'number' ||
     (typeof props.dangerouslySetInnerHTML === 'object' &&
