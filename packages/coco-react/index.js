@@ -1,1 +1,1 @@
-export * from './src/ReactElement';
+export { jsx, jsxs, Children } from './src/React';

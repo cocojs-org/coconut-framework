@@ -39,7 +39,6 @@ import { getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
 import { hasOwnProperty } from 'shared';
 import { listenToNonDelegatedEvent, mediaEventTypes } from '../events/DOMPluginEventSystem';
 import { track } from './inputValueTracking';
-import { mkdirIfNotExist } from 'ts-patch/utils';
 
 const DANGEROUSLY_SET_INNER_HTML = 'dangerouslySetInnerHTML';
 const CHILDREN = 'children';

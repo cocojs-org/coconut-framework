@@ -13,7 +13,7 @@ import * as ReactTestUtils from './test-units/ReactTestUnits';
 
 describe('ReactDOMTextarea', () => {
   function emptyFunction() {}
-  let cocoMvc, Application, application, jsx, view, reactive, ref, renderTextarea, consoleErrorSpy;
+  let cocoMvc, Application, application, view, reactive, ref, renderTextarea, consoleErrorSpy;
 
   beforeEach(async () => {
     jest.resetModules();
@@ -26,7 +26,6 @@ describe('ReactDOMTextarea', () => {
     view = (await import('coco-mvc')).view;
     reactive = (await import('coco-mvc')).reactive;
     ref = (await import('coco-mvc')).ref;
-    jsx = (await import('coco-mvc')).jsx;
     application = new Application();
     cocoMvc.registerApplication(application);
 

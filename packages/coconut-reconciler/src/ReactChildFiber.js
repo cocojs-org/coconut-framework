@@ -21,6 +21,20 @@ function coerceRef(
   return mixedRef;
 }
 
+function throwOnInvalidObjectType(returnFiber, newChild) {
+  const childString = Object.prototype.toString.call(newChild);
+
+  throw new Error(
+    `Objects are not valid as a React child (found: ${
+      childString === '[object Object]'
+        ? 'object with keys {' + Object.keys(newChild).join(', ') + '}'
+        : childString
+    }). ` +
+    'If you meant to render a collection of children, use an array ' +
+    'instead.',
+  );
+}
+
 function ChildReconciler(shouldTrackSideEffects) {
   function deleteChild(returnFiber, childToDelete) {
     if (!shouldTrackSideEffects) {
@@ -45,10 +59,15 @@ function ChildReconciler(shouldTrackSideEffects) {
       return created;
     }
     if (typeof newChild === 'object' && newChild !== null) {
-      const created = createFiberFromElement(newChild)
-      created.ref = coerceRef(returnFiber, null, newChild);
-      created.return = returnFiber;
-      return created;
+      switch (newChild.$$typeof) {
+        case REACT_ELEMENT_TYPE:
+          const created = createFiberFromElement(newChild)
+          created.ref = coerceRef(returnFiber, null, newChild);
+          created.return = returnFiber;
+          return created;
+      }
+
+      throwOnInvalidObjectType(returnFiber, newChild);
     }
 
     return null;
@@ -195,6 +214,27 @@ function ChildReconciler(shouldTrackSideEffects) {
 
     const created = createFiberFromElement(element);
     created.ref = coerceRef(returnFiber, currentFirstChild, element);
+    created.return = returnFiber;
+    return created;
+  }
+
+  function reconcileSingleTextNode(
+    returnFiber,
+    currentFirstChild,
+    textContent
+  ) {
+    if (currentFirstChild !== null && currentFirstChild.tag === HostText) {
+      // We already have an existing node so let's just update it and delete
+      // the rest.
+      deleteRemainingChildren(returnFiber, currentFirstChild.sibling);
+      const existing = useFiber(currentFirstChild, textContent);
+      existing.return = returnFiber;
+      return existing;
+    }
+    // The existing first child is not a text node so we need to create one
+    // and delete the existing ones.
+    deleteRemainingChildren(returnFiber, currentFirstChild);
+    const created = createFiberFromText(textContent);
     created.return = returnFiber;
     return created;
   }
@@ -357,6 +397,19 @@ function ChildReconciler(shouldTrackSideEffects) {
           newChild
         )
       }
+    }
+
+    if (
+      (typeof newChild === 'string' && newChild !== '') ||
+      typeof newChild === 'number'
+    ) {
+      return placeSingleChild(
+        reconcileSingleTextNode(
+          returnFiber,
+          currentFirstChild,
+          '' + newChild,
+        )
+      )
     }
 
     return deleteRemainingChildren(returnFiber, currentFirstChild);
