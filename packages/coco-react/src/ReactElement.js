@@ -4,7 +4,20 @@ const RESERVED_PROPS = {
   ref: true,
 };
 
-const h = (component, config, maybeKey) => {
+const ReactElement = function (type, key, ref, props) {
+  const element = {
+    // This tag allows us to uniquely identify this as a React Element
+    $$typeof: REACT_ELEMENT_TYPE,
+    type: type,
+    key: key,
+    ref: ref,
+    props: props,
+  };
+
+  return element;
+};
+
+export const jsx = (component, config, maybeKey) => {
   const props = {};
   let ref = null;
   let key = null;
@@ -26,14 +39,6 @@ const h = (component, config, maybeKey) => {
     }
   } // Resolve default props
 
-  return {
-    $$typeof: REACT_ELEMENT_TYPE,
-    type: component,
-    key,
-    ref,
-    props,
-  };
+  return ReactElement(component, key, ref, props);
 };
-
-export const jsx = h;
-export const jsxs = h;
+export { jsx as jsxs };
