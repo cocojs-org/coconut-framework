@@ -1,4 +1,4 @@
-import { get as getFromShare, NAME } from 'react-shared';
+import { get as getFromShare, NAME } from 'shared';
 import { getClosestInstanceFromNode } from '../client/ReactDomComponentTree';
 
 export let return_targetInst = null;

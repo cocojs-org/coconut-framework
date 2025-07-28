@@ -16,14 +16,7 @@ module.exports = {
     ],
   },
   moduleNameMapper: {
-    'coco-mvc/jsx-runtime$': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
-    'coco-mvc$': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
-    'react-reconciler': '<rootDir>/packages/react-reconciler/src/index.js',
-    'react-shared$': '<rootDir>/packages/react-shared/src/index.ts',
-    'react-dom-ReactFiberHostConfig$':
-      '<rootDir>/packages/react-dom/src/client/ReactDomHostConfig.js',
-    'react-reconciler-ReactWorkTags$':
-      '<rootDir>/packages/react-reconciler/src/ReactWorkTags.js',
+    'coco-mvc': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
   },
   globals: {
     __DEV__: true,

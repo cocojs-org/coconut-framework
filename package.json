@@ -3,7 +3,7 @@
   "scripts": {
     "run-build-script": "node ./scripts/build/index.js",
     "run-build-script:test": "cross-env NODE_ENV=test node ./scripts/build/index.js",
-    "build-dts": "tsc --build packages/coco-ioc-container packages/coco-reactive packages/coco-router packages/coco-mvc packages/coco-render && pnpm --filter coco-mvc api-extractor",
+    "build-dts": "tsc --build packages/coco-ioc-container packages/coco-reactive packages/coco-router packages/coco-mvc packages/coco-render packages/shared && pnpm --filter coco-mvc api-extractor",
     "build-cli-dts": "tsc --build packages/coco-cli && pnpm --filter @cocojs/cli api-extractor",
     "build": "pnpm run run-build-script && pnpm run build-dts && pnpm run build-cli-dts",
     "build:test": "pnpm run run-build-script:test && pnpm run build-dts && pnpm run build-cli-dts",

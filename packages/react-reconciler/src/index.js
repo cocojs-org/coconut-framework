@@ -2,7 +2,7 @@ import { updateContainer, createContainer, getPublicRootInstance, findHostInstan
 import { finishQueueingConcurrentUpdates } from './ReactFiberConcurrentUpdate.js';
 import { classComponentUpdater } from './ReactFiberClassComponent';
 import { isRenderPhase } from "./ReactFiberWorkLoop";
-import {register, NAME} from "react-shared";
+import {register, NAME} from "shared";
 import { scheduleUpdateOnFiber, flushSync, batchedUpdates } from "./ReactFiberWorkLoop";
 import { reference } from './ReactFiberThrow';
 reference();

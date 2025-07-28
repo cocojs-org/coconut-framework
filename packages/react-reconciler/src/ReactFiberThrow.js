@@ -3,7 +3,7 @@ import {
 } from './ReactFiberWorkLoop';
 import { CaptureUpdate, createUpdate, enqueueCapturedUpdate } from './ReactFiberClassUpdateQueue';
 import { HostRoot } from './ReactWorkTags';
-import { register, NAME } from 'react-shared';
+import { register, NAME } from 'shared';
 import { Incomplete, ShouldCapture } from './ReactFiberFlags';
 
 function createRootErrorUpdate(

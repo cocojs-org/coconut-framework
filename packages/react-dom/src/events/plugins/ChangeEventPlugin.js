@@ -3,7 +3,7 @@ import { getNodeFromInstance } from '../../client/ReactDomComponentTree';
 import isTextInputElement from '../isTextInputElement';
 import { updateValueIfChanged } from '../../client/inputValueTracking';
 import { enqueueStateRestore } from '../ReactDOMControllerdComponent';
-import { get as getFromShare, NAME } from 'react-shared';
+import { get as getFromShare, NAME } from 'shared';
 import { setDefaultValue } from '../../client/ReactDomInput';
 
 function registerEvents() {

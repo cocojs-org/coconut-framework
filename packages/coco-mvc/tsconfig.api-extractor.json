@@ -6,7 +6,7 @@
       "coco-router": ["../coco-router/dist-dts/index.d.ts"],
       "coco-reactive": ["../coco-reactive/dist-dts/index.d.ts"],
       "coco-render": ["../coco-render/dist-dts/index.d.ts"],
-      "react-shared": ["../react-shared"]
+      "shared": ["../shared/dist-dts/index.d.ts"]
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "coco-ioc-container",
-  "types": "dist/index.d.ts",
+  "types": "dist-dts/index.d.ts",
   "description": "IOC容器。",
   "version": "0.0.0",
   "scripts": {},

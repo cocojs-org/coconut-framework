@@ -5,7 +5,7 @@ import {
   initializeUpdateQueue,
   processUpdateQueue,
 } from './ReactFiberClassUpdateQueue';
-import {get, NAME} from "react-shared";
+import {get, NAME} from "shared";
 import { Update } from "./ReactFiberFlags";
 import { getApplication } from './coco-ioc-container/index';
 

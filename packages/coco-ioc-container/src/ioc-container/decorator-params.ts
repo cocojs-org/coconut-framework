@@ -1,7 +1,7 @@
 import type { PostConstructFn } from './ioc-component-definition.ts';
 import { type Field, type Kind, KindClass } from './decorator-context.ts';
 import { isClass } from '../share/util.ts';
-import { get as getFromShare, NAME } from 'react-shared';
+import { get as getFromShare, NAME } from 'shared';
 
 export type params = {
   decoratorName?: string;

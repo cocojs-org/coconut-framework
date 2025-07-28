@@ -6,9 +6,9 @@
     "rootDir": "src",
     "outDir": "dist-dts",
     "paths": {
-      "react-shared": ["../react-shared"]
+      "shared": ["../shared/src"]
     }
   },
   "include": ["src"],
-  "references": [{ "path": "../react-shared" }]
+  "references": [{ "path": "../shared" }]
 }

@@ -11,7 +11,7 @@
       "coco-reactive": ["../coco-reactive/src"],
       "react-react": ["../react-react/src"],
       "coco-render": ["../coco-render/src"],
-      "react-shared": ["../react-shared"]
+      "shared": ["../shared/src"]
     }
   },
   "include": ["src"],
@@ -20,6 +20,6 @@
     { "path": "../coco-router" },
     { "path": "../coco-reactive" },
     { "path": "../coco-render" },
-    { "path": "../react-shared" }
+    { "path": "../shared" }
   ]
 }

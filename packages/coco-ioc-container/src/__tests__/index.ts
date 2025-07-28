@@ -11,7 +11,7 @@ import {
 } from '../ioc-container/metadata.ts';
 import { clear as clearComponentDefinition } from '../ioc-container/component-factory.ts';
 
-import { clear as clearPreventCircularDependency } from 'react-shared';
+import { clear as clearPreventCircularDependency } from 'shared';
 
 function clear() {
   clearMetadata();

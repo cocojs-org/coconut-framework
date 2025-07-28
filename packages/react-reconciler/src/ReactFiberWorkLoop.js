@@ -6,7 +6,7 @@ import { scheduleCallback } from './Scheduler';
 import {createWorkInProgress} from "./ReactFiber";
 import {finishQueueingConcurrentUpdates} from "./ReactFiberConcurrentUpdate";
 import { commitLayoutEffects, commitMutationEffects } from './ReactFiberCommitWork';
-import { get, NAME } from 'react-shared';
+import { get, NAME } from 'shared';
 import { flushSyncCallbacks, scheduleSyncCallback } from './ReactFiberSyncTaskQueue';
 
 

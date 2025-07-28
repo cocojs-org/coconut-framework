@@ -1,6 +1,6 @@
 import { registerSimpleEvents, topLevelEventsToReactNames } from '../DOMEventProperties';
 import { IS_CAPTURE_PHASE } from '../EventSystemFlags';
-import { get as getFromShare, NAME } from 'react-shared';
+import { get as getFromShare, NAME } from 'shared';
 
 function extractEvents(
   dispatchQueue,

@@ -9,7 +9,7 @@ import {
   KindAccessor,
 } from './decorator-context.ts';
 export type { Decorator };
-import { get, NAME } from 'react-shared';
+import { get, NAME } from 'shared';
 import { isClass, lowercaseFirstLetter, once } from '../share/util.ts';
 import { addDecoratorParams } from './decorator-params.ts';
 import { registerMetadataCls } from './metadata.ts';
