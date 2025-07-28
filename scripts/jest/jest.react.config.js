@@ -5,7 +5,7 @@ module.exports = {
   cache: false,
   maxConcurrency: 1,
   testEnvironment: 'jsdom',
-  testMatch: ['**/packages/coconut-web/**/*-test.jsx'],
+  testMatch: ['**/packages/react-dom/**/*-test.jsx'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transform: {
     '\\.[jt]sx?$': [
@@ -18,12 +18,12 @@ module.exports = {
   moduleNameMapper: {
     'coco-mvc/jsx-runtime$': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
     'coco-mvc$': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
-    'coconut-reconciler': '<rootDir>/packages/coconut-reconciler/src/index.js',
-    shared$: '<rootDir>/packages/shared/src/index.ts',
-    ReactFiberHostConfig$:
-      '<rootDir>/packages/coconut-web/src/client/ReactDomHostConfig.js',
-    'reconciler-ReactWorkTags$':
-      '<rootDir>/packages/coconut-reconciler/src/ReactWorkTags.js',
+    'react-reconciler': '<rootDir>/packages/react-reconciler/src/index.js',
+    'react-shared$': '<rootDir>/packages/react-shared/src/index.ts',
+    'react-dom-ReactFiberHostConfig$':
+      '<rootDir>/packages/react-dom/src/client/ReactDomHostConfig.js',
+    'react-reconciler-ReactWorkTags$':
+      '<rootDir>/packages/react-reconciler/src/ReactWorkTags.js',
   },
   globals: {
     __DEV__: true,

@@ -7,8 +7,8 @@ module.exports = {
   testEnvironment: 'jsdom',
   testMatch: ['**/*.test.ts'],
   testPathIgnorePatterns: [
-    '<rootDir>/packages/coconut-reconciler/',
-    '<rootDir>/packages/coconut-web/',
+    '<rootDir>/packages/react-reconciler/',
+    '<rootDir>/packages/react-dom/',
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transform: {
@@ -18,7 +18,7 @@ module.exports = {
     'coco-mvc/jsx-runtime$': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
     'coco-mvc$': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
     '@cocojs/cli$': '<rootDir>/packages/coco-cli/dist/index.js',
-    shared$: '<rootDir>/packages/shared/src/index.ts',
+    'react-shared$': '<rootDir>/packages/react-shared/src/index.ts',
   },
   globals: {
     __DEV__: false,

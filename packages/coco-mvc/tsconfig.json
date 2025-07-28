@@ -9,9 +9,9 @@
       "coco-ioc-container": ["../coco-ioc-container/src"],
       "coco-router": ["../coco-router/src"],
       "coco-reactive": ["../coco-reactive/src"],
-      "coco-react": ["../coco-react/src"],
+      "react-react": ["../react-react/src"],
       "coco-render": ["../coco-render/src"],
-      "shared": ["../shared"]
+      "react-shared": ["../react-shared"]
     }
   },
   "include": ["src"],
@@ -20,6 +20,6 @@
     { "path": "../coco-router" },
     { "path": "../coco-reactive" },
     { "path": "../coco-render" },
-    { "path": "../shared" }
+    { "path": "../react-shared" }
   ]
 }

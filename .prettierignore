@@ -5,5 +5,5 @@ coverage
 .github
 .DS_Store
 docs
-packages/coconut-reconciler
-packages/coconut-web
+packages/react-reconciler
+packages/react-dom

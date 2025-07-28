@@ -8,13 +8,13 @@
     "paths": {
       "coco-ioc-container": ["../coco-ioc-container/src"],
       "coco-render": ["../coco-render/src"],
-      "shared": ["../shared"]
+      "react-shared": ["../react-shared"]
     }
   },
   "include": ["src"],
   "references": [
     { "path": "../coco-ioc-container" },
     { "path": "../coco-render" },
-    { "path": "../shared" }
+    { "path": "../react-shared" }
   ]
 }

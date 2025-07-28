@@ -7,10 +7,13 @@
     "outDir": "dist-dts",
     "paths": {
       "coco-ioc-container": ["../coco-ioc-container/src"],
-      "coco-react": ["../coco-react"],
-      "shared": ["../shared"]
+      "react-react": ["../react-react"],
+      "react-shared": ["../react-shared"]
     }
   },
   "include": ["src"],
-  "references": [{ "path": "../coco-ioc-container" }, { "path": "../shared" }]
+  "references": [
+    { "path": "../coco-ioc-container" },
+    { "path": "../react-shared" }
+  ]
 }

@@ -14,7 +14,7 @@ function genRollupConfig (inputConfig) {
     external,
     plugins: [
       replace({
-        __DEV__: false,
+        __DEV__: process.env.NODE_ENV === 'test',
         __TEST__: process.env.NODE_ENV === 'test',
       }),
       typescript({

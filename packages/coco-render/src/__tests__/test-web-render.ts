@@ -1,8 +1,8 @@
 // @ts-ignore todo fix it
-import { render as renderApp, registerApplication } from 'coconut-web';
+import { render as renderApp, registerApplication } from 'react-dom';
 import { type Application, init } from 'coco-ioc-container';
 import render from '../decorator/render.ts';
-import { jsx } from 'coco-react';
+import { jsx } from 'react-react';
 import Render from '../component/render.ts';
 
 @render()

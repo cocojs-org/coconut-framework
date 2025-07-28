@@ -33,7 +33,7 @@ export {
 } from 'coco-ioc-container';
 export * from 'coco-reactive';
 export * from 'coco-router';
-export * from 'coco-react';
+export * from 'react-react';
 export { Render, WebRender } from 'coco-render';
 export { default as Api } from './metadata/api.ts';
 export { default as api } from './decorator/api.ts';
@@ -66,7 +66,7 @@ export {
   registerApplication,
   unregisterApplication,
   cleanCache,
-} from 'coconut-web';
+} from 'react-dom';
 
 /**
  * @public

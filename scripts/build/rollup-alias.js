@@ -4,46 +4,45 @@ const packages = path.join(__dirname, '../../packages');
 // todo 和tsconfig.json.path放在一起维护
 const mvc = path.join(packages, './coco-mvc/src/index.ts')
 const render = path.join(packages, './coco-render/src/index.ts')
-const react = path.join(packages, './coco-react/index.js')
-const reconciler = path.join(packages, './coconut-reconciler/src/index.js')
-const reconcilerReactWorkTags = path.join(packages, './coconut-reconciler/src/ReactWorkTags.js')
-const web = path.join(packages, './coconut-web/src/index.js')
 const iocContainer = path.join(packages, './coco-ioc-container/src/index.ts')
 const iocContainerTestHelper = path.join(packages, './coco-ioc-container/src/__tests__/index.ts')
 const reactive = path.join(packages, './coco-reactive/src/index.ts')
 const router = path.join(packages, './coco-router/src/index.ts')
-// todo 支持@
-const shared = path.join(packages, './shared/src/index.ts')
-const ReactFiberHostConfig = path.join(packages, './coconut-web/src/client/ReactDomHostConfig.js')
+const reactReact = path.join(packages, './react-react/index.js')
+const reactReconciler = path.join(packages, './react-reconciler/src/index.js')
+const reactReconcilerReactWorkTags = path.join(packages, './react-reconciler/src/ReactWorkTags.js')
+const reactDOM = path.join(packages, './react-dom/src/index.js')
+const reactDOMFiberHostConfig = path.join(packages, './react-dom/src/client/ReactDomHostConfig.js')
+const reactShared = path.join(packages, './react-shared/src/index.ts')
 
 const PACKAGE = {
   MVC: 'coco-mvc',
   MVC_RENDER: 'coco-render',
-  REACT: 'coco-react',
-  RECONCILER: 'coconut-reconciler',
-  RECONCILER_REACT_WORK_TAGS: 'reconciler-ReactWorkTags',
-  WEB: 'coconut-web',
   IOC_CONTAINER: 'coco-ioc-container',
   IOC_CONTAINER_TEST_HELPER: 'coco-ioc-container-test-helper',
   REACTIVE: 'coco-reactive',
   ROUTER: 'coco-router',
-  HOST_CONFIG: 'ReactFiberHostConfig',
-  SHARED: 'shared',
+  REACT_REACT: 'react-react',
+  REACT_RECONCILER: 'react-reconciler',
+  REACT_RECONCILER_REACT_WORK_TAGS: 'react-reconciler-ReactWorkTags',
+  REACT_DOM: 'react-dom',
+  REACT_DOM_HOST_CONFIG: 'react-dom-ReactFiberHostConfig',
+  REACT_SHARED: 'react-shared',
 };
 
 const pathMap = {
   [PACKAGE.MVC]: mvc,
   [PACKAGE.MVC_RENDER]: render,
-  [PACKAGE.REACT]: react,
-  [PACKAGE.RECONCILER]: reconciler,
-  [PACKAGE.RECONCILER_REACT_WORK_TAGS]: reconcilerReactWorkTags,
-  [PACKAGE.WEB]: web,
   [PACKAGE.IOC_CONTAINER]: iocContainer,
   [PACKAGE.IOC_CONTAINER_TEST_HELPER]: iocContainerTestHelper,
   [PACKAGE.REACTIVE]: reactive,
   [PACKAGE.ROUTER]: router,
-  [PACKAGE.HOST_CONFIG]: ReactFiberHostConfig,
-  [PACKAGE.SHARED]: shared
+  [PACKAGE.REACT_REACT]: reactReact,
+  [PACKAGE.REACT_RECONCILER]: reactReconciler,
+  [PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS]: reactReconcilerReactWorkTags,
+  [PACKAGE.REACT_DOM]: reactDOM,
+  [PACKAGE.REACT_DOM_HOST_CONFIG]: reactDOMFiberHostConfig,
+  [PACKAGE.REACT_SHARED]: reactShared,
 }
 
 function genEntries(config) {
