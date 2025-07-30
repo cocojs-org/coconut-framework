@@ -11,7 +11,7 @@
       "coco-reactive": ["../coco-reactive"],
       "coco-render": ["../coco-render"],
       "shared": ["../shared"],
-      "react-react": ["../react-react"],
+      "react": ["../react"],
       "react-dom": ["../react-dom"]
     }
   },
@@ -22,7 +22,7 @@
     { "path": "../coco-reactive" },
     { "path": "../coco-render" },
     { "path": "../shared" },
-    { "path": "../react-react" },
+    { "path": "../react" },
     { "path": "../react-dom" }
   ]
 }

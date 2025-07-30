@@ -5,7 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import { Children } from 'react-react';
+import { Children } from 'react';
 import { getToStringValue, toString } from './ToStringValue';
 
 let didWarnSelectedSetOnOption = false;

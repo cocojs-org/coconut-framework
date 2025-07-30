@@ -7,7 +7,7 @@
       "coco-reactive": ["../coco-reactive/dist"],
       "coco-render": ["../coco-render/dist"],
       "shared": ["../shared/dist"],
-      "react-react": ["../react-react/dist"],
+      "react": ["../react/dist"],
       "react-dom": ["../react-dom/dist"]
     }
   }

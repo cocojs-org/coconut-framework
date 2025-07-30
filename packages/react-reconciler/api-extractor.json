@@ -16,7 +16,7 @@
   },
   "bundledPackages": [
     "coco-ioc-container",
-    "react-react",
+    "react",
     "react-dom"
   ]
 }

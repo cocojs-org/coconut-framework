@@ -7,7 +7,7 @@
     "outDir": "dts-tmp",
     "paths": {
       "coco-ioc-container": ["../coco-ioc-container"],
-      "react-react": ["../react-react"],
+      "react": ["../react"],
       "shared": ["../shared/src"]
     }
   },

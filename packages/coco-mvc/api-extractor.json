@@ -19,7 +19,7 @@
     "coco-reactive",
     "coco-router",
     "coco-render",
-    "react-react",
+    "react",
     "react-dom"
   ]
 }

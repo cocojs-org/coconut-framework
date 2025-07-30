@@ -9,7 +9,7 @@ const iocContainerTestHelper = path.join(packages, './coco-ioc-container/src/__t
 const reactive = path.join(packages, './coco-reactive/src/index.ts')
 const router = path.join(packages, './coco-router/src/index.ts')
 const shared = path.join(packages, './shared/src/index.ts')
-const reactReact = path.join(packages, './react-react/index.js')
+const react = path.join(packages, './react/index.js')
 const reactReconciler = path.join(packages, './react-reconciler/src/index.js')
 const reactReconcilerReactWorkTags = path.join(packages, './react-reconciler/src/ReactWorkTags.js')
 const reactDOM = path.join(packages, './react-dom/src/index.js')
@@ -24,7 +24,7 @@ const PACKAGE = {
   REACTIVE: 'coco-reactive',
   ROUTER: 'coco-router',
   SHARED: 'shared',
-  REACT_REACT: 'react-react',
+  REACT: 'react',
   REACT_RECONCILER: 'react-reconciler',
   REACT_RECONCILER_REACT_WORK_TAGS: 'react-reconciler-ReactWorkTags',
   REACT_DOM: 'react-dom',
@@ -40,7 +40,7 @@ const pathMap = {
   [PACKAGE.REACTIVE]: reactive,
   [PACKAGE.ROUTER]: router,
   [PACKAGE.SHARED]: shared,
-  [PACKAGE.REACT_REACT]: reactReact,
+  [PACKAGE.REACT]: react,
   [PACKAGE.REACT_RECONCILER]: reactReconciler,
   [PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS]: reactReconcilerReactWorkTags,
   [PACKAGE.REACT_DOM]: reactDOM,

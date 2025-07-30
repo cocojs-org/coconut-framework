@@ -33,7 +33,7 @@ export {
 } from 'coco-ioc-container';
 export * from 'coco-reactive';
 export * from 'coco-router';
-export * from 'react-react';
+export * from 'react';
 export { Render, WebRender } from 'coco-render';
 export { default as Api } from './metadata/api';
 export { default as api } from './decorator/api';
