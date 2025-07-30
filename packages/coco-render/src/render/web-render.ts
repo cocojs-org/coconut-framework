@@ -1,9 +1,9 @@
 // @ts-ignore todo fix it
 import { render as renderApp, registerApplication } from 'react-dom';
 import { type Application, init } from 'coco-ioc-container';
-import render from '../decorator/render.ts';
+import render from '../decorator/render';
 import { jsx } from 'react-react';
-import Render from '../component/render.ts';
+import Render from '../component/render';
 
 /**
  * @public

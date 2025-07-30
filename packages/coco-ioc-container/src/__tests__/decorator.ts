@@ -1,7 +1,7 @@
 import { register, NAME } from 'shared';
-import { getMetadata, getAllMetadata } from '../ioc-container/metadata.ts';
-import Metadata from '../metadata/abstract/metadata.ts';
-import { isEqual } from './is-equal.ts';
+import { getMetadata, getAllMetadata } from '../ioc-container/metadata';
+import Metadata from '../metadata/abstract/metadata';
+import { isEqual } from './is-equal';
 
 const order = [];
 function item(action: 'exec' | 'apply', name: string, params: any) {

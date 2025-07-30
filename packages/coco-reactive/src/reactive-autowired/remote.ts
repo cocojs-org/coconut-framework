@@ -1,4 +1,4 @@
-import Local from './local.ts';
+import Local from './local';
 
 class Remote {
   private readonly ctor: Class<any>;

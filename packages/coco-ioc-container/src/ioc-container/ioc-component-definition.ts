@@ -3,10 +3,10 @@ import {
   KindClass,
   KindField,
   KindMethod,
-} from './decorator-context.ts';
-import { listClassMetadata, listFieldMetadata } from './metadata.ts';
-import type Application from './application.ts';
-import type Metadata from '../metadata/abstract/metadata.ts';
+} from './decorator-context';
+import { listClassMetadata, listFieldMetadata } from './metadata';
+import type Application from './application';
+import type Metadata from '../metadata/abstract/metadata';
 
 /**
  * @public

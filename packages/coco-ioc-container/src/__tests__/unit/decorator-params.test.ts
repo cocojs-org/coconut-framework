@@ -3,9 +3,9 @@ import {
   isIncludesClassDecorator,
   get,
   clear,
-} from '../../ioc-container/decorator-params.ts';
-import { KindClass } from '../../ioc-container/decorator-context.ts';
-import { createDecoratorExpFactory } from '../../ioc-container/create-decorator-exp.ts';
+} from '../../ioc-container/decorator-params';
+import { KindClass } from '../../ioc-container/decorator-context';
+import { createDecoratorExpFactory } from '../../ioc-container/create-decorator-exp';
 
 describe('decorator-params', () => {
   beforeEach(async () => {});

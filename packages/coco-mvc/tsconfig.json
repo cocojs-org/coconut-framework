@@ -2,16 +2,17 @@
   "extends": ["../../tsconfig.json"],
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "dist-dts",
+    "outDir": "dts-tmp",
     "composite": true,
     "declaration": true,
     "paths": {
-      "coco-ioc-container": ["../coco-ioc-container/src"],
-      "coco-router": ["../coco-router/src"],
-      "coco-reactive": ["../coco-reactive/src"],
-      "react-react": ["../react-react/src"],
-      "coco-render": ["../coco-render/src"],
-      "shared": ["../shared/src"]
+      "coco-ioc-container": ["../coco-ioc-container"],
+      "coco-router": ["../coco-router"],
+      "coco-reactive": ["../coco-reactive"],
+      "coco-render": ["../coco-render"],
+      "shared": ["../shared"],
+      "react-react": ["../react-react"],
+      "react-dom": ["../react-dom"]
     }
   },
   "include": ["src"],
@@ -20,6 +21,8 @@
     { "path": "../coco-router" },
     { "path": "../coco-reactive" },
     { "path": "../coco-render" },
-    { "path": "../shared" }
+    { "path": "../shared" },
+    { "path": "../react-react" },
+    { "path": "../react-dom" }
   ]
 }

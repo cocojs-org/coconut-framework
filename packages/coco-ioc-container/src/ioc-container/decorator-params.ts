@@ -1,6 +1,6 @@
-import type { PostConstructFn } from './ioc-component-definition.ts';
-import { type Field, type Kind, KindClass } from './decorator-context.ts';
-import { isClass } from '../share/util.ts';
+import type { PostConstructFn } from './ioc-component-definition';
+import { type Field, type Kind, KindClass } from './decorator-context';
+import { isClass } from '../share/util';
 import { get as getFromShare, NAME } from 'shared';
 
 export type params = {

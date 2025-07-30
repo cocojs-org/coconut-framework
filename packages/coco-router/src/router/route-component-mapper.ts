@@ -1,5 +1,5 @@
-import RouteClass from '../metadata/route.ts';
-import DynamicRoute from './dynamic-route.ts';
+import RouteClass from '../metadata/route';
+import DynamicRoute from './dynamic-route';
 
 type Route = string | DynamicRoute;
 

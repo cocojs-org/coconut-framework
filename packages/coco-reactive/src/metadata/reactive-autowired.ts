@@ -1,8 +1,8 @@
 import { Metadata, target, Target } from 'coco-ioc-container';
-import reactive from '../decorator/reactive.ts';
-import Remote from '../reactive-autowired/remote.ts';
-import { customPostConstruct } from './reactive.ts';
-import { sym_remote } from './store.ts';
+import reactive from '../decorator/reactive';
+import Remote from '../reactive-autowired/remote';
+import { customPostConstruct } from './reactive';
+import { sym_remote } from './store';
 
 /**
  * @public

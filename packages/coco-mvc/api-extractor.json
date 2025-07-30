@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
-  "mainEntryPointFilePath": "./dist-dts/index.d.ts",
+  "mainEntryPointFilePath": "./dts-tmp/index.d.ts",
   "dtsRollup": {
     "enabled": true,
     "untrimmedFilePath": "./dist/index.d.ts"
@@ -18,6 +18,8 @@
     "coco-ioc-container",
     "coco-reactive",
     "coco-router",
-    "coco-render"
+    "coco-render",
+    "react-react",
+    "react-dom"
   ]
 }

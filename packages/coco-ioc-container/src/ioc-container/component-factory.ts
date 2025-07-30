@@ -3,12 +3,12 @@ import IocComponentDefinition, {
   type FieldPostConstruct,
   type MethodPostConstruct,
   PostConstruct,
-} from './ioc-component-definition.ts';
-import Component, { Scope } from '../metadata/component.ts';
-import { findClassMetadata } from './metadata.ts';
-import type Application from './application.ts';
-import { KindClass, KindField, KindMethod } from './decorator-context.ts';
-import { isChildClass, uppercaseFirstLetter } from '../share/util.ts';
+} from './ioc-component-definition';
+import Component, { Scope } from '../metadata/component';
+import { findClassMetadata } from './metadata';
+import type Application from './application';
+import { KindClass, KindField, KindMethod } from './decorator-context';
+import { isChildClass, uppercaseFirstLetter } from '../share/util';
 
 type Id = string;
 const idDefinitionMap: Map<Id, IocComponentDefinition<any>> = new Map();

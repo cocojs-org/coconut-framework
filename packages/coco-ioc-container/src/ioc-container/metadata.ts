@@ -1,5 +1,5 @@
-import Metadata, { createMetadata } from '../metadata/abstract/metadata.ts';
-import { type Field } from './decorator-context.ts';
+import Metadata, { createMetadata } from '../metadata/abstract/metadata';
+import { type Field } from './decorator-context';
 
 // 元数据类本身的集合
 const metadataClsCollection: Map<string, Metadata> = new Map();

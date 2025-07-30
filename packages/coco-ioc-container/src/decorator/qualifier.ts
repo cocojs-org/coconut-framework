@@ -1,8 +1,8 @@
 import {
   createDecoratorExp,
   type Decorator,
-} from '../ioc-container/create-decorator-exp.ts';
-import Qualifier from '../metadata/qualifier.ts';
+} from '../ioc-container/create-decorator-exp';
+import Qualifier from '../metadata/qualifier';
 
 export default createDecoratorExp(Qualifier) as (
   clsId: string

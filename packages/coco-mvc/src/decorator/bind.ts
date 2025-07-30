@@ -1,5 +1,5 @@
 import { createDecoratorExp, type Decorator } from 'coco-ioc-container';
-import Bind from '../metadata/bind.ts';
+import Bind from '../metadata/bind';
 
 export default createDecoratorExp(
   Bind

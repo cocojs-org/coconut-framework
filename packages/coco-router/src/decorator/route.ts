@@ -3,7 +3,7 @@ import {
   type Application,
   type Decorator,
 } from 'coco-ioc-container';
-import Route from '../metadata/route.ts';
+import Route from '../metadata/route';
 
 export default createDecoratorExp(Route) as (
   url: string

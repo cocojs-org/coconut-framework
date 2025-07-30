@@ -2,7 +2,11 @@
   "private": true,
   "name": "shared",
   "version": "0.0.0",
+  "types": "dist/index.d.ts",
   "include": [
     "src"
-  ]
+  ],
+  "scripts": {
+    "api-extractor": "api-extractor run --local"
+  }
 }

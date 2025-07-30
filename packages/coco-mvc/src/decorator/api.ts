@@ -1,5 +1,5 @@
 import { createDecoratorExp, Decorator } from 'coco-ioc-container';
-import Api from '../metadata/api.ts';
+import Api from '../metadata/api';
 
 export default createDecoratorExp(
   Api

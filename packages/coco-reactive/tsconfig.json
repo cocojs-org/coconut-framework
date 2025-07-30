@@ -4,10 +4,10 @@
     "composite": true,
     "declaration": true,
     "rootDir": "src",
-    "outDir": "dist-dts",
+    "outDir": "dts-tmp",
     "paths": {
-      "coco-ioc-container": ["../coco-ioc-container/src"],
-      "shared": ["../shared/src"]
+      "coco-ioc-container": ["../coco-ioc-container"],
+      "shared": ["../shared"]
     }
   },
   "include": ["src"],

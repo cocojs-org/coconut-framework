@@ -2,14 +2,14 @@ import {
   expectInOrder,
   checkClassMetadataAsExpected,
   checkMetadataForMetadataAsExpected,
-} from './decorator.ts';
+} from './decorator';
 
 import {
   getMetadata,
   getAllMetadata,
   clear as clearMetadata,
-} from '../ioc-container/metadata.ts';
-import { clear as clearComponentDefinition } from '../ioc-container/component-factory.ts';
+} from '../ioc-container/metadata';
+import { clear as clearComponentDefinition } from '../ioc-container/component-factory';
 
 import { clear as clearPreventCircularDependency } from 'shared';
 

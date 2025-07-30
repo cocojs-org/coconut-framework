@@ -3,12 +3,12 @@ import {
   createDecoratorExpByName,
   createDecoratorExpFactory,
   type Decorator,
-} from '../../ioc-container/create-decorator-exp.ts';
+} from '../../ioc-container/create-decorator-exp';
 import {
   KindClass,
   KindField,
   KindMethod,
-} from '../../ioc-container/decorator-context.ts';
+} from '../../ioc-container/decorator-context';
 
 describe('create-decorator-exp:createDecoratorExpFactory', () => {
   beforeEach(async () => {});

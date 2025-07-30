@@ -7,12 +7,12 @@ import {
   KindGetter,
   KindSetter,
   KindAccessor,
-} from './decorator-context.ts';
+} from './decorator-context';
 export type { Decorator };
 import { get, NAME } from 'shared';
-import { isClass, lowercaseFirstLetter, once } from '../share/util.ts';
-import { addDecoratorParams } from './decorator-params.ts';
-import { registerMetadataCls } from './metadata.ts';
+import { isClass, lowercaseFirstLetter, once } from '../share/util';
+import { addDecoratorParams } from './decorator-params';
+import { registerMetadataCls } from './metadata';
 
 function createDecoratorExpFactory(fn: any) {
   return function <UserParam, C extends Context>(

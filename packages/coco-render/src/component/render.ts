@@ -1,4 +1,4 @@
-import render from '../decorator/render.ts';
+import render from '../decorator/render';
 
 /**
  * @public

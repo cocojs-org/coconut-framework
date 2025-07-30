@@ -1,8 +1,8 @@
-import Start from '../metadata/start.ts';
+import Start from '../metadata/start';
 import {
   createDecoratorExp,
   type Decorator,
-} from '../ioc-container/create-decorator-exp.ts';
+} from '../ioc-container/create-decorator-exp';
 
 export default createDecoratorExp(
   Start

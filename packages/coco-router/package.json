@@ -2,8 +2,11 @@
   "private": true,
   "name": "coco-router",
   "description": "路由。",
+  "types": "dist/index.d.ts",
   "version": "0.0.0",
-  "scripts": {},
+  "scripts": {
+    "api-extractor": "api-extractor run --local"
+  },
   "author": "jiangchenguang",
   "homepage": "https://github.com/coco-core/coconut-framework",
   "license": "MIT"

@@ -1,5 +1,5 @@
-export { default as Render } from './component/render.ts';
-export { default as WebRender } from './render/web-render.ts';
+export { default as Render } from './component/render';
+export { default as WebRender } from './render/web-render';
 
 import { TestWebRender } from './__tests__';
 

@@ -6,7 +6,7 @@ import {
   Target,
   type Application,
 } from 'coco-ioc-container';
-import Remote from '../reactive-autowired/remote.ts';
+import Remote from '../reactive-autowired/remote';
 
 export const sym_remote = Symbol.for('remote');
 /**

@@ -1,6 +1,6 @@
-import Metadata from './abstract/metadata.ts';
-import Target from './target.ts';
-import target from '../decorator/target.ts';
+import Metadata from './abstract/metadata';
+import Target from './target';
+import target from '../decorator/target';
 import { register, NAME } from 'shared';
 
 /**

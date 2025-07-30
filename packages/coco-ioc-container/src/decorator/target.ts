@@ -4,8 +4,8 @@ import {
   KindClass,
   KindField,
   KindMethod,
-} from '../ioc-container/decorator-context.ts';
-import { createDecoratorExpByName } from '../ioc-container/create-decorator-exp.ts';
+} from '../ioc-container/decorator-context';
+import { createDecoratorExpByName } from '../ioc-container/create-decorator-exp';
 
 /**
  * @public

@@ -4,11 +4,11 @@
     "composite": true,
     "declaration": true,
     "rootDir": "src",
-    "outDir": "dist-dts",
+    "outDir": "dts-tmp",
     "paths": {
-      "coco-ioc-container": ["../coco-ioc-container/src"],
-      "coco-render": ["../coco-render/src"],
-      "shared": ["../shared/src"]
+      "coco-ioc-container": ["../coco-ioc-container"],
+      "coco-render": ["../coco-render"],
+      "shared": ["../shared"]
     }
   },
   "include": ["src"],

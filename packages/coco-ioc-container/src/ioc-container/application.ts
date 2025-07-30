@@ -3,7 +3,7 @@ import {
   addPostConstruct,
   findInstantiateComponent,
   getComponent,
-} from './component-factory.ts';
+} from './component-factory';
 import {
   addClassMetadata,
   addFieldOrMethodMetadata,
@@ -13,32 +13,32 @@ import {
   listFieldMetadata,
   listFieldByMetadataCls,
   metadataClsCollection,
-} from './metadata.ts';
+} from './metadata';
 import {
   get,
   clear as clearDecoratorParams,
   isIncludesClassDecorator,
   addDecoratorParams,
-} from './decorator-params.ts';
+} from './decorator-params';
 import {
   ClassPostConstructFn,
   genClassPostConstruct,
   genFieldPostConstruct,
   genMethodPostConstruct,
-} from './ioc-component-definition.ts';
-import Metadata from '../metadata/abstract/metadata.ts';
-import { KindClass, KindField, KindMethod } from './decorator-context.ts';
-import Component from '../metadata/component.ts';
-import type { Scope } from '../metadata/component.ts';
+} from './ioc-component-definition';
+import Metadata from '../metadata/abstract/metadata';
+import { KindClass, KindField, KindMethod } from './decorator-context';
+import Component from '../metadata/component';
+import type { Scope } from '../metadata/component';
 import {
   isChildClass,
   isPlainObject,
   lowercaseFirstLetter,
-} from '../share/util.ts';
-import Configuration from '../metadata/configuration.ts';
-import ConstructorParam from '../metadata/constructor-param.ts';
-import { Init, Start, Target, Qualifier } from '../metadata/index.ts';
-import PropertiesConfig from './properties-config.ts';
+} from '../share/util';
+import Configuration from '../metadata/configuration';
+import ConstructorParam from '../metadata/constructor-param';
+import { Init, Start, Target, Qualifier } from '../metadata/index';
+import PropertiesConfig from './properties-config';
 
 /**
  * 表示一个web应用实例
@@ -85,7 +85,8 @@ class Application {
     ClsOrId: Class<T> | string,
     option: { constructorParams?: any[]; qualifier?: string } = {}
   ): T {
-    const { constructorParams, qualifier } = option;
+    const constructorParams = option.constructorParams;
+    const qualifier = option.qualifier;
     return getComponent(this, ClsOrId, {
       qualifier,
       newParameters: constructorParams,

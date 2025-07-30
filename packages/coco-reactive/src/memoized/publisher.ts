@@ -1,4 +1,4 @@
-import Subscriber from './subscriber.ts';
+import Subscriber from './subscriber';
 
 class Publisher {
   private readonly name: string;

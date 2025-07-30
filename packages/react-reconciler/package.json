@@ -3,12 +3,9 @@
   "private": true,
   "version": "0.0.1",
   "description": "和react仓库下react-reconciler包保持同步",
-  "main": "index.js",
-  "files": [
-    "dist"
-  ],
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "api-extractor": "api-extractor run --local"
   },
   "keywords": [],
   "author": "",

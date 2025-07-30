@@ -1,8 +1,8 @@
 import {
   createDecoratorExp,
   type Decorator,
-} from '../ioc-container/create-decorator-exp.ts';
-import Value from '../metadata/value.ts';
+} from '../ioc-container/create-decorator-exp';
+import Value from '../metadata/value';
 
 export default createDecoratorExp(Value) as (
   path: string

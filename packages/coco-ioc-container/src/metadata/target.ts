@@ -1,5 +1,5 @@
-import Metadata from './abstract/metadata.ts';
-import target, { Type } from '../decorator/target.ts';
+import Metadata from './abstract/metadata';
+import target, { Type } from '../decorator/target';
 
 /**
  * @public

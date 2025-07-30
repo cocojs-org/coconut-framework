@@ -1,6 +1,6 @@
 import { type Application, Metadata, target, Target } from 'coco-ioc-container';
-import Publisher from '../memoized/publisher.ts';
-import Subscriber from '../memoized/subscriber.ts';
+import Publisher from '../memoized/publisher';
+import Subscriber from '../memoized/subscriber';
 import { get, NAME } from 'shared';
 
 export function customPostConstruct(hooks?: {

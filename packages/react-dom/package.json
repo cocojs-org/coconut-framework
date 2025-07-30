@@ -2,13 +2,10 @@
   "private": true,
   "name": "react-dom",
   "description": "和react仓库下react-dom包保持同步",
-  "version": "0.0.1",
-  "main": "index.js",
-  "files": [
-    "dist"
-  ],
+  "version": "0.0.0",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "api-extractor": "api-extractor run --local"
   },
   "keywords": [],
   "author": "",

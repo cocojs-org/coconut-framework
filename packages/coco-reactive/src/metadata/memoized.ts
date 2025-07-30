@@ -1,5 +1,5 @@
 import { type Application, Metadata, target, Target } from 'coco-ioc-container';
-import Subscriber from '../memoized/subscriber.ts';
+import Subscriber from '../memoized/subscriber';
 
 /**
  * @public

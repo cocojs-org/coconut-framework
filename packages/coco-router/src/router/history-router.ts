@@ -1,13 +1,13 @@
-import router from '../decorator/router.ts';
-import Route from '../metadata/route.ts';
+import router from '../decorator/router';
+import Route from '../metadata/route';
 import {
   type Application,
   constructorParam,
   init,
   start,
 } from 'coco-ioc-container';
-import RouteComponentMapper from './route-component-mapper.ts';
-import Router from './router.ts';
+import RouteComponentMapper from './route-component-mapper';
+import Router from './router';
 import { Render } from 'coco-render';
 
 /**

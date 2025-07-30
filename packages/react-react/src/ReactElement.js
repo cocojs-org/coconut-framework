@@ -28,7 +28,7 @@ export function cloneAndReplaceKey(oldElement, newKey) {
   return newElement;
 }
 
-export const jsx = (component, config, maybeKey) => {
+export const jsx = (component, config, maybeKey = undefined) => {
   const props = {};
   let ref = null;
   let key = null;

@@ -8,12 +8,12 @@ import {
   listBeDecoratedClsByFieldMetadata,
   listClassMetadata,
   listFieldMetadata,
-} from '../../ioc-container/metadata.ts';
-import Metadata, { createMetadata } from '../../metadata/abstract/metadata.ts';
+} from '../../ioc-container/metadata';
+import Metadata, { createMetadata } from '../../metadata/abstract/metadata';
 import {
   createDecoratorExp,
   Decorator,
-} from '../../ioc-container/create-decorator-exp.ts';
+} from '../../ioc-container/create-decorator-exp';
 
 describe('metadata/metadata', () => {
   test('纯对象类型会取自身的prop，全部浅赋值，不管元数据如何定义', () => {

@@ -1,10 +1,12 @@
 {
   "private": true,
   "name": "coco-ioc-container",
-  "types": "dist-dts/index.d.ts",
+  "types": "dist/index.d.ts",
   "description": "IOC容器。",
   "version": "0.0.0",
-  "scripts": {},
+  "scripts": {
+    "api-extractor": "api-extractor run --local"
+  },
   "author": "jiangchenguang",
   "homepage": "https://github.com/coco-core/coconut-framework",
   "license": "MIT"

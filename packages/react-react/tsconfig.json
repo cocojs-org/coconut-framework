@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "allowJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./dts-tmp"
+  },
+  "include": ["src/**/*.js", "index.js"],
+  "exclude": ["node_modules"]
+}

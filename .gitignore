@@ -131,7 +131,7 @@ dist
 
 # coco-mvc
 **/.coco
-**/dist-dts
+**/dts-tmp
 .rollup.cache
 
 # ide

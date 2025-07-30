@@ -1,3 +1,3 @@
-import TestWebRender from './test-web-render.ts';
+import TestWebRender from './test-web-render';
 
 export { TestWebRender };
