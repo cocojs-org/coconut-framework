@@ -4,9 +4,7 @@
   "description": "响应式。",
   "types": "dist/index.d.ts",
   "version": "0.0.0",
-  "scripts": {
-    "api-extractor": "api-extractor run --local"
-  },
+  "scripts": {},
   "author": "jiangchenguang",
   "homepage": "https://github.com/coco-core/coconut-framework",
   "license": "MIT"

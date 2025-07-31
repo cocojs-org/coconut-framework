@@ -14,9 +14,7 @@
     "runtime-config",
     "dist"
   ],
-  "scripts": {
-    "api-extractor": "api-extractor run --local"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "MIT",

@@ -220,9 +220,13 @@ importers:
 
   packages/coco-router: {}
 
-  packages/coconut-reconciler: {}
+  packages/react: {}
 
-  packages/coconut-web: {}
+  packages/react-dom: {}
+
+  packages/react-reconciler: {}
+
+  packages/react-shared: {}
 
   packages/shared: {}
 

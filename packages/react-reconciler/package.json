@@ -4,9 +4,7 @@
   "version": "0.0.1",
   "description": "和react仓库下react-reconciler包保持同步",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "api-extractor": "api-extractor run --local"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "MIT"

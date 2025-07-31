@@ -4,9 +4,7 @@
   "types": "dist/index.d.ts",
   "description": "渲染器",
   "version": "0.0.0",
-  "scripts": {
-    "api-extractor": "api-extractor run --local"
-  },
+  "scripts": {},
   "author": "jiangchenguang",
   "homepage": "https://github.com/coco-core/coconut-framework",
   "license": "MIT"

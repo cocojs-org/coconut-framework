@@ -4,9 +4,7 @@
   "description": "和react仓库下react-dom包保持同步",
   "version": "0.0.0",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "api-extractor": "api-extractor run --local"
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "MIT"

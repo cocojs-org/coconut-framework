@@ -4,9 +4,7 @@
   "description": "使用@装饰器构建web应用。",
   "main": "dist/coco-mvc.cjs.js",
   "types": "dist/index.d.ts",
-  "scripts": {
-    "api-extractor": "api-extractor run --local"
-  },
+  "scripts": {},
   "exports": {
     ".": {
       "import": "./dist/coco-mvc.cjs.js",
@@ -15,7 +13,8 @@
     },
     "./jsx-runtime": {
       "import": "./dist/coco-mvc.cjs.js",
-      "require": "./dist/coco-mvc.cjs.js"
+      "require": "./dist/coco-mvc.cjs.js",
+      "types": "./dist/index.d.ts"
     }
   },
   "files": [

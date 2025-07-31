@@ -6,7 +6,5 @@
   "include": [
     "src"
   ],
-  "scripts": {
-    "api-extractor": "api-extractor run --local"
-  }
+  "scripts": {}
 }
