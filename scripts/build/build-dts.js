@@ -4,6 +4,8 @@ const cp = require('node:child_process');
 const process = require('node:process');
 const { Extractor, ExtractorConfig, ExtractorResult } = require('@microsoft/api-extractor');
 
+const isTest = process.env.NODE_ENV === 'test';
+
 function buildDtsTmp(packageName) {
   const packagesDir = path.join(process.cwd(), 'packages', packageName);
   if (!fs.existsSync(packagesDir)) {
@@ -12,12 +14,12 @@ function buildDtsTmp(packageName) {
   cp.execSync(`tsc --build packages/${packageName}`);
 }
 
-function runApiExtractor(packageName, mainEntryPointName) {
+function runApiExtractor(packageName, mainEntryPointFilePath) {
   const packageDir = path.join(process.cwd(), 'packages', packageName);
   const config = ExtractorConfig.prepare({
     configObject: {
       "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
-      "mainEntryPointFilePath": path.join(packageDir, `./dts-tmp/${mainEntryPointName}`),
+      "mainEntryPointFilePath": path.join(packageDir, mainEntryPointFilePath),
       "projectFolder": packageDir,
       "dtsRollup": {
         "enabled": true,
@@ -54,52 +56,52 @@ function runApiExtractor(packageName, mainEntryPointName) {
 const cocoMvcDts = [
   {
     packageName: 'shared',
-    mainEntryPointName: 'index.d.ts'
+    mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
     packageName: 'react',
-    mainEntryPointName: 'index.d.ts'
+    mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
     packageName: 'react-reconciler',
-    mainEntryPointName: 'src/index.d.ts'
+    mainEntryPointFilePath: './dts-tmp/src/index.d.ts'
   },
   {
     packageName: 'react-dom',
-    mainEntryPointName: 'src/index.d.ts'
+    mainEntryPointFilePath: './dts-tmp/src/index.d.ts'
   },
   {
     packageName: 'coco-ioc-container',
-    mainEntryPointName: 'index.d.ts'
+    mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
     packageName: 'coco-reactive',
-    mainEntryPointName: 'index.d.ts'
+    mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
     packageName: 'coco-render',
-    mainEntryPointName: 'index.d.ts'
+    mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
     packageName: 'coco-router',
-    mainEntryPointName: 'index.d.ts'
+    mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
     packageName: 'coco-mvc',
-    mainEntryPointName: 'index.d.ts'
+    mainEntryPointFilePath: isTest ? './dts-tmp/test.d.ts' : './dts-tmp/index.d.ts'
   }
 ]
 
 const cliDts = [
   {
     packageName: 'coco-cli',
-    mainEntryPointName: 'index.d.ts'
+    mainEntryPointFilePath: './dts-tmp/index.d.ts'
   }
 ]
 
 function doBuild(t) {
   buildDtsTmp(t.packageName);
-  runApiExtractor(t.packageName, t.mainEntryPointName);
+  runApiExtractor(t.packageName, t.mainEntryPointFilePath);
 }
 function build() {
   cocoMvcDts.forEach(doBuild)

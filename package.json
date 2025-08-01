@@ -1,11 +1,12 @@
 {
   "private": true,
   "scripts": {
-    "run-build-script": "node ./scripts/build/index.js",
-    "run-build-script:test": "cross-env NODE_ENV=test node ./scripts/build/index.js",
+    "build-lib": "node ./scripts/build/index.js",
+    "build-lib:test": "cross-env NODE_ENV=test node ./scripts/build/index.js",
     "build-dts": "node ./scripts/build/build-dts.js",
-    "build": "pnpm run run-build-script && pnpm run build-dts",
-    "build:test": "pnpm run run-build-script:test && pnpm run build-dts",
+    "build-dts:test": "cross-env NODE_ENV=test node ./scripts/build/build-dts.js",
+    "build": "pnpm run build-lib && pnpm run build-dts",
+    "build:test": "pnpm run build-lib:test && pnpm run build-dts:test",
     "test:coconut": "jest -c ./scripts/jest/jest.config.js",
     "test:react": "jest -c ./scripts/jest/jest.react.config.js",
     "test": "pnpm run build:test && pnpm run test:coconut && pnpm run test:react",

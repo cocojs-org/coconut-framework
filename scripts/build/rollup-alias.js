@@ -1,8 +1,11 @@
 const path = require("node:path");
+const process = require('node:process');
+const isTest = process.env.NODE_ENV === 'test';
 
 const packages = path.join(__dirname, '../../packages');
-// todo 和tsconfig.json.path放在一起维护
-const mvc = path.join(packages, './coco-mvc/src/index.ts')
+// todo 和tsconfig.json.path放在一起维护；
+const mvc = path.join(packages, './coco-mvc/index.ts')
+const mvcTest = path.join(packages, './coco-mvc/test.ts')
 const render = path.join(packages, './coco-render/src/index.ts')
 const iocContainer = path.join(packages, './coco-ioc-container/src/index.ts')
 const iocContainerTestHelper = path.join(packages, './coco-ioc-container/src/__tests__/index.ts')
@@ -33,7 +36,7 @@ const PACKAGE = {
 };
 
 const pathMap = {
-  [PACKAGE.MVC]: mvc,
+  [PACKAGE.MVC]: isTest ? mvcTest : mvc,
   [PACKAGE.MVC_RENDER]: render,
   [PACKAGE.IOC_CONTAINER]: iocContainer,
   [PACKAGE.IOC_CONTAINER_TEST_HELPER]: iocContainerTestHelper,

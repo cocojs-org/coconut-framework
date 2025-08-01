@@ -1,7 +1,7 @@
 {
-  "name": "react-reconciler",
   "private": true,
-  "version": "0.0.1",
+  "name": "react-reconciler",
+  "version": "0.0.0",
   "description": "和react仓库下react-reconciler包保持同步",
   "types": "dist/index.d.ts",
   "scripts": {},
