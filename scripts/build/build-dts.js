@@ -6,12 +6,12 @@ const { Extractor, ExtractorConfig, ExtractorResult } = require('@microsoft/api-
 
 const isTest = process.env.NODE_ENV === 'test';
 
-function buildDtsTmp(packageName) {
+function buildDtsTmp(packageName, tsconfigJson) {
   const packagesDir = path.join(process.cwd(), 'packages', packageName);
   if (!fs.existsSync(packagesDir)) {
     throw new Error(`packages directory[${packageName}] does not exist!`);
   }
-  cp.execSync(`tsc --build packages/${packageName}`);
+  cp.execSync(`tsc --project packages/${packageName}/${tsconfigJson}`);
 }
 
 function runApiExtractor(packageName, mainEntryPointFilePath) {
@@ -53,58 +53,120 @@ function runApiExtractor(packageName, mainEntryPointFilePath) {
   }
 }
 
-const cocoMvcDts = [
+const cocoMvcDtsProd = [
   {
     packageName: 'shared',
+    tsconfigJson: 'tsconfig.json',
     mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
     packageName: 'react',
+    tsconfigJson: 'tsconfig.json',
     mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
     packageName: 'react-reconciler',
+    tsconfigJson: 'tsconfig.json',
     mainEntryPointFilePath: './dts-tmp/src/index.d.ts'
   },
   {
     packageName: 'react-dom',
+    tsconfigJson: 'tsconfig.json',
     mainEntryPointFilePath: './dts-tmp/src/index.d.ts'
   },
   {
     packageName: 'coco-ioc-container',
+    tsconfigJson: 'tsconfig.json',
     mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
     packageName: 'coco-reactive',
+    tsconfigJson: 'tsconfig.json',
     mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
     packageName: 'coco-render',
+    tsconfigJson: 'tsconfig.json',
     mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
     packageName: 'coco-router',
+    tsconfigJson: 'tsconfig.json',
     mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
     packageName: 'coco-mvc',
-    mainEntryPointFilePath: isTest ? './dts-tmp/test.d.ts' : './dts-tmp/index.d.ts'
+    tsconfigJson: 'tsconfig.json',
+    mainEntryPointFilePath: './dts-tmp/index.d.ts'
+  }
+]
+
+const cocoMvcDtsTest = [
+  {
+    packageName: 'shared',
+    tsconfigJson: 'tsconfig.json',
+    mainEntryPointFilePath: './dts-tmp/index.d.ts'
+  },
+  {
+    packageName: 'react',
+    tsconfigJson: 'tsconfig.json',
+    mainEntryPointFilePath: './dts-tmp/index.d.ts'
+  },
+  {
+    packageName: 'react-reconciler',
+    tsconfigJson: 'tsconfig.json',
+    mainEntryPointFilePath: './dts-tmp/src/index.d.ts'
+  },
+  {
+    packageName: 'react-dom',
+    tsconfigJson: 'tsconfig.json',
+    mainEntryPointFilePath: './dts-tmp/src/index.d.ts'
+  },
+  {
+    packageName: 'coco-ioc-container',
+    tsconfigJson: 'tsconfig.json',
+    mainEntryPointFilePath: './dts-tmp/test.d.ts'
+  },
+  {
+    packageName: 'coco-reactive',
+    tsconfigJson: 'tsconfig.json',
+    mainEntryPointFilePath: './dts-tmp/index.d.ts'
+  },
+  {
+    packageName: 'coco-render',
+    tsconfigJson: 'tsconfig.json',
+    mainEntryPointFilePath: './dts-tmp/test.d.ts'
+  },
+  {
+    packageName: 'coco-router',
+    tsconfigJson: 'tsconfig.json',
+    mainEntryPointFilePath: './dts-tmp/index.d.ts'
+  },
+  {
+    packageName: 'coco-mvc',
+    tsconfigJson: 'tsconfig.test.json',
+    mainEntryPointFilePath: './dts-tmp/test.d.ts'
   }
 ]
 
 const cliDts = [
   {
     packageName: 'coco-cli',
+    tsconfigJson: 'tsconfig.json',
     mainEntryPointFilePath: './dts-tmp/index.d.ts'
   }
 ]
 
 function doBuild(t) {
-  buildDtsTmp(t.packageName);
+  buildDtsTmp(t.packageName, t.tsconfigJson);
   runApiExtractor(t.packageName, t.mainEntryPointFilePath);
 }
 function build() {
-  cocoMvcDts.forEach(doBuild)
+  if (isTest) {
+    cocoMvcDtsTest.forEach(doBuild)
+  } else {
+    cocoMvcDtsProd.forEach(doBuild)
+  }
   cliDts.forEach(doBuild)
 }
 

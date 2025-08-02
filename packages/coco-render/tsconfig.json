@@ -12,5 +12,6 @@
     }
   },
   "include": ["src"],
+  "exclude": ["src/__tests__"],
   "references": [{ "path": "../coco-ioc-container" }, { "path": "../shared" }]
 }

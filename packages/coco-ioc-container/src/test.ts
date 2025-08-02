@@ -1,7 +1,32 @@
+export * from './index.ts';
 import { register, NAME } from 'shared';
-import { getMetadata, getAllMetadata } from '../ioc-container/metadata';
-import Metadata from '../metadata/abstract/metadata';
-import { isEqual } from './is-equal';
+import Metadata from './metadata/abstract/metadata';
+
+function isEqual(a: unknown, b: unknown) {
+  if (
+    typeof a === 'number' ||
+    typeof a === 'string' ||
+    typeof a === 'boolean' ||
+    typeof a === 'undefined'
+  ) {
+    return a === b;
+  } else if (Array.isArray(a)) {
+    // 浅比较
+    if (!Array.isArray(b) || a.length !== b.length) {
+      return false;
+    }
+    const sortedA = [...a].sort();
+    const sortedB = [...b].sort();
+    for (let i = 0; i < sortedA.length; i++) {
+      if (sortedA[i] !== sortedB[i]) {
+        return false;
+      }
+    }
+    return true;
+  } else {
+    throw new Error('未实现的比较');
+  }
+}
 
 const order = [];
 function item(action: 'exec' | 'apply', name: string, params: any) {
@@ -29,7 +54,7 @@ export function get() {
 /**
  * 期望list的每一项都存在于order中，且每一项的前后位置和order是一样的
  */
-export function expectInOrder(
+function expectInOrder(
   list: {
     type: 'exec' | 'apply';
     name: string;
@@ -53,7 +78,7 @@ export function expectInOrder(
  * Clazz: 想要校验的类
  * expectedMetadataList: Clazz上应该具备的所有元信息
  */
-export function checkClassMetadataAsExpected(
+function checkClassMetadataAsExpected(
   Clazz: Class<any>,
   expectedMetadataList: {
     Metadata: Class<Metadata>;
@@ -93,7 +118,7 @@ export function checkClassMetadataAsExpected(
 }
 
 // 检查元数据的元数据是否正确
-export function checkMetadataForMetadataAsExpected(
+function checkMetadataForMetadataAsExpected(
   expectedList: {
     metadataCls: Class<Metadata>;
     metaList: {
@@ -115,3 +140,36 @@ export function checkMetadataForMetadataAsExpected(
   }
   return true;
 }
+
+import {
+  getMetadata,
+  getAllMetadata,
+  clear as clearMetadata,
+} from './ioc-container/metadata';
+import { clear as clearComponentDefinition } from './ioc-container/component-factory';
+
+import { clear as clearPreventCircularDependency } from 'shared';
+
+function clear() {
+  clearMetadata();
+  clearComponentDefinition();
+  clearPreventCircularDependency();
+}
+
+const _test_helper: {
+  expectInOrder: typeof expectInOrder;
+  checkClassMetadataAsExpected: typeof checkClassMetadataAsExpected;
+  checkMetadataForMetadataAsExpected: typeof checkMetadataForMetadataAsExpected;
+  getMetadata: typeof getMetadata;
+  getAllMetadata: typeof getAllMetadata;
+  clear: typeof clear;
+} = {
+  expectInOrder,
+  checkClassMetadataAsExpected,
+  checkMetadataForMetadataAsExpected,
+  getMetadata,
+  getAllMetadata,
+  clear,
+};
+
+export { _test_helper };

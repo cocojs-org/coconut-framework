@@ -1,4 +1,4 @@
-import DynamicRoute from '../../../src/router/dynamic-route';
+import DynamicRoute from '../router/dynamic-route.ts';
 
 describe('DynamicRoute', () => {
   beforeEach(async () => {});

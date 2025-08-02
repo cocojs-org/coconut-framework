@@ -2,12 +2,12 @@ import {
   addDefinition,
   addPostConstruct,
   clear,
-} from '../../ioc-container/component-factory';
+} from '../ioc-container/component-factory.ts';
 import {
   genClassPostConstruct,
   genFieldPostConstruct,
   genMethodPostConstruct,
-} from '../../ioc-container/ioc-component-definition';
+} from '../ioc-container/ioc-component-definition.ts';
 
 describe('component-factory', () => {
   beforeEach(async () => {});

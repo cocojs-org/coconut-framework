@@ -3,7 +3,7 @@ import { render as renderApp, registerApplication } from 'react-dom';
 import { type Application, init } from 'coco-ioc-container';
 import render from '../decorator/render';
 import { jsx } from 'react';
-import Render from '../component/render';
+import Render from './render';
 
 @render()
 class TestWebRender extends Render {

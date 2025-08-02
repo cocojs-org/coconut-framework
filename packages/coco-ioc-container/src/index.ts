@@ -30,36 +30,3 @@ export {
 export { default as Application } from './ioc-container/application';
 export { default as PropertiesConfig } from './ioc-container/properties-config';
 export type { Decorator, Field } from './ioc-container/decorator-context';
-
-import {
-  expectInOrder,
-  checkClassMetadataAsExpected,
-  checkMetadataForMetadataAsExpected,
-  getMetadata,
-  getAllMetadata,
-  clear,
-} from './__tests__';
-
-let _test_helper:
-  | {
-      expectInOrder: typeof expectInOrder;
-      checkClassMetadataAsExpected: typeof checkClassMetadataAsExpected;
-      checkMetadataForMetadataAsExpected: typeof checkMetadataForMetadataAsExpected;
-      getMetadata: typeof getMetadata;
-      getAllMetadata: typeof getAllMetadata;
-      clear: typeof clear;
-    }
-  | undefined = undefined;
-
-if (__TEST__) {
-  _test_helper = {
-    expectInOrder,
-    checkClassMetadataAsExpected,
-    checkMetadataForMetadataAsExpected,
-    getMetadata,
-    getAllMetadata,
-    clear,
-  };
-}
-
-export { _test_helper };

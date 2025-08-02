@@ -7,8 +7,9 @@ const packages = path.join(__dirname, '../../packages');
 const mvc = path.join(packages, './coco-mvc/index.ts')
 const mvcTest = path.join(packages, './coco-mvc/test.ts')
 const render = path.join(packages, './coco-render/src/index.ts')
+const renderTest = path.join(packages, './coco-render/src/test.ts')
 const iocContainer = path.join(packages, './coco-ioc-container/src/index.ts')
-const iocContainerTestHelper = path.join(packages, './coco-ioc-container/src/__tests__/index.ts')
+const iocContainerTest = path.join(packages, './coco-ioc-container/src/test.ts')
 const reactive = path.join(packages, './coco-reactive/src/index.ts')
 const router = path.join(packages, './coco-router/src/index.ts')
 const shared = path.join(packages, './shared/src/index.ts')
@@ -23,7 +24,6 @@ const PACKAGE = {
   MVC: 'coco-mvc',
   MVC_RENDER: 'coco-render',
   IOC_CONTAINER: 'coco-ioc-container',
-  IOC_CONTAINER_TEST_HELPER: 'coco-ioc-container-test-helper',
   REACTIVE: 'coco-reactive',
   ROUTER: 'coco-router',
   SHARED: 'shared',
@@ -37,9 +37,8 @@ const PACKAGE = {
 
 const pathMap = {
   [PACKAGE.MVC]: isTest ? mvcTest : mvc,
-  [PACKAGE.MVC_RENDER]: render,
-  [PACKAGE.IOC_CONTAINER]: iocContainer,
-  [PACKAGE.IOC_CONTAINER_TEST_HELPER]: iocContainerTestHelper,
+  [PACKAGE.MVC_RENDER]: isTest ? renderTest : render,
+  [PACKAGE.IOC_CONTAINER]: isTest ? iocContainerTest : iocContainer,
   [PACKAGE.REACTIVE]: reactive,
   [PACKAGE.ROUTER]: router,
   [PACKAGE.SHARED]: shared,
