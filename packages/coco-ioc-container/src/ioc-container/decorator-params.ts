@@ -51,6 +51,7 @@ export function addDecoratorParams(beDecoratedCls: Class<any>, params: params) {
   const isComponent = isComponentSubMetadata(params);
   const hadComponent = !!paramsList.find((p) => isComponentSubMetadata(p));
   if (isComponent && hadComponent) {
+    // todo 不要在这里报错，应该还是保留装饰器参数，然后运行前检查报错。
     throw new Error(
       '一个类只能添加一个component装饰器，包含component复合装饰器！'
     );
