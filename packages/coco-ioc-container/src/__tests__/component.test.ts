@@ -1,5 +1,3 @@
-import { describe } from 'node:test';
-
 let Application;
 let application;
 let webApplication;
@@ -12,7 +10,6 @@ let component;
 let Component;
 describe('不能同时添加一个component装饰器和一个component的复合装饰器', () => {
   beforeEach(async () => {
-    // cli_helper.buildDotCoco(pkgPath(__dirname));
     cocoMvc = await import('coco-mvc');
     view = cocoMvc.view;
     page = cocoMvc.page;
