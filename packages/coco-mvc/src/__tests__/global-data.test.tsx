@@ -1,5 +1,3 @@
-import * as ReactTestUtils from './test-units/ReactTestUnits';
-
 describe('global-data', () => {
   let cocoMvc, Application, application, view, bind, globalData, autowired;
   beforeEach(async () => {

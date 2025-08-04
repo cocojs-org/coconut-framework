@@ -5,7 +5,6 @@ import {
   queryByTestId,
   waitFor,
 } from '@testing-library/dom';
-import * as ReactTestUtils from './test-units/ReactTestUnits';
 
 describe('decorator', () => {
   let cocoMvc, Application, application, view, reactive, bind;
