@@ -1,7 +1,4 @@
-import { _test_helper } from 'coco-mvc';
-import { _test_helper as cli_helper } from '@cocojs/cli';
 import { getByText, waitFor } from '@testing-library/dom';
-import { pkgPath, cocoIdxStr, cocoIdxAppJson } from './_helper_/pkg-path.ts';
 
 let Application;
 let application;
