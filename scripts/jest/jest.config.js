@@ -5,7 +5,7 @@ module.exports = {
   cache: false,
   maxConcurrency: 1,
   testEnvironment: 'jsdom',
-  testMatch: ['**/*.test.ts'],
+  testMatch: ['**/__tests__/**/*.test.(ts|tsx)'],
   testPathIgnorePatterns: [
     '<rootDir>/packages/react-reconciler/',
     '<rootDir>/packages/react-dom/',
