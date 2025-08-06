@@ -243,6 +243,14 @@ export function shouldRemoveAttribute(
   ) {
     return true;
   }
+  if (propertyInfo !== null) {
+    switch (propertyInfo.type) {
+      case BOOLEAN:
+        return !value;
+      case OVERLOADED_BOOLEAN:
+        return value === false;
+    }
+  }
   return false;
 }
 
@@ -372,3 +380,16 @@ const capitalize = token => token[1].toUpperCase();
     false, // removeEmptyString
   );
 });
+
+// These attributes accept URLs. These must not allow javascript: URLS.
+// These will also need to accept Trusted Types object in the future.
+const xlinkHref = 'xlinkHref';
+properties[xlinkHref] = new PropertyInfoRecord(
+  'xlinkHref',
+  STRING,
+  false, // mustUseProperty
+  'xlink:href',
+  'http://www.w3.org/1999/xlink',
+  true, // sanitizeURL
+  false, // removeEmptyString
+);

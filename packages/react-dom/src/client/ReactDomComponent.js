@@ -325,6 +325,13 @@ export function diffProperties(
       }
     } else if (propKey === DANGEROUSLY_SET_INNER_HTML || propKey === CHILDREN) {
       // Noop. This is handled by the clear text mechanism.
+    } else if (registrationNameDependencies.hasOwnProperty(propKey)) {
+      // This is a special case. If any listener updates we need to ensure
+      // that the "current" fiber pointer gets updated so we need a commit
+      // to update this element.
+      if (!updatePayload) {
+        updatePayload = [];
+      }
     } else {
       (updatePayload = updatePayload || []).push(propKey, null)
     }
@@ -402,6 +409,12 @@ export function diffProperties(
         if (propKey === 'onScroll') {
           listenToNonDelegatedEvent('scroll', domElement);
         }
+      }
+      if (!updatePayload && lastProp !== nextProp) {
+        // This is a special case. If any listener updates we need to ensure
+        // that the "current" props pointer gets updated so we need a commit
+        // to update this element.
+        updatePayload = [];
       }
     } else {
       (updatePayload = updatePayload || []).push(propKey, nextProp)

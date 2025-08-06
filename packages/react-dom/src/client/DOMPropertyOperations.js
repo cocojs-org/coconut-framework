@@ -73,7 +73,7 @@ export function setValueForProperty(
     }
     return;
   }
-  const { attributeName } = propertyInfo;
+  const { attributeName, attributeNamespace } = propertyInfo;
   if (value === null) {
     node.removeAttribute(attributeName)
   } else {
@@ -87,6 +87,10 @@ export function setValueForProperty(
         attributeValue = '' + value;
       }
     }
-    node.setAttribute(attributeName, attributeValue)
+    if (attributeNamespace) {
+      node.setAttributeNS(attributeNamespace, attributeName, attributeValue);
+    } else {
+      node.setAttribute(attributeName, attributeValue)
+    }
   }
 }

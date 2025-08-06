@@ -360,6 +360,7 @@ function executeDispatch(
   listener({
     type: reactEventType,
     target: domEvent.target,
+    nativeEvent: domEvent,
     currentTarget: currentTarget,
     stopPropagation: () => {
       domEvent.stopPropagation();

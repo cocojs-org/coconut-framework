@@ -26,6 +26,7 @@ const simpleEventPluginEvents = [
   'ended',
   'error',
   'gotPointerCapture',
+  'input',
   'invalid',
   'keyDown',
   'keyPress',
