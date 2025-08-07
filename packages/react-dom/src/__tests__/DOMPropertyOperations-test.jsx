@@ -248,5 +248,412 @@ describe('DOMPropertyOperations', () => {
       expectedHandlerCallCount++;
       expect(eventHandler).toHaveBeenCalledTimes(expectedHandlerCallCount);
     });
+
+    it('<input is=...> should have the same onChange/onInput/onClick behavior as <input>', () => {
+      const container = document.createElement('div');
+      document.body.appendChild(container);
+      const regularOnInputHandler = jest.fn();
+      const regularOnChangeHandler = jest.fn();
+      const regularOnClickHandler = jest.fn();
+      const customOnInputHandler = jest.fn();
+      const customOnChangeHandler = jest.fn();
+      const customOnClickHandler = jest.fn();
+      function clearMocks() {
+        regularOnInputHandler.mockClear();
+        regularOnChangeHandler.mockClear();
+        regularOnClickHandler.mockClear();
+        customOnInputHandler.mockClear();
+        customOnChangeHandler.mockClear();
+        customOnClickHandler.mockClear();
+      }
+      cocoMvc.render(
+        <div>
+          <input
+            onInput={regularOnInputHandler}
+            onChange={regularOnChangeHandler}
+            onClick={regularOnClickHandler}
+          />
+          <input
+            is="my-custom-element"
+            onInput={customOnInputHandler}
+            onChange={customOnChangeHandler}
+            onClick={customOnClickHandler}
+          />
+        </div>,
+        container,
+      );
+
+      const regularInput = container.querySelector(
+        'input:not([is=my-custom-element])',
+      );
+      const customInput = container.querySelector(
+        'input[is=my-custom-element]',
+      );
+      expect(regularInput).not.toBe(customInput);
+
+      // Typing should trigger onInput and onChange for both kinds of inputs.
+      clearMocks();
+      setUntrackedValue.call(regularInput, 'hello');
+      regularInput.dispatchEvent(new Event('input', {bubbles: true}));
+      expect(regularOnInputHandler).toHaveBeenCalledTimes(1);
+      expect(regularOnChangeHandler).toHaveBeenCalledTimes(1);
+      expect(regularOnClickHandler).toHaveBeenCalledTimes(0);
+      setUntrackedValue.call(customInput, 'hello');
+      customInput.dispatchEvent(new Event('input', {bubbles: true}));
+      expect(customOnInputHandler).toHaveBeenCalledTimes(1);
+      expect(customOnChangeHandler).toHaveBeenCalledTimes(1);
+      expect(customOnClickHandler).toHaveBeenCalledTimes(0);
+
+      // The native change event itself does not produce extra React events.
+      clearMocks();
+      regularInput.dispatchEvent(new Event('change', {bubbles: true}));
+      expect(regularOnInputHandler).toHaveBeenCalledTimes(0);
+      expect(regularOnChangeHandler).toHaveBeenCalledTimes(0);
+      expect(regularOnClickHandler).toHaveBeenCalledTimes(0);
+      customInput.dispatchEvent(new Event('change', {bubbles: true}));
+      expect(customOnInputHandler).toHaveBeenCalledTimes(0);
+      expect(customOnChangeHandler).toHaveBeenCalledTimes(0);
+      expect(customOnClickHandler).toHaveBeenCalledTimes(0);
+
+      // The click event is handled by both inputs.
+      clearMocks();
+      regularInput.dispatchEvent(new Event('click', {bubbles: true}));
+      expect(regularOnInputHandler).toHaveBeenCalledTimes(0);
+      expect(regularOnChangeHandler).toHaveBeenCalledTimes(0);
+      expect(regularOnClickHandler).toHaveBeenCalledTimes(1);
+      customInput.dispatchEvent(new Event('click', {bubbles: true}));
+      expect(customOnInputHandler).toHaveBeenCalledTimes(0);
+      expect(customOnChangeHandler).toHaveBeenCalledTimes(0);
+      expect(customOnClickHandler).toHaveBeenCalledTimes(1);
+
+      // Typing again should trigger onInput and onChange for both kinds of inputs.
+      clearMocks();
+      setUntrackedValue.call(regularInput, 'goodbye');
+      regularInput.dispatchEvent(new Event('input', {bubbles: true}));
+      expect(regularOnInputHandler).toHaveBeenCalledTimes(1);
+      expect(regularOnChangeHandler).toHaveBeenCalledTimes(1);
+      expect(regularOnClickHandler).toHaveBeenCalledTimes(0);
+      setUntrackedValue.call(customInput, 'goodbye');
+      customInput.dispatchEvent(new Event('input', {bubbles: true}));
+      expect(customOnInputHandler).toHaveBeenCalledTimes(1);
+      expect(customOnChangeHandler).toHaveBeenCalledTimes(1);
+      expect(customOnClickHandler).toHaveBeenCalledTimes(0);
+    });
+
+    it('<input type=radio is=...> should have the same onChange/onInput/onClick behavior as <input type=radio>', () => {
+      const container = document.createElement('div');
+      document.body.appendChild(container);
+      const regularOnInputHandler = jest.fn();
+      const regularOnChangeHandler = jest.fn();
+      const regularOnClickHandler = jest.fn();
+      const customOnInputHandler = jest.fn();
+      const customOnChangeHandler = jest.fn();
+      const customOnClickHandler = jest.fn();
+      function clearMocks() {
+        regularOnInputHandler.mockClear();
+        regularOnChangeHandler.mockClear();
+        regularOnClickHandler.mockClear();
+        customOnInputHandler.mockClear();
+        customOnChangeHandler.mockClear();
+        customOnClickHandler.mockClear();
+      }
+      cocoMvc.render(
+        <div>
+          <input
+            type="radio"
+            onInput={regularOnInputHandler}
+            onChange={regularOnChangeHandler}
+            onClick={regularOnClickHandler}
+          />
+          <input
+            is="my-custom-element"
+            type="radio"
+            onInput={customOnInputHandler}
+            onChange={customOnChangeHandler}
+            onClick={customOnClickHandler}
+          />
+        </div>,
+        container,
+      );
+
+      const regularInput = container.querySelector(
+        'input:not([is=my-custom-element])',
+      );
+      const customInput = container.querySelector(
+        'input[is=my-custom-element]',
+      );
+      expect(regularInput).not.toBe(customInput);
+
+      // Clicking should trigger onClick and onChange on both inputs.
+      clearMocks();
+      setUntrackedChecked.call(regularInput, true);
+      regularInput.dispatchEvent(new Event('click', {bubbles: true}));
+      expect(regularOnInputHandler).toHaveBeenCalledTimes(0);
+      expect(regularOnChangeHandler).toHaveBeenCalledTimes(1);
+      expect(regularOnClickHandler).toHaveBeenCalledTimes(1);
+      setUntrackedChecked.call(customInput, true);
+      customInput.dispatchEvent(new Event('click', {bubbles: true}));
+      expect(customOnInputHandler).toHaveBeenCalledTimes(0);
+      expect(customOnChangeHandler).toHaveBeenCalledTimes(1);
+      expect(customOnClickHandler).toHaveBeenCalledTimes(1);
+
+      // The native input event only produces a React onInput event.
+      clearMocks();
+      regularInput.dispatchEvent(new Event('input', {bubbles: true}));
+      expect(regularOnInputHandler).toHaveBeenCalledTimes(1);
+      expect(regularOnChangeHandler).toHaveBeenCalledTimes(0);
+      expect(regularOnClickHandler).toHaveBeenCalledTimes(0);
+      customInput.dispatchEvent(new Event('input', {bubbles: true}));
+      expect(customOnInputHandler).toHaveBeenCalledTimes(1);
+      expect(customOnChangeHandler).toHaveBeenCalledTimes(0);
+      expect(customOnClickHandler).toHaveBeenCalledTimes(0);
+
+      // Clicking again should trigger onClick and onChange on both inputs.
+      clearMocks();
+      setUntrackedChecked.call(regularInput, false);
+      regularInput.dispatchEvent(new Event('click', {bubbles: true}));
+      expect(regularOnInputHandler).toHaveBeenCalledTimes(0);
+      expect(regularOnChangeHandler).toHaveBeenCalledTimes(1);
+      expect(regularOnClickHandler).toHaveBeenCalledTimes(1);
+      setUntrackedChecked.call(customInput, false);
+      customInput.dispatchEvent(new Event('click', {bubbles: true}));
+      expect(customOnInputHandler).toHaveBeenCalledTimes(0);
+      expect(customOnChangeHandler).toHaveBeenCalledTimes(1);
+      expect(customOnClickHandler).toHaveBeenCalledTimes(1);
+    });
+
+    it('<select is=...> should have the same onChange/onInput/onClick behavior as <select>', () => {
+      const container = document.createElement('div');
+      document.body.appendChild(container);
+      const regularOnInputHandler = jest.fn();
+      const regularOnChangeHandler = jest.fn();
+      const regularOnClickHandler = jest.fn();
+      const customOnInputHandler = jest.fn();
+      const customOnChangeHandler = jest.fn();
+      const customOnClickHandler = jest.fn();
+      function clearMocks() {
+        regularOnInputHandler.mockClear();
+        regularOnChangeHandler.mockClear();
+        regularOnClickHandler.mockClear();
+        customOnInputHandler.mockClear();
+        customOnChangeHandler.mockClear();
+        customOnClickHandler.mockClear();
+      }
+      cocoMvc.render(
+        <div>
+          <select
+            onInput={regularOnInputHandler}
+            onChange={regularOnChangeHandler}
+            onClick={regularOnClickHandler}
+          />
+          <select
+            is="my-custom-element"
+            onInput={customOnInputHandler}
+            onChange={customOnChangeHandler}
+            onClick={customOnClickHandler}
+          />
+        </div>,
+        container,
+      );
+
+      const regularSelect = container.querySelector(
+        'select:not([is=my-custom-element])',
+      );
+      const customSelect = container.querySelector(
+        'select[is=my-custom-element]',
+      );
+      expect(regularSelect).not.toBe(customSelect);
+
+      // Clicking should only trigger onClick on both inputs.
+      clearMocks();
+      regularSelect.dispatchEvent(new Event('click', {bubbles: true}));
+      expect(regularOnInputHandler).toHaveBeenCalledTimes(0);
+      expect(regularOnChangeHandler).toHaveBeenCalledTimes(0);
+      expect(regularOnClickHandler).toHaveBeenCalledTimes(1);
+      customSelect.dispatchEvent(new Event('click', {bubbles: true}));
+      expect(customOnInputHandler).toHaveBeenCalledTimes(0);
+      expect(customOnChangeHandler).toHaveBeenCalledTimes(0);
+      expect(customOnClickHandler).toHaveBeenCalledTimes(1);
+
+      // Native input event should only trigger onInput on both inputs.
+      clearMocks();
+      regularSelect.dispatchEvent(new Event('input', {bubbles: true}));
+      expect(regularOnInputHandler).toHaveBeenCalledTimes(1);
+      expect(regularOnChangeHandler).toHaveBeenCalledTimes(0);
+      expect(regularOnClickHandler).toHaveBeenCalledTimes(0);
+      customSelect.dispatchEvent(new Event('input', {bubbles: true}));
+      expect(customOnInputHandler).toHaveBeenCalledTimes(1);
+      expect(customOnChangeHandler).toHaveBeenCalledTimes(0);
+      expect(customOnClickHandler).toHaveBeenCalledTimes(0);
+
+      // Native change event should trigger onChange.
+      clearMocks();
+      regularSelect.dispatchEvent(new Event('change', {bubbles: true}));
+      expect(regularOnInputHandler).toHaveBeenCalledTimes(0);
+      expect(regularOnChangeHandler).toHaveBeenCalledTimes(1);
+      expect(regularOnClickHandler).toHaveBeenCalledTimes(0);
+      customSelect.dispatchEvent(new Event('change', {bubbles: true}));
+      expect(customOnInputHandler).toHaveBeenCalledTimes(0);
+      expect(customOnChangeHandler).toHaveBeenCalledTimes(1);
+      expect(customOnClickHandler).toHaveBeenCalledTimes(0);
+    });
+
+    it('custom element onChange/onInput/onClick with event target input child', () => {
+      const container = document.createElement('div');
+      document.body.appendChild(container);
+      const onChangeHandler = jest.fn();
+      const onInputHandler = jest.fn();
+      const onClickHandler = jest.fn();
+      cocoMvc.render(
+        <my-custom-element
+          onChange={onChangeHandler}
+          onInput={onInputHandler}
+          onClick={onClickHandler}>
+          <input />
+        </my-custom-element>,
+        container,
+      );
+
+      const input = container.querySelector('input');
+      setUntrackedValue.call(input, 'hello');
+      input.dispatchEvent(new Event('input', {bubbles: true}));
+      // Simulated onChange from the child's input event
+      // bubbles to the parent custom element.
+      expect(onChangeHandler).toBeCalledTimes(1);
+      expect(onInputHandler).toBeCalledTimes(1);
+      expect(onClickHandler).toBeCalledTimes(0);
+      // Consequently, the native change event is ignored.
+      input.dispatchEvent(new Event('change', {bubbles: true}));
+      expect(onChangeHandler).toBeCalledTimes(1);
+      expect(onInputHandler).toBeCalledTimes(1);
+      expect(onClickHandler).toBeCalledTimes(0);
+      input.dispatchEvent(new Event('click', {bubbles: true}));
+      expect(onChangeHandler).toBeCalledTimes(1);
+      expect(onInputHandler).toBeCalledTimes(1);
+      expect(onClickHandler).toBeCalledTimes(1);
+    });
+
+    it('custom element onChange/onInput/onClick with event target div child', () => {
+      const container = document.createElement('div');
+      document.body.appendChild(container);
+      const onChangeHandler = jest.fn();
+      const onInputHandler = jest.fn();
+      const onClickHandler = jest.fn();
+      cocoMvc.render(
+        <my-custom-element
+          onChange={onChangeHandler}
+          onInput={onInputHandler}
+          onClick={onClickHandler}>
+          <div />
+        </my-custom-element>,
+        container,
+      );
+
+      const div = container.querySelector('div');
+      div.dispatchEvent(new Event('input', {bubbles: true}));
+      expect(onChangeHandler).toBeCalledTimes(0);
+      expect(onInputHandler).toBeCalledTimes(1);
+      expect(onClickHandler).toBeCalledTimes(0);
+
+      div.dispatchEvent(new Event('change', {bubbles: true}));
+      // React always ignores change event invoked on non-custom and non-input targets.
+      // So change event emitted on a div does not propagate upwards.
+      expect(onChangeHandler).toBeCalledTimes(0);
+      expect(onInputHandler).toBeCalledTimes(1);
+      expect(onClickHandler).toBeCalledTimes(0);
+
+      div.dispatchEvent(new Event('click', {bubbles: true}));
+      expect(onChangeHandler).toBeCalledTimes(0);
+      expect(onInputHandler).toBeCalledTimes(1);
+      expect(onClickHandler).toBeCalledTimes(1);
+    });
+
+    it('div onChange/onInput/onClick with event target div child', () => {
+      const container = document.createElement('div');
+      document.body.appendChild(container);
+      const onChangeHandler = jest.fn();
+      const onInputHandler = jest.fn();
+      const onClickHandler = jest.fn();
+      cocoMvc.render(
+        <div
+          onChange={onChangeHandler}
+          onInput={onInputHandler}
+          onClick={onClickHandler}>
+          <div />
+        </div>,
+        container,
+      );
+
+      const div = container.querySelector('div > div');
+      div.dispatchEvent(new Event('input', {bubbles: true}));
+      expect(onChangeHandler).toBeCalledTimes(0);
+      expect(onInputHandler).toBeCalledTimes(1);
+      expect(onClickHandler).toBeCalledTimes(0);
+
+      div.dispatchEvent(new Event('change', {bubbles: true}));
+      // React always ignores change event invoked on non-custom and non-input targets.
+      // So change event emitted on a div does not propagate upwards.
+      expect(onChangeHandler).toBeCalledTimes(0);
+      expect(onInputHandler).toBeCalledTimes(1);
+      expect(onClickHandler).toBeCalledTimes(0);
+
+      div.dispatchEvent(new Event('click', {bubbles: true}));
+      expect(onChangeHandler).toBeCalledTimes(0);
+      expect(onInputHandler).toBeCalledTimes(1);
+      expect(onClickHandler).toBeCalledTimes(1);
+    });
+
+    it('innerHTML should not work on custom elements', () => {
+      const container = document.createElement('div');
+      cocoMvc.render(<my-custom-element innerHTML="foo" />, container);
+      const customElement = container.querySelector('my-custom-element');
+      expect(customElement.getAttribute('innerHTML')).toBe(null);
+      expect(customElement.hasChildNodes()).toBe(false);
+
+      // Render again to verify the update codepath doesn't accidentally let
+      // something through.
+      cocoMvc.render(<my-custom-element innerHTML="bar" />, container);
+      expect(customElement.getAttribute('innerHTML')).toBe(null);
+      expect(customElement.hasChildNodes()).toBe(false);
+    });
+  })
+
+  describe('deleteValueForProperty', () => {
+    it('should remove attributes for normal properties', () => {
+      const container = document.createElement('div');
+      cocoMvc.render(<div title="foo" />, container);
+      expect(container.firstChild.getAttribute('title')).toBe('foo');
+      cocoMvc.render(<div />, container);
+      expect(container.firstChild.getAttribute('title')).toBe(null);
+    });
+
+    it('should not remove attributes for special properties', () => {
+      const container = document.createElement('div');
+      cocoMvc.render(
+        <input type="text" value="foo" onChange={function() {}} />,
+        container,
+      );
+      expect(container.firstChild.getAttribute('value')).toBe('foo');
+      expect(container.firstChild.value).toBe('foo');
+      cocoMvc.render(
+        <input type="text" onChange={function() {}} />,
+        container,
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'A component is changing a controlled input to be uncontrolled. ' +
+        'This is likely caused by the value changing from a defined to ' +
+        'undefined, which should not happen. ' +
+        'Decide between using a controlled or uncontrolled input ' +
+        'element for the lifetime of the component. More info: https://reactjs.org/link/controlled-components',
+      );
+      expect(container.firstChild.getAttribute('value')).toBe('foo');
+      expect(container.firstChild.value).toBe('foo');
+    });
+
+    it('should not remove attributes for custom component tag', () => {
+      const container = document.createElement('div');
+      cocoMvc.render(<my-icon size="5px" />, container);
+      expect(container.firstChild.getAttribute('size')).toBe('5px');
+    });
   })
 })

@@ -53,6 +53,12 @@ function getTargetInstForInputOrChangeEvent(
   }
 }
 
+function getTargetInstForChangeEvent(domEventName, targetInst) {
+  if (domEventName === 'change') {
+    return targetInst;
+  }
+}
+
 function handleControlledInputBlur(node) {
   const state = node._wrapperState;
 
@@ -82,6 +88,17 @@ function createAndAccumulateChangeEvent(
   }
 }
 
+/**
+ * SECTION: handle `change` event
+ */
+function shouldUseChangeEvent(elem) {
+  const nodeName = elem.nodeName && elem.nodeName.toLowerCase();
+  return (
+    nodeName === 'select' ||
+    (nodeName === 'input' && elem.type === 'file')
+  );
+}
+
 function extractEvents(
   dispatchQueue,
   domEventName,
@@ -92,7 +109,9 @@ function extractEvents(
   const targetNode = targetInst ? getNodeFromInstance(targetInst) : window;
 
   let getTargetInstFun;
-  if (isTextInputElement(targetNode)) {
+  if (shouldUseChangeEvent(targetNode)) {
+    getTargetInstFun = getTargetInstForChangeEvent;
+  } else if (isTextInputElement(targetNode)) {
     getTargetInstFun = getTargetInstForInputOrChangeEvent;
   } else if (shouldUseClickEvent(targetNode)) {
     getTargetInstFun = getTargetInstForClickEvent;
