@@ -6,7 +6,10 @@ module.exports = {
   maxConcurrency: 1,
   testEnvironment: 'jsdom',
   testMatch: ['**/__tests__/**/*.test.(ts|tsx)'],
-  testPathIgnorePatterns: ['<rootDir>/packages/react-dom/'],
+  testPathIgnorePatterns: [
+    '<rootDir>/packages/react-dom/',
+    '<rootDir>/packages/react-reconciler/',
+  ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transform: {
     '\\.[jt]sx?$': '<rootDir>/scripts/jest/transformer.js',

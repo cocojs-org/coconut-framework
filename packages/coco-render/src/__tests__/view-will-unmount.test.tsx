@@ -52,7 +52,9 @@ describe('viewWillUnmount', () => {
 
       render() {
         return (
-          <h1 onClick={this.handleClick}>{this.show ? <Button /> : 'not show'}</h1>
+          <h1 onClick={this.handleClick}>
+            {this.show ? <Button /> : 'not show'}
+          </h1>
         );
       }
     }

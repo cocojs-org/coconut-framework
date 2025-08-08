@@ -1429,8 +1429,9 @@ describe('ReactDOMComponent', () => {
         cocoMvc
       );
       expect(consoleErrorSpy.mock.calls[0]).toEqual([
-          "Unknown event handler property `%s`. It will be ignored.",
-          "oninput"
+        'Invalid event handler property `%s`. Did you mean `%s`?',
+        'oninput',
+        'onInput',
         ]
       );
       ReactTestUtils.renderIntoDocument(
