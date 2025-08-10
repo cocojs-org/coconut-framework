@@ -7,13 +7,8 @@ import { scheduleUpdateOnFiber, flushSync, batchedUpdates } from "./ReactFiberWo
 import { reference } from './ReactFiberThrow';
 reference();
 
-export function updateRender(instance) {
-  throw new Error("todo")
-}
-
 export { classComponentUpdater, flushSync, batchedUpdates, updateContainer, createContainer, getPublicRootInstance, findHostInstance, finishQueueingConcurrentUpdates, isRenderPhase }
 export { registerApplication, unregisterApplication } from './coco-ioc-container/index'
 
 register(NAME.isRenderPhase, isRenderPhase);
-register(NAME.enqueueSetState, classComponentUpdater.enqueueSetState);
 register(NAME.scheduleUpdateOnFiber, scheduleUpdateOnFiber);

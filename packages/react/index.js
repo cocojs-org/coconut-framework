@@ -1,1 +1,1 @@
-export { jsx, jsxs, Children } from './src/React';
+export { jsx, jsxs, Children, ReactNoopUpdateQueue } from './src/React';

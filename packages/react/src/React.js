@@ -1,6 +1,6 @@
-import { jsx, jsxs, cloneAndReplaceKey } from './ReactElement';
-
+import { jsx, jsxs } from './ReactElement';
 import { map, forEach } from './ReactChildren';
+import ReactNoopUpdateQueue from './ReactNoopUpdateQueue';
 
 /**
  * Children
@@ -14,4 +14,4 @@ const Children = {
   forEach,
 };
 
-export { Children, jsx, jsxs };
+export { Children, jsx, jsxs, ReactNoopUpdateQueue };

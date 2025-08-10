@@ -8,13 +8,22 @@ import {
 import {get, NAME} from "shared";
 import { Update } from "./ReactFiberFlags";
 import { getApplication } from './coco-ioc-container/index';
+import { isMounted } from './ReactFiberTreeReflection';
 
 let didWarnAboutDirectlyAssigningPropsToState;
 if (__DEV__) {
   didWarnAboutDirectlyAssigningPropsToState = new Set();
 }
 
+/**
+ * classComponentUpdater
+ * @type {{
+ *   isMounted: (component: any)=> boolean,
+ *   enqueueUpdate: (inst: any, field: string, payload: any, callback: any) => void
+ * }}
+ */
 const classComponentUpdater = {
+  isMounted,
   enqueueSetState(inst, field, payload, callback) {
     const fiber = inst._reactInternals; // const fiber = getInstance(inst)
 

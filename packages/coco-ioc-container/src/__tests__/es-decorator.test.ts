@@ -4,7 +4,28 @@
  */
 
 describe('class装饰器', () => {
-  test('addInitializer回调在装饰器执行之后立刻执行，不用实例化。', () => {
+  it('类装饰器可以用来修改prototype。', () => {
+    const log = [];
+    function a() {
+      return (value, { addInitializer }) => {
+        value.prototype.updater = {
+          exec: () => {
+            log.push('newMethod');
+          },
+        };
+      };
+    }
+
+    @a()
+    class Button {}
+    class Child extends Button {}
+
+    const btn = new Child();
+    btn?.updater.exec();
+    expect(log).toEqual(['newMethod']);
+  });
+
+  it('addInitializer回调在装饰器执行之后立刻执行，不用实例化。', () => {
     const log = [];
     function a() {
       log.push('evaluating decorators');
@@ -29,7 +50,7 @@ describe('class装饰器', () => {
     ]);
   });
 
-  test('多个类装饰器执行顺序，执行addInitializer回调顺序和calling decorator顺序一致。', async () => {
+  it('多个类装饰器执行顺序，执行addInitializer回调顺序和calling decorator顺序一致。', async () => {
     const log = [];
     function a() {
       log.push('evaluating decorator a');
@@ -67,7 +88,7 @@ describe('class装饰器', () => {
 });
 
 describe('field装饰器', () => {
-  test('addInitializer回调在constructor之前执行', () => {
+  it('addInitializer回调在constructor之前执行', () => {
     const log = [];
     function a() {
       log.push('evaluating decorators');
@@ -95,7 +116,7 @@ describe('field装饰器', () => {
     ]);
   });
 
-  test('多个类装饰器执行顺序，执行addInitializer回调顺序和calling decorator顺序一致。', () => {
+  it('多个类装饰器执行顺序，执行addInitializer回调顺序和calling decorator顺序一致。', () => {
     const log = [];
     function a() {
       log.push('evaluating decorator a');
@@ -145,7 +166,7 @@ describe('field装饰器', () => {
 });
 
 describe('method装饰器', () => {
-  test('addInitializer回调在constructor之前执行', () => {
+  it('addInitializer回调在constructor之前执行', () => {
     const log = [];
     function a() {
       log.push('evaluating decorators');
@@ -173,7 +194,7 @@ describe('method装饰器', () => {
     ]);
   });
 
-  test('多个类装饰器执行顺序，执行addInitializer回调顺序和calling decorator顺序一致。', () => {
+  it('多个类装饰器执行顺序，执行addInitializer回调顺序和calling decorator顺序一致。', () => {
     const log = [];
     function a() {
       log.push('evaluating decorator a');

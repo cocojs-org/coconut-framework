@@ -29,7 +29,7 @@ function createDecoratorExpFactory(fn: any) {
     function decoratorExpress(userParam: UserParam, decorateSelf?: true) {
       return function (value, context: C) {
         switch (context.kind) {
-          case KindClass:
+          case KindClass: {
             if (decorateSelf) {
               if (MetadataCls === null) {
                 MetadataCls = value;
@@ -51,7 +51,14 @@ function createDecoratorExpFactory(fn: any) {
                 postConstruct: MetadataCls.postConstruct,
               });
             }
+            // 修改prototype
+            if (
+              typeof MetadataCls?.classDecoratorModifyPrototype === 'function'
+            ) {
+              MetadataCls?.classDecoratorModifyPrototype(value.prototype);
+            }
             break;
+          }
           case KindGetter:
           case KindSetter:
           case KindAccessor:

@@ -5,7 +5,6 @@
 const map = new Map();
 export const NAME = {
   isRenderPhase: 'isRenderPhase',
-  enqueueSetState: 'enqueueSetState',
   scheduleUpdateOnFiber: 'scheduleUpdateOnFiber',
   Component: 'Component',
   throwException: 'throwException',

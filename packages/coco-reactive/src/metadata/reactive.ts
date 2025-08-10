@@ -28,7 +28,7 @@ export function customPostConstruct(hooks?: {
     name: string
   ) {
     const enqueueSetState = (v: any) => {
-      get(NAME.enqueueSetState)?.(this, name, v);
+      this.updater.enqueueSetState(this, name, v);
     };
     const initRtn = hooks?.init?.(metadata, application, name, enqueueSetState);
     let _value: any = hooks?.initValue ? hooks.initValue(initRtn) : this[name];

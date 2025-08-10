@@ -39,6 +39,14 @@ function assertIsMounted(fiber) {
   }
 }
 
+export function isMounted(component) {
+  const fiber = component._reactInternals; // const fiber = getInstance(inst);
+  if (!fiber) {
+    return false;
+  }
+  return getNearestMountedFiber(fiber) === fiber;
+}
+
 export function findCurrentFiberUsingSlowPath(fiber) {
   const alternate = fiber.alternate;
   if (!alternate) {

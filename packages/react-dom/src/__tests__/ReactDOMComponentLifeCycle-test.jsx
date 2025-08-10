@@ -142,4 +142,28 @@ describe('ReactDOMComponent', () => {
       'StatefulComponent'
     )
   });
+
+  it('should correctly determine if a component is mounted', () => {
+    @view()
+    class Component {
+      _isMounted() {
+        // No longer a public API, but we can test that it works internally by
+        // reaching into the updater.
+        return this.updater.isMounted(this);
+      }
+      componentDidMount() {
+        expect(this._isMounted()).toBeTruthy();
+      }
+      render() {
+        expect(this._isMounted()).toBeFalsy();
+        return <div />;
+      }
+    }
+
+    application.start();
+    const element = <Component />;
+
+    const instance = ReactTestUtils.renderIntoDocument(element, cocoMvc);
+    expect(instance._isMounted()).toBeTruthy();
+  });
 })
