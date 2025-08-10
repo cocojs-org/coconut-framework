@@ -9,7 +9,6 @@ import {
   KindAccessor,
 } from './decorator-context';
 export type { Decorator };
-import { get, NAME } from 'shared';
 import { isClass, lowercaseFirstLetter, once } from '../share/util';
 import { addDecoratorParams } from './decorator-params';
 import { registerMetadataCls } from './metadata';
@@ -28,13 +27,7 @@ function createDecoratorExpFactory(fn: any) {
       registerMetadataCls(MetadataCls);
     }
     function decoratorExpress(userParam: UserParam, decorateSelf?: true) {
-      if (__TEST__) {
-        get(NAME.exec)?.(decoratorName, userParam);
-      }
       return function (value, context: C) {
-        if (__TEST__) {
-          get(NAME.apply)?.(decoratorName, userParam);
-        }
         switch (context.kind) {
           case KindClass:
             if (decorateSelf) {

@@ -28,51 +28,6 @@ function isEqual(a: unknown, b: unknown) {
   }
 }
 
-const order = [];
-function item(action: 'exec' | 'apply', name: string, params: any) {
-  return `[${action}][${name}][${params}]`;
-}
-
-export function reset() {
-  order.length = 0;
-}
-
-export function exec(decoratorName: string, params: any) {
-  order.push(item('exec', decoratorName, params));
-}
-register(NAME.exec, exec);
-
-export function apply(decoratorName: string, params: any) {
-  order.push(item('apply', decoratorName, params));
-}
-register(NAME.apply, apply);
-
-export function get() {
-  return order;
-}
-
-/**
- * 期望list的每一项都存在于order中，且每一项的前后位置和order是一样的
- */
-function expectInOrder(
-  list: {
-    type: 'exec' | 'apply';
-    name: string;
-    params?: any;
-  }[]
-) {
-  const index = list.map((i) => {
-    return order.indexOf(item(i.type, i.name, i.params));
-  });
-
-  for (let i = 1; i < index.length; i++) {
-    if (index[i] <= index[i - 1]) {
-      return false;
-    }
-  }
-  return true;
-}
-
 /**
  * 期望特定的类的元信息收集正确的
  * Clazz: 想要校验的类
@@ -157,14 +112,12 @@ function clear() {
 }
 
 const _test_helper: {
-  expectInOrder: typeof expectInOrder;
   checkClassMetadataAsExpected: typeof checkClassMetadataAsExpected;
   checkMetadataForMetadataAsExpected: typeof checkMetadataForMetadataAsExpected;
   getMetadata: typeof getMetadata;
   getAllMetadata: typeof getAllMetadata;
   clear: typeof clear;
 } = {
-  expectInOrder,
   checkClassMetadataAsExpected,
   checkMetadataForMetadataAsExpected,
   getMetadata,

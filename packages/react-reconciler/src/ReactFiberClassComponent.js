@@ -9,6 +9,11 @@ import {get, NAME} from "shared";
 import { Update } from "./ReactFiberFlags";
 import { getApplication } from './coco-ioc-container/index';
 
+let didWarnAboutDirectlyAssigningPropsToState;
+if (__DEV__) {
+  didWarnAboutDirectlyAssigningPropsToState = new Set();
+}
+
 const classComponentUpdater = {
   enqueueSetState(inst, field, payload, callback) {
     const fiber = inst._reactInternals; // const fiber = getInstance(inst)
@@ -55,6 +60,29 @@ function mountClassInstance(
 
   initializeUpdateQueue(workInProgress)
 
+  if (__DEV__) {
+    const application = getApplication();
+    if (!application) {
+      console.error("没有注入application");
+      return;
+    }
+    const Reactive = application.getMetadataCls('Reactive');
+    const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
+    for (const field of fields) {
+      if (instance[field] === newProps) {
+        const componentName = ctor.name || 'Component';
+        if (!didWarnAboutDirectlyAssigningPropsToState.has(componentName)) {
+          didWarnAboutDirectlyAssigningPropsToState.add(componentName);
+          console.error(
+            '%s: It is not recommended to assign props directly to state ' +
+            "because updates to props won't be reflected in state. " +
+            'In most cases, it is better to use props directly.',
+            componentName,
+          );
+        }
+      }
+    }
+  }
   if (typeof instance.viewDidMount === 'function') {
     workInProgress.flags |= Update;
   }

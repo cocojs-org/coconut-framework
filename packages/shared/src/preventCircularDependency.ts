@@ -7,8 +7,6 @@ export const NAME = {
   isRenderPhase: 'isRenderPhase',
   enqueueSetState: 'enqueueSetState',
   scheduleUpdateOnFiber: 'scheduleUpdateOnFiber',
-  apply: 'apply',
-  exec: 'exec',
   Component: 'Component',
   throwException: 'throwException',
   dispatchEventForPluginEventSystem: 'dispatchEventForPluginEventSystem',

@@ -24,11 +24,11 @@ let consoleLogSpy
 describe('ReactDOMEventListener', () => {
   beforeEach(async () => {
     cocoMvc = (await import('coco-mvc'));
-    Application = (await import('coco-mvc')).Application;
-    view = (await import('coco-mvc')).view;
-    reactive = (await import('coco-mvc')).reactive;
-    ref = (await import('coco-mvc')).ref;
-    jsx = (await import('coco-mvc')).jsx;
+    Application = cocoMvc.Application;
+    view = cocoMvc.view;
+    reactive = cocoMvc.reactive;
+    ref = cocoMvc.ref;
+    jsx = cocoMvc.jsx;
     application = new Application();
     cocoMvc.registerApplication(application);
     consoleErrorSpy = jest.spyOn(console, 'error');
