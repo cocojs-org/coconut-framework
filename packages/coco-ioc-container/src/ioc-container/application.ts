@@ -144,6 +144,14 @@ class Application {
   private addFieldOrMethodDecoratorParams() {
     for (const Cls of get().keys()) {
       if (Object.getPrototypeOf(Cls) !== Metadata) {
+        /**
+         * todo 如果view组件的state需要用到props初始化的话，会导致报错，例如：
+         * class {
+         *   constructor(props){
+         *     this.name = props.name // 这里会报错
+         *   }
+         * }
+         */
         new Cls();
       }
     }
