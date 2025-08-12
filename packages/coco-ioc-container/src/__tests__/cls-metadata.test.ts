@@ -26,33 +26,26 @@ describe('decorator', () => {
     class Button {}
 
     application.start();
-    const asExpected =
-      cocoMvc._test_helper.iocContainer.checkClassMetadataAsExpected(Button, [
-        {
-          Metadata: Component,
-          fieldValues: { scope: Component.Scope.Singleton },
-        },
-      ]);
+    const asExpected = cocoMvc.checkClassMetadataAsExpected(Button, [
+      {
+        Metadata: Component,
+        fieldValues: { scope: Component.Scope.Singleton },
+      },
+    ]);
     expect(asExpected).toBe(true);
-    const r1 = cocoMvc._test_helper.iocContainer.checkClassMetadataAsExpected(
-      Target,
-      [
-        {
-          Metadata: Target,
-          fieldValues: { value: [Target.Type.Class] },
-        },
-      ]
-    );
+    const r1 = cocoMvc.checkClassMetadataAsExpected(Target, [
+      {
+        Metadata: Target,
+        fieldValues: { value: [Target.Type.Class] },
+      },
+    ]);
     expect(r1).toEqual(true);
-    const r2 = cocoMvc._test_helper.iocContainer.checkClassMetadataAsExpected(
-      Component,
-      [
-        {
-          Metadata: Target,
-          fieldValues: { value: [Target.Type.Class, Target.Type.Method] },
-        },
-      ]
-    );
+    const r2 = cocoMvc.checkClassMetadataAsExpected(Component, [
+      {
+        Metadata: Target,
+        fieldValues: { value: [Target.Type.Class, Target.Type.Method] },
+      },
+    ]);
     expect(r2).toEqual(true);
   });
 });

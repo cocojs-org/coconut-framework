@@ -1,5 +1,4 @@
 export * from './index.ts';
-import { register, NAME } from 'shared';
 import Metadata from './metadata/abstract/metadata';
 
 function isEqual(a: unknown, b: unknown) {
@@ -111,18 +110,4 @@ function clear() {
   clearPreventCircularDependency();
 }
 
-const _test_helper: {
-  checkClassMetadataAsExpected: typeof checkClassMetadataAsExpected;
-  checkMetadataForMetadataAsExpected: typeof checkMetadataForMetadataAsExpected;
-  getMetadata: typeof getMetadata;
-  getAllMetadata: typeof getAllMetadata;
-  clear: typeof clear;
-} = {
-  checkClassMetadataAsExpected,
-  checkMetadataForMetadataAsExpected,
-  getMetadata,
-  getAllMetadata,
-  clear,
-};
-
-export { _test_helper };
+export { checkClassMetadataAsExpected };

@@ -14,7 +14,7 @@ describe('router', () => {
     route = cocoMvc.route;
     page = cocoMvc.page;
     Application = cocoMvc.Application;
-    TestWebRender = cocoMvc._test_helper.render.TestWebRender;
+    TestWebRender = cocoMvc.TestWebRender;
     application = new Application({
       Render: {
         qualifier: 'TestWebRender',
