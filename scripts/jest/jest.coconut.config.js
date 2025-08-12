@@ -7,8 +7,10 @@ module.exports = {
   testEnvironment: 'jsdom',
   testMatch: ['**/__tests__/**/*.test.(ts|tsx)'],
   testPathIgnorePatterns: [
+    '<rootDir>/packages/react/',
     '<rootDir>/packages/react-dom/',
     '<rootDir>/packages/react-reconciler/',
+    '<rootDir>/packages/react-shared/',
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   transform: {

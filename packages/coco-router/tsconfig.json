@@ -7,6 +7,7 @@
     "outDir": "dts-tmp",
     "paths": {
       "coco-ioc-container": ["../coco-ioc-container"],
+      "coco-reactive": ["../coco-reactive"],
       "coco-render": ["../coco-render"],
       "shared": ["../shared"]
     }
@@ -15,6 +16,7 @@
   "exclude": ["src/__tests__"],
   "references": [
     { "path": "../coco-ioc-container" },
+    { "path": "../coco-reactive" },
     { "path": "../coco-render" },
     { "path": "../shared" }
   ]

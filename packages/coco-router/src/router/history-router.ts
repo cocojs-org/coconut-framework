@@ -1,5 +1,5 @@
 import router from '../decorator/router';
-import Route from '../metadata/route';
+import RouteMeta from '../metadata/route';
 import {
   type Application,
   constructorParam,
@@ -8,6 +8,7 @@ import {
 } from 'coco-ioc-container';
 import RouteComponentMapper from './route-component-mapper';
 import Router from './router';
+import Route from './route';
 import { Render } from 'coco-render';
 
 /**
@@ -22,12 +23,11 @@ class HistoryRouter extends Router {
   }
 
   handleRouteChange = () => {
-    this.pathname = window.location.pathname;
-    const { pageComponent, params } = this.routeComponentMapper.match(
-      this.pathname
-    );
+    const pathname = window.location.pathname;
+    const { pageComponent, params } = this.routeComponentMapper.match(pathname);
+    this.route.pathname = pathname;
+    this.route.params = params || {};
     if (pageComponent) {
-      this.params = params || {};
       this.render.render(pageComponent);
     } else {
       // todo 404 page
@@ -36,12 +36,13 @@ class HistoryRouter extends Router {
 
   @init()
   init(application: Application) {
-    const routeComponentMap = application.getByClassMetadata(Route) as Map<
+    const routeComponentMap = application.getByClassMetadata(RouteMeta) as Map<
       Class<any>,
-      Route
+      RouteMeta
     >;
     this.routeComponentMapper = new RouteComponentMapper();
     this.routeComponentMapper.init(routeComponentMap);
+    this.route = application.getComponent(Route);
   }
 
   @start()
