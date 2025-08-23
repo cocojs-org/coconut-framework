@@ -8,6 +8,12 @@ const internalPropsKey = '__reactProps$' + randomKey;
 const internalContainerInstanceKey = '__reactContainer$' + randomKey;
 const internalEventHandlersKey = '__reactEvents$' + randomKey;
 
+export function detachDeletedInstance(node) {
+  delete node[internalInstanceKey];
+  delete node[internalPropsKey];
+  delete node[internalEventHandlersKey];
+}
+
 export function precacheFiberNode(
   hostInst,
   node,

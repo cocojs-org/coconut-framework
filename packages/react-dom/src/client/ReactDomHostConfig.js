@@ -6,6 +6,7 @@ import {
   createElement,
 } from './ReactDomComponent';
 import { precacheFiberNode, updateFiberProps } from './ReactDomComponentTree';
+export {detachDeletedInstance} from './ReactDomComponentTree';
 import setTextContent from './setTextContent';
 import { getChildNamespace, getIntrinsicNamespace, HTML_NAMESPACE } from '../shared/DOMNamespaces';
 import { validateDOMNesting, updatedAncestorInfo } from './validateDOMNesting';

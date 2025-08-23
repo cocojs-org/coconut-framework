@@ -3,6 +3,7 @@ import { assign } from "react-shared";
 import { Callback, DidCapture, ShouldCapture } from './ReactFiberFlags';
 
 export const UpdateState = 0;
+export const ForceUpdate = 2;
 export const CaptureUpdate = 3;
 
 /**
@@ -118,6 +119,9 @@ function getStateFromUpdate(
       }
       return partialState;
     }
+    case ForceUpdate: {
+      return prevState;
+    }
   }
 }
 
@@ -176,6 +180,7 @@ export function processUpdateQueue(
       const {field} = update;
       const _newState = getStateFromUpdate(workInProgress, queue, update, newState, props, instance, field);
       if (field) {
+        // 更新特定的field
         newState = assign({}, newState, {[field]: _newState});
       } else {
         newState = assign({}, newState, _newState);

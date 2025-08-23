@@ -1,11 +1,11 @@
 import {beginWork} from "./ReactFiberBeginWork";
-import { HostEffectMask, Incomplete, NoFlags } from './ReactFiberFlags';
+import { HostEffectMask, Incomplete, NoFlags, PassiveMask } from './ReactFiberFlags';
 import {completeWork} from "./ReactFiberCompleteWork";
 import {unwindWork} from "./ReactFiberUnwindWork";
 import { scheduleCallback } from './Scheduler';
 import {createWorkInProgress} from "./ReactFiber";
 import {finishQueueingConcurrentUpdates} from "./ReactFiberConcurrentUpdate";
-import { commitLayoutEffects, commitMutationEffects } from './ReactFiberCommitWork';
+import { commitLayoutEffects, commitMutationEffects, commitPassiveUnmountEffects } from './ReactFiberCommitWork';
 import { get, NAME } from 'shared';
 import { flushSyncCallbacks, scheduleSyncCallback } from './ReactFiberSyncTaskQueue';
 
@@ -22,6 +22,9 @@ let workInProgress = null;
 
 let hasUncaughtError = false;
 let firstUncaughtError = null;
+
+let rootDoesHavePassiveEffects = false;
+let rootWithPendingPassiveEffects = null;
 
 function prepareToThrowUncaughtError(error) {
   if (!hasUncaughtError) {
@@ -160,15 +163,51 @@ function renderRootSync(root) {
 }
 
 function commitRootImpl(root) {
+  do {
+    flushPassiveEffects();
+  } while (rootWithPendingPassiveEffects !== null);
+
+  if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
+    throw new Error('Should not already be working.');
+  }
 
   const finishedWork = root.finishedWork;
   root.finishedWork = null;
 
+  if (
+    (finishedWork.subtreeFlags & PassiveMask) !== NoFlags ||
+    (finishedWork.flags & PassiveMask) === NoFlags
+  ) {
+    if (!rootDoesHavePassiveEffects) {
+      rootDoesHavePassiveEffects = true;
+      scheduleCallback('fakePriorityLevel', () => {
+        flushPassiveEffects();
+        // This render triggered passive effects: release the root cache pool
+        // *after* passive effects fire to avoid freeing a cache pool that may
+        // be referenced by a node in the tree (HostRoot, Cache boundary etc)
+        return null;
+      })
+    }
+  }
+
+  // The next phase is the mutation phase, where we mutate the host tree.
   commitMutationEffects(root, finishedWork)
 
+  // The work-in-progress tree is now the current tree. This must come after
+  // the mutation phase, so that the previous tree is still current during
+  // componentWillUnmount, but before the layout phase, so that the finished
+  // work is current during componentDidMount/Update.
   root.current = finishedWork;
 
   commitLayoutEffects(finishedWork, root);
+
+  if (rootDoesHavePassiveEffects) {
+    // This commit has passive effects. Stash a reference to them. But don't
+    // schedule a callback until after flushing layout work.
+    rootDoesHavePassiveEffects = false;
+    rootWithPendingPassiveEffects = root;
+  }
+
 
   if (hasUncaughtError) {
     hasUncaughtError = false;
@@ -239,6 +278,33 @@ export function scheduleUpdateOnFiber(
   ) {
     flushSyncCallbacks();
   }
+}
+
+export function flushPassiveEffects() {
+  if (rootWithPendingPassiveEffects !== null) {
+    return flushPassiveEffectsImpl();
+  }
+
+  return false;
+}
+
+function flushPassiveEffectsImpl() {
+  if (rootWithPendingPassiveEffects === null) {
+    return false;
+  }
+  const root = rootWithPendingPassiveEffects;
+  rootWithPendingPassiveEffects = null;
+
+  if ((executionContext & (RenderContext | CommitContext)) !== NoContext) {
+    throw new Error('Cannot flush passive effects while already rendering.');
+  }
+
+  const prevExecutionContext = executionContext;
+  executionContext |= CommitContext;
+
+  commitPassiveUnmountEffects(root.current);
+
+  executionContext = prevExecutionContext;
 }
 
 export function isRenderPhase() {

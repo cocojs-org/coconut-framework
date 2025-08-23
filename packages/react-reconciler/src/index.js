@@ -8,7 +8,7 @@ import { reference } from './ReactFiberThrow';
 reference();
 
 export { classComponentUpdater, flushSync, batchedUpdates, updateContainer, createContainer, getPublicRootInstance, findHostInstance, finishQueueingConcurrentUpdates, isRenderPhase }
-export { registerApplication, unregisterApplication } from './coco-ioc-container/index'
+export { registerApplication, unregisterApplication } from './coco-mvc/application.js'
 
 register(NAME.isRenderPhase, isRenderPhase);
 register(NAME.scheduleUpdateOnFiber, scheduleUpdateOnFiber);

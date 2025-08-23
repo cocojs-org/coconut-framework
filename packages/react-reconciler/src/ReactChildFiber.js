@@ -1,5 +1,5 @@
 import {createFiberFromElement, createFiberFromText, createWorkInProgress} from "./ReactFiber";
-import {Deletion, Forked, Placement} from "./ReactFiberFlags";
+import { ChildDeletion, Forked, Placement} from "./ReactFiberFlags";
 import {REACT_ELEMENT_TYPE} from "react-shared";
 import {HostText} from "./ReactWorkTags";
 
@@ -43,7 +43,7 @@ function ChildReconciler(shouldTrackSideEffects) {
     const deletions = returnFiber.deletions;
     if (deletions === null) {
       returnFiber.deletions = [childToDelete];
-      returnFiber.flags |= Deletion;
+      returnFiber.flags |= ChildDeletion;
     } else {
       deletions.push(childToDelete);
     }

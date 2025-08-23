@@ -72,6 +72,12 @@ function bubbleProperties(completedWork) {
   while (child !== null) {
     subtreeFlags |= child.subtreeFlags;
     subtreeFlags |= child.flags;
+
+    // Update the return pointer so the tree is consistent. This is a code
+    // smell because it assumes the commit phase is never concurrent with
+    // the render phase. Will address during refactor to alternate model.
+    child.return = completedWork;
+
     child = child.sibling;
   }
   completedWork.subtreeFlags |= subtreeFlags;

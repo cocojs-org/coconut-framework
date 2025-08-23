@@ -1,6 +1,5 @@
 /**
- * reconciler需要调用ioc容器的能力创建组件，而不是简单的实例化
- * 为了不破坏react reconciler整体的代码结构，所以额外新增了一个文件
+ * 提供当前应用实例，方便reconciler获取元数据和装饰器参数
  */
 let _application = null;
 

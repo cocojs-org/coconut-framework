@@ -6,3 +6,5 @@ export { default as Store } from './metadata/store';
 export { default as store } from './decorator/store';
 export { default as ReactiveAutowired } from './metadata/reactive-autowired';
 export { default as reactiveAutowired } from './decorator/reactive-autowired';
+export { default as StorePublisher } from './reactive-autowired/store-publisher';
+export { default as StoreSubscriber } from './reactive-autowired/store-subscriber';

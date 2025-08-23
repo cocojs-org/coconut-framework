@@ -7,8 +7,9 @@ import {
 } from './ReactFiberClassUpdateQueue';
 import {get, NAME} from "shared";
 import { Update } from "./ReactFiberFlags";
-import { getApplication } from './coco-ioc-container/index';
+import { getApplication } from './coco-mvc/application';
 import { isMounted } from './ReactFiberTreeReflection';
+import { connectStore } from './coco-mvc/autowired';
 
 let didWarnAboutDirectlyAssigningPropsToState;
 if (__DEV__) {
@@ -36,6 +37,18 @@ const classComponentUpdater = {
         scheduleUpdateOnFiber(root, fiber);
       }
     }
+  },
+  enqueueForceUpdate(inst, callback) {
+    const fiber = inst._reactInternals; // const fiber = getInstance(inst)
+    const update = createUpdate();
+    update.tag = ForceUpdate;
+    const root = enqueueUpdate(fiber, update);
+    if (root !== null) {
+      const scheduleUpdateOnFiber = get(NAME.scheduleUpdateOnFiber);
+      if (scheduleUpdateOnFiber) {
+        scheduleUpdateOnFiber(root, fiber);
+      }
+    }
   }
 }
 
@@ -55,6 +68,7 @@ function constructClassInstance(workInProgress, ctor, props) {
     return prev;
   }, {})
   adoptClassInstance(workInProgress, instance);
+  connectStore(ctor, instance);
 
   return instance;
 }

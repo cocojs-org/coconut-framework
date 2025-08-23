@@ -1,5 +1,5 @@
 import {ClassComponent, HostComponent, HostRoot, HostText} from "./ReactWorkTags";
-import { ContentReset, LayoutMask, MutationMask, NoFlags, Placement, Ref, Update } from './ReactFiberFlags';
+import { ChildDeletion, ContentReset, LayoutMask, MutationMask, NoFlags, Passive, PassiveMask, Placement, Ref, Update } from './ReactFiberFlags';
 import {
   resetTextContent,
   commitTextUpdate,
@@ -7,8 +7,11 @@ import {
   removeChild,
   removeChildFromContainer,
   commitMount,
+  detachDeletedInstance,
 } from "react-dom-ReactFiberHostConfig";
 import { commitUpdateQueue } from './ReactFiberClassUpdateQueue';
+import { deletedTreeCleanUpLevel } from 'react-shared'
+import { disconnectStore } from './coco-mvc/autowired';
 
 let nextEffect = null;
 let inProgressRoot = null;
@@ -44,6 +47,7 @@ function getHostSibling(fiber) {
     }
   }
 }
+
 const callComponentWillUnmountWithTimer = function(current, instance) {
   instance.viewWillUnmount();
 };
@@ -147,6 +151,8 @@ function recursivelyTraverseDeletionEffects(finishedRoot, nearestMountedAncestor
 function commitDeletionEffectsOnFiber(finishedRoot, nearestMountedAncestor, deletedFiber) {
   switch (deletedFiber.tag) {
     case HostComponent:
+      safelyDetachRef(deletedFiber);
+      // Intentional fallthrough to next branch
     case HostText:
       const prevHostParent = hostParent;
       const prevHostParentIsContainer = hostParentIsContainer;
@@ -163,7 +169,9 @@ function commitDeletionEffectsOnFiber(finishedRoot, nearestMountedAncestor, dele
       }
       return;
     case ClassComponent: {
+      safelyDetachRef(deletedFiber);
       const instance = deletedFiber.stateNode;
+      disconnectStore(instance);
       if (typeof instance.viewWillUnmount === 'function') {
         safelyCallComponentWillUnmount(
           deletedFiber,
@@ -217,6 +225,8 @@ function commitPlacement(finishedWork) {
 }
 
 function recursivelyTraverseMutationEffects(root, parentFiber) {
+  // Deletions effects can be scheduled on any fiber type. They need to happen
+  // before the children effects hae fired.
   const deletions = parentFiber.deletions;
   if (deletions !== null) {
     for (let i = 0; i < deletions.length; i++) {
@@ -243,6 +253,7 @@ function commitReconciliationEffects(finishedWork) {
     finishedWork.flags &= ~Placement
   }
 }
+
 function commitMutationEffectsOnFiber(
   finishedWork,
   root
@@ -253,6 +264,12 @@ function commitMutationEffectsOnFiber(
     case HostComponent: {
       recursivelyTraverseMutationEffects(root, finishedWork)
       commitReconciliationEffects(finishedWork)
+
+      if (flags & Ref) {
+        if (current !== null) {
+          safelyDetachRef(current);
+        }
+      }
 
       if (finishedWork.flags & ContentReset) {
         const instance = finishedWork.stateNode;
@@ -291,6 +308,12 @@ function commitMutationEffectsOnFiber(
     case ClassComponent: {
       recursivelyTraverseMutationEffects(root, finishedWork)
       commitReconciliationEffects(finishedWork)
+
+      if (flags & Ref) {
+        if (current !== null) {
+          safelyDetachRef(current);
+        }
+      }
       return
     }
     case HostText: {
@@ -424,6 +447,198 @@ function commitLayoutEffectOnFiber(
   }
 }
 
+export function commitPassiveUnmountEffects(childFiber) {
+  nextEffect = childFiber;
+  commitPassiveUnmountEffects_begin()
+}
+
+function commitPassiveUnmountEffects_begin() {
+  while (nextEffect !== null) {
+    const fiber = nextEffect;
+    const child = fiber.child;
+
+    if ((nextEffect.flags & ChildDeletion) !== NoFlags) {
+      const deletions = fiber.deletions;
+      if (deletions !== null) {
+        for (let i = 0; i < deletions.length; i ++) {
+          const fiberToDelete = deletions[i];
+          nextEffect = fiberToDelete;
+          commitPassiveUnmountEffectsInsideOfDeleteTree_begin(
+            fiberToDelete,
+            fiber
+          )
+        }
+
+        if (deletedTreeCleanUpLevel >= 1) {
+          // A fiber was deleted from this parent fiber, but it's still part of
+          // the previous (alternate) parent fiber's list of children. Because
+          // children are a linked list, an earlier sibling that's still alive
+          // will be connected to the deleted fiber via its `alternate`:
+          //
+          //   live fiber
+          //   --alternate--> previous live fiber
+          //   --sibling--> deleted fiber
+          //
+          // We can't disconnect `alternate` on nodes that haven't been deleted
+          // yet, but we can disconnect the `sibling` and `child` pointers.
+          const previousFiber = fiber.alternate;
+          if (previousFiber !== null) {
+            let detachedChild = previousFiber.child;
+            if (detachedChild !== null) {
+              previousFiber.child = null;
+              do {
+                const detachedSibling = detachedChild.sibling;
+                detachedChild.sibling = null;
+                detachedChild = detachedSibling;
+              } while (detachedChild !== null);
+            }
+          }
+        }
+
+        nextEffect = fiber;
+      }
+    }
+
+    if ((fiber.subtreeFlags & PassiveMask) !== NoFlags && child !== null) {
+      child.return = fiber;
+      nextEffect = child;
+    } else {
+      commitPassiveUnmountEffects_complete()
+    }
+  }
+}
+
+function commitPassiveUnmountEffects_complete() {
+  while (nextEffect !== null) {
+    const fiber = nextEffect;
+    if ((fiber.flags & Passive) !== NoFlags) {
+      commitPassiveUnmountOnFiber(fiber);
+    }
+
+    const sibling = fiber.sibling;
+    if (sibling !== null) {
+      sibling.return = fiber.return;
+      nextEffect = sibling;
+      return;
+    }
+
+    nextEffect = fiber.return;
+  }
+}
+
+function commitPassiveUnmountOnFiber(fiber) {
+  // coco 因为我们没有函数组件，所以是一个空函数
+}
+
+function commitPassiveUnmountEffectsInsideOfDeleteTree_begin(
+  deletedSubtreeRoot,
+  nearestMountedAncestor
+) {
+  while (nextEffect !== null) {
+    const fiber = nextEffect;
+    commitPassiveUnmountInsideDeletedTreeOnFiber(fiber, nearestMountedAncestor);
+
+    const child = fiber.child;
+    if (child !== null) {
+      child.return = fiber;
+      nextEffect = child;
+    } else {
+      commitPassiveUnmountEffectsInsideOfDeleteTree_complete(
+        deletedSubtreeRoot,
+      )
+    }
+  }
+}
+
+function commitPassiveUnmountInsideDeletedTreeOnFiber(
+  current,
+  nearestMountedAncestor,
+) {
+  // coco 我们没有函数组件，所以是一个空函数
+}
+
+function commitPassiveUnmountEffectsInsideOfDeleteTree_complete(
+  deletedSubtreeRoot,
+) {
+  while (nextEffect !== null) {
+    const fiber = nextEffect;
+    const sibling = fiber.sibling;
+    const returnFiber = fiber.return;
+
+    if (deletedTreeCleanUpLevel >= 2) {
+      detachFiberAfterEffects(fiber);
+      if (fiber === deletedSubtreeRoot) {
+        nextEffect = null;
+        return;
+      }
+    }
+
+    if (sibling !== null) {
+      sibling.return = returnFiber;
+      nextEffect = sibling;
+      return;
+    }
+
+    nextEffect = returnFiber;
+  }
+}
+
+function detachFiberAfterEffects(fiber) {
+  const alternate = fiber.alternate;
+  if (alternate !== null) {
+    fiber.alternate = null;
+    detachFiberAfterEffects(alternate);
+  }
+
+  // Clear cyclical Fiber fields. This level alone is designed to roughly
+  // approximate the planned Fiber refactor. In that world, `setState` will be
+  // bound to a special "instance" object instead of a Fiber. The Instance
+  // object will not have any of these fields. It will only be connected to
+  // the fiber tree via a single link at the root. So if this level alone is
+  // sufficient to fix memory issues, that bodes well for our plans.
+  fiber.child = null;
+  fiber.deletions = null;
+  fiber.sibling = null;
+
+  // The `stateNode` is cyclical because on host nodes it points to the host
+  // tree, which has its own pointers to children, parents, and siblings.
+  // The other host nodes also point back to fibers, so we should detach that
+  // one, too.
+  if (fiber.tag === HostComponent) {
+    const hostInstance = fiber.stateNode;
+    if (hostInstance !== null) {
+      detachDeletedInstance(hostInstance);
+    }
+  }
+  fiber.sibling = null;
+
+  if (deletedTreeCleanUpLevel >= 3) {
+    // Theoretically, nothing in here should be necessary, because we already
+    // disconnected the fiber from the tree. So even if something leaks this
+    // particular fiber, it won't leak anything else
+    //
+    // The purpose of this branch is to be super aggressive so we can measure
+    // if there's any difference in memory impact. If there is, that could
+    // indicate a React leak we don't know about.
+    fiber.return = null;
+    fiber.memoizedProps = null;
+    fiber.memoizedState = null;
+    fiber.pendingProps = null;
+    fiber.stateNode = null;
+    fiber.updateQueue = null;
+  }
+}
+
+
+function safelyAttachRef(current) {
+  try {
+    commitAttachRef(current);
+  } catch(err) {
+    // captureCommitPhaseError(current, nearestMountedAncestor, error);
+    console.error(err)
+  }
+}
+
 function commitAttachRef(finishedWork) {
   const ref = finishedWork.ref;
   if (ref !== null) {
@@ -432,6 +647,23 @@ function commitAttachRef(finishedWork) {
       ref(instanceToUse)
     } else {
       ref.current = instanceToUse;
+    }
+  }
+}
+
+function safelyDetachRef(current) {
+  const ref = current.ref;
+  if (ref !== null) {
+    if (typeof ref === 'function') {
+      let retVal;
+      try {
+        retVal = ref(null);
+      } catch (err) {
+        // todo captureCommitPhaseError(current, nearestMountedAncestor, error);
+        console.error(err)
+      }
+    } else {
+      ref.current = null;
     }
   }
 }
