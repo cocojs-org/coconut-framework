@@ -1,4 +1,4 @@
-import type StoreSubscriber from './store-subscriber.ts';
+import type StoreSubscriber from './store-subscriber';
 
 let id = 0;
 

@@ -6,5 +6,5 @@ export { default as Store } from './metadata/store';
 export { default as store } from './decorator/store';
 export { default as Publisher } from './memoized/publisher';
 export { default as Subscriber } from './memoized/subscriber';
-export { default as StorePublisher } from './reactive-autowired/store-publisher';
-export { default as StoreSubscriber } from './reactive-autowired/store-subscriber';
+export { default as StorePublisher } from './memoized/store-publisher';
+export { default as StoreSubscriber } from './memoized/store-subscriber';

@@ -6,7 +6,7 @@ import {
   Target,
   type Application,
 } from 'coco-ioc-container';
-import StorePublisher from '../reactive-autowired/store-publisher.ts';
+import StorePublisher from '../memoized/store-publisher.ts';
 import Publisher from '../memoized/publisher.ts';
 import Subscriber from '../memoized/subscriber.ts';
 
