@@ -12,9 +12,14 @@ let warnedAutowiredSameStoreInOneComponentMultipleTimes;
  */
 function connectStore(ctor, instance) {
   const application = getApplication();
-  const ReactiveAutowired = application.getMetadataCls('ReactiveAutowired');
-  const reactiveAutowiredFields = application.listFieldByMetadataCls(ctor, ReactiveAutowired, true);
-  const stores = reactiveAutowiredFields.map(field => instance[field]);
+  // 找到所有的注入
+  const Autowired = application.getMetadataCls('Autowired');
+  const autowiredFields = application.listFieldByMetadataCls(ctor, Autowired, true);
+  const autowiredComponents = autowiredFields.map(field => instance[field]);
+  const Store = application.getMetadataCls('Store');
+  // 过滤出所有注入的store
+  const stores = autowiredComponents.filter(comp => application.findClassMetadata(comp.constructor, Store));
+  // store去重
   const uniqueStores = stores.filter((s, idx) => {
     const index = stores.indexOf(s);
     if (__DEV__) {
@@ -23,7 +28,6 @@ function connectStore(ctor, instance) {
         console.warn('%s组件中多次注入%s，只需要注入一次就够了。', ctor.name, s.constructor?.name);
       }
     }
-    // 去重
     return index === idx;
   });
   if (uniqueStores.length > 0) {

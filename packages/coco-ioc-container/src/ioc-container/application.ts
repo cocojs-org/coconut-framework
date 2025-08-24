@@ -11,6 +11,7 @@ import {
   listBeDecoratedClsByClassMetadata,
   listBeDecoratedClsByFieldMetadata,
   listFieldMetadata,
+  findClassMetadata,
   listFieldByMetadataCls,
   metadataClsCollection,
 } from './metadata';
@@ -137,6 +138,7 @@ class Application {
   }
 
   public listFieldByMetadataCls = listFieldByMetadataCls;
+  public findClassMetadata = findClassMetadata;
 
   /**
    * 实例化所有业务类（非元数据类），拿到field和method装饰器参数

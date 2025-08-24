@@ -13,7 +13,7 @@ let application;
 let cocoMvc;
 let view;
 let store;
-let reactiveAutowired;
+let autowired;
 let memoized;
 let bind;
 let consoleWarnSpy;
@@ -23,7 +23,7 @@ describe('store', () => {
     cocoMvc = await import('coco-mvc');
     view = cocoMvc.view;
     store = cocoMvc.store;
-    reactiveAutowired = cocoMvc.reactiveAutowired;
+    autowired = cocoMvc.autowired;
     memoized = cocoMvc.memoized;
     bind = cocoMvc.bind;
     Application = cocoMvc.Application;
@@ -47,7 +47,7 @@ describe('store', () => {
 
     @view()
     class Detail {
-      @reactiveAutowired()
+      @autowired()
       userInfo: UserInfo;
 
       render() {
@@ -57,7 +57,7 @@ describe('store', () => {
 
     @view()
     class Form {
-      @reactiveAutowired()
+      @autowired()
       userInfo: UserInfo;
 
       render() {
@@ -80,7 +80,7 @@ describe('store', () => {
 
     @view()
     class Detail {
-      @reactiveAutowired()
+      @autowired()
       userInfo: UserInfo;
 
       render() {
@@ -90,7 +90,7 @@ describe('store', () => {
 
     @view()
     class Form {
-      @reactiveAutowired()
+      @autowired()
       userInfo: UserInfo;
 
       handleClick = () => {
@@ -130,7 +130,7 @@ describe('store', () => {
 
     @view()
     class Detail {
-      @reactiveAutowired()
+      @autowired()
       userInfo: UserInfo;
 
       @memoized()
@@ -145,7 +145,7 @@ describe('store', () => {
 
     @view()
     class Form {
-      @reactiveAutowired()
+      @autowired()
       userInfo: UserInfo;
 
       handleClick = () => {
@@ -185,7 +185,7 @@ describe('store', () => {
 
     @view()
     class Detail {
-      @reactiveAutowired()
+      @autowired()
       userInfo: UserInfo;
 
       label() {
@@ -199,7 +199,7 @@ describe('store', () => {
 
     @view()
     class Form {
-      @reactiveAutowired()
+      @autowired()
       userInfo: UserInfo;
 
       label() {
@@ -248,10 +248,10 @@ describe('store', () => {
 
     @view()
     class Detail {
-      @reactiveAutowired()
+      @autowired()
       userInfo: UserInfo;
 
-      @reactiveAutowired()
+      @autowired()
       userInfo1: UserInfo;
 
       render() {
