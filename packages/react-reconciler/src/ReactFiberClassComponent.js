@@ -10,6 +10,7 @@ import { Update } from "./ReactFiberFlags";
 import { getApplication } from './coco-mvc/application';
 import { isMounted } from './ReactFiberTreeReflection';
 import { connectStore } from './coco-mvc/autowired';
+import { initProps, updateProps } from './coco-mvc/props';
 
 let didWarnAboutDirectlyAssigningPropsToState;
 if (__DEV__) {
@@ -79,7 +80,7 @@ function mountClassInstance(
   newProps
 ) {
   const instance = workInProgress.stateNode;
-  instance.props = newProps;
+  initProps(instance, newProps);
 
   initializeUpdateQueue(workInProgress)
 
@@ -123,7 +124,7 @@ function updateClassInstance(
   processUpdateQueue(workInProgress, newProps, instance);
   newState = workInProgress.memoizedState;
 
-  instance.props = newProps;
+  updateProps(instance, newProps);
   const application = getApplication();
   const Reactive = application.getMetadataCls('Reactive');
   const fields = application.listFieldByMetadataCls(ctor, Reactive, true);

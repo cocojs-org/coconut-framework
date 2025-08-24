@@ -1,6 +1,7 @@
 import { REACT_ELEMENT_TYPE } from 'react-shared';
 
 const RESERVED_PROPS = {
+  key: true,
   ref: true,
 };
 
