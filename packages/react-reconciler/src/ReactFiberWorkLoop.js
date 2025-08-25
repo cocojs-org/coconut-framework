@@ -306,7 +306,3 @@ function flushPassiveEffectsImpl() {
 
   executionContext = prevExecutionContext;
 }
-
-export function isRenderPhase() {
-  return (executionContext & RenderContext) !== NoContext;
-}

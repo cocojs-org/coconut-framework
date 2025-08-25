@@ -129,7 +129,7 @@ function updateClassInstance(
   const Reactive = application.getMetadataCls('Reactive');
   const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
   for (const field of fields) {
-    instance[field] = newState[field]
+    instance[`_setter_${field}`] = newState[field]
   }
 
   // todo 新旧state对比，新旧props对比，判断是否需要update

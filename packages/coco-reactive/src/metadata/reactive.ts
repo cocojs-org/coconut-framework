@@ -1,37 +1,23 @@
 import { type Application, Metadata, target, Target } from 'coco-ioc-container';
 import Publisher from '../memoized/publisher';
 import Subscriber from '../memoized/subscriber';
-import { get, NAME } from 'shared';
 
-export function customPostConstruct(hooks?: {
-  /**
-   * 自定义初始化工作，返回值作为参数传递给其他的hook
-   */
-  init?: (
-    metadata: Reactive,
-    application: Application,
-    name: string,
-    enqueueSetState: (v: any) => void
-  ) => any;
-  // 值的初始化
-  initValue?: (initRtn: any) => any;
-  // 在获取值之前
-  preGetter?: (initRtn: any) => void;
-  // 在排队操作之前
-  preEnqueueSetUpdate?: (initRtn: any) => void;
-  // 自定义的排队
-  enqueueSetState?: (initRtn: any, v: any) => void;
-}) {
-  return function postConstruct(
+let didWarnedReadValueFromUnderscoreName = false;
+
+const setterPrefix = '_setter_';
+/**
+ * 加在field表明是响应式
+ * 加在metadata上用于自定义reactive元数据
+ * @public
+ */
+@target([Target.Type.Field, Target.Type.Class])
+class Reactive extends Metadata {
+  static postConstruct(
     metadata: Reactive,
     application: Application,
     name: string
   ) {
-    const enqueueSetState = (v: any) => {
-      this.updater.enqueueSetState(this, name, v);
-    };
-    const initRtn = hooks?.init?.(metadata, application, name, enqueueSetState);
-    let _value: any = hooks?.initValue ? hooks.initValue(initRtn) : this[name];
+    let _value: any = this[name];
     const publisher = new Publisher(name);
     Object.defineProperty(this, name, {
       configurable: false,
@@ -40,32 +26,39 @@ export function customPostConstruct(hooks?: {
         if (Subscriber.Executing) {
           Subscriber.Executing.subscribe(publisher);
         }
-        hooks?.preGetter?.(initRtn);
         return _value;
       },
       set(v: any): boolean {
-        if (get(NAME.isRenderPhase)?.()) {
-          _value = v;
-        } else {
-          publisher.notify();
-          hooks?.preEnqueueSetUpdate?.(initRtn);
-          hooks?.enqueueSetState
-            ? hooks.enqueueSetState(initRtn, v)
-            : enqueueSetState(v);
+        if (_value === v || (v !== v && _value !== _value)) {
+          return true;
         }
+        publisher.notify();
+        this.updater.enqueueSetState(this, name, v);
         return true;
       },
     });
-  };
-}
-/**
- * 加在field表明是响应式
- * 加在metadata上用于自定义reactive元数据
- * @public
- */
-@target([Target.Type.Field, Target.Type.Class])
-class Reactive extends Metadata {
-  static postConstruct = customPostConstruct();
+
+    // 使用单独的field名称来更新this.name
+    Object.defineProperty(this, `${setterPrefix}${name}`, {
+      configurable: false,
+      enumerable: false,
+      get: function () {
+        if (__DEV__) {
+          if (!didWarnedReadValueFromUnderscoreName) {
+            didWarnedReadValueFromUnderscoreName = true;
+            console.error(
+              `${setterPrefix}${name}仅仅用于更新${name}，想要取值直接使用this.${name}即可`
+            );
+          }
+        }
+        return _value;
+      },
+      set(v: any): boolean {
+        _value = v;
+        return true;
+      },
+    });
+  }
 }
 
 export default Reactive;

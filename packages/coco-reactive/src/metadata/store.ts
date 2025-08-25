@@ -41,6 +41,12 @@ class Store extends Metadata {
           return _values[field];
         },
         set(v: any): boolean {
+          if (
+            _values[field] === v ||
+            (v !== v && _values[field] !== _values[field])
+          ) {
+            return true;
+          }
           _values[field] = v;
           publisher.notify();
           storePublisher.broadcast();

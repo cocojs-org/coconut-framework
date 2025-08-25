@@ -4,7 +4,6 @@
  */
 const map = new Map();
 export const NAME = {
-  isRenderPhase: 'isRenderPhase',
   scheduleUpdateOnFiber: 'scheduleUpdateOnFiber',
   Component: 'Component',
   throwException: 'throwException',
