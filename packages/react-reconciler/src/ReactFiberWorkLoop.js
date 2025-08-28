@@ -176,7 +176,7 @@ function commitRootImpl(root) {
 
   if (
     (finishedWork.subtreeFlags & PassiveMask) !== NoFlags ||
-    (finishedWork.flags & PassiveMask) === NoFlags
+    (finishedWork.flags & PassiveMask) !== NoFlags
   ) {
     if (!rootDoesHavePassiveEffects) {
       rootDoesHavePassiveEffects = true;
@@ -222,6 +222,8 @@ function commitRoot(root) {
 }
 
 function performSyncWorkOnRoot(root) {
+  flushPassiveEffects();
+
   renderRootSync(root)
 
   const finishedWork = root.current.alternate;

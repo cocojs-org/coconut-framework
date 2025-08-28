@@ -311,6 +311,13 @@ function ChildReconciler(shouldTrackSideEffects) {
         }
         break;
       }
+      if (shouldTrackSideEffects) {
+        if (oldFiber && newFiber.alternate === null) {
+          // We matched the slot, but we didn't reuse the existing fiber, so we
+          // need to delete the existing child.
+          deleteChild(returnFiber, oldFiber);
+        }
+      }
       lastPlacedIndex = placeChild(newFiber, lastPlacedIndex, newIdx);
       if (previousNewFiber === null) {
         resultingFirstChild = newFiber;
@@ -328,7 +335,7 @@ function ChildReconciler(shouldTrackSideEffects) {
 
     if (oldFiber === null) {
       for (; newIdx < newChildren.length; newIdx++){
-        let newFiber = createChild(returnFiber, newChildren[newIdx], newIdx);
+        const newFiber = createChild(returnFiber, newChildren[newIdx]);
         if (newFiber === null) {
           continue;
         }

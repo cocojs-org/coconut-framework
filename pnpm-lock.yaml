@@ -230,8 +230,6 @@ importers:
 
   packages/shared: {}
 
-  packages/test: {}
-
 packages:
   /@alloc/quick-lru@5.2.0:
     resolution:
