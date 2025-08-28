@@ -132,6 +132,7 @@ dist
 # coco-mvc
 **/.coco
 **/dts-tmp
+**/tsconfig.tsbuildinfo
 .rollup.cache
 
 # ide
