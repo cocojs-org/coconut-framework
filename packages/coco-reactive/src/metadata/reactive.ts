@@ -1,10 +1,10 @@
 import { type Application, Metadata, target, Target } from 'coco-ioc-container';
 import Publisher from '../memoized/publisher';
 import Subscriber from '../memoized/subscriber';
+import { reactiveSetterField } from 'shared';
 
 let didWarnedReadValueFromUnderscoreName = false;
 
-const setterPrefix = '_setter_';
 /**
  * 加在field表明是响应式
  * 加在metadata上用于自定义reactive元数据
@@ -39,7 +39,7 @@ class Reactive extends Metadata {
     });
 
     // 使用单独的field名称来更新this.name
-    Object.defineProperty(this, `${setterPrefix}${name}`, {
+    Object.defineProperty(this, reactiveSetterField(name), {
       configurable: false,
       enumerable: false,
       get: function () {
@@ -47,7 +47,7 @@ class Reactive extends Metadata {
           if (!didWarnedReadValueFromUnderscoreName) {
             didWarnedReadValueFromUnderscoreName = true;
             console.error(
-              `${setterPrefix}${name}仅仅用于更新${name}，想要取值直接使用this.${name}即可`
+              `${reactiveSetterField(name)}仅仅用于更新${name}，想要取值直接使用this.${name}即可`
             );
           }
         }

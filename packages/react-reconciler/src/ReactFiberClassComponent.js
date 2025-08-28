@@ -11,6 +11,7 @@ import { getApplication } from './coco-mvc/application';
 import { isMounted } from './ReactFiberTreeReflection';
 import { connectStore } from './coco-mvc/autowired';
 import { initProps, updateProps } from './coco-mvc/props';
+import { reactiveSetterField } from 'shared';
 
 let didWarnAboutDirectlyAssigningPropsToState;
 if (__DEV__) {
@@ -129,10 +130,10 @@ function updateClassInstance(
   const Reactive = application.getMetadataCls('Reactive');
   const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
   for (const field of fields) {
-    instance[`_setter_${field}`] = newState[field]
+    instance[reactiveSetterField(field)] = newState[field]
   }
 
-  // todo 新旧state对比，新旧props对比，判断是否需要update
+  // TODO: 新旧state对比，新旧props对比，判断是否需要update
 
   if (typeof instance.viewDidUpdate === 'function') {
     workInProgress.flags |= Update;
