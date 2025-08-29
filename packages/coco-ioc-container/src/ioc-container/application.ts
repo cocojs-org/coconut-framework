@@ -27,18 +27,18 @@ import {
   genFieldPostConstruct,
   genMethodPostConstruct,
 } from './ioc-component-definition';
-import Metadata from '../metadata/abstract/metadata';
+import Metadata from '../decorator/metadata/abstract/metadata';
 import { KindClass, KindField, KindMethod } from './decorator-context';
-import Component from '../metadata/component';
-import type { Scope } from '../metadata/component';
+import Component from '../decorator/metadata/component';
+import type { Scope } from '../decorator/metadata/component';
 import {
   isChildClass,
   isPlainObject,
   lowercaseFirstLetter,
 } from '../share/util';
-import Configuration from '../metadata/configuration';
-import ConstructorParam from '../metadata/constructor-param';
-import { Init, Start, Target, Qualifier } from '../metadata/index';
+import Configuration from '../decorator/metadata/configuration';
+import ConstructorParam from '../decorator/metadata/constructor-param';
+import { Init, Start, Target, Qualifier } from '../decorator/metadata/index';
 import PropertiesConfig from './properties-config';
 
 /**

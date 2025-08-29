@@ -22,18 +22,18 @@ describe('decorator', () => {
   });
 
   test('类的postConstruct调用是从下往上的', async () => {
-    class A extends Metadata {
-      static postConstruct() {
+    class A extends Metadata {}
+    const a = cocoMvc.createDecoratorExp(A, {
+      postConstruct: function () {
         mockFn('a');
-      }
-    }
-    const a = cocoMvc.createDecoratorExp(A);
-    class B extends Metadata {
-      static postConstruct() {
+      },
+    });
+    class B extends Metadata {}
+    const b = cocoMvc.createDecoratorExp(B, {
+      postConstruct: function () {
         mockFn('b');
-      }
-    }
-    const b = cocoMvc.createDecoratorExp(B);
+      },
+    });
 
     @a()
     @b()

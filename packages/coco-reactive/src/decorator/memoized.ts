@@ -1,6 +1,19 @@
-import { createDecoratorExp, type Decorator } from 'coco-ioc-container';
-import Memoized from '../metadata/memoized';
+import {
+  createDecoratorExp,
+  type Decorator,
+  type Application,
+} from 'coco-ioc-container';
+import Memoized from './metadata/memoized';
+import Subscriber from '../memoized/subscriber';
 
-export default createDecoratorExp(
-  Memoized
-) as () => Decorator<ClassMethodDecoratorContext>;
+export default createDecoratorExp(Memoized, {
+  postConstruct: function (
+    metadata: Memoized,
+    application: Application,
+    field?: string
+  ) {
+    const fn = this[field];
+    const subscriber = new Subscriber(fn.bind(this));
+    this[field] = subscriber.memoizedFn;
+  },
+}) as () => Decorator<ClassMethodDecoratorContext>;

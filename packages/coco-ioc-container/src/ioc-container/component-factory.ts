@@ -4,7 +4,7 @@ import IocComponentDefinition, {
   type MethodPostConstruct,
   PostConstruct,
 } from './ioc-component-definition';
-import Component, { Scope } from '../metadata/component';
+import Component, { Scope } from '../decorator/metadata/component';
 import { findClassMetadata } from './metadata';
 import type Application from './application';
 import { KindClass, KindField, KindMethod } from './decorator-context';

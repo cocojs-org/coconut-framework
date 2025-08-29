@@ -6,7 +6,7 @@ import {
   createDecoratorExp,
   type Decorator,
 } from '../ioc-container/create-decorator-exp';
-import Component, { Scope } from '../metadata/component';
+import Component, { Scope } from './metadata/component';
 
 export default createDecoratorExp(Component) as (
   scope?: Scope

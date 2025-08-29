@@ -1,21 +1,24 @@
-export { default as Metadata } from './metadata/abstract/metadata';
-export { default as Autowired } from './metadata/autowired';
+export { default as Metadata } from './decorator/metadata/abstract/metadata';
+export { default as Autowired } from './decorator/metadata/autowired';
 export { default as autowired } from './decorator/autowired';
-export { default as Component, type Scope } from './metadata/component';
+export {
+  default as Component,
+  type Scope,
+} from './decorator/metadata/component';
 export { default as component } from './decorator/component';
-export { default as Configuration } from './metadata/configuration';
+export { default as Configuration } from './decorator/metadata/configuration';
 export { default as configuration } from './decorator/configuration';
-export { default as ConstructorParam } from './metadata/constructor-param';
+export { default as ConstructorParam } from './decorator/metadata/constructor-param';
 export { default as constructorParam } from './decorator/constructor-param';
-export { default as Target } from './metadata/target';
+export { default as Target } from './decorator/metadata/target';
 export { default as target, type Type } from './decorator/target';
-export { default as Init } from './metadata/init';
+export { default as Init } from './decorator/metadata/init';
 export { default as init } from './decorator/init';
-export { default as Qualifier } from './metadata/qualifier';
+export { default as Qualifier } from './decorator/metadata/qualifier';
 export { default as qualifier } from './decorator/qualifier';
-export { default as Start } from './metadata/start';
+export { default as Start } from './decorator/metadata/start';
 export { default as start } from './decorator/start';
-export { default as Value } from './metadata/value';
+export { default as Value } from './decorator/metadata/value';
 export { default as value } from './decorator/value';
 export {
   createDecoratorExp,

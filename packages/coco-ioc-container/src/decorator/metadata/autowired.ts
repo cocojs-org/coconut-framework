@@ -1,13 +1,13 @@
 import Target from './target';
-import target from '../decorator/target';
+import target from '../target';
 import Metadata from './abstract/metadata';
 
 /**
  * @public
  */
 @target([Target.Type.Field])
-class Qualifier extends Metadata {
-  value: string;
+class Autowired extends Metadata {
+  value: Class<any>;
 }
 
-export default Qualifier;
+export default Autowired;

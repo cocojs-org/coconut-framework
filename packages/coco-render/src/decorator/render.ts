@@ -1,5 +1,5 @@
 import { createDecoratorExp, type Decorator } from 'coco-ioc-container';
-import Render from '../metadata/render';
+import Render from './metadata/render';
 
 export default createDecoratorExp(
   Render

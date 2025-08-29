@@ -1,4 +1,4 @@
-import Start from '../metadata/start';
+import Start from './metadata/start';
 import {
   createDecoratorExp,
   type Decorator,

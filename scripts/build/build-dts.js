@@ -11,7 +11,7 @@ function buildDtsTmp(packageName, tsconfigJson) {
   if (!fs.existsSync(packagesDir)) {
     throw new Error(`packages directory[${packageName}] does not exist!`);
   }
-  cp.execSync(`tsc --project packages/${packageName}/${tsconfigJson}`);
+  cp.execSync(`tsc --project packages/${packageName}/${tsconfigJson}`, { stdio: 'inherit' });
 }
 
 function runApiExtractor(packageName, mainEntryPointFilePath) {

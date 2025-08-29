@@ -1,4 +1,4 @@
-import RouteClass from '../metadata/route';
+import RouteClass from '../decorator/metadata/route';
 import DynamicRoute from './dynamic-route';
 
 type Route = string | DynamicRoute;

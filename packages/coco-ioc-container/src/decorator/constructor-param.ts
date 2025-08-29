@@ -1,4 +1,4 @@
-import ConstructorParam from '../metadata/constructor-param';
+import ConstructorParam from './metadata/constructor-param';
 import {
   createDecoratorExp,
   type Decorator,

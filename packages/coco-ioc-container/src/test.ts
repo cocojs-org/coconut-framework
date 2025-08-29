@@ -1,5 +1,5 @@
 export * from './index.ts';
-import Metadata from './metadata/abstract/metadata';
+import Metadata from './decorator/metadata/abstract/metadata';
 
 function isEqual(a: unknown, b: unknown) {
   if (

@@ -1,4 +1,6 @@
-import Metadata, { createMetadata } from '../metadata/abstract/metadata';
+import Metadata, {
+  createMetadata,
+} from '../decorator/metadata/abstract/metadata';
 import { type Field } from './decorator-context';
 
 // 元数据类本身的集合

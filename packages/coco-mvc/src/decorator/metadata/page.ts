@@ -1,5 +1,5 @@
 import { Metadata, target, Target } from 'coco-ioc-container';
-import view from '../decorator/view';
+import view from '../view';
 
 /**
  * @public

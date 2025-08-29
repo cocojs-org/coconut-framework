@@ -1,5 +1,5 @@
 import Metadata from './abstract/metadata';
-import target, { Type } from '../decorator/target';
+import target, { Type } from '../target';
 
 /**
  * @public

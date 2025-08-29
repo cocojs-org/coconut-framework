@@ -1,6 +1,6 @@
 import Metadata from './abstract/metadata';
 import Target from './target';
-import target from '../decorator/target';
+import target from '../target';
 import { register, NAME } from 'shared';
 
 /**

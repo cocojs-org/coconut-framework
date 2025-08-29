@@ -6,7 +6,7 @@ import {
 } from './decorator-context';
 import { listClassMetadata, listFieldMetadata } from './metadata';
 import type Application from './application';
-import type Metadata from '../metadata/abstract/metadata';
+import type Metadata from '../decorator/metadata/abstract/metadata';
 
 /**
  * @public

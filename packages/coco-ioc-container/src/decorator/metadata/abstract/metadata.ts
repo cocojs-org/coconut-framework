@@ -1,4 +1,4 @@
-import { isPlainObject } from '../../share/util';
+import { isPlainObject } from '../../../share/util';
 
 const defaultProp = 'value';
 /**

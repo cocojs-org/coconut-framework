@@ -1,5 +1,5 @@
 import router from '../decorator/router';
-import RouteMeta from '../metadata/route';
+import RouteMeta from '../decorator/metadata/route';
 import {
   type Application,
   constructorParam,

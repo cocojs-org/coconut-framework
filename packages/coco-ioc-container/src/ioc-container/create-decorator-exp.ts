@@ -12,10 +12,21 @@ export type { Decorator };
 import { isClass, lowercaseFirstLetter, once } from '../share/util';
 import { addDecoratorParams } from './decorator-params';
 import { registerMetadataCls } from './metadata';
+import type Metadata from '../decorator/metadata/abstract/metadata';
+import type Application from './application';
+
+interface CreateDecoratorExpOption {
+  postConstruct?: (
+    metadata: Metadata,
+    application: Application,
+    field?: string
+  ) => void;
+}
 
 function createDecoratorExpFactory(fn: any) {
   return function <UserParam, C extends Context>(
-    metadataClsOrName: MetadataClass<any> | string
+    metadataClsOrName: MetadataClass<any> | string,
+    option?: CreateDecoratorExpOption
   ): (userParam?: UserParam, decorateSelf?: true) => Decorator<C> {
     const decoratorName =
       typeof metadataClsOrName === 'string'
@@ -39,7 +50,7 @@ function createDecoratorExpFactory(fn: any) {
                   metadataKind: KindClass,
                   metadataClass: value,
                   metadataParam: userParam,
-                  postConstruct: value.postConstruct,
+                  postConstruct: option?.postConstruct,
                 });
               }
             } else {
@@ -48,7 +59,7 @@ function createDecoratorExpFactory(fn: any) {
                 metadataKind: KindClass,
                 metadataClass: MetadataCls,
                 metadataParam: userParam,
-                postConstruct: MetadataCls.postConstruct,
+                postConstruct: option?.postConstruct,
               });
             }
             // 修改prototype
@@ -79,7 +90,7 @@ function createDecoratorExpFactory(fn: any) {
                 metadataClass: MetadataCls,
                 metadataParam: userParam,
                 field: context.name as string,
-                postConstruct: MetadataCls.postConstruct,
+                postConstruct: option?.postConstruct,
               });
               break;
             case KindClass:
@@ -106,12 +117,13 @@ const doCreateDecoratorExp = createDecoratorExpFactory(addDecoratorParams);
  * @public
  */
 function createDecoratorExp(
-  metadataCls: Class<any>
+  metadataCls: Class<any>,
+  option?: CreateDecoratorExpOption
 ): (userParam?: any) => Decorator<DecoratorContext> {
   if (!isClass(metadataCls)) {
     throw new Error('createDecoratorExp的第一个参数类型是类');
   }
-  return doCreateDecoratorExp(metadataCls);
+  return doCreateDecoratorExp(metadataCls, option);
 }
 
 /**
@@ -120,14 +132,15 @@ function createDecoratorExp(
  * @public
  */
 function createDecoratorExpByName(
-  decoratorName: string
+  decoratorName: string,
+  option?: CreateDecoratorExpOption
 ): (userParam?: any, decorateSelf?: true) => Decorator<DecoratorContext> {
   if (typeof decoratorName !== 'string') {
     throw new Error(
       'createDecoratorExpByName的第一个参数类型是字符串，表示装饰器的名字'
     );
   }
-  return doCreateDecoratorExp(decoratorName);
+  return doCreateDecoratorExp(decoratorName, option);
 }
 
 export {

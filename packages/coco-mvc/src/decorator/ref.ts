@@ -1,6 +1,16 @@
-import { createDecoratorExp, type Decorator } from 'coco-ioc-container';
-import Ref from '../metadata/ref';
+import {
+  createDecoratorExp,
+  type Decorator,
+  type Application,
+} from 'coco-ioc-container';
+import Ref from './metadata/ref';
 
-export default createDecoratorExp(
-  Ref
-) as () => Decorator<ClassFieldDecoratorContext>;
+export default createDecoratorExp(Ref, {
+  postConstruct: function (
+    metadata: Ref,
+    application: Application,
+    field?: string
+  ) {
+    this[field] = { current: null };
+  },
+}) as () => Decorator<ClassFieldDecoratorContext>;
