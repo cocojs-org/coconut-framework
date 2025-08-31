@@ -16,7 +16,7 @@ import type Metadata from '../decorator/metadata/abstract/metadata';
 import type Application from './application';
 
 interface CreateDecoratorExpOption {
-  postConstruct?: (
+  componentPostConstruct?: (
     metadata: Metadata,
     application: Application,
     field?: string
@@ -50,7 +50,7 @@ function createDecoratorExpFactory(fn: any) {
                   metadataKind: KindClass,
                   metadataClass: value,
                   metadataParam: userParam,
-                  postConstruct: option?.postConstruct,
+                  componentPostConstruct: option?.componentPostConstruct,
                 });
               }
             } else {
@@ -59,7 +59,7 @@ function createDecoratorExpFactory(fn: any) {
                 metadataKind: KindClass,
                 metadataClass: MetadataCls,
                 metadataParam: userParam,
-                postConstruct: option?.postConstruct,
+                componentPostConstruct: option?.componentPostConstruct,
               });
             }
             // 修改prototype
@@ -90,7 +90,7 @@ function createDecoratorExpFactory(fn: any) {
                 metadataClass: MetadataCls,
                 metadataParam: userParam,
                 field: context.name as string,
-                postConstruct: option?.postConstruct,
+                componentPostConstruct: option?.componentPostConstruct,
               });
               break;
             case KindClass:

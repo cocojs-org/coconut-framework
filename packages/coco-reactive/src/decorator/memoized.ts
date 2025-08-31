@@ -7,7 +7,7 @@ import Memoized from './metadata/memoized';
 import Subscriber from '../memoized/subscriber';
 
 export default createDecoratorExp(Memoized, {
-  postConstruct: function (
+  componentPostConstruct: function (
     metadata: Memoized,
     application: Application,
     field?: string

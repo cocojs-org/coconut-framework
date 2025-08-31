@@ -13,7 +13,7 @@ import type Metadata from '../decorator/metadata/abstract/metadata';
  * @param metadata - 元数据实例对象
  * @param application - 全局的application对象
  */
-export type ClassPostConstructFn = (
+export type ComponentClassPostConstructFn = (
   metadata: Metadata,
   application: Application
 ) => void;
@@ -23,7 +23,7 @@ export type ClassPostConstructFn = (
  * @param application - 全局的application对象
  * @param field - 被装饰的字段名
  */
-export type FieldPostConstructFn = (
+export type ComponentFieldPostConstructFn = (
   metadata: Metadata,
   application: Application,
   field: Field
@@ -31,7 +31,7 @@ export type FieldPostConstructFn = (
 /**
  * @public
  */
-export type MethodPostConstructFn = (
+export type ComponentMethodPostConstructFn = (
   metadata: Metadata,
   application: Application,
   field: Field
@@ -39,35 +39,35 @@ export type MethodPostConstructFn = (
 /**
  * @public
  */
-export type PostConstructFn =
-  | ClassPostConstructFn
-  | FieldPostConstructFn
-  | MethodPostConstructFn;
+export type ComponentPostConstructFn =
+  | ComponentClassPostConstructFn
+  | ComponentFieldPostConstructFn
+  | ComponentMethodPostConstructFn;
 
-export interface ClassPostConstruct {
+export interface ComponentClassPostConstruct {
   kind: typeof KindClass;
   metadataCls: Class<any>;
-  fn: ClassPostConstructFn;
+  fn: ComponentClassPostConstructFn;
 }
 
-export interface FieldPostConstruct {
+export interface ComponentFieldPostConstruct {
   kind: typeof KindField;
   metadataCls: Class<any>;
-  fn: FieldPostConstructFn;
+  fn: ComponentFieldPostConstructFn;
   field: Field;
 }
 
-export interface MethodPostConstruct {
+export interface ComponentMethodPostConstruct {
   kind: typeof KindMethod;
   metadataCls: Class<any>;
-  fn: MethodPostConstructFn;
+  fn: ComponentMethodPostConstructFn;
   field: Field;
 }
 
-export type PostConstruct =
-  | ClassPostConstruct
-  | FieldPostConstruct
-  | MethodPostConstruct;
+export type ComponentPostConstruct =
+  | ComponentClassPostConstruct
+  | ComponentFieldPostConstruct
+  | ComponentMethodPostConstruct;
 
 export default class IocComponentDefinition<T> {
   id: string;
@@ -78,29 +78,29 @@ export default class IocComponentDefinition<T> {
    * 自定义初始化方法
    * new表达式后立刻执行
    */
-  postConstruct?: PostConstruct[];
+  componentPostConstruct?: ComponentPostConstruct[];
 }
 
 export function genClassPostConstruct(
   metadataCls: Class<any>,
-  fn: ClassPostConstructFn
-): ClassPostConstruct {
+  fn: ComponentClassPostConstructFn
+): ComponentClassPostConstruct {
   return { kind: KindClass, metadataCls, fn };
 }
 
 export function genFieldPostConstruct(
   metadataCls: Class<any>,
-  fn: FieldPostConstructFn,
+  fn: ComponentFieldPostConstructFn,
   field: Field
-): FieldPostConstruct {
+): ComponentFieldPostConstruct {
   return { kind: KindField, metadataCls, fn, field };
 }
 
 export function genMethodPostConstruct(
   metadataCls: Class<any>,
-  fn: MethodPostConstructFn,
+  fn: ComponentMethodPostConstructFn,
   field: Field
-): MethodPostConstruct {
+): ComponentMethodPostConstruct {
   return { kind: KindMethod, metadataCls, fn, field };
 }
 
@@ -111,27 +111,32 @@ export function createComponent(
 ) {
   const cls = componentDefinition.cls;
   const component = new cls(...parameters);
-  for (const pc of componentDefinition.postConstruct) {
-    switch (pc.kind) {
+  for (const cpc of componentDefinition.componentPostConstruct) {
+    switch (cpc.kind) {
       case KindClass: {
-        const metadata = listClassMetadata(cls, pc.metadataCls);
+        const metadata = listClassMetadata(cls, cpc.metadataCls);
         if (metadata.length === 1) {
-          pc.fn.call(component, metadata[0], application);
+          cpc.fn.call(component, metadata[0], application);
         } else {
           if (__TEST__) {
-            console.error('元数据应该只有一个', cls, pc.metadataCls);
+            console.error('元数据应该只有一个', cls, cpc.metadataCls);
           }
         }
         break;
       }
       case KindField:
       case KindMethod: {
-        const metadata = listFieldMetadata(cls, pc.field, pc.metadataCls);
+        const metadata = listFieldMetadata(cls, cpc.field, cpc.metadataCls);
         if (metadata.length === 1) {
-          pc.fn.call(component, metadata[0], application, pc.field);
+          cpc.fn.call(component, metadata[0], application, cpc.field);
         } else {
           if (__TEST__) {
-            console.error('元数据应该只有一个', cls, pc.metadataCls, pc.field);
+            console.error(
+              '元数据应该只有一个',
+              cls,
+              cpc.metadataCls,
+              cpc.field
+            );
           }
         }
         break;

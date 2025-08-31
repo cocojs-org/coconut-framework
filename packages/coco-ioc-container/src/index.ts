@@ -25,10 +25,10 @@ export {
   createDecoratorExpByName,
 } from './ioc-container/create-decorator-exp';
 export {
-  type PostConstructFn,
-  type ClassPostConstructFn,
-  type MethodPostConstructFn,
-  type FieldPostConstructFn,
+  type ComponentPostConstructFn,
+  type ComponentClassPostConstructFn,
+  type ComponentMethodPostConstructFn,
+  type ComponentFieldPostConstructFn,
 } from './ioc-container/ioc-component-definition';
 export { default as Application } from './ioc-container/application';
 export { default as PropertiesConfig } from './ioc-container/properties-config';

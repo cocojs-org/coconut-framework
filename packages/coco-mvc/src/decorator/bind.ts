@@ -6,7 +6,7 @@ import {
 import Bind from './metadata/bind';
 
 export default createDecoratorExp(Bind, {
-  postConstruct: function (
+  componentPostConstruct: function (
     metadata: Bind,
     application: Application,
     field?: string

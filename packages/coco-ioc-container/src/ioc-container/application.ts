@@ -22,7 +22,7 @@ import {
   addDecoratorParams,
 } from './decorator-params';
 import {
-  ClassPostConstructFn,
+  ComponentClassPostConstructFn,
   genClassPostConstruct,
   genFieldPostConstruct,
   genMethodPostConstruct,
@@ -204,22 +204,31 @@ class Application {
         if (isIncludesClassDecorator(beDecoratedCls, Component, 2)) {
           addDefinition(beDecoratedCls);
           params.forEach(
-            ({ metadataClass, metadataKind, postConstruct, field }) => {
-              if (postConstruct) {
+            ({
+              metadataClass,
+              metadataKind,
+              componentPostConstruct,
+              field,
+            }) => {
+              if (componentPostConstruct) {
                 switch (metadataKind) {
                   case KindClass:
                     addPostConstruct(
                       beDecoratedCls,
                       genClassPostConstruct(
                         metadataClass,
-                        postConstruct as ClassPostConstructFn
+                        componentPostConstruct as ComponentClassPostConstructFn
                       )
                     );
                     break;
                   case KindField:
                     addPostConstruct(
                       beDecoratedCls,
-                      genFieldPostConstruct(metadataClass, postConstruct, field)
+                      genFieldPostConstruct(
+                        metadataClass,
+                        componentPostConstruct,
+                        field
+                      )
                     );
                     break;
                   case KindMethod:
@@ -227,7 +236,7 @@ class Application {
                       beDecoratedCls,
                       genMethodPostConstruct(
                         metadataClass,
-                        postConstruct,
+                        componentPostConstruct,
                         field
                       )
                     );

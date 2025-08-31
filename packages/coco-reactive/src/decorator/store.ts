@@ -9,7 +9,7 @@ import Publisher from '../memoized/publisher';
 import Subscriber from '../memoized/subscriber';
 
 export default createDecoratorExp(Store, {
-  postConstruct: function (metadata: Store, application: Application) {
+  componentPostConstruct: function (metadata: Store, application: Application) {
     const storePublisher = new StorePublisher();
     Object.defineProperty(this, 'storePublisher', {
       value: storePublisher,

@@ -11,7 +11,11 @@ import { reactiveSetterField } from 'shared';
 let didWarnedReadValueFromUnderscoreName = false;
 
 export default createDecoratorExp(Reactive, {
-  postConstruct(metadata: Reactive, application: Application, name: string) {
+  componentPostConstruct(
+    metadata: Reactive,
+    application: Application,
+    name: string
+  ) {
     let _value: any = this[name];
     const publisher = new Publisher(name);
     Object.defineProperty(this, name, {

@@ -32,7 +32,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
       metadataClass: Meta,
       metadataKind: KindClass,
       metadataParam: param,
-      postConstruct: undefined,
+      componentPostConstruct: undefined,
     });
   });
 
@@ -50,7 +50,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
       metadataClass: Meta1,
       metadataKind: KindClass,
       metadataParam: param,
-      postConstruct: undefined,
+      componentPostConstruct: undefined,
     });
     // 多次实例化操作
     new A();
@@ -79,7 +79,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
       metadataKind: KindField,
       metadataParam: param,
       field: 'f',
-      postConstruct: undefined,
+      componentPostConstruct: undefined,
     });
   });
 
@@ -103,7 +103,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
       metadataKind: KindMethod,
       metadataParam: param,
       field: 'fn',
-      postConstruct: undefined,
+      componentPostConstruct: undefined,
     });
   });
 
@@ -127,7 +127,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
       metadataKind: KindField,
       metadataParam: param,
       field: 'f',
-      postConstruct: undefined,
+      componentPostConstruct: undefined,
     });
     new A();
     expect(fn).toBeCalledTimes(1);
@@ -157,7 +157,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
       metadataKind: KindMethod,
       metadataParam: param,
       field: 'fn',
-      postConstruct: undefined,
+      componentPostConstruct: undefined,
     });
     new A();
     expect(fn).toBeCalledTimes(1);

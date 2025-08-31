@@ -6,7 +6,7 @@ import {
 import Refs from './metadata/refs';
 
 export default createDecoratorExp(Refs, {
-  postConstruct: function (
+  componentPostConstruct: function (
     metadata: Refs,
     application: Application,
     field?: string

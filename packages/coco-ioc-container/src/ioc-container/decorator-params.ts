@@ -1,4 +1,4 @@
-import type { PostConstructFn } from './ioc-component-definition';
+import type { ComponentPostConstructFn } from './ioc-component-definition';
 import { type Field, type Kind, KindClass } from './decorator-context';
 import { isClass } from '../share/util';
 import { get as getFromShare, NAME } from 'shared';
@@ -14,7 +14,7 @@ export type params = {
    * todo 测试是否支持Symbol类型
    */
   field?: Field;
-  postConstruct?: PostConstructFn;
+  componentPostConstruct?: ComponentPostConstructFn;
 };
 const decoratorParamMap: Map<Class<any>, params[]> = new Map();
 

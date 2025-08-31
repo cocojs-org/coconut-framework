@@ -6,7 +6,7 @@ import Value from './metadata/value';
 import type Application from '../ioc-container/application';
 
 export default createDecoratorExp(Value, {
-  postConstruct: function (
+  componentPostConstruct: function (
     metadata: Value,
     application: Application,
     field?: string

@@ -1,8 +1,8 @@
 import IocComponentDefinition, {
   createComponent,
-  type FieldPostConstruct,
-  type MethodPostConstruct,
-  PostConstruct,
+  type ComponentFieldPostConstruct,
+  type ComponentMethodPostConstruct,
+  ComponentPostConstruct,
 } from './ioc-component-definition';
 import Component, { Scope } from '../decorator/metadata/component';
 import { findClassMetadata } from './metadata';
@@ -35,12 +35,12 @@ function addDefinition(cls: Class<any>) {
   const componentDefinition = new IocComponentDefinition();
   componentDefinition.id = id;
   componentDefinition.cls = cls;
-  componentDefinition.postConstruct = [];
+  componentDefinition.componentPostConstruct = [];
   idDefinitionMap.set(id, componentDefinition);
   clsDefinitionMap.set(cls, componentDefinition);
 }
 
-function addPostConstruct(cls: Class<any>, pc: PostConstruct) {
+function addPostConstruct(cls: Class<any>, pc: ComponentPostConstruct) {
   const definition = clsDefinitionMap.get(cls);
   if (!definition) {
     if (__TEST__) {
@@ -50,7 +50,9 @@ function addPostConstruct(cls: Class<any>, pc: PostConstruct) {
   switch (pc.kind) {
     case KindClass:
       if (
-        definition.postConstruct.find((i) => i.metadataCls === pc.metadataCls)
+        definition.componentPostConstruct.find(
+          (i) => i.metadataCls === pc.metadataCls
+        )
       ) {
         if (__TEST__) {
           throw new Error('一个类装饰器只能有一个对应的postConstruct');
@@ -58,8 +60,9 @@ function addPostConstruct(cls: Class<any>, pc: PostConstruct) {
       }
       break;
     case KindField: {
-      const pcs = definition.postConstruct as FieldPostConstruct[];
-      const fieldPc = pc as FieldPostConstruct;
+      const pcs =
+        definition.componentPostConstruct as ComponentFieldPostConstruct[];
+      const fieldPc = pc as ComponentFieldPostConstruct;
       if (
         pcs.find(
           (i) =>
@@ -73,8 +76,9 @@ function addPostConstruct(cls: Class<any>, pc: PostConstruct) {
       break;
     }
     case KindMethod: {
-      const pcs = definition.postConstruct as MethodPostConstruct[];
-      const fieldPc = pc as MethodPostConstruct;
+      const pcs =
+        definition.componentPostConstruct as ComponentMethodPostConstruct[];
+      const fieldPc = pc as ComponentMethodPostConstruct;
       if (
         pcs.find(
           (i) =>
@@ -88,7 +92,7 @@ function addPostConstruct(cls: Class<any>, pc: PostConstruct) {
       break;
     }
   }
-  definition.postConstruct.push(pc);
+  definition.componentPostConstruct.push(pc);
 }
 
 function getDefinition(
