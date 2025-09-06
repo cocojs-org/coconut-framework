@@ -5,7 +5,7 @@ import IocComponentDefinition, {
   ComponentPostConstruct,
 } from './ioc-component-definition';
 import Component, { Scope } from '../decorator/metadata/component';
-import { findClassMetadata } from './metadata';
+import { findClassMetadata } from '../metadata';
 import type Application from './application';
 import { KindClass, KindField, KindMethod } from './decorator-context';
 import { isChildClass, uppercaseFirstLetter } from '../share/util';

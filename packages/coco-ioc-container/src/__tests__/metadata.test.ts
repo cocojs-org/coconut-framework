@@ -1,6 +1,7 @@
 import {
   addClassMetadata,
-  addFieldOrMethodMetadata,
+  addFieldMetadata,
+  addMethodMetadata,
   clear,
   findClassMetadata,
   getAllMetadata,
@@ -8,15 +9,14 @@ import {
   listBeDecoratedClsByFieldMetadata,
   listClassMetadata,
   listFieldMetadata,
-} from '../ioc-container/metadata.ts';
-import Metadata, {
-  createMetadata,
-} from '../decorator/metadata/abstract/metadata.ts';
+} from '../metadata/index.ts';
+import Metadata, { createMetadata } from '../metadata/metadata.ts';
 import {
   createDecoratorExp,
   Decorator,
 } from '../ioc-container/create-decorator-exp.ts';
 
+// TODO: 不要基于源文件做测试，而是基于打包后的包做测试
 describe('metadata/metadata', () => {
   test('纯对象类型会取自身的prop，全部浅赋值，不管元数据如何定义', () => {
     class M {
@@ -125,7 +125,7 @@ describe('addFieldOrMethodMetadata', () => {
     class B {}
     let error = false;
     try {
-      addFieldOrMethodMetadata(MM, 'f', B, {});
+      addFieldMetadata(MM, 'f', B, {});
     } catch (err) {
       error = true;
     }
@@ -135,7 +135,7 @@ describe('addFieldOrMethodMetadata', () => {
   test('为普通类添加field元数据', async () => {
     class M {}
     class B {}
-    addFieldOrMethodMetadata(M, 'f', B, {});
+    addFieldMetadata(M, 'f', B, {});
     const [metadataSet, bizSet] = getAllMetadata();
     expect(bizSet.size).toStrictEqual(1);
   });
@@ -161,8 +161,8 @@ describe('ioc-container/metadata', () => {
     class T {}
     class M {}
     class M1 {}
-    addFieldOrMethodMetadata(T, 'a', M, {});
-    addFieldOrMethodMetadata(T, 'a', M1, {});
+    addFieldMetadata(T, 'a', M, {});
+    addFieldMetadata(T, 'a', M1, {});
     const metadata = listFieldMetadata(T, 'a');
     expect(metadata.length).toStrictEqual(2);
     const metadata1 = listFieldMetadata(T, 'a', M);
@@ -235,7 +235,7 @@ describe('listBeDecoratedClsByFieldMetadata', () => {
   test('只会找业务类的类元数据', async () => {
     class T {}
     class M {}
-    addFieldOrMethodMetadata(T, 'f', M, {});
+    addFieldMetadata(T, 'f', M, {});
     const m = listBeDecoratedClsByFieldMetadata(M);
     expect(m.size).toBe(1);
     expect(m.has(T)).toBe(true);

@@ -1,5 +1,5 @@
 export * from './index.ts';
-import Metadata from './decorator/metadata/abstract/metadata';
+import Metadata from './metadata/metadata.ts';
 
 function isEqual(a: unknown, b: unknown) {
   if (
@@ -99,7 +99,7 @@ import {
   getMetadata,
   getAllMetadata,
   clear as clearMetadata,
-} from './ioc-container/metadata';
+} from './metadata/index.ts';
 import { clear as clearComponentDefinition } from './ioc-container/component-factory';
 
 import { clear as clearPreventCircularDependency } from 'shared';

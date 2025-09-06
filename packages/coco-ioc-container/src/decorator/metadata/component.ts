@@ -1,4 +1,4 @@
-import Metadata from './abstract/metadata';
+import Metadata from '../../metadata/metadata';
 import Target from './target';
 import target from '../target';
 import { register, NAME } from 'shared';

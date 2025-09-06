@@ -1,4 +1,4 @@
-import Metadata from './abstract/metadata';
+import Metadata from '../../metadata/metadata';
 import target, { Type } from '../target';
 
 /**

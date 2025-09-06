@@ -6,7 +6,8 @@ import {
 } from './component-factory';
 import {
   addClassMetadata,
-  addFieldOrMethodMetadata,
+  addFieldMetadata,
+  addMethodMetadata,
   getAllMetadata,
   listBeDecoratedClsByClassMetadata,
   listBeDecoratedClsByFieldMetadata,
@@ -14,7 +15,7 @@ import {
   findClassMetadata,
   listFieldByMetadataCls,
   metadataClsCollection,
-} from './metadata';
+} from '../metadata/index';
 import {
   get,
   clear as clearDecoratorParams,
@@ -27,7 +28,7 @@ import {
   genFieldPostConstruct,
   genMethodPostConstruct,
 } from './ioc-component-definition';
-import Metadata from '../decorator/metadata/abstract/metadata';
+import Metadata from '../metadata/metadata';
 import { KindClass, KindField, KindMethod } from './decorator-context';
 import Component from '../decorator/metadata/component';
 import type { Scope } from '../decorator/metadata/component';
@@ -38,8 +39,10 @@ import {
 } from '../share/util';
 import Configuration from '../decorator/metadata/configuration';
 import ConstructorParam from '../decorator/metadata/constructor-param';
-import { Init, Start, Target, Qualifier } from '../decorator/metadata/index';
+import { Init, Start, Qualifier } from '../decorator/metadata/index';
 import PropertiesConfig from './properties-config';
+import { Diagnose, printDiagnose } from '../metadata/diagnose';
+import validate from '../metadata/validate';
 
 /**
  * 表示一个web应用实例
@@ -47,6 +50,8 @@ import PropertiesConfig from './properties-config';
  */
 class Application {
   propertiesConfig: PropertiesConfig;
+
+  diagnoseList: Diagnose[];
 
   constructor(jsonConfig: Record<string, any> = {}) {
     this.propertiesConfig = new PropertiesConfig(jsonConfig);
@@ -60,8 +65,12 @@ class Application {
     {
       this.addFieldOrMethodDecoratorParams();
       this.addAtComponentDecoratorParams();
-      this.validateTarget();
       this.buildMetadata();
+      // TODO: 校验全部放在core里面做到，然后业务上获取的时候先过滤掉非法的元数据，只从合法的元数据中查找
+      this.diagnoseList = validate(getAllMetadata());
+      if (this.diagnoseList.length > 0) {
+        this.diagnoseList.forEach(printDiagnose);
+      }
       this.buildIocComponentDefinition();
     }
     // todo 不用清空装饰器参数记录
@@ -181,8 +190,15 @@ class Application {
             addClassMetadata(beDecoratedCls, metadataClass, metadataParam);
             break;
           case KindField:
+            addFieldMetadata(
+              beDecoratedCls,
+              field,
+              metadataClass,
+              metadataParam
+            );
+            break;
           case KindMethod:
-            addFieldOrMethodMetadata(
+            addMethodMetadata(
               beDecoratedCls,
               field,
               metadataClass,
@@ -349,7 +365,7 @@ class Application {
       const field = entity[1].field;
       if (bootComponent.has(beDecoratedCls)) {
         const component = getComponent(this, beDecoratedCls);
-        component[field]?.(this);
+        component[field]?.call(component, this);
       }
     }
   }
@@ -362,46 +378,6 @@ class Application {
       if (bootComponent.has(beDecoratedCls)) {
         const component = getComponent(this, beDecoratedCls);
         component[field]?.();
-      }
-    }
-  }
-
-  private validateTarget() {
-    const allDecoratorParams = get();
-    for (const entity of allDecoratorParams.entries()) {
-      const beDecoratedCls = entity[0];
-      const params = entity[1];
-      for (const p of params) {
-        const metadataClass = p.metadataClass;
-        const metadataKind = p.metadataKind;
-        const decoratorName = p.decoratorName;
-        const decoratorDecoratorParams =
-          allDecoratorParams.get(metadataClass) || [];
-        const find = decoratorDecoratorParams.find(
-          (i) => i.metadataClass === Target
-        );
-        if (!find) {
-          if (__DEV__) {
-            console.warn(
-              `${metadataClass}应该添加@target装饰器，以明确装饰器对象。`
-            );
-          }
-          return;
-        }
-        if (find.metadataParam.indexOf(metadataKind) === -1) {
-          if (__DEV__) {
-            console.error(
-              beDecoratedCls,
-              '没有按照target限制使用装饰器:',
-              metadataClass,
-              '。'
-            );
-          } else {
-            throw new Error(
-              `[${beDecoratedCls.name}]使用@${decoratorName}和其定义的@target值不一致。`
-            );
-          }
-        }
       }
     }
   }

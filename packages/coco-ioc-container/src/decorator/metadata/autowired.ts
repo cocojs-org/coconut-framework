@@ -1,6 +1,6 @@
 import Target from './target';
 import target from '../target';
-import Metadata from './abstract/metadata';
+import Metadata from '../../metadata/metadata';
 
 /**
  * @public

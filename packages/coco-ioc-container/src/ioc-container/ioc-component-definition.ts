@@ -4,9 +4,13 @@ import {
   KindField,
   KindMethod,
 } from './decorator-context';
-import { listClassMetadata, listFieldMetadata } from './metadata';
+import {
+  listClassMetadata,
+  listFieldMetadata,
+  listMethodMetadata,
+} from '../metadata';
 import type Application from './application';
-import type Metadata from '../decorator/metadata/abstract/metadata';
+import type Metadata from '../metadata/metadata';
 
 /**
  * @public
@@ -124,9 +128,24 @@ export function createComponent(
         }
         break;
       }
-      case KindField:
-      case KindMethod: {
+      case KindField: {
         const metadata = listFieldMetadata(cls, cpc.field, cpc.metadataCls);
+        if (metadata.length === 1) {
+          cpc.fn.call(component, metadata[0], application, cpc.field);
+        } else {
+          if (__TEST__) {
+            console.error(
+              '元数据应该只有一个',
+              cls,
+              cpc.metadataCls,
+              cpc.field
+            );
+          }
+        }
+        break;
+      }
+      case KindMethod: {
+        const metadata = listMethodMetadata(cls, cpc.field, cpc.metadataCls);
         if (metadata.length === 1) {
           cpc.fn.call(component, metadata[0], application, cpc.field);
         } else {

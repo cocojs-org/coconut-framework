@@ -11,7 +11,6 @@ import {
  */
 @target([Target.Type.Class])
 @component(Component.Scope.Prototype)
-class Controller extends Metadata {}
+class Util extends Metadata {}
 
-// TODO: rename to Business
-export default Controller;
+export default Util;

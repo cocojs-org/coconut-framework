@@ -1,4 +1,4 @@
-export { default as Metadata } from './decorator/metadata/abstract/metadata';
+export { default as Metadata } from './metadata/metadata';
 export { default as Autowired } from './decorator/metadata/autowired';
 export { default as autowired } from './decorator/autowired';
 export {

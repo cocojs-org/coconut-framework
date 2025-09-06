@@ -6,6 +6,6 @@ import util from '../util';
  */
 @target([Target.Type.Class])
 @util()
-class Api extends Metadata {}
+class SessionStorage extends Metadata {}
 
-export default Api;
+export default SessionStorage;

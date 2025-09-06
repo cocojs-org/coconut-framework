@@ -22,6 +22,13 @@ export function uppercaseFirstLetter(str: string) {
   return transformStr(str, fn);
 }
 
+export function className2DecoratorName(className: string) {
+  return `@${lowercaseFirstLetter(className)}`;
+}
+
+export function metadataInstance2DecoratorName(instance: any) {
+  return `@${lowercaseFirstLetter(instance.constructor.name)}`;
+}
 /**
  * 是{}，不是基础数据类型，也不是function array set map...
  * @param v

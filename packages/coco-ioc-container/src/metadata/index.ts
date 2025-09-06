@@ -1,51 +1,55 @@
-import Metadata, {
-  createMetadata,
-} from '../decorator/metadata/abstract/metadata';
-import { type Field } from './decorator-context';
+import Metadata, { createMetadata } from './metadata';
+import { type Field } from '../ioc-container/decorator-context';
 
 // 元数据类本身的集合
 const metadataClsCollection: Map<string, Metadata> = new Map();
 
 type MetadataSet = Array<{ metadata: Metadata; dependencies?: MetadataSet }>;
 
+export interface MetaMetadata {
+  classMetadata: Metadata[];
+}
+export interface BizMetadata {
+  classMetadata: Metadata[];
+  fieldMetadata: Map<Field, Metadata[]>;
+  methodMetadata: Map<Field, Metadata[]>;
+}
+
 // 元数据子类的元数据
-const metadataForMetadata: Map<
-  Class<Metadata>,
-  { classMetadata: Metadata[] }
-> = new Map();
-// 非元数据子类（业务类）的元数据
-const metadataForBizClass: Map<
-  Class<any>,
-  {
-    classMetadata: Metadata[];
-    fieldMetadata: Map<Field, Metadata[]>;
-  }
-> = new Map();
+const metaMetadataMap: Map<Class<Metadata>, MetaMetadata> = new Map();
+
+// 非元数据子类（业务类）的元数据（合法的）
+const bizMetadataMap: Map<Class<any>, BizMetadata> = new Map();
 
 function getFromMap(Cls: Class<any>) {
   const value: {
     classMetadata: Metadata[];
     fieldMetadata?: Map<Field, Metadata[]>;
+    methodMetadata?: Map<Field, Metadata[]>;
   } =
     Object.getPrototypeOf(Cls) === Metadata
-      ? metadataForMetadata.get(Cls)
-      : metadataForBizClass.get(Cls);
+      ? metaMetadataMap.get(Cls)
+      : bizMetadataMap.get(Cls);
   return value;
 }
 
 function addToMap(cls: Class<any>) {
   let config;
   if (Object.getPrototypeOf(cls) === Metadata) {
-    config = metadataForMetadata.get(cls);
+    config = metaMetadataMap.get(cls);
     if (!config) {
       config = { classMetadata: [] };
-      metadataForMetadata.set(cls, config);
+      metaMetadataMap.set(cls, config);
     }
   } else {
-    config = metadataForBizClass.get(cls);
+    config = bizMetadataMap.get(cls);
     if (!config) {
-      config = { classMetadata: [], fieldMetadata: new Map() };
-      metadataForBizClass.set(cls, config);
+      config = {
+        classMetadata: [],
+        fieldMetadata: new Map(),
+        methodMetadata: new Map(),
+      };
+      bizMetadataMap.set(cls, config);
     }
   }
   return config;
@@ -70,15 +74,16 @@ function addClassMetadata(
   const classMetadata: Metadata[] = config.classMetadata;
   if (MetadataCls) {
     if (__DEV__ && existSameMetadata(classMetadata, MetadataCls)) {
-      console.warn(`${cls}已经存在相同的注解【${MetadataCls}】，忽略`);
-      return;
+      // TODO: 挪到validate中
+      // console.warn(`${cls}已经存在相同的注解【${MetadataCls}】，忽略`);
+      // return;
     }
     const metadata = createMetadata(MetadataCls, args);
     classMetadata.push(metadata);
   }
 }
 
-function addFieldOrMethodMetadata(
+function addFieldMetadata(
   Cls: Class<any>,
   fieldName: Field,
   MetadataCls: Class<Metadata>,
@@ -88,22 +93,54 @@ function addFieldOrMethodMetadata(
   if (!config) {
     config = addToMap(Cls);
   }
-  if (Object.getPrototypeOf(Cls) === Metadata) {
-    throw new Error('目前元数据的类只支持类装饰器');
-  }
+  // if (Object.getPrototypeOf(Cls) === Metadata) {
+  //   // TODO: 挪到validate中
+  //   throw new Error('目前元数据的类只支持类装饰器');
+  // }
   const { fieldMetadata } = config;
   let fieldMetas = fieldMetadata.get(fieldName);
   if (!fieldMetas) {
     fieldMetas = [];
     fieldMetadata.set(fieldName, fieldMetas);
   }
-  if (fieldMetas.find((i) => i instanceof MetadataCls)) {
-    if (__TEST__) {
-      throw new Error('相同的Field装饰器装饰了2次!');
-    }
-  }
+  // if (fieldMetas.find((i) => i instanceof MetadataCls)) {
+  //   if (__TEST__) {
+  //     // TODO: 挪到validate中
+  //     throw new Error('相同的Field装饰器装饰了2次!');
+  //   }
+  // }
   const metadata = createMetadata(MetadataCls, args);
   fieldMetas.push(metadata);
+}
+
+function addMethodMetadata(
+  Cls: Class<any>,
+  fieldName: Field,
+  MetadataCls: Class<Metadata>,
+  args?: any
+) {
+  let config = getFromMap(Cls);
+  if (!config) {
+    config = addToMap(Cls);
+  }
+  // if (Object.getPrototypeOf(Cls) === Metadata) {
+  //   // TODO: 挪到validate中
+  //   throw new Error('目前元数据的类只支持类装饰器');
+  // }
+  const { methodMetadata } = config;
+  let methodMetas = methodMetadata.get(fieldName);
+  if (!methodMetas) {
+    methodMetas = [];
+    methodMetadata.set(fieldName, methodMetas);
+  }
+  // if (methodMetas.find((i) => i instanceof MetadataCls)) {
+  //   if (__TEST__) {
+  //     // TODO: 挪到validate中
+  //     throw new Error('相同的Field装饰器装饰了2次!');
+  //   }
+  // }
+  const metadata = createMetadata(MetadataCls, args);
+  methodMetas.push(metadata);
 }
 
 /**
@@ -144,6 +181,23 @@ function listFieldMetadata(
     return [];
   }
   return value.fieldMetadata.get(field).filter((i) => {
+    return findMetadataCls ? i instanceof findMetadataCls : true;
+  });
+}
+
+function listMethodMetadata(
+  Cls: Class<any>,
+  field: Field,
+  findMetadataCls?: Class<any>
+) {
+  const value = getFromMap(Cls);
+  if (!value) {
+    if (__DEV__) {
+      console.error(`未注册的组件：`, Cls);
+    }
+    return [];
+  }
+  return value.methodMetadata.get(field).filter((i) => {
     return findMetadataCls ? i instanceof findMetadataCls : true;
   });
 }
@@ -192,7 +246,7 @@ function listFieldByMetadataCls(
   MetadataCls: Class<any>,
   includeCompound: boolean = false
 ): Metadata[] {
-  const def = metadataForBizClass.get(Cls);
+  const def = bizMetadataMap.get(Cls);
   if (!def) {
     return [];
   }
@@ -202,7 +256,7 @@ function listFieldByMetadataCls(
       fields.push(key);
     } else if (includeCompound) {
       for (const metadata of value) {
-        const def = metadataForMetadata.get(<Class<any>>metadata.constructor);
+        const def = metaMetadataMap.get(<Class<any>>metadata.constructor);
         if (def.classMetadata.find((i) => i instanceof MetadataCls)) {
           fields.push(key);
         }
@@ -217,10 +271,7 @@ function listBeDecoratedClsByClassMetadata(
   MetadataCls: Class<any>
 ): Map<Class<any>, Metadata> {
   const rlt = new Map<Class<any>, Metadata>();
-  for (const [
-    beDecoratedCls,
-    { classMetadata },
-  ] of metadataForBizClass.entries()) {
+  for (const [beDecoratedCls, { classMetadata }] of bizMetadataMap.entries()) {
     const find = classMetadata.find((i) => i instanceof MetadataCls);
     if (find) {
       rlt.set(beDecoratedCls, find);
@@ -236,9 +287,18 @@ function listBeDecoratedClsByFieldMetadata(
   const rlt = new Map<Class<any>, { field: Field; metadata: Metadata }>();
   for (const [
     beDecoratedCls,
-    { fieldMetadata },
-  ] of metadataForBizClass.entries()) {
+    { fieldMetadata, methodMetadata },
+  ] of bizMetadataMap.entries()) {
     for (const [field, metadataList] of fieldMetadata.entries()) {
+      if (metadataList) {
+        const find = metadataList.find((i) => i instanceof MetadataCls);
+        if (find) {
+          // TODO: 这里直接设置可能会发生覆盖的情况
+          rlt.set(beDecoratedCls, { field, metadata: find });
+        }
+      }
+    }
+    for (const [field, metadataList] of methodMetadata.entries()) {
       if (metadataList) {
         const find = metadataList.find((i) => i instanceof MetadataCls);
         if (find) {
@@ -251,8 +311,8 @@ function listBeDecoratedClsByFieldMetadata(
 }
 
 function clear() {
-  metadataForMetadata.clear();
-  metadataForBizClass.clear();
+  metaMetadataMap.clear();
+  bizMetadataMap.clear();
 }
 
 /**
@@ -263,8 +323,8 @@ function getMetadata(Cls?: Class<any>) {
   if (Cls) {
     const config =
       Object.getPrototypeOf(Cls) === Metadata
-        ? metadataForMetadata.get(Cls)
-        : metadataForBizClass.get(Cls);
+        ? metaMetadataMap.get(Cls)
+        : bizMetadataMap.get(Cls);
     if (config) {
       const { classMetadata } = config;
       for (const metadata of classMetadata) {
@@ -285,8 +345,11 @@ function getMetadata(Cls?: Class<any>) {
   return result;
 }
 
-function getAllMetadata() {
-  return [metadataForMetadata, metadataForBizClass];
+function getAllMetadata(): [
+  Map<Class<Metadata>, MetaMetadata>,
+  Map<Class<Metadata>, BizMetadata>,
+] {
+  return [metaMetadataMap, bizMetadataMap];
 }
 
 /**
@@ -302,8 +365,9 @@ function registerMetadataCls(cls: Class<any>) {
     // 为什么元数据类不能重名？
     // 本来是可以的，因为元数据类和装饰器哪怕重名都是不严格相等的，注意引入路径即可
     // 但是框架允许通过name查找，那么就不允许重名了，不然麻烦
-    console.error('相同的类不应该注解2次啊', name);
-    throw new Error('元数据类不允许重名！');
+    // TODO: 重复的注册也挪到validate里面
+    // console.error('相同的类不应该注解2次啊', name);
+    // throw new Error('元数据类不允许重名！');
   }
   metadataClsCollection.set(name, cls);
 }
@@ -312,9 +376,11 @@ export {
   metadataClsCollection,
   registerMetadataCls,
   addClassMetadata,
-  addFieldOrMethodMetadata,
+  addFieldMetadata,
+  addMethodMetadata,
   listClassMetadata,
   listFieldMetadata,
+  listMethodMetadata,
   findClassMetadata,
   listFieldByMetadataCls,
   listBeDecoratedClsByClassMetadata,
