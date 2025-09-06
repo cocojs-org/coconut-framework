@@ -12,6 +12,8 @@ export enum DiagnoseCode {
   'CO10006' = 'CO10006',
   'CO10007' = 'CO10007', // 业务类不需要添加@target
   'CO10008' = 'CO10008', // 只有配置类内部才可以使用component注入第三方组件。
+  'CO10009' = 'CO10009', // autowired注入的类存在多个子类，但是没有使用@qualifier装饰器
+  'CO10010' = 'CO10010', // autowired注入的类存在多个子类，但@qualifier装饰器指定了一个不存在的子类id
 }
 
 const DiagnoseCodeMsg = {
@@ -25,10 +27,22 @@ const DiagnoseCodeMsg = {
   [DiagnoseCode.CO10006]: `%s 类 %s 方法上method装饰器 %s 只能用于装饰%s`,
   [DiagnoseCode.CO10007]: `业务类 %s 不需要添加@target装饰器`,
   [DiagnoseCode.CO10008]: `%s 类 %s 方法上有@component装饰器，但 %s 没有@configuration类装饰器或@configuration的复合装饰器`,
+  [DiagnoseCode.CO10009]: `实例化组件失败，%s 类存在多个子类 %s，但没有使用@qualifier指定子类id`,
+  [DiagnoseCode.CO10010]: `实例化组件失败，%s 类存在多个子类 %s，@qualifier装饰器指定了一个不存在的子类id: %s`,
 };
 
 export function createDiagnose(code: DiagnoseCode, ...args: any[]): Diagnose {
   return { code, args };
+}
+
+export function stringifyDiagnose(diagnose: Diagnose) {
+  const { code, args } = diagnose;
+  const format = DiagnoseCodeMsg[code];
+  const msg = format.replace(/%[sd]/g, function (match) {
+    const value = args.shift();
+    return match === '%d' ? `${parseInt(value, 10)}` : `${String(value)}`;
+  });
+  return `${diagnose.code}：${msg}`;
 }
 
 export function printDiagnose(diagnose: Diagnose) {

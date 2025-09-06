@@ -160,9 +160,8 @@ import Target from '../decorator/metadata/target';
 import { Type } from '../decorator/target';
 import Component from '../decorator/metadata/component';
 import Configuration from '../decorator/metadata/configuration';
-import { createDiagnose, Diagnose } from './diagnose';
+import { createDiagnose, type Diagnose, DiagnoseCode } from 'shared';
 import { type MetaMetadata, type BizMetadata } from './index';
-import { DiagnoseCode } from './diagnose';
 import {
   className2DecoratorName,
   metadataInstance2DecoratorName,

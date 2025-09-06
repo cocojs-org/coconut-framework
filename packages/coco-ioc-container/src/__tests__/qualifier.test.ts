@@ -70,14 +70,14 @@ describe('@qualifier装饰器: 通过装饰器配置', () => {
       parent: Parent;
     }
 
-    let error = false;
     try {
       application.start();
       application.getComponent(UserInfo);
     } catch (e) {
-      error = true;
+      expect(e.message).toBe(
+        'CO10009：实例化组件失败，Parent 类存在多个子类 Child,Child1，但没有使用@qualifier指定子类id'
+      );
     }
-    expect(error).toBe(true);
   });
 
   test('@autowired注入的组件存在多个子组件，使用@qualifier指定不存在的id，抛出异常', () => {
@@ -90,18 +90,18 @@ describe('@qualifier装饰器: 通过装饰器配置', () => {
 
     @view()
     class UserInfo {
-      @qualifier('hhhh')
+      @qualifier('notExistId')
       @autowired()
       parent: Parent;
     }
-    let error = false;
     try {
       application.start();
       application.getComponent(UserInfo);
     } catch (e) {
-      error = true;
+      expect(e.message).toBe(
+        'CO10010：实例化组件失败，Parent 类存在多个子类 Child,Child1，@qualifier装饰器指定了一个不存在的子类id: notExistId'
+      );
     }
-    expect(error).toBe(true);
   });
 
   test('@autowired注入的组件存在多个子组件，使用@qualifier指定一个子组件', () => {

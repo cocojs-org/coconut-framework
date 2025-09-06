@@ -9,6 +9,7 @@ import { findClassMetadata } from '../metadata';
 import type Application from './application';
 import { KindClass, KindField, KindMethod } from './decorator-context';
 import { isChildClass, uppercaseFirstLetter } from '../share/util';
+import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
 
 type Id = string;
 const idDefinitionMap: Map<Id, IocComponentDefinition<any>> = new Map();
@@ -133,7 +134,22 @@ function getDefinition(
         }
       }
     }
-    throw new Error(`不应该存在多个一样的子类组件${ClsOrId.name}`);
+    if (_qualifier) {
+      const diagnose = createDiagnose(
+        DiagnoseCode.CO10010,
+        ClsOrId.name,
+        childCls.map((i) => i.name),
+        qualifier
+      );
+      throw new Error(stringifyDiagnose(diagnose));
+    } else {
+      const diagnose = createDiagnose(
+        DiagnoseCode.CO10009,
+        ClsOrId.name,
+        childCls.map((i) => i.name)
+      );
+      throw new Error(stringifyDiagnose(diagnose));
+    }
   }
 }
 
