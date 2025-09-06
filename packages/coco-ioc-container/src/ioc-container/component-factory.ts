@@ -101,7 +101,7 @@ function getDefinition(
   qualifier?: string
 ) {
   if (typeof ClsOrId === 'string') {
-    // todo 如果使用id的话，要考虑子组件的情况吗？
+    // TODO: 如果使用id的话，要考虑子组件的情况吗？
     return idDefinitionMap.get(ClsOrId);
   }
   const childCls: Class<any>[] = [];

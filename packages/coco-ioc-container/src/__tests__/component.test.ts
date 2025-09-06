@@ -1,18 +1,19 @@
-let Application;
-let application;
-let webApplication;
-let cocoMvc;
-let Metadata;
-let target;
-let Target;
-let view;
-let page;
-let layout;
-let controller;
-let component;
-let Component;
-let consoleErrorSpy;
 describe('@component装饰器', () => {
+  let Application;
+  let application;
+  let webApplication;
+  let cocoMvc;
+  let Metadata;
+  let target;
+  let Target;
+  let view;
+  let page;
+  let layout;
+  let controller;
+  let component;
+  let Component;
+  let consoleErrorSpy;
+
   beforeEach(async () => {
     consoleErrorSpy = jest.spyOn(console, 'error');
     consoleErrorSpy.mockImplementation(() => {});
@@ -41,7 +42,7 @@ describe('@component装饰器', () => {
   });
 
   describe('@component装饰在类上', () => {
-    test('不能同时添加2个component装饰器', async () => {
+    test('不能同时添加2个component装饰器', () => {
       @component()
       @component()
       @target([Target.Type.Class])
@@ -55,7 +56,7 @@ describe('@component装饰器', () => {
       );
     });
 
-    test('不能同时添加component装饰器和一个一级复合装饰器', async () => {
+    test('不能同时添加component装饰器和一个一级复合装饰器', () => {
       @view()
       @component()
       @target([Target.Type.Class])
@@ -69,7 +70,7 @@ describe('@component装饰器', () => {
       );
     });
 
-    test('不能同时添加component装饰器和一个二级复合装饰器', async () => {
+    test('不能同时添加component装饰器和一个二级复合装饰器', () => {
       @page()
       @component()
       @target([Target.Type.Class])
@@ -83,7 +84,7 @@ describe('@component装饰器', () => {
       );
     });
 
-    test('不能同时添加2个一级复合装饰器', async () => {
+    test('不能同时添加2个一级复合装饰器', () => {
       @controller()
       @view()
       @target([Target.Type.Class])
@@ -97,7 +98,7 @@ describe('@component装饰器', () => {
       );
     });
 
-    test('不能同时添加一个一级复合装饰器和一个二级复合装饰器', async () => {
+    test('不能同时添加一个一级复合装饰器和一个二级复合装饰器', () => {
       @page()
       @view()
       @target([Target.Type.Class])
@@ -110,7 +111,7 @@ describe('@component装饰器', () => {
       );
     });
 
-    test('不能同时添加2个二级component复合装饰器', async () => {
+    test('不能同时添加2个二级component复合装饰器', () => {
       @page()
       @layout()
       @target([Target.Type.Class])
@@ -124,7 +125,7 @@ describe('@component装饰器', () => {
       );
     });
 
-    test('默认singleton模式', async () => {
+    test('默认singleton模式', () => {
       @component()
       class DefaultValue {}
 
@@ -134,7 +135,7 @@ describe('@component装饰器', () => {
       expect(s1 === s2).toBe(true);
     });
 
-    test('支持显式singleton', async () => {
+    test('支持通过设置scope显式设置为单例模式', () => {
       @component(Component.Scope.Singleton)
       class Single {}
 
@@ -144,7 +145,7 @@ describe('@component装饰器', () => {
       expect(s1 === s2).toBe(true);
     });
 
-    test('支持设置prototype', async () => {
+    test('支持通过设置scope显式设置为多例模式', () => {
       @component(Component.Scope.Prototype)
       class Prototype {}
       application.start();
@@ -155,7 +156,7 @@ describe('@component装饰器', () => {
   });
 
   describe('@component装饰在方法上', () => {
-    test('当使用component注入第三方组件时，必须是配置类内部。', async () => {
+    test('当使用component注入第三方组件时，必须是配置类内部。', () => {
       class Theme {}
       @component()
       class Application {
@@ -174,7 +175,7 @@ describe('@component装饰器', () => {
       );
     });
 
-    test('通过对象传入要注册的ioc组件，默认singleton模式', async () => {
+    test('通过对象传入要注册的ioc组件，默认singleton模式', () => {
       class Theme {}
 
       @webApplication()
@@ -191,7 +192,7 @@ describe('@component装饰器', () => {
       expect(t1 === t2).toBe(true);
     });
 
-    test('通过对象传入要注册的ioc组件，可以设置prototype模式', async () => {
+    test('通过对象传入要注册的ioc组件，可以设置prototype模式', () => {
       class Button {}
 
       @webApplication()
@@ -206,6 +207,98 @@ describe('@component装饰器', () => {
       const b1 = application.getComponent(Button);
       const b2 = application.getComponent(Button);
       expect(b1 === b2).toBe(false);
+    });
+
+    // TODO:
+    xtest('不支持注入number类型', () => {
+      @webApplication()
+      class Application {
+        @component()
+        theme() {
+          return 1;
+        }
+      }
+    });
+
+    // TODO:
+    xtest('不支持注入string类型', () => {
+      @webApplication()
+      class Application {
+        @component()
+        theme() {
+          return '1';
+        }
+      }
+    });
+
+    // TODO:
+    xtest('不支持注入boolean类型', () => {
+      @webApplication()
+      class Application {
+        @component()
+        theme() {
+          return true;
+        }
+      }
+    });
+
+    // TODO:
+    xtest('不支持注入Symbol类型', () => {
+      @webApplication()
+      class Application {
+        @component()
+        theme() {
+          return Symbol('1');
+        }
+      }
+    });
+
+    // TODO:
+    xtest('不支持注入Array类型', () => {
+      @webApplication()
+      class Application {
+        @component()
+        theme() {
+          return [1, 2, 3];
+        }
+      }
+    });
+
+    // TODO:
+    xtest('不支持注入Object类型', () => {
+      @webApplication()
+      class Application {
+        @component()
+        theme() {
+          return { name: '1' };
+        }
+      }
+    });
+
+    // TODO:
+    xtest('不支持注入Set类型', () => {
+      @webApplication()
+      class Application {
+        @component()
+        theme() {
+          return new Set([1, 2, 3]);
+        }
+      }
+    });
+
+    // TODO:
+    xtest('不支持注入Map类型', () => {
+      @webApplication()
+      class Application {
+        @component()
+        theme() {
+          return new Map([
+            ['1', 1],
+            ['2', 2],
+            ['3', 3],
+          ]);
+        }
+      }
     });
   });
 });

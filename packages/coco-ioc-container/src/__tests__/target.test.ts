@@ -1,14 +1,15 @@
-let Application;
-let application;
-let cocoMvc;
-let Metadata;
-let target;
-let Target;
-let component;
-let createDecoratorExp;
-let Component;
-let consoleErrorSpy;
 describe('@target装饰器', () => {
+  let Application;
+  let application;
+  let cocoMvc;
+  let Metadata;
+  let target;
+  let Target;
+  let component;
+  let createDecoratorExp;
+  let Component;
+  let consoleErrorSpy;
+
   beforeEach(async () => {
     consoleErrorSpy = jest.spyOn(console, 'error');
     consoleErrorSpy.mockImplementation(() => {});
@@ -29,6 +30,42 @@ describe('@target装饰器', () => {
     cocoMvc.unregisterApplication();
     jest.resetModules();
     consoleErrorSpy.mockRestore();
+  });
+
+  test('filed上不能使用target装饰器', async () => {
+    @component()
+    class Button {
+      @target([Target.Type.Field])
+      field: string;
+    }
+
+    application.start();
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
+      'Button',
+      'field',
+      '@target',
+      'class'
+    );
+  });
+
+  test('method上不能使用target装饰器', async () => {
+    @component()
+    class Button {
+      @target([Target.Type.Method])
+      click(): string {
+        return '123';
+      }
+    }
+
+    application.start();
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'CO10006：%s 类 %s 方法上method装饰器 %s 只能用于装饰%s',
+      'Button',
+      'click',
+      '@target',
+      'class'
+    );
   });
 
   test('元数据类不能缺少target装饰器', async () => {
