@@ -1,5 +1,4 @@
 import {
-  addDefinition,
   addPostConstruct,
   findInstantiateComponent,
   getComponent,
@@ -23,6 +22,7 @@ import {
   addDecoratorParams,
 } from './decorator-params';
 import {
+  addDefinition,
   ComponentClassPostConstructFn,
   genClassPostConstruct,
   genFieldPostConstruct,
@@ -41,7 +41,7 @@ import Configuration from '../decorator/metadata/configuration';
 import ConstructorParam from '../decorator/metadata/constructor-param';
 import { Init, Start, Qualifier } from '../decorator/metadata/index';
 import PropertiesConfig from './properties-config';
-import { type Diagnose, printDiagnose } from 'shared';
+import { Diagnose, printDiagnose } from 'shared';
 import validate from '../metadata/validate';
 
 /**

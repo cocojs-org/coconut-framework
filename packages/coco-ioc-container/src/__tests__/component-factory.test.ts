@@ -1,9 +1,6 @@
+import { addPostConstruct, clear } from '../ioc-container/component-factory.ts';
 import {
   addDefinition,
-  addPostConstruct,
-  clear,
-} from '../ioc-container/component-factory.ts';
-import {
   genClassPostConstruct,
   genFieldPostConstruct,
   genMethodPostConstruct,

@@ -1,45 +1,21 @@
 import IocComponentDefinition, {
-  createComponent,
   type ComponentFieldPostConstruct,
   type ComponentMethodPostConstruct,
   ComponentPostConstruct,
+  clsDefinitionMap,
+  idDefinitionMap,
+  type Id,
+  getDefinition,
 } from './ioc-component-definition';
 import Component, { Scope } from '../decorator/metadata/component';
-import { findClassMetadata } from '../metadata';
+import {
+  findClassMetadata,
+  listClassMetadata,
+  listFieldMetadata,
+  listMethodMetadata,
+} from '../metadata';
 import type Application from './application';
 import { KindClass, KindField, KindMethod } from './decorator-context';
-import { isChildClass, uppercaseFirstLetter } from '../share/util';
-import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
-
-type Id = string;
-const idDefinitionMap: Map<Id, IocComponentDefinition<any>> = new Map();
-const clsDefinitionMap: Map<
-  Class<any>,
-  IocComponentDefinition<any>
-> = new Map();
-
-function addDefinition(cls: Class<any>) {
-  const existClsDef = clsDefinitionMap.get(cls);
-  if (existClsDef) {
-    throw new Error(
-      `存在同名的组件: [${existClsDef.cls.name}] - [${cls.name}]`
-    );
-  }
-  const id = uppercaseFirstLetter(cls.name);
-  if (typeof id !== 'string' || !id.trim()) {
-    throw new Error(`生成组件id失败: [${cls.name}]`);
-  }
-  const existIdDef = idDefinitionMap.get(id);
-  if (existIdDef) {
-    throw new Error(`存在id的组件: [${existIdDef.cls.name}] - [${cls.name}]`);
-  }
-  const componentDefinition = new IocComponentDefinition();
-  componentDefinition.id = id;
-  componentDefinition.cls = cls;
-  componentDefinition.componentPostConstruct = [];
-  idDefinitionMap.set(id, componentDefinition);
-  clsDefinitionMap.set(cls, componentDefinition);
-}
 
 function addPostConstruct(cls: Class<any>, pc: ComponentPostConstruct) {
   const definition = clsDefinitionMap.get(cls);
@@ -96,63 +72,6 @@ function addPostConstruct(cls: Class<any>, pc: ComponentPostConstruct) {
   definition.componentPostConstruct.push(pc);
 }
 
-function getDefinition(
-  ClsOrId: Class<any> | Id,
-  application: Application,
-  qualifier?: string
-) {
-  if (typeof ClsOrId === 'string') {
-    // TODO: 如果使用id的话，要考虑子组件的情况吗？
-    return idDefinitionMap.get(ClsOrId);
-  }
-  const childCls: Class<any>[] = [];
-  for (const beDecorated of clsDefinitionMap.keys()) {
-    if (isChildClass(beDecorated, ClsOrId)) {
-      childCls.push(beDecorated);
-    }
-  }
-  const definition = clsDefinitionMap.get(ClsOrId);
-  if (childCls.length === 0) {
-    // 没有子组件直接返回本身
-    return definition;
-  } else if (childCls.length === 1) {
-    // 有一个子组件
-    return clsDefinitionMap.get(childCls[0]);
-  } else {
-    // 多个子组件
-    let _qualifier = qualifier;
-    if (!_qualifier && definition) {
-      _qualifier = application.propertiesConfig.getValue(
-        `${definition.id}.qualifier`
-      );
-    }
-    if (_qualifier) {
-      for (const child of childCls) {
-        const def = clsDefinitionMap.get(child);
-        if (def.id === _qualifier) {
-          return def;
-        }
-      }
-    }
-    if (_qualifier) {
-      const diagnose = createDiagnose(
-        DiagnoseCode.CO10010,
-        ClsOrId.name,
-        childCls.map((i) => i.name),
-        qualifier
-      );
-      throw new Error(stringifyDiagnose(diagnose));
-    } else {
-      const diagnose = createDiagnose(
-        DiagnoseCode.CO10009,
-        ClsOrId.name,
-        childCls.map((i) => i.name)
-      );
-      throw new Error(stringifyDiagnose(diagnose));
-    }
-  }
-}
-
 // 单例实例集合
 const singletonInstances: Map<Class<any>, any> = new Map();
 
@@ -182,6 +101,63 @@ function findInstantiateComponent(
   } else {
     throw new Error(`这应该是一个bug，没有${clsOrId}对应的组件`);
   }
+}
+
+function createComponent(
+  application: Application,
+  componentDefinition: IocComponentDefinition<any>,
+  ...parameters: any[]
+) {
+  const cls = componentDefinition.cls;
+  const component = new cls(...parameters);
+  for (const cpc of componentDefinition.componentPostConstruct) {
+    switch (cpc.kind) {
+      case KindClass: {
+        const metadata = listClassMetadata(cls, cpc.metadataCls);
+        if (metadata.length === 1) {
+          cpc.fn.call(component, metadata[0], application);
+        } else {
+          if (__TEST__) {
+            console.error('元数据应该只有一个', cls, cpc.metadataCls);
+          }
+        }
+        break;
+      }
+      case KindField: {
+        const metadata = listFieldMetadata(cls, cpc.field, cpc.metadataCls);
+        if (metadata.length === 1) {
+          cpc.fn.call(component, metadata[0], application, cpc.field);
+        } else {
+          if (__TEST__) {
+            console.error(
+              '元数据应该只有一个',
+              cls,
+              cpc.metadataCls,
+              cpc.field
+            );
+          }
+        }
+        break;
+      }
+      case KindMethod: {
+        const metadata = listMethodMetadata(cls, cpc.field, cpc.metadataCls);
+        if (metadata.length === 1) {
+          cpc.fn.call(component, metadata[0], application, cpc.field);
+        } else {
+          if (__TEST__) {
+            console.error(
+              '元数据应该只有一个',
+              cls,
+              cpc.metadataCls,
+              cpc.field
+            );
+          }
+        }
+        break;
+      }
+    }
+  }
+  return component;
 }
 
 /**
@@ -222,10 +198,4 @@ function clear() {
   singletonInstances.clear();
 }
 
-export {
-  getComponent,
-  findInstantiateComponent,
-  addDefinition,
-  addPostConstruct,
-  clear,
-};
+export { getComponent, findInstantiateComponent, addPostConstruct, clear };

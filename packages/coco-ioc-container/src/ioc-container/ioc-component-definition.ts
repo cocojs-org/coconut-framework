@@ -4,13 +4,10 @@ import {
   KindField,
   KindMethod,
 } from './decorator-context';
-import {
-  listClassMetadata,
-  listFieldMetadata,
-  listMethodMetadata,
-} from '../metadata';
 import type Application from './application';
 import type Metadata from '../metadata/metadata';
+import { isChildClass, uppercaseFirstLetter } from '../share/util';
+import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
 
 /**
  * @public
@@ -108,59 +105,89 @@ export function genMethodPostConstruct(
   return { kind: KindMethod, metadataCls, fn, field };
 }
 
-export function createComponent(
+export type Id = string;
+export const idDefinitionMap: Map<Id, IocComponentDefinition<any>> = new Map();
+export const clsDefinitionMap: Map<
+  Class<any>,
+  IocComponentDefinition<any>
+> = new Map();
+
+export function addDefinition(cls: Class<any>) {
+  const existClsDef = clsDefinitionMap.get(cls);
+  if (existClsDef) {
+    throw new Error(
+      `存在同名的组件: [${existClsDef.cls.name}] - [${cls.name}]`
+    );
+  }
+  const id = uppercaseFirstLetter(cls.name);
+  if (typeof id !== 'string' || !id.trim()) {
+    throw new Error(`生成组件id失败: [${cls.name}]`);
+  }
+  const existIdDef = idDefinitionMap.get(id);
+  if (existIdDef) {
+    throw new Error(`存在id的组件: [${existIdDef.cls.name}] - [${cls.name}]`);
+  }
+  const componentDefinition = new IocComponentDefinition();
+  componentDefinition.id = id;
+  componentDefinition.cls = cls;
+  componentDefinition.componentPostConstruct = [];
+  idDefinitionMap.set(id, componentDefinition);
+  clsDefinitionMap.set(cls, componentDefinition);
+}
+
+export function getDefinition(
+  ClsOrId: Class<any> | Id,
   application: Application,
-  componentDefinition: IocComponentDefinition<any>,
-  ...parameters: any[]
+  qualifier?: string
 ) {
-  const cls = componentDefinition.cls;
-  const component = new cls(...parameters);
-  for (const cpc of componentDefinition.componentPostConstruct) {
-    switch (cpc.kind) {
-      case KindClass: {
-        const metadata = listClassMetadata(cls, cpc.metadataCls);
-        if (metadata.length === 1) {
-          cpc.fn.call(component, metadata[0], application);
-        } else {
-          if (__TEST__) {
-            console.error('元数据应该只有一个', cls, cpc.metadataCls);
-          }
-        }
-        break;
-      }
-      case KindField: {
-        const metadata = listFieldMetadata(cls, cpc.field, cpc.metadataCls);
-        if (metadata.length === 1) {
-          cpc.fn.call(component, metadata[0], application, cpc.field);
-        } else {
-          if (__TEST__) {
-            console.error(
-              '元数据应该只有一个',
-              cls,
-              cpc.metadataCls,
-              cpc.field
-            );
-          }
-        }
-        break;
-      }
-      case KindMethod: {
-        const metadata = listMethodMetadata(cls, cpc.field, cpc.metadataCls);
-        if (metadata.length === 1) {
-          cpc.fn.call(component, metadata[0], application, cpc.field);
-        } else {
-          if (__TEST__) {
-            console.error(
-              '元数据应该只有一个',
-              cls,
-              cpc.metadataCls,
-              cpc.field
-            );
-          }
-        }
-        break;
-      }
+  if (typeof ClsOrId === 'string') {
+    // TODO: 如果使用id的话，要考虑子组件的情况吗？
+    return idDefinitionMap.get(ClsOrId);
+  }
+  const childCls: Class<any>[] = [];
+  for (const beDecorated of clsDefinitionMap.keys()) {
+    if (isChildClass(beDecorated, ClsOrId)) {
+      childCls.push(beDecorated);
     }
   }
-  return component;
+  const definition = clsDefinitionMap.get(ClsOrId);
+  if (childCls.length === 0) {
+    // 没有子组件直接返回本身
+    return definition;
+  } else if (childCls.length === 1) {
+    // 有一个子组件
+    return clsDefinitionMap.get(childCls[0]);
+  } else {
+    // 多个子组件
+    let _qualifier = qualifier;
+    if (!_qualifier && definition) {
+      _qualifier = application.propertiesConfig.getValue(
+        `${definition.id}.qualifier`
+      );
+    }
+    if (_qualifier) {
+      for (const child of childCls) {
+        const def = clsDefinitionMap.get(child);
+        if (def.id === _qualifier) {
+          return def;
+        }
+      }
+    }
+    if (_qualifier) {
+      const diagnose = createDiagnose(
+        DiagnoseCode.CO10010,
+        ClsOrId.name,
+        childCls.map((i) => i.name),
+        qualifier
+      );
+      throw new Error(stringifyDiagnose(diagnose));
+    } else {
+      const diagnose = createDiagnose(
+        DiagnoseCode.CO10009,
+        ClsOrId.name,
+        childCls.map((i) => i.name)
+      );
+      throw new Error(stringifyDiagnose(diagnose));
+    }
+  }
 }
