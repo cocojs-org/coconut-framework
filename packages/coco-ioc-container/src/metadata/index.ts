@@ -245,7 +245,7 @@ function listFieldByMetadataCls(
   Cls: Class<any>,
   MetadataCls: Class<any>,
   includeCompound: boolean = false
-): Metadata[] {
+): Field[] {
   const def = bizMetadataMap.get(Cls);
   if (!def) {
     return [];

@@ -1,10 +1,11 @@
-let cocoMvc;
-let Application;
-let application;
-let component;
-let Component;
-let Target;
 describe('decorator', () => {
+  let cocoMvc;
+  let Application;
+  let application;
+  let component;
+  let Component;
+  let Target;
+
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
     Application = cocoMvc.Application;

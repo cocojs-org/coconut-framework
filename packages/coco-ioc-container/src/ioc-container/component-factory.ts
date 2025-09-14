@@ -6,16 +6,22 @@ import IocComponentDefinition, {
   idDefinitionMap,
   type Id,
   getDefinition,
+  existDefinition,
 } from './ioc-component-definition';
 import Component, { Scope } from '../decorator/metadata/component';
 import {
   findClassMetadata,
   listClassMetadata,
+  listFieldByMetadataCls,
   listFieldMetadata,
   listMethodMetadata,
 } from '../metadata';
 import type Application from './application';
 import { KindClass, KindField, KindMethod } from './decorator-context';
+import ConstructorParam from '../decorator/metadata/constructor-param';
+import Autowired from '../decorator/metadata/autowired';
+import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
+import Qualifier from '../decorator/metadata/qualifier';
 
 function addPostConstruct(cls: Class<any>, pc: ComponentPostConstruct) {
   const definition = clsDefinitionMap.get(cls);
@@ -160,24 +166,19 @@ function createComponent(
   return component;
 }
 
-/**
- * 创建一个ioc组件实例
- * @param application 应用实例；
- * @param ClsOrId 通过类定义或Id获取；
- * @param rest 其他参数
- */
-function getComponent<T>(
+function newInstance<T>(
   application: Application,
   ClsOrId: Class<T> | Id,
-  rest: { qualifier?: string; newParameters?: any[] } = {}
+  rest: { qualifier?: string; constructorArgs?: any[] } = {}
 ): T {
-  const { qualifier, newParameters = [] } = rest;
+  const { qualifier, constructorArgs = [] } = rest;
   const definition = getDefinition(ClsOrId, application, qualifier);
   if (!definition) {
-    if (__TEST__) {
-      console.error('definition', clsDefinitionMap);
-      throw new Error(`can no find component definition:${ClsOrId}`);
-    }
+    const diagnose = createDiagnose(
+      DiagnoseCode.CO10011,
+      typeof ClsOrId === 'string' ? ClsOrId : ClsOrId.name
+    );
+    throw new Error(stringifyDiagnose(diagnose));
   }
   const cls = definition.cls;
   const metadata = findClassMetadata(cls, Component, 2);
@@ -185,11 +186,141 @@ function getComponent<T>(
   if (isSingleton && singletonInstances.has(cls)) {
     return singletonInstances.get(cls);
   }
-  const component = createComponent(application, definition, ...newParameters);
+  // TODO: 还需要处理通过@component装饰方法注入的类
+  const component = createComponent(
+    application,
+    definition,
+    ...constructorArgs
+  );
   if (isSingleton) {
     singletonInstances.set(cls, component);
   }
   return component;
+}
+
+type ConstructOption = {
+  cls: Class<any>;
+  option?: { constructorParams?: any[]; qualifier?: string };
+};
+function getComponents(
+  application: Application,
+  constructOption: ConstructOption
+) {
+  const instances = new Map<Class<any>, any>();
+  const instantiatingStage = new Set<Class<any>>(); // 实例化中
+  const assignningStage = new Set<Class<any>>(); // field赋值中
+  const finishedStage = new Set<Class<any>>(); // 已完成
+
+  // 已经有的单例填充到finishedStage和instances
+  for (const cls of singletonInstances.keys()) {
+    finishedStage.add(cls);
+    instances.set(cls, singletonInstances.get(cls));
+  }
+
+  // 完整的初始化一个组件
+  function instantiateComponent(opt: ConstructOption) {
+    const { cls } = opt;
+    if (!existDefinition(cls)) {
+      const diagnose = createDiagnose(DiagnoseCode.CO10011, cls.name);
+      throw new Error(stringifyDiagnose(diagnose));
+    }
+    if (instantiatingStage.has(cls)) {
+      // 理论上不可能走到这里
+      throw new Error(`循环依赖: ${cls.name}`);
+    }
+    // 已实例化，直接返回
+    if (assignningStage.has(cls) || finishedStage.has(cls)) {
+      return instances.get(cls);
+    }
+    instantiatingStage.add(cls);
+
+    const constructorArgs = [];
+    const constructorParams = listClassMetadata(cls, ConstructorParam);
+    if (constructorParams.length > 0) {
+      // 因为元数据不能重复，所以只有一个
+      const constructorParamsParams = (constructorParams[0] as ConstructorParam)
+        .value;
+      for (const dependency of constructorParamsParams) {
+        if (dependency === undefined) {
+          constructorArgs.push(undefined);
+        } else {
+          const depInstance = instantiateComponent({ cls: dependency });
+          // 确保依赖已完全注入
+          if (!finishedStage.has(dependency)) {
+            throw new Error(
+              `${cls.name} 的构造函数依赖 ${dependency.name} 未完全注入`
+            );
+          }
+          constructorArgs.push(depInstance);
+        }
+      }
+    }
+
+    // 2. 实例化，同时执行componentPostConstruct
+    const instance = newInstance(application, cls, {
+      constructorArgs,
+      qualifier: opt.option?.qualifier,
+    });
+    instances.set(cls, instance);
+    instantiatingStage.delete(cls);
+    assignningStage.add(cls);
+
+    // 3. 递归实例化field注入
+    const autowiredFields = listFieldByMetadataCls(cls, Autowired);
+    for (const field of autowiredFields) {
+      const autowiredMetadatas = listFieldMetadata(
+        cls,
+        field,
+        Autowired
+      ) as Autowired[];
+      if (autowiredMetadatas.length > 0) {
+        const autowiredCls = autowiredMetadatas[0].value;
+        if (autowiredCls === undefined) {
+          instance[field] = undefined;
+        } else if (autowiredCls === cls) {
+          // 检查自依赖：不能注入自己
+          instance[field] = undefined;
+        } else {
+          const qualifierMetadatas = listFieldMetadata(
+            cls,
+            field,
+            Qualifier
+          ) as Qualifier[];
+          let qualifier: string;
+          if (qualifierMetadatas.length > 0) {
+            qualifier = qualifierMetadatas[0].value;
+          }
+          const autowiredInstance = instantiateComponent({
+            cls: autowiredCls,
+            option: { qualifier },
+          });
+          // 字段注入只需要依赖已实例化
+          if (
+            !assignningStage.has(autowiredCls) &&
+            !finishedStage.has(autowiredCls)
+          ) {
+            const diagnose = createDiagnose(
+              DiagnoseCode.CO10012,
+              cls.name,
+              field
+            );
+            throw new Error(stringifyDiagnose(diagnose));
+          }
+          instance[field] = autowiredInstance;
+        }
+      }
+    }
+
+    // 4. 标记为完全注入
+    assignningStage.delete(cls);
+    finishedStage.add(cls);
+
+    return instance;
+  }
+
+  // TODO: 如果初始化多个，有没有先后顺序问题？
+  const instance = instantiateComponent(constructOption);
+  return instance;
 }
 
 function clear() {
@@ -198,4 +329,4 @@ function clear() {
   singletonInstances.clear();
 }
 
-export { getComponent, findInstantiateComponent, addPostConstruct, clear };
+export { getComponents, findInstantiateComponent, addPostConstruct, clear };

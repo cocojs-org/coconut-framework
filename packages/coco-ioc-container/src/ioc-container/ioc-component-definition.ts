@@ -82,14 +82,14 @@ export default class IocComponentDefinition<T> {
   componentPostConstruct?: ComponentPostConstruct[];
 }
 
-export function genClassPostConstruct(
+function genClassPostConstruct(
   metadataCls: Class<any>,
   fn: ComponentClassPostConstructFn
 ): ComponentClassPostConstruct {
   return { kind: KindClass, metadataCls, fn };
 }
 
-export function genFieldPostConstruct(
+function genFieldPostConstruct(
   metadataCls: Class<any>,
   fn: ComponentFieldPostConstructFn,
   field: Field
@@ -97,7 +97,7 @@ export function genFieldPostConstruct(
   return { kind: KindField, metadataCls, fn, field };
 }
 
-export function genMethodPostConstruct(
+function genMethodPostConstruct(
   metadataCls: Class<any>,
   fn: ComponentMethodPostConstructFn,
   field: Field
@@ -105,14 +105,14 @@ export function genMethodPostConstruct(
   return { kind: KindMethod, metadataCls, fn, field };
 }
 
-export type Id = string;
-export const idDefinitionMap: Map<Id, IocComponentDefinition<any>> = new Map();
-export const clsDefinitionMap: Map<
+type Id = string;
+const idDefinitionMap: Map<Id, IocComponentDefinition<any>> = new Map();
+const clsDefinitionMap: Map<
   Class<any>,
   IocComponentDefinition<any>
 > = new Map();
 
-export function addDefinition(cls: Class<any>) {
+function addDefinition(cls: Class<any>) {
   const existClsDef = clsDefinitionMap.get(cls);
   if (existClsDef) {
     throw new Error(
@@ -135,7 +135,7 @@ export function addDefinition(cls: Class<any>) {
   clsDefinitionMap.set(cls, componentDefinition);
 }
 
-export function getDefinition(
+function getDefinition(
   ClsOrId: Class<any> | Id,
   application: Application,
   qualifier?: string
@@ -173,7 +173,7 @@ export function getDefinition(
         }
       }
     }
-    if (_qualifier) {
+    if (qualifier) {
       const diagnose = createDiagnose(
         DiagnoseCode.CO10010,
         ClsOrId.name,
@@ -191,3 +191,23 @@ export function getDefinition(
     }
   }
 }
+
+function existDefinition(ClsOrId: Class<any> | Id) {
+  if (typeof ClsOrId === 'string') {
+    return idDefinitionMap.has(ClsOrId);
+  } else {
+    return clsDefinitionMap.has(ClsOrId);
+  }
+}
+
+export {
+  type Id,
+  clsDefinitionMap, // TODO: 不应该导出
+  idDefinitionMap, // TODO: 不应该导出
+  existDefinition,
+  getDefinition,
+  addDefinition,
+  genClassPostConstruct,
+  genFieldPostConstruct,
+  genMethodPostConstruct,
+};

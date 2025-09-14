@@ -52,10 +52,10 @@
     "webpack-merge": "^6.0.1"
   },
   "devDependencies": {
-    "@cocojs/typescript-transformer": "^0.0.10",
+    "@cocojs/typescript-transformer": "^0.0.12",
     "@types/node": "^22.15.18"
   },
   "peerDependencies": {
-    "@cocojs/typescript-transformer": "^0.0.10"
+    "@cocojs/typescript-transformer": "^0.0.12"
   }
 }

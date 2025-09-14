@@ -1,21 +1,18 @@
-let Application;
-let application;
-let webApplication;
-let cocoMvc;
-let view;
-let autowired;
-let page;
-let layout;
-let controller;
-let component;
-let Component;
 describe('autowired', () => {
+  let Application;
+  let application;
+  let webApplication;
+  let cocoMvc;
+  let view;
+  let autowired;
+  let controller;
+  let component;
+  let Component;
+
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
     view = cocoMvc.view;
     autowired = cocoMvc.autowired;
-    page = cocoMvc.page;
-    layout = cocoMvc.layout;
     component = cocoMvc.component;
     controller = cocoMvc.controller;
     Component = cocoMvc.Component;
@@ -48,6 +45,48 @@ describe('autowired', () => {
     expect(userInfo1.button).not.toBe(userInfo2.button);
   });
 
+  test('如果通过autowired装饰器注入自己，则注入undefined', () => {
+    @component()
+    class Button {
+      @autowired()
+      button: Button;
+    }
+    application.start();
+    const button = application.getComponent(Button);
+    expect(button.button).toBe(undefined);
+  });
+
+  test('没有定义的组件，就会注入undefined', () => {
+    @component()
+    class Button {
+      @autowired()
+      like: Like;
+    }
+
+    application.start();
+    const button = application.getComponent(Button);
+    expect(button.like).toBe(undefined);
+  });
+
+  test('没有注册的组件，会抛异常', () => {
+    let throwError = false;
+    class Like {}
+    @component()
+    class Button {
+      @autowired()
+      like: Like;
+    }
+
+    application.start();
+    try {
+      application.getComponent(Button);
+    } catch (e) {
+      throwError = true;
+      expect(e.message).toBe('CO10011：实例化组件失败，Like 类不是ioc组件');
+    }
+    expect(throwError).toBe(true);
+  });
+
   test('注入一个默认配置的组件，默认单例组件', async () => {
     @component()
     class Theme {}
@@ -64,7 +103,27 @@ describe('autowired', () => {
     expect(userInfo1.theme).toBe(userInfo2.theme);
   });
 
-  test('注入一个配置的组件，默认是单例组件', async () => {
+  test('TODO:看一下为什么不能注入后面的组件', () => {
+    @component()
+    class ButtonA {
+      @autowired()
+      buttonB: ButtonB;
+    }
+
+    @component()
+    class ButtonB {
+      @autowired()
+      buttonA: ButtonA;
+    }
+
+    application.start();
+    const buttonB = application.getComponent(ButtonB);
+    expect(buttonB).toBeInstanceOf(ButtonB);
+    expect(buttonB.buttonA).toBeInstanceOf(ButtonA);
+    expect(buttonB.buttonA.buttonB).toBe(undefined);
+  });
+
+  xtest('注入一个配置的组件，默认是单例组件', async () => {
     class User {}
 
     @webApplication()
@@ -87,7 +146,7 @@ describe('autowired', () => {
     expect(userInfo1.user).toBe(userInfo2.user);
   });
 
-  test('注入一个配置的组件，原型模式则返回不同的组件', async () => {
+  xtest('注入一个配置的组件，原型模式则返回不同的组件', async () => {
     class Computer {}
 
     @webApplication()

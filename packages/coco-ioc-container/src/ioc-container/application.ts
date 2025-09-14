@@ -1,7 +1,7 @@
 import {
   addPostConstruct,
   findInstantiateComponent,
-  getComponent,
+  getComponents,
 } from './component-factory';
 import {
   addClassMetadata,
@@ -85,22 +85,37 @@ class Application {
    * @param cls - 类定义
    * @param option
    */
-  public getComponent<T>(
-    cls: Class<T>,
-    option?: { constructorParams?: any[]; qualifier?: string }
-  ): T;
+  public getComponent<T>(cls: Class<T>, option?: { qualifier?: string }): T;
   // 根据组件id返回组件实例
-  public getComponent<T>(id: string, option?: { constructorParams?: any[] }): T;
+  public getComponent<T>(id: string, option?: { qualifier?: string }): T;
   public getComponent<T>(
     ClsOrId: Class<T> | string,
-    option: { constructorParams?: any[]; qualifier?: string } = {}
-  ): T {
-    const constructorParams = option.constructorParams;
-    const qualifier = option.qualifier;
-    return getComponent(this, ClsOrId, {
-      qualifier,
-      newParameters: constructorParams,
-    });
+    option?: { qualifier?: string }
+  ) {
+    if (typeof ClsOrId === 'string') {
+      // TODO:
+      return null;
+    } else {
+      return getComponents(this, { cls: ClsOrId, option });
+    }
+  }
+
+  /**
+   * 仅用于view组件的实例化入口，其他ioc组件都应该使用getComponent
+   * @param ClsOrId 组件的类定义或id
+   * @param props 组件的props
+   * @returns
+   */
+  public getViewComponent<T>(ClsOrId: Class<T> | string, props?: any[]) {
+    if (typeof ClsOrId === 'string') {
+      // TODO:
+      return null;
+    } else {
+      return getComponents(this, {
+        cls: ClsOrId,
+        option: { constructorParams: [props] },
+      });
+    }
   }
 
   /**
@@ -342,13 +357,14 @@ class Application {
 
     const doInstantiateComponent = (beDecorated: Class<any>) => {
       if (!map.has(beDecorated)) {
-        return getComponent(this, beDecorated);
+        return getComponents(this, { cls: beDecorated });
       } else {
         const metadata = map.get(beDecorated) as { value: Class<any>[] };
         const ParameterList = metadata.value;
         const parameterList = ParameterList.map(doInstantiateComponent);
-        return getComponent(this, beDecorated, {
-          newParameters: parameterList,
+        return getComponents(this, {
+          cls: beDecorated,
+          option: { constructorParams: parameterList },
         });
       }
     };
@@ -364,7 +380,7 @@ class Application {
       const beDecoratedCls = entity[0];
       const field = entity[1].field;
       if (bootComponent.has(beDecoratedCls)) {
-        const component = getComponent(this, beDecoratedCls);
+        const component = getComponents(this, { cls: beDecoratedCls });
         component[field]?.call(component, this);
       }
     }
@@ -376,7 +392,7 @@ class Application {
       const beDecoratedCls = entity[0];
       const field = entity[1].field;
       if (bootComponent.has(beDecoratedCls)) {
-        const component = getComponent(this, beDecoratedCls);
+        const component = getComponents(this, { cls: beDecoratedCls });
         component[field]?.();
       }
     }
