@@ -324,8 +324,6 @@ function getComponents(
 }
 
 function clear() {
-  idDefinitionMap.clear();
-  clsDefinitionMap.clear();
   singletonInstances.clear();
 }
 

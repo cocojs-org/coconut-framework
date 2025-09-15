@@ -100,12 +100,13 @@ import {
   getAllMetadata,
   clear as clearMetadata,
 } from './metadata/index.ts';
-import { clear as clearComponentDefinition } from './ioc-container/component-factory';
-
+import { clear as clearComponentFactory } from './ioc-container/component-factory';
+import { clear as clearComponentDefinition } from './ioc-container/ioc-component-definition';
 import { clear as clearPreventCircularDependency } from 'shared';
 
 function clear() {
   clearMetadata();
+  clearComponentFactory();
   clearComponentDefinition();
   clearPreventCircularDependency();
 }

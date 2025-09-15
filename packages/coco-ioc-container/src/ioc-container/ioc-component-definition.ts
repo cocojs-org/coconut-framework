@@ -200,10 +200,16 @@ function existDefinition(ClsOrId: Class<any> | Id) {
   }
 }
 
+function clear() {
+  idDefinitionMap.clear();
+  clsDefinitionMap.clear();
+}
+
 export {
   type Id,
   clsDefinitionMap, // TODO: 不应该导出
   idDefinitionMap, // TODO: 不应该导出
+  clear,
   existDefinition,
   getDefinition,
   addDefinition,
