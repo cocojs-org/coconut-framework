@@ -78,9 +78,13 @@ export type ComponentPostConstruct =
  * 3. 项目中通过@component方法装饰注册的组件
  */
 export interface IocComponentDefinition<T> {
+  // 组件id，每个组件的id是唯一的
   id: string;
 
   cls: Class<T>;
+
+  // 是否是单例模式，否则每次实例化都会创建一个新的实例
+  isSingleton: boolean;
 
   // 实例化方式
   instantiateType: 'new' | 'method';
@@ -101,9 +105,10 @@ export interface IocComponentDefinition<T> {
 function newIocComponentDefinition<T>(
   id: string,
   cls: Class<T>,
+  isSingleton: boolean,
   instantiateType: 'new' | 'method'
 ): IocComponentDefinition<T> {
-  return { id, cls, instantiateType, componentPostConstruct: [] };
+  return { id, cls, isSingleton, instantiateType, componentPostConstruct: [] };
 }
 
 function genClassPostConstruct(
@@ -138,6 +143,7 @@ const clsDefinitionMap: Map<
 
 function addDefinition(
   cls: Class<any>,
+  isSingleton: boolean,
   methodInstantiateOpts?: { configurationCls: Class<any>; method: string }
 ) {
   const existClsDef = clsDefinitionMap.get(cls);
@@ -157,6 +163,7 @@ function addDefinition(
   const componentDefinition = newIocComponentDefinition(
     id,
     cls,
+    isSingleton,
     methodInstantiateOpts ? 'method' : 'new'
   );
   if (methodInstantiateOpts) {

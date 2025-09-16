@@ -190,18 +190,15 @@ function newInstance<T>(
     throw new Error(stringifyDiagnose(diagnose));
   }
   const cls = definition.cls;
-  const metadata = findClassMetadata(cls, Component, 2);
-  const isSingleton = metadata.scope === Scope.Singleton;
-  if (isSingleton && singletonInstances.has(cls)) {
+  if (definition.isSingleton && singletonInstances.has(cls)) {
     return singletonInstances.get(cls);
   }
-  // TODO: 还需要处理通过@component装饰方法注入的类
   const component = createComponent(
     application,
     definition,
     ...constructorArgs
   );
-  if (isSingleton) {
+  if (definition.isSingleton) {
     singletonInstances.set(cls, component);
   }
   return component;

@@ -14,6 +14,7 @@ import {
   findClassMetadata,
   listFieldByMetadataCls,
   metadataClsCollection,
+  listMethodMetadata,
 } from '../metadata/index';
 import {
   get,
@@ -225,8 +226,13 @@ class Application {
       const beDecoratedCls = entity[0];
       const params = entity[1];
       if (bizMetadata.has(beDecoratedCls)) {
+        // TODO: 这里不应该从装饰器中找component，因为可能是非法的，应该从元数据中找
         if (isIncludesClassDecorator(beDecoratedCls, Component, 2)) {
-          addDefinition(beDecoratedCls);
+          const meta = findClassMetadata(beDecoratedCls, Component, 2);
+          addDefinition(
+            beDecoratedCls,
+            meta.scope === Component.Scope.Singleton
+          );
           params.forEach(
             ({
               metadataClass,
@@ -275,21 +281,18 @@ class Application {
             Component
           );
           if (methodDecoratorParams) {
-            addDefinition(methodDecoratorParams.metadataParam.value, {
-              configurationCls: beDecoratedCls,
-              method: methodDecoratorParams.field,
-            });
-            /**
-             * TODO: 为什么这里要添加一个component元数据呢？
-             * 原因是默认情况下，组件都是有@component装饰器装饰的
-             * 但是第三方的组件是通过方法注入的，没有@component装饰器
-             * 但是呢在实例化的时候，需要通过元数据判断这个组件是单例还是prototype，如果找不到component元数据呢，直接报错了
-             * 但是呢，虽然这个解决了问题，但是解决方案太丑陋了，1. 这行代码不合理。2. 我本来在组件上也没有component装饰器啊
-             */
-            addClassMetadata(
+            const metadata: Component[] = listMethodMetadata(
+              beDecoratedCls,
+              methodDecoratorParams.field,
+              Component
+            ) as Component[];
+            addDefinition(
               methodDecoratorParams.metadataParam.value,
-              Component,
-              methodDecoratorParams.metadataParam.scope
+              metadata[0].scope === Component.Scope.Singleton,
+              {
+                configurationCls: beDecoratedCls,
+                method: methodDecoratorParams.field,
+              }
             );
           }
         }
