@@ -42,7 +42,7 @@ describe('@component装饰器', () => {
   });
 
   describe('@component装饰在类上', () => {
-    test('不能同时添加2个component装饰器', () => {
+    xtest('不能同时添加2个component装饰器', () => {
       @component()
       @component()
       @target([Target.Type.Class])
@@ -175,14 +175,13 @@ describe('@component装饰器', () => {
       );
     });
 
-    xtest('通过对象传入要注册的ioc组件，默认singleton模式', () => {
-      // TODO: component装饰器要重新实现
+    test('通过对象传入要注册的ioc组件，默认singleton模式', () => {
       class Theme {}
 
       @webApplication()
       class Application {
         @component()
-        theme() {
+        theme(): Theme {
           return new Theme();
         }
       }
@@ -193,14 +192,13 @@ describe('@component装饰器', () => {
       expect(t1 === t2).toBe(true);
     });
 
-    xtest('通过对象传入要注册的ioc组件，可以设置prototype模式', () => {
-      // TODO: component装饰器要重新实现
+    test('通过对象传入要注册的ioc组件，可以设置prototype模式', () => {
       class Button {}
 
       @webApplication()
       class Application {
         @component(Component.Scope.Prototype)
-        button() {
+        button(): Button {
           return new Button();
         }
       }

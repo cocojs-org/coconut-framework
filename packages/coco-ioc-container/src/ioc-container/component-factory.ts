@@ -1,4 +1,5 @@
-import IocComponentDefinition, {
+import {
+  type IocComponentDefinition,
   type ComponentFieldPostConstruct,
   type ComponentMethodPostConstruct,
   ComponentPostConstruct,
@@ -114,8 +115,16 @@ function createComponent(
   componentDefinition: IocComponentDefinition<any>,
   ...parameters: any[]
 ) {
-  const cls = componentDefinition.cls;
-  const component = new cls(...parameters);
+  const { cls, instantiateType } = componentDefinition;
+  let component;
+  if (instantiateType === 'new') {
+    component = new cls(...parameters);
+  } else {
+    const { configurationCls, method } =
+      componentDefinition.methodInstantiateOpts;
+    const configuration = new configurationCls();
+    component = configuration[method]();
+  }
   for (const cpc of componentDefinition.componentPostConstruct) {
     switch (cpc.kind) {
       case KindClass: {

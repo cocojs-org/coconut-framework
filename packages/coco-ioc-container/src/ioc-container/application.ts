@@ -19,7 +19,7 @@ import {
   get,
   clear as clearDecoratorParams,
   isIncludesClassDecorator,
-  addDecoratorParams,
+  isIncludesMethodDecorator,
 } from './decorator-params';
 import {
   addDefinition,
@@ -31,13 +31,6 @@ import {
 import Metadata from '../metadata/metadata';
 import { KindClass, KindField, KindMethod } from './decorator-context';
 import Component from '../decorator/metadata/component';
-import type { Scope } from '../decorator/metadata/component';
-import {
-  isChildClass,
-  isPlainObject,
-  lowercaseFirstLetter,
-} from '../share/util';
-import Configuration from '../decorator/metadata/configuration';
 import ConstructorParam from '../decorator/metadata/constructor-param';
 import { Init, Start, Qualifier } from '../decorator/metadata/index';
 import PropertiesConfig from './properties-config';
@@ -63,8 +56,7 @@ class Application {
    */
   public start() {
     {
-      this.addFieldOrMethodDecoratorParams();
-      this.addAtComponentDecoratorParams();
+      this.collectFieldOrMethodDecoratorParams();
       this.buildMetadata();
       // TODO: 校验全部放在core里面做到，然后业务上获取的时候先过滤掉非法的元数据，只从合法的元数据中查找
       this.diagnoseList = validate(getAllMetadata());
@@ -167,11 +159,11 @@ class Application {
   /**
    * 实例化所有业务类（非元数据类），拿到field和method装饰器参数
    */
-  private addFieldOrMethodDecoratorParams() {
+  private collectFieldOrMethodDecoratorParams() {
     for (const Cls of get().keys()) {
       if (Object.getPrototypeOf(Cls) !== Metadata) {
         /**
-         * todo 如果view组件的state需要用到props初始化的话，会导致报错，例如：
+         * TODO: 如果view组件的state需要用到props初始化的话，会导致报错，例如：
          * class {
          *   constructor(props){
          *     this.name = props.name // 这里会报错
@@ -225,6 +217,7 @@ class Application {
     }
   }
 
+  // 如果有类装饰器，则添加到ioc组件定义中
   private buildIocComponentDefinition() {
     const bizMetadata = getAllMetadata()[1];
     // 处理@component和带有@component的元数据类
@@ -276,38 +269,31 @@ class Application {
               }
             }
           );
-        }
-      }
-    }
-  }
-
-  // 为@component添加装饰器参数
-  private addAtComponentDecoratorParams() {
-    for (const entity of get().entries()) {
-      const beDecoratedCls = entity[0];
-      const params = entity[1];
-      if (!isIncludesClassDecorator(beDecoratedCls, Configuration, 1)) {
-        continue;
-      }
-      const componentDecorateParams = params.filter(
-        (i) => i.metadataKind === KindMethod && i.metadataClass === Component
-      );
-      componentDecorateParams.forEach(function (param) {
-        let targetCls: Class<any>;
-        let scope: Scope;
-        if (isPlainObject(param.metadataParam)) {
-          targetCls = param.metadataParam.value;
-          scope = param.metadataParam.scope;
         } else {
-          targetCls = param.metadataParam;
+          const methodDecoratorParams = isIncludesMethodDecorator(
+            beDecoratedCls,
+            Component
+          );
+          if (methodDecoratorParams) {
+            addDefinition(methodDecoratorParams.metadataParam.value, {
+              configurationCls: beDecoratedCls,
+              method: methodDecoratorParams.field,
+            });
+            /**
+             * TODO: 为什么这里要添加一个component元数据呢？
+             * 原因是默认情况下，组件都是有@component装饰器装饰的
+             * 但是第三方的组件是通过方法注入的，没有@component装饰器
+             * 但是呢在实例化的时候，需要通过元数据判断这个组件是单例还是prototype，如果找不到component元数据呢，直接报错了
+             * 但是呢，虽然这个解决了问题，但是解决方案太丑陋了，1. 这行代码不合理。2. 我本来在组件上也没有component装饰器啊
+             */
+            addClassMetadata(
+              methodDecoratorParams.metadataParam.value,
+              Component,
+              methodDecoratorParams.metadataParam.scope
+            );
+          }
         }
-        addDecoratorParams(targetCls, {
-          decoratorName: lowercaseFirstLetter(Component.name),
-          metadataKind: KindClass,
-          metadataClass: Component,
-          metadataParam: scope,
-        });
-      });
+      }
     }
   }
 

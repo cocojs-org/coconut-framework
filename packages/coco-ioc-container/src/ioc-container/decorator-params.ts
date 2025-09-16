@@ -1,5 +1,10 @@
 import type { ComponentPostConstructFn } from './ioc-component-definition';
-import { type Field, type Kind, KindClass } from './decorator-context';
+import {
+  type Field,
+  type Kind,
+  KindClass,
+  KindMethod,
+} from './decorator-context';
 import { isClass } from '../share/util';
 import { get as getFromShare, NAME } from 'shared';
 
@@ -97,6 +102,23 @@ export function isIncludesClassDecorator(
     }
   }
   return false;
+}
+
+export function isIncludesMethodDecorator(
+  beDecoratedCls: Class<any>,
+  targetMetadataCls: Class<any>
+): params {
+  const allDecoratorParams = decoratorParamMap.get(beDecoratedCls);
+  if (!allDecoratorParams) {
+    return null;
+  }
+  const methodDecoratorParams = allDecoratorParams.filter(
+    (i) => i.metadataKind === KindMethod
+  );
+  const find = methodDecoratorParams.find(
+    (params) => params.metadataClass === targetMetadataCls
+  );
+  return find || null;
 }
 
 export function get(): Map<Class<any>, params[]> {

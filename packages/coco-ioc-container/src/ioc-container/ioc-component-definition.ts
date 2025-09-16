@@ -70,16 +70,40 @@ export type ComponentPostConstruct =
   | ComponentFieldPostConstruct
   | ComponentMethodPostConstruct;
 
-export default class IocComponentDefinition<T> {
+/**
+ * 所有被扫描的规范的组件
+ * 包括：
+ * 1. 项目中添加@component类装饰的组件
+ * 2. 第三方添加@component类装饰的组件
+ * 3. 项目中通过@component方法装饰注册的组件
+ */
+export interface IocComponentDefinition<T> {
   id: string;
 
   cls: Class<T>;
 
+  // 实例化方式
+  instantiateType: 'new' | 'method';
+
   /**
-   * 自定义初始化方法
+   * 元数据的定义后置处理方法
    * new表达式后立刻执行
    */
   componentPostConstruct?: ComponentPostConstruct[];
+
+  // 当实例化方式为method时对应的选项
+  methodInstantiateOpts?: {
+    configurationCls: Class<any>; // 配置类
+    method: string; // 方法名
+  };
+}
+
+function newIocComponentDefinition<T>(
+  id: string,
+  cls: Class<T>,
+  instantiateType: 'new' | 'method'
+): IocComponentDefinition<T> {
+  return { id, cls, instantiateType, componentPostConstruct: [] };
 }
 
 function genClassPostConstruct(
@@ -112,7 +136,10 @@ const clsDefinitionMap: Map<
   IocComponentDefinition<any>
 > = new Map();
 
-function addDefinition(cls: Class<any>) {
+function addDefinition(
+  cls: Class<any>,
+  methodInstantiateOpts?: { configurationCls: Class<any>; method: string }
+) {
   const existClsDef = clsDefinitionMap.get(cls);
   if (existClsDef) {
     throw new Error(
@@ -127,10 +154,14 @@ function addDefinition(cls: Class<any>) {
   if (existIdDef) {
     throw new Error(`存在id的组件: [${existIdDef.cls.name}] - [${cls.name}]`);
   }
-  const componentDefinition = new IocComponentDefinition();
-  componentDefinition.id = id;
-  componentDefinition.cls = cls;
-  componentDefinition.componentPostConstruct = [];
+  const componentDefinition = newIocComponentDefinition(
+    id,
+    cls,
+    methodInstantiateOpts ? 'method' : 'new'
+  );
+  if (methodInstantiateOpts) {
+    componentDefinition.methodInstantiateOpts = methodInstantiateOpts;
+  }
   idDefinitionMap.set(id, componentDefinition);
   clsDefinitionMap.set(cls, componentDefinition);
 }
