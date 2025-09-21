@@ -231,13 +231,11 @@ function addPostConstruct(cls: Class<any>, pc: ComponentPostConstruct) {
 /**
  * 获取真正会实例化的类定义
  * @param ClsOrId 想要实例化的类或类id
- * @param application 应用实例
  * @param qualifier 如果存在多个后端类，需要通过qualifier指定具体的类id
  * @returns 真正会实例化的类定义
  */
 function getInstantiateDefinition(
   ClsOrId: Class<any> | Id,
-  application: Application,
   qualifier?: string
 ) {
   const definition = getDefinition(ClsOrId);
@@ -259,16 +257,10 @@ function getInstantiateDefinition(
     return clsDefinitionMap.get(descendantList[0]);
   } else {
     // 多个子组件
-    let _qualifier = qualifier;
-    if (!_qualifier && definition) {
-      _qualifier = application.propertiesConfig.getValue(
-        `${definition.id}.qualifier`
-      );
-    }
-    if (_qualifier) {
+    if (qualifier) {
       for (const child of descendantList) {
         const def = clsDefinitionMap.get(child);
-        if (def.id === _qualifier) {
+        if (def.id === qualifier) {
           return def;
         }
       }

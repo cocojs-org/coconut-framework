@@ -1,16 +1,9 @@
 import {
   type IocComponentDefinition,
-  type ComponentFieldPostConstruct,
-  type ComponentMethodPostConstruct,
-  ComponentPostConstruct,
-  type Id,
   getInstantiateDefinition,
-  existDefinition,
   getDefinition,
 } from './ioc-component-definition';
-import Component, { Scope } from '../decorator/metadata/component';
 import {
-  findClassMetadata,
   listClassMetadata,
   listFieldByMetadataCls,
   listFieldMetadata,
@@ -33,31 +26,6 @@ import Start from '../decorator/metadata/start';
 
 // 单例构造函数和单例的映射关系
 const singletonInstances: Map<Class<any>, any> = new Map();
-
-/*
- * 如果实例化组件ID，找到要实例化的子组件，也有可能是多子组件的情况下
- */
-function findInstantiateComponent(
-  application: Application,
-  clsOrId: Class<any> | Id,
-  qualifier?: string
-) {
-  const definition = getDefinition(clsOrId);
-  if (definition) {
-    const definitionOrChildDefinition = getInstantiateDefinition(
-      definition.cls,
-      application,
-      qualifier
-    );
-    if (definitionOrChildDefinition) {
-      return definitionOrChildDefinition.cls;
-    } else {
-      return definition.cls;
-    }
-  } else {
-    throw new Error(`这应该是一个bug，没有${clsOrId}对应的组件`);
-  }
-}
 
 function createComponent<T>(
   application: Application,
@@ -127,10 +95,7 @@ type ConstructOption = {
   classOrId: Class<any> | string;
   qualifier?: string;
 };
-function getComponents(
-  application: Application,
-  constructOption: ConstructOption
-) {
+function getComponents(application: Application, userOption: ConstructOption) {
   const targetClsInstanceMap = new Map<Class<any>, any>(); // 想要实例化的类和对应的实例
   const instanceInstantiateClsMap = new Map<any, Class<any>>(); // 新建实例和对应的实例化类
   const newSingletonInstances: Map<Class<any>, any> = new Map(); // 新增的单例，最后要合并到singletonInstances
@@ -156,11 +121,17 @@ function getComponents(
       );
       throw new Error(stringifyDiagnose(diagnose));
     }
+    let qualifier = opt.qualifier;
+    if (!qualifier) {
+      // 如果没有指定，尝试从配置中获取
+      qualifier = application.propertiesConfig.getValue(
+        `${targetDefinition.id}.qualifier`
+      );
+    }
     // 真正实例化的类定义
     const instantiateDefinition = getInstantiateDefinition(
       classOrId,
-      application,
-      opt.qualifier
+      qualifier
     );
 
     if (instantiateDefinition.isSingleton) {
@@ -280,7 +251,7 @@ function getComponents(
   }
 
   // TODO: 如果初始化多个，有没有先后顺序问题？
-  const instance = instantiateComponent(constructOption);
+  const instance = instantiateComponent(userOption);
   // merge newSingletonInstances to singletonInstances
   if (newSingletonInstances.size > 0) {
     for (const [cls, instance] of newSingletonInstances.entries()) {
@@ -377,4 +348,4 @@ function clear() {
   singletonInstances.clear();
 }
 
-export { getComponents, getViewComponent, findInstantiateComponent, clear };
+export { getComponents, getViewComponent, clear };

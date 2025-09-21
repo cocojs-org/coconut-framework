@@ -20,6 +20,7 @@ export enum Scope {
 class Component extends Metadata {
   static Scope = Scope;
 
+  // TODO: scope单独成装饰器
   scope: Scope = Scope.Singleton;
 }
 
