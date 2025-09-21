@@ -44,17 +44,26 @@ export function constructOf<T>(o: any): Class<T> {
   return o.constructor;
 }
 
-/**
- * 判断subclass是否是superclass的子类
- * @param childCls
- * @param parentCls
- */
-export function isChildClass(childCls: Class<any>, parentCls: Class<any>) {
-  if (typeof childCls !== 'function' || typeof parentCls !== 'function') {
+export function isDescendantOf(
+  childClass: Class<any>,
+  parentClass: Class<any>
+) {
+  if (typeof childClass !== 'function' || typeof parentClass !== 'function') {
+    return false;
+  }
+  // 直接相等的情况
+  if (childClass === parentClass) {
     return false;
   }
 
-  return parentCls === Object.getPrototypeOf(childCls);
+  let proto = Object.getPrototypeOf(childClass.prototype);
+  while (proto) {
+    if (proto === parentClass.prototype) {
+      return true;
+    }
+    proto = Object.getPrototypeOf(proto);
+  }
+  return false;
 }
 
 /**

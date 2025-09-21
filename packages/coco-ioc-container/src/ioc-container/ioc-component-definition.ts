@@ -6,7 +6,7 @@ import {
 } from './decorator-context';
 import type Application from './application';
 import type Metadata from '../metadata/metadata';
-import { isChildClass, uppercaseFirstLetter } from '../share/util';
+import { isDescendantOf, uppercaseFirstLetter } from '../share/util';
 import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
 
 /**
@@ -248,19 +248,15 @@ function getInstantiateDefinition(
     );
     throw new Error(stringifyDiagnose(diagnose));
   }
-  const childCls: Class<any>[] = [];
-  for (const beDecorated of clsDefinitionMap.keys()) {
-    // TODO: 改成后端类，而不是子类
-    if (isChildClass(beDecorated, definition.cls)) {
-      childCls.push(beDecorated);
-    }
-  }
-  if (childCls.length === 0) {
+  const descendantList: Class<any>[] = Array.from(
+    clsDefinitionMap.keys()
+  ).filter((i) => isDescendantOf(i, definition.cls));
+  if (descendantList.length === 0) {
     // 没有子组件直接返回本身
     return definition;
-  } else if (childCls.length === 1) {
+  } else if (descendantList.length === 1) {
     // 有一个子组件
-    return clsDefinitionMap.get(childCls[0]);
+    return clsDefinitionMap.get(descendantList[0]);
   } else {
     // 多个子组件
     let _qualifier = qualifier;
@@ -270,7 +266,7 @@ function getInstantiateDefinition(
       );
     }
     if (_qualifier) {
-      for (const child of childCls) {
+      for (const child of descendantList) {
         const def = clsDefinitionMap.get(child);
         if (def.id === _qualifier) {
           return def;
@@ -281,7 +277,7 @@ function getInstantiateDefinition(
       const diagnose = createDiagnose(
         DiagnoseCode.CO10010,
         definition.id,
-        childCls.map((i) => i.name),
+        descendantList.map((i) => i.name),
         qualifier
       );
       throw new Error(stringifyDiagnose(diagnose));
@@ -289,7 +285,7 @@ function getInstantiateDefinition(
       const diagnose = createDiagnose(
         DiagnoseCode.CO10009,
         definition.id,
-        childCls.map((i) => i.name)
+        descendantList.map((i) => i.name)
       );
       throw new Error(stringifyDiagnose(diagnose));
     }

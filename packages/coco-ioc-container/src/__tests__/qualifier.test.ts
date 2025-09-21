@@ -80,6 +80,30 @@ describe('@qualifier装饰器: 通过装饰器配置', () => {
     }
   });
 
+  test('@autowired注入的组件存在一个子组件，一个孙组件，但是没有使用@qualifier，则抛出异常', () => {
+    @component()
+    class Parent {}
+    @component()
+    class Child extends Parent {}
+    @component()
+    class Grandson extends Child {}
+
+    @view()
+    class UserInfo {
+      @autowired()
+      parent: Parent;
+    }
+
+    try {
+      application.start();
+      application.getComponent(UserInfo);
+    } catch (e) {
+      expect(e.message).toBe(
+        'CO10009：实例化组件失败，Parent 类存在多个子类 Child,Grandson，但没有使用@qualifier指定子类id'
+      );
+    }
+  });
+
   test('@autowired注入的组件存在多个子组件，使用@qualifier指定不存在的id，抛出异常', () => {
     @component()
     class Parent {}
@@ -104,23 +128,23 @@ describe('@qualifier装饰器: 通过装饰器配置', () => {
     }
   });
 
-  test('@autowired注入的组件存在多个子组件，使用@qualifier指定一个子组件', () => {
+  test('@autowired注入的组件存在多个子组件，使用@qualifier指定一个孙组件', () => {
     @component()
     class Parent {}
     @component()
     class Child extends Parent {}
     @component()
-    class Child1 extends Parent {}
+    class Grandson extends Child {}
 
     @view()
     class UserInfo {
-      @qualifier('Child')
+      @qualifier('Grandson')
       @autowired()
       parent: Parent;
     }
     application.start();
     const user = application.getComponent(UserInfo);
-    expect(user.parent instanceof Child).toBe(true);
+    expect(user.parent instanceof Grandson).toBe(true);
   });
 });
 
