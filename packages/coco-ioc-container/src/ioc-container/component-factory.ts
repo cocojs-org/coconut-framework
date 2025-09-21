@@ -3,11 +3,10 @@ import {
   type ComponentFieldPostConstruct,
   type ComponentMethodPostConstruct,
   ComponentPostConstruct,
-  clsDefinitionMap,
-  idDefinitionMap,
   type Id,
-  getDefinition,
+  getInstantiateDefinition,
   existDefinition,
+  getDefinition,
 } from './ioc-component-definition';
 import Component, { Scope } from '../decorator/metadata/component';
 import {
@@ -15,71 +14,24 @@ import {
   listClassMetadata,
   listFieldByMetadataCls,
   listFieldMetadata,
+  listMethodByMetadataCls,
   listMethodMetadata,
 } from '../metadata';
 import type Application from './application';
 import { KindClass, KindField, KindMethod } from './decorator-context';
 import ConstructorParam from '../decorator/metadata/constructor-param';
 import Autowired from '../decorator/metadata/autowired';
-import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
+import {
+  createDiagnose,
+  DiagnoseCode,
+  printDiagnose,
+  stringifyDiagnose,
+} from 'shared';
 import Qualifier from '../decorator/metadata/qualifier';
+import Init from '../decorator/metadata/init';
+import Start from '../decorator/metadata/start';
 
-function addPostConstruct(cls: Class<any>, pc: ComponentPostConstruct) {
-  const definition = clsDefinitionMap.get(cls);
-  if (!definition) {
-    if (__TEST__) {
-      throw new Error('没有对应的cls');
-    }
-  }
-  switch (pc.kind) {
-    case KindClass:
-      if (
-        definition.componentPostConstruct.find(
-          (i) => i.metadataCls === pc.metadataCls
-        )
-      ) {
-        if (__TEST__) {
-          throw new Error('一个类装饰器只能有一个对应的postConstruct');
-        }
-      }
-      break;
-    case KindField: {
-      const pcs =
-        definition.componentPostConstruct as ComponentFieldPostConstruct[];
-      const fieldPc = pc as ComponentFieldPostConstruct;
-      if (
-        pcs.find(
-          (i) =>
-            i.metadataCls === fieldPc.metadataCls && i.field === fieldPc.field
-        )
-      ) {
-        if (__TEST__) {
-          throw new Error('重复的postConstruct');
-        }
-      }
-      break;
-    }
-    case KindMethod: {
-      const pcs =
-        definition.componentPostConstruct as ComponentMethodPostConstruct[];
-      const fieldPc = pc as ComponentMethodPostConstruct;
-      if (
-        pcs.find(
-          (i) =>
-            i.metadataCls === fieldPc.metadataCls && i.field === fieldPc.field
-        )
-      ) {
-        if (__TEST__) {
-          throw new Error('重复的postConstruct');
-        }
-      }
-      break;
-    }
-  }
-  definition.componentPostConstruct.push(pc);
-}
-
-// 单例实例集合
+// 单例构造函数和单例的映射关系
 const singletonInstances: Map<Class<any>, any> = new Map();
 
 /*
@@ -90,12 +42,9 @@ function findInstantiateComponent(
   clsOrId: Class<any> | Id,
   qualifier?: string
 ) {
-  const definition =
-    typeof clsOrId === 'string'
-      ? idDefinitionMap.get(clsOrId)
-      : clsDefinitionMap.get(clsOrId);
+  const definition = getDefinition(clsOrId);
   if (definition) {
-    const definitionOrChildDefinition = getDefinition(
+    const definitionOrChildDefinition = getInstantiateDefinition(
       definition.cls,
       application,
       qualifier
@@ -110,22 +59,21 @@ function findInstantiateComponent(
   }
 }
 
-function createComponent(
+function createComponent<T>(
   application: Application,
-  componentDefinition: IocComponentDefinition<any>,
-  ...parameters: any[]
-) {
-  const { cls, instantiateType } = componentDefinition;
+  definition: IocComponentDefinition<T>,
+  constructorArgs: any[]
+): T {
+  const { cls, instantiateType } = definition;
   let component;
   if (instantiateType === 'new') {
-    component = new cls(...parameters);
+    component = new cls(...constructorArgs);
   } else {
-    const { configurationCls, method } =
-      componentDefinition.methodInstantiateOpts;
+    const { configurationCls, method } = definition.methodInstantiateOpts;
     const configuration = new configurationCls();
     component = configuration[method]();
   }
-  for (const cpc of componentDefinition.componentPostConstruct) {
+  for (const cpc of definition.componentPostConstruct) {
     switch (cpc.kind) {
       case KindClass: {
         const metadata = listClassMetadata(cls, cpc.metadataCls);
@@ -175,73 +123,71 @@ function createComponent(
   return component;
 }
 
-function newInstance<T>(
-  application: Application,
-  ClsOrId: Class<T> | Id,
-  rest: { qualifier?: string; constructorArgs?: any[] } = {}
-): T {
-  const { qualifier, constructorArgs = [] } = rest;
-  const definition = getDefinition(ClsOrId, application, qualifier);
-  if (!definition) {
-    const diagnose = createDiagnose(
-      DiagnoseCode.CO10011,
-      typeof ClsOrId === 'string' ? ClsOrId : ClsOrId.name
-    );
-    throw new Error(stringifyDiagnose(diagnose));
-  }
-  const cls = definition.cls;
-  if (definition.isSingleton && singletonInstances.has(cls)) {
-    return singletonInstances.get(cls);
-  }
-  const component = createComponent(
-    application,
-    definition,
-    ...constructorArgs
-  );
-  if (definition.isSingleton) {
-    singletonInstances.set(cls, component);
-  }
-  return component;
-}
-
 type ConstructOption = {
-  cls: Class<any>;
-  option?: { constructorParams?: any[]; qualifier?: string };
+  classOrId: Class<any> | string;
+  qualifier?: string;
 };
 function getComponents(
   application: Application,
   constructOption: ConstructOption
 ) {
-  const instances = new Map<Class<any>, any>();
+  const targetClsInstanceMap = new Map<Class<any>, any>(); // 想要实例化的类和对应的实例
+  const instanceInstantiateClsMap = new Map<any, Class<any>>(); // 新建实例和对应的实例化类
+  const newSingletonInstances: Map<Class<any>, any> = new Map(); // 新增的单例，最后要合并到singletonInstances
   const instantiatingStage = new Set<Class<any>>(); // 实例化中
   const assignningStage = new Set<Class<any>>(); // field赋值中
   const finishedStage = new Set<Class<any>>(); // 已完成
 
   // 已经有的单例填充到finishedStage和instances
-  for (const cls of singletonInstances.keys()) {
-    finishedStage.add(cls);
-    instances.set(cls, singletonInstances.get(cls));
+  for (const [cls, instance] of singletonInstances.entries()) {
+    targetClsInstanceMap.set(cls, instance);
   }
 
   // 完整的初始化一个组件
   function instantiateComponent(opt: ConstructOption) {
-    const { cls } = opt;
-    if (!existDefinition(cls)) {
-      const diagnose = createDiagnose(DiagnoseCode.CO10011, cls.name);
+    const { classOrId } = opt;
+
+    // 要实例化的类定义
+    const targetDefinition = getDefinition(classOrId);
+    if (!targetDefinition) {
+      const diagnose = createDiagnose(
+        DiagnoseCode.CO10011,
+        typeof classOrId === 'string' ? classOrId : classOrId.name
+      );
       throw new Error(stringifyDiagnose(diagnose));
     }
-    if (instantiatingStage.has(cls)) {
+    // 真正实例化的类定义
+    const instantiateDefinition = getInstantiateDefinition(
+      classOrId,
+      application,
+      opt.qualifier
+    );
+
+    if (instantiateDefinition.isSingleton) {
+      if (singletonInstances.has(instantiateDefinition.cls)) {
+        return singletonInstances.get(instantiateDefinition.cls);
+      } else if (newSingletonInstances.has(instantiateDefinition.cls)) {
+        return newSingletonInstances.get(instantiateDefinition.cls);
+      }
+    }
+    if (instantiatingStage.has(targetDefinition.cls)) {
       // 理论上不可能走到这里
-      throw new Error(`循环依赖: ${cls.name}`);
+      throw new Error(`循环依赖: ${targetDefinition.cls.name}`);
     }
-    // 已实例化，直接返回
-    if (assignningStage.has(cls) || finishedStage.has(cls)) {
-      return instances.get(cls);
+    // 在实例化中或者已实例化，返回实例
+    if (
+      assignningStage.has(targetDefinition.cls) ||
+      finishedStage.has(targetDefinition.cls)
+    ) {
+      return targetClsInstanceMap.get(targetDefinition.cls);
     }
-    instantiatingStage.add(cls);
+    instantiatingStage.add(targetDefinition.cls);
 
     const constructorArgs = [];
-    const constructorParams = listClassMetadata(cls, ConstructorParam);
+    const constructorParams = listClassMetadata(
+      instantiateDefinition.cls,
+      ConstructorParam
+    );
     if (constructorParams.length > 0) {
       // 因为元数据不能重复，所以只有一个
       const constructorParamsParams = (constructorParams[0] as ConstructorParam)
@@ -250,12 +196,18 @@ function getComponents(
         if (dependency === undefined) {
           constructorArgs.push(undefined);
         } else {
-          const depInstance = instantiateComponent({ cls: dependency });
+          const depInstance = instantiateComponent({ classOrId: dependency });
           // 确保依赖已完全注入
-          if (!finishedStage.has(dependency)) {
-            throw new Error(
-              `${cls.name} 的构造函数依赖 ${dependency.name} 未完全注入`
+          if (
+            !finishedStage.has(dependency) &&
+            !singletonInstances.has(dependency)
+          ) {
+            const diagnose = createDiagnose(
+              DiagnoseCode.CO10013,
+              targetDefinition.cls.name,
+              dependency.name
             );
+            throw new Error(stringifyDiagnose(diagnose));
           }
           constructorArgs.push(depInstance);
         }
@@ -263,19 +215,27 @@ function getComponents(
     }
 
     // 2. 实例化，同时执行componentPostConstruct
-    const instance = newInstance(application, cls, {
-      constructorArgs,
-      qualifier: opt.option?.qualifier,
-    });
-    instances.set(cls, instance);
-    instantiatingStage.delete(cls);
-    assignningStage.add(cls);
+    const instance = createComponent(
+      application,
+      instantiateDefinition,
+      constructorArgs
+    );
+    if (instantiateDefinition.isSingleton) {
+      newSingletonInstances.set(instantiateDefinition.cls, instance);
+    }
+    targetClsInstanceMap.set(targetDefinition.cls, instance);
+    instanceInstantiateClsMap.set(instance, instantiateDefinition.cls);
+    instantiatingStage.delete(targetDefinition.cls);
+    assignningStage.add(targetDefinition.cls);
 
     // 3. 递归实例化field注入
-    const autowiredFields = listFieldByMetadataCls(cls, Autowired);
+    const autowiredFields = listFieldByMetadataCls(
+      instantiateDefinition.cls,
+      Autowired
+    );
     for (const field of autowiredFields) {
       const autowiredMetadatas = listFieldMetadata(
-        cls,
+        instantiateDefinition.cls,
         field,
         Autowired
       ) as Autowired[];
@@ -283,12 +243,19 @@ function getComponents(
         const autowiredCls = autowiredMetadatas[0].value;
         if (autowiredCls === undefined) {
           instance[field] = undefined;
-        } else if (autowiredCls === cls) {
+        } else if (autowiredCls === instantiateDefinition.cls) {
           // 检查自依赖：不能注入自己
+          // TODO: 如果autowiredCls是instantiateDefinition.cls的祖先类或者子孙类怎么办？
+          const diagnose = createDiagnose(
+            DiagnoseCode.CO10012,
+            instantiateDefinition.cls.name,
+            field
+          );
+          printDiagnose(diagnose);
           instance[field] = undefined;
         } else {
           const qualifierMetadatas = listFieldMetadata(
-            cls,
+            instantiateDefinition.cls,
             field,
             Qualifier
           ) as Qualifier[];
@@ -297,35 +264,112 @@ function getComponents(
             qualifier = qualifierMetadatas[0].value;
           }
           const autowiredInstance = instantiateComponent({
-            cls: autowiredCls,
-            option: { qualifier },
+            classOrId: autowiredCls,
+            qualifier,
           });
-          // 字段注入只需要依赖已实例化
-          if (
-            !assignningStage.has(autowiredCls) &&
-            !finishedStage.has(autowiredCls)
-          ) {
-            const diagnose = createDiagnose(
-              DiagnoseCode.CO10012,
-              cls.name,
-              field
-            );
-            throw new Error(stringifyDiagnose(diagnose));
-          }
           instance[field] = autowiredInstance;
         }
       }
     }
 
     // 4. 标记为完全注入
-    assignningStage.delete(cls);
-    finishedStage.add(cls);
+    assignningStage.delete(targetDefinition.cls);
+    finishedStage.add(targetDefinition.cls);
 
     return instance;
   }
 
   // TODO: 如果初始化多个，有没有先后顺序问题？
   const instance = instantiateComponent(constructOption);
+  // merge newSingletonInstances to singletonInstances
+  if (newSingletonInstances.size > 0) {
+    for (const [cls, instance] of newSingletonInstances.entries()) {
+      singletonInstances.set(cls, instance);
+      // 现在默认子类的singleton和父类都是保持一致的。TODO: 如果子类的singleton不是单例了，应该如何处理
+    }
+  }
+
+  // 5. 所有新增的单例执行init方法
+  for (const cls of finishedStage.keys()) {
+    // 这里应该是根据instance来判断是否已经存在的
+    const instance = targetClsInstanceMap.get(cls);
+    const instantiateCls = instanceInstantiateClsMap.get(instance);
+    const initMethods = listMethodByMetadataCls(instantiateCls, Init);
+    for (const method of initMethods) {
+      instance[method]?.call(instance, application);
+    }
+  }
+
+  // 执行start方法
+  for (const cls of finishedStage.keys()) {
+    const instance = targetClsInstanceMap.get(cls);
+    const instantiateCls = instanceInstantiateClsMap.get(instance);
+    const startMethods = listMethodByMetadataCls(instantiateCls, Start);
+    for (const method of startMethods) {
+      instance[method]?.call(instance, application);
+    }
+  }
+
+  return instance;
+}
+
+function getViewComponent(
+  application: Application,
+  viewClass: Class<any>,
+  props: any[]
+) {
+  const targetDefinition = getDefinition(viewClass);
+  if (!targetDefinition) {
+    const diagnose = createDiagnose(
+      DiagnoseCode.CO10011,
+      typeof viewClass === 'string' ? viewClass : viewClass.name
+    );
+    throw new Error(stringifyDiagnose(diagnose));
+  }
+  // 视图组件目前简单的认为全是prototype，且不支持实例化子组件
+  const instance = createComponent(application, targetDefinition, [props]);
+  const autowiredFields = listFieldByMetadataCls(
+    targetDefinition.cls,
+    Autowired
+  );
+  for (const field of autowiredFields) {
+    const autowiredMetadatas = listFieldMetadata(
+      targetDefinition.cls,
+      field,
+      Autowired
+    ) as Autowired[];
+    if (autowiredMetadatas.length > 0) {
+      const autowiredCls = autowiredMetadatas[0].value;
+      if (autowiredCls === undefined) {
+        instance[field] = undefined;
+      } else if (autowiredCls === targetDefinition.cls) {
+        // 检查自依赖：不能注入自己
+        // TODO: 如果autowiredCls是instantiateDefinition.cls的祖先类或者子孙类怎么办？
+        const diagnose = createDiagnose(
+          DiagnoseCode.CO10012,
+          targetDefinition.cls.name,
+          field
+        );
+        printDiagnose(diagnose);
+        instance[field] = undefined;
+      } else {
+        const qualifierMetadatas = listFieldMetadata(
+          targetDefinition.cls,
+          field,
+          Qualifier
+        ) as Qualifier[];
+        let qualifier: string;
+        if (qualifierMetadatas.length > 0) {
+          qualifier = qualifierMetadatas[0].value;
+        }
+        const autowiredInstance = getComponents(application, {
+          classOrId: autowiredCls,
+          qualifier,
+        });
+        instance[field] = autowiredInstance;
+      }
+    }
+  }
   return instance;
 }
 
@@ -333,4 +377,4 @@ function clear() {
   singletonInstances.clear();
 }
 
-export { getComponents, findInstantiateComponent, addPostConstruct, clear };
+export { getComponents, getViewComponent, findInstantiateComponent, clear };

@@ -1,15 +1,10 @@
-import {
-  addPostConstruct,
-  findInstantiateComponent,
-  getComponents,
-} from './component-factory';
+import { getComponents, getViewComponent } from './component-factory';
 import {
   addClassMetadata,
   addFieldMetadata,
   addMethodMetadata,
   getAllMetadata,
   listBeDecoratedClsByClassMetadata,
-  listBeDecoratedClsByFieldMetadata,
   listFieldMetadata,
   findClassMetadata,
   listFieldByMetadataCls,
@@ -24,6 +19,7 @@ import {
 } from './decorator-params';
 import {
   addDefinition,
+  addPostConstruct,
   ComponentClassPostConstructFn,
   genClassPostConstruct,
   genFieldPostConstruct,
@@ -32,8 +28,7 @@ import {
 import Metadata from '../metadata/metadata';
 import { KindClass, KindField, KindMethod } from './decorator-context';
 import Component from '../decorator/metadata/component';
-import ConstructorParam from '../decorator/metadata/constructor-param';
-import { Init, Start, Qualifier } from '../decorator/metadata/index';
+import { Qualifier } from '../decorator/metadata/index';
 import PropertiesConfig from './properties-config';
 import { Diagnose, printDiagnose } from 'shared';
 import validate from '../metadata/validate';
@@ -89,26 +84,21 @@ class Application {
       // TODO:
       return null;
     } else {
-      return getComponents(this, { cls: ClsOrId, option });
+      return getComponents(this, {
+        classOrId: ClsOrId,
+        qualifier: option?.qualifier,
+      });
     }
   }
 
   /**
    * 仅用于view组件的实例化入口，其他ioc组件都应该使用getComponent
-   * @param ClsOrId 组件的类定义或id
+   * @param viewClass view组件的类定义
    * @param props 组件的props
    * @returns
    */
-  public getViewComponent<T>(ClsOrId: Class<T> | string, props?: any[]) {
-    if (typeof ClsOrId === 'string') {
-      // TODO:
-      return null;
-    } else {
-      return getComponents(this, {
-        cls: ClsOrId,
-        option: { constructorParams: [props] },
-      });
-    }
+  public getViewComponent<T>(viewClass: Class<T>, props?: any[]) {
+    return getViewComponent(this, viewClass, props);
   }
 
   /**
@@ -176,13 +166,6 @@ class Application {
     }
   }
 
-  /**
-   * todo 这里有一个疑问，为什么要把装饰器记录的参数转换成元数据？
-   * 粗略一看，装饰器参数和元数据是一一对应关系，没有必要做这层转换
-   * 1. 部分装饰器，例如\@component装饰在函数上面，会添加额外的装饰器信息，不过这还是可以一一对应关系
-   * 2. 业务使用元数据类，方便ts推导类型
-   * 3. 从装饰器 -\> 元数据，方便框架做一些自定义操作，例如target不符合则不生成对应的元数据
-   */
   // 根据装饰器的参数，构建对应的元数据实例
   private buildMetadata() {
     for (const entity of get().entries()) {
@@ -306,85 +289,13 @@ class Application {
   private bootComponent() {
     // 1. 所有配置boot的组件集合
     const bootComponents = this.propertiesConfig.getAllBootComponents();
-    // 2. boot的组件可能会有@inject，也可能实例化子组件，那么判断一下，找到真正需要实例化的组件的集合
-    const constructorParamMetadata =
-      listBeDecoratedClsByClassMetadata(ConstructorParam);
-    const instantiateCls: Set<Class<any>> = new Set(); // 需要实例化的组件集合
-    const doFindInstantiateComponent = (clsOrId: Class<any> | string) => {
-      const Cls = findInstantiateComponent(this, clsOrId);
-      if (instantiateCls.has(Cls)) {
-        // 已经有了
-        return;
-      } else {
-        instantiateCls.add(Cls);
-      }
-      const metadata = <ConstructorParam>constructorParamMetadata.get(Cls);
-      const ClsList = metadata && metadata.value;
-      if (ClsList?.length) {
-        ClsList.forEach((i) => {
-          if (!instantiateCls.has(i)) {
-            doFindInstantiateComponent(i);
-          }
-        });
-      }
-    };
-    bootComponents.forEach(doFindInstantiateComponent);
-    this.instantiateComponentRecursively(instantiateCls);
-    this.initComponent(instantiateCls);
-    this.startComponent(instantiateCls);
-  }
-
-  private instantiateComponentRecursively(bootComponent: Set<Class<any>>) {
-    const map = listBeDecoratedClsByClassMetadata(ConstructorParam);
-    const realInitiatedCls: Set<Class<any>> = new Set();
-    for (const beDecoratedCls of map.keys()) {
-      // 只初始化配置boot的组件
-      if (bootComponent.has(beDecoratedCls)) {
-        realInitiatedCls.add(beDecoratedCls);
-      }
+    if (bootComponents.length === 0) {
+      return;
     }
 
-    const doInstantiateComponent = (beDecorated: Class<any>) => {
-      if (!map.has(beDecorated)) {
-        return getComponents(this, { cls: beDecorated });
-      } else {
-        const metadata = map.get(beDecorated) as { value: Class<any>[] };
-        const ParameterList = metadata.value;
-        const parameterList = ParameterList.map(doInstantiateComponent);
-        return getComponents(this, {
-          cls: beDecorated,
-          option: { constructorParams: parameterList },
-        });
-      }
-    };
-
-    for (const beDecorated of bootComponent) {
-      doInstantiateComponent(beDecorated);
-    }
-  }
-
-  private initComponent(bootComponent: Set<Class<any>>) {
-    const map = listBeDecoratedClsByFieldMetadata(Init);
-    for (const entity of map.entries()) {
-      const beDecoratedCls = entity[0];
-      const field = entity[1].field;
-      if (bootComponent.has(beDecoratedCls)) {
-        const component = getComponents(this, { cls: beDecoratedCls });
-        component[field]?.call(component, this);
-      }
-    }
-  }
-
-  private startComponent(bootComponent: Set<Class<any>>) {
-    const map = listBeDecoratedClsByFieldMetadata(Start);
-    for (const entity of map.entries()) {
-      const beDecoratedCls = entity[0];
-      const field = entity[1].field;
-      if (bootComponent.has(beDecoratedCls)) {
-        const component = getComponents(this, { cls: beDecoratedCls });
-        component[field]?.();
-      }
-    }
+    // TODO: 支持多个组件初始化
+    const bootComponent = bootComponents[0];
+    getComponents(this, { classOrId: bootComponent });
   }
 }
 

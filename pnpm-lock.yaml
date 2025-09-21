@@ -38,8 +38,8 @@ importers:
         specifier: ^7.24.7
         version: 7.24.7(@babel/core@7.26.7)
       '@cocojs/typescript-transformer':
-        specifier: ^0.0.12
-        version: 0.0.12(typescript@5.3.3)
+        specifier: ^0.0.13
+        version: 0.0.13(typescript@5.3.3)
       '@microsoft/api-extractor':
         specifier: ^7.52.7
         version: 7.52.7(@types/node@20.0.0)
@@ -204,8 +204,8 @@ importers:
         version: 6.0.1
     devDependencies:
       '@cocojs/typescript-transformer':
-        specifier: ^0.0.12
-        version: 0.0.12(typescript@5.3.3)
+        specifier: ^0.0.13
+        version: 0.0.13(typescript@5.3.3)
       '@types/node':
         specifier: ^22.15.18
         version: 22.15.18
@@ -2230,10 +2230,10 @@ packages:
       }
     dev: true
 
-  /@cocojs/typescript-transformer@0.0.12(typescript@5.3.3):
+  /@cocojs/typescript-transformer@0.0.13(typescript@5.3.3):
     resolution:
       {
-        integrity: sha512-n4+hU1tY5LTegNKStIkZe+2ThvwgEvEfwFRQXbZwKSBQHlPYAVYSh3/pkT8TXktwS6A7Ax4v2F5ATtb1lD1nSg==,
+        integrity: sha512-EbxbeOEquu7L+e3mcRhYX+emYyLZvtLzApgmkCpeWwZ8pk8OcTtq6b6nU7VzgaDSQ1Vmtw38eGDTuFVsBp3MVw==,
       }
     peerDependencies:
       typescript: 5.3.3

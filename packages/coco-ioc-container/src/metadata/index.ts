@@ -152,7 +152,7 @@ function listClassMetadata(Cls: Class<any>, findMetadataCls?: Class<any>) {
   const value = getFromMap(Cls);
   if (!value) {
     if (__DEV__) {
-      console.error(`未注册的组件：`, Cls);
+      console.error(`未注册的组件：`, Cls.name);
     }
     return [];
   }
@@ -264,6 +264,37 @@ function listFieldByMetadataCls(
     }
   }
   return fields;
+}
+
+/**
+ * 返回包含特定元数据类的所有method
+ * @param Cls 指定类
+ * @param MetadataCls 要包含的元数据类
+ * @param includeCompound 是否也返回包含了MetadataCls的元数据
+ */
+function listMethodByMetadataCls(
+  Cls: Class<any>,
+  MetadataCls: Class<any>,
+  includeCompound: boolean = false
+): Field[] {
+  const def = bizMetadataMap.get(Cls);
+  if (!def) {
+    return [];
+  }
+  const methods = [];
+  for (const [key, value] of def.methodMetadata.entries()) {
+    if (value.find((i) => i instanceof MetadataCls)) {
+      methods.push(key);
+    } else if (includeCompound) {
+      for (const metadata of value) {
+        const def = metaMetadataMap.get(<Class<any>>metadata.constructor);
+        if (def.classMetadata.find((i) => i instanceof MetadataCls)) {
+          methods.push(key);
+        }
+      }
+    }
+  }
+  return methods;
 }
 
 // 找到特定类装饰器
@@ -383,6 +414,7 @@ export {
   listMethodMetadata,
   findClassMetadata,
   listFieldByMetadataCls,
+  listMethodByMetadataCls,
   listBeDecoratedClsByClassMetadata,
   listBeDecoratedClsByFieldMetadata,
   clear,

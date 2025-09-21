@@ -33,8 +33,8 @@ const DiagnoseCodeMsg = {
   [DiagnoseCode.CO10009]: `实例化组件失败，%s 类存在多个子类 %s，但没有使用@qualifier指定子类id`,
   [DiagnoseCode.CO10010]: `实例化组件失败，%s 类存在多个子类 %s，@qualifier装饰器指定了一个不存在的子类id: %s`,
   [DiagnoseCode.CO10011]: `实例化组件失败，%s 类不是ioc组件`,
-  [DiagnoseCode.CO10012]: `实例化组件失败，%s 类 %s 字段不能使用autowired注入自身`,
-  [DiagnoseCode.CO10013]: `实例化组件失败，存在循环依赖：%s`,
+  [DiagnoseCode.CO10012]: `%s 类 %s 字段不能使用autowired注入自身，字段置为undefined`,
+  [DiagnoseCode.CO10013]: `实例化组件失败，%s 类的构造函数的依赖 %s 类也没有完全初始化，可能是循环依赖了？`,
 };
 
 export function createDiagnose(code: DiagnoseCode, ...args: any[]): Diagnose {

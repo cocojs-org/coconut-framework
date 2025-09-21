@@ -173,22 +173,88 @@ function addDefinition(
   clsDefinitionMap.set(cls, componentDefinition);
 }
 
-function getDefinition(
+function addPostConstruct(cls: Class<any>, pc: ComponentPostConstruct) {
+  const definition = clsDefinitionMap.get(cls);
+  if (!definition) {
+    if (__TEST__) {
+      throw new Error('没有对应的cls');
+    }
+  }
+  switch (pc.kind) {
+    case KindClass:
+      if (
+        definition.componentPostConstruct.find(
+          (i) => i.metadataCls === pc.metadataCls
+        )
+      ) {
+        if (__TEST__) {
+          throw new Error('一个类装饰器只能有一个对应的postConstruct');
+        }
+      }
+      break;
+    case KindField: {
+      const pcs =
+        definition.componentPostConstruct as ComponentFieldPostConstruct[];
+      const fieldPc = pc as ComponentFieldPostConstruct;
+      if (
+        pcs.find(
+          (i) =>
+            i.metadataCls === fieldPc.metadataCls && i.field === fieldPc.field
+        )
+      ) {
+        if (__TEST__) {
+          throw new Error('重复的postConstruct');
+        }
+      }
+      break;
+    }
+    case KindMethod: {
+      const pcs =
+        definition.componentPostConstruct as ComponentMethodPostConstruct[];
+      const fieldPc = pc as ComponentMethodPostConstruct;
+      if (
+        pcs.find(
+          (i) =>
+            i.metadataCls === fieldPc.metadataCls && i.field === fieldPc.field
+        )
+      ) {
+        if (__TEST__) {
+          throw new Error('重复的postConstruct');
+        }
+      }
+      break;
+    }
+  }
+  definition.componentPostConstruct.push(pc);
+}
+
+/**
+ * 获取真正会实例化的类定义
+ * @param ClsOrId 想要实例化的类或类id
+ * @param application 应用实例
+ * @param qualifier 如果存在多个后端类，需要通过qualifier指定具体的类id
+ * @returns 真正会实例化的类定义
+ */
+function getInstantiateDefinition(
   ClsOrId: Class<any> | Id,
   application: Application,
   qualifier?: string
 ) {
-  if (typeof ClsOrId === 'string') {
-    // TODO: 如果使用id的话，要考虑子组件的情况吗？
-    return idDefinitionMap.get(ClsOrId);
+  const definition = getDefinition(ClsOrId);
+  if (!definition) {
+    const diagnose = createDiagnose(
+      DiagnoseCode.CO10011,
+      typeof ClsOrId === 'string' ? ClsOrId : ClsOrId.name
+    );
+    throw new Error(stringifyDiagnose(diagnose));
   }
   const childCls: Class<any>[] = [];
   for (const beDecorated of clsDefinitionMap.keys()) {
-    if (isChildClass(beDecorated, ClsOrId)) {
+    // TODO: 改成后端类，而不是子类
+    if (isChildClass(beDecorated, definition.cls)) {
       childCls.push(beDecorated);
     }
   }
-  const definition = clsDefinitionMap.get(ClsOrId);
   if (childCls.length === 0) {
     // 没有子组件直接返回本身
     return definition;
@@ -214,7 +280,7 @@ function getDefinition(
     if (qualifier) {
       const diagnose = createDiagnose(
         DiagnoseCode.CO10010,
-        ClsOrId.name,
+        definition.id,
         childCls.map((i) => i.name),
         qualifier
       );
@@ -222,11 +288,19 @@ function getDefinition(
     } else {
       const diagnose = createDiagnose(
         DiagnoseCode.CO10009,
-        ClsOrId.name,
+        definition.id,
         childCls.map((i) => i.name)
       );
       throw new Error(stringifyDiagnose(diagnose));
     }
+  }
+}
+
+function getDefinition(ClsOrId: Class<any> | Id) {
+  if (typeof ClsOrId === 'string') {
+    return idDefinitionMap.get(ClsOrId);
+  } else {
+    return clsDefinitionMap.get(ClsOrId);
   }
 }
 
@@ -245,12 +319,12 @@ function clear() {
 
 export {
   type Id,
-  clsDefinitionMap, // TODO: 不应该导出
-  idDefinitionMap, // TODO: 不应该导出
   clear,
   existDefinition,
+  getInstantiateDefinition,
   getDefinition,
   addDefinition,
+  addPostConstruct,
   genClassPostConstruct,
   genFieldPostConstruct,
   genMethodPostConstruct,

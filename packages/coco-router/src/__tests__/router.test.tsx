@@ -1,13 +1,14 @@
 import { getByText, waitFor } from '@testing-library/dom';
 
-let Application;
-let application;
-let cocoMvc;
-let route;
-let page;
-let Router;
-let TestWebRender;
 describe('router', () => {
+  let Application;
+  let application;
+  let cocoMvc;
+  let route;
+  let page;
+  let Router;
+  let TestWebRender;
+
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
     Router = cocoMvc.Router;
