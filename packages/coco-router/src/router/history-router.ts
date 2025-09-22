@@ -1,11 +1,6 @@
 import router from '../decorator/router';
 import RouteMeta from '../decorator/metadata/route';
-import {
-  type Application,
-  constructorParam,
-  init,
-  start,
-} from 'coco-ioc-container';
+import { type Application, constructorParam } from 'coco-ioc-container';
 import RouteComponentMapper from './route-component-mapper';
 import Router from './router';
 import Route from './route';
@@ -34,7 +29,6 @@ class HistoryRouter extends Router {
     }
   };
 
-  @init()
   init(application: Application) {
     const routeComponentMap = application.getByClassMetadata(RouteMeta) as Map<
       Class<any>,
@@ -45,8 +39,7 @@ class HistoryRouter extends Router {
     this.route = application.getComponent(Route);
   }
 
-  @start()
-  addListener() {
+  start() {
     window.addEventListener('popstate', this.handleRouteChange);
     // 初始化渲染
     this.handleRouteChange();

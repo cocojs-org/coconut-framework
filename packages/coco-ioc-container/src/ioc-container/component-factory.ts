@@ -7,7 +7,6 @@ import {
   listClassMetadata,
   listFieldByMetadataCls,
   listFieldMetadata,
-  listMethodByMetadataCls,
   listMethodMetadata,
 } from '../metadata';
 import type Application from './application';
@@ -21,8 +20,6 @@ import {
   stringifyDiagnose,
 } from 'shared';
 import Qualifier from '../decorator/metadata/qualifier';
-import Init from '../decorator/metadata/init';
-import Start from '../decorator/metadata/start';
 
 // 单例构造函数和单例的映射关系
 const singletonInstances: Map<Class<any>, any> = new Map();
@@ -264,20 +261,16 @@ function getComponents(application: Application, userOption: ConstructOption) {
   for (const cls of finishedStage.keys()) {
     // 这里应该是根据instance来判断是否已经存在的
     const instance = targetClsInstanceMap.get(cls);
-    const instantiateCls = instanceInstantiateClsMap.get(instance);
-    const initMethods = listMethodByMetadataCls(instantiateCls, Init);
-    for (const method of initMethods) {
-      instance[method]?.call(instance, application);
+    if (typeof instance['init'] === 'function') {
+      instance['init']?.call(instance, application);
     }
   }
 
   // 执行start方法
   for (const cls of finishedStage.keys()) {
     const instance = targetClsInstanceMap.get(cls);
-    const instantiateCls = instanceInstantiateClsMap.get(instance);
-    const startMethods = listMethodByMetadataCls(instantiateCls, Start);
-    for (const method of startMethods) {
-      instance[method]?.call(instance, application);
+    if (typeof instance['start'] === 'function') {
+      instance['start']?.call(instance, application);
     }
   }
 

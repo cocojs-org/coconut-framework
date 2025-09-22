@@ -1,6 +1,6 @@
 // @ts-ignore todo fix it
 import { render as renderApp, registerApplication } from 'react-dom';
-import { type Application, init } from 'coco-ioc-container';
+import { type Application } from 'coco-ioc-container';
 import render from '../decorator/render';
 import { jsx } from 'react';
 import Render from './render';
@@ -9,7 +9,6 @@ import Render from './render';
 class TestWebRender extends Render {
   container: HTMLElement;
 
-  @init()
   init(application: Application) {
     registerApplication(application);
     this.container = document.createElement('div');
