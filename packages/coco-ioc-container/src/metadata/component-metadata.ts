@@ -1,10 +1,10 @@
 /**
- * 组件装饰器的复合信息
+ * 所有组件元数据的信息，便于初始化ioc-component-definition
  */
 import Metadata from './create-metadata';
 import Component from '../decorator/metadata/component';
 import Scope, { SCOPE } from '../decorator/metadata/scope';
-import { findClassMetadata, getAllMetadata } from './index';
+import { getAllMetadata } from './index';
 
 interface ScopeAndParentComponentMetadata {
   // 如果类组件上添加@scope装饰器，对应的scope实例

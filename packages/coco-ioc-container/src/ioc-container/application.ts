@@ -1,5 +1,6 @@
 import { getComponents, getViewComponent } from './component-factory';
 import {
+  Metadata,
   addClassMetadata,
   addFieldMetadata,
   addMethodMetadata,
@@ -13,12 +14,8 @@ import {
   getMetaClassById,
   listClassMetadata,
   listMethodByMetadataCls,
-} from '../metadata/index';
-import {
-  get,
-  clear as clearDecoratorParams,
-  isIncludesMethodDecorator,
-} from './decorator-params';
+} from '../metadata';
+import { get, clear as clearDecoratorParams } from './decorator-params';
 import {
   addDefinition,
   addPostConstruct,
@@ -27,7 +24,6 @@ import {
   genFieldPostConstruct,
   genMethodPostConstruct,
 } from './ioc-component-definition';
-import Metadata from '../metadata/create-metadata';
 import { KindClass, KindField, KindMethod } from './decorator-context';
 import Component from '../decorator/metadata/component';
 import { Qualifier } from '../decorator/metadata/index';
@@ -40,7 +36,6 @@ import {
   findComponentDecorator,
   findComponentDecoratorScope,
 } from '../metadata/component-metadata';
-import { scope } from '../test';
 
 /**
  * 表示一个web应用实例
