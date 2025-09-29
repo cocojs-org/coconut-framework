@@ -12,7 +12,7 @@ import {
 export type { Decorator };
 import { isClass, lowercaseFirstLetter, once } from '../share/util';
 import { addDecoratorParams } from './decorator-params';
-import type Metadata from '../metadata/metadata';
+import type Metadata from '../metadata/create-metadata';
 import type Application from './application';
 
 interface CreateDecoratorExpOption {

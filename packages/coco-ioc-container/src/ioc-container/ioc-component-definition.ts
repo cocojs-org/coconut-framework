@@ -5,7 +5,7 @@ import {
   KindMethod,
 } from './decorator-context';
 import type Application from './application';
-import type Metadata from '../metadata/metadata';
+import type Metadata from '../metadata/create-metadata';
 import { isDescendantOf, uppercaseFirstLetter } from '../share/util';
 import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
 

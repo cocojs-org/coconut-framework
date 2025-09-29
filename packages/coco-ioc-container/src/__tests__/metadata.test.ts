@@ -10,14 +10,14 @@ import {
   listClassMetadata,
   listFieldMetadata,
 } from '../metadata/index.ts';
-import Metadata, { createMetadata } from '../metadata/metadata.ts';
+import Metadata, { createMetadata } from '../metadata/create-metadata.ts';
 import {
   createDecoratorExp,
   Decorator,
 } from '../ioc-container/create-decorator-exp.ts';
 
 // TODO: 不要基于源文件做测试，而是基于打包后的包做测试
-describe('metadata/metadata', () => {
+describe('metadata/create-metadata', () => {
   test('纯对象类型会取自身的prop，全部浅赋值，不管元数据如何定义', () => {
     class M {
       name: string;

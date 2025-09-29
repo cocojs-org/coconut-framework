@@ -27,7 +27,7 @@ import {
   genFieldPostConstruct,
   genMethodPostConstruct,
 } from './ioc-component-definition';
-import Metadata from '../metadata/metadata';
+import Metadata from '../metadata/create-metadata';
 import { KindClass, KindField, KindMethod } from './decorator-context';
 import Component from '../decorator/metadata/component';
 import { Qualifier } from '../decorator/metadata/index';

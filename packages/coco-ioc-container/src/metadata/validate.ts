@@ -155,7 +155,7 @@
   }
 }
  */
-import Metadata from './metadata';
+import Metadata from './create-metadata';
 import Target from '../decorator/metadata/target';
 import { Type } from '../decorator/target';
 import Component from '../decorator/metadata/component';

@@ -1,4 +1,4 @@
-import Metadata, { createMetadata } from './metadata';
+import Metadata, { createMetadata } from './create-metadata';
 import { type Field } from '../ioc-container/decorator-context';
 
 // 元数据类本身和自身id的映射

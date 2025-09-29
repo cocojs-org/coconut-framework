@@ -1,5 +1,5 @@
 export * from './index.ts';
-import Metadata from './metadata/metadata.ts';
+import Metadata from './metadata/create-metadata.ts';
 
 function isEqual(a: unknown, b: unknown) {
   if (

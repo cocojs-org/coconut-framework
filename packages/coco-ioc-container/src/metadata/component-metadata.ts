@@ -1,7 +1,7 @@
 /**
  * 组件装饰器的复合信息
  */
-import Metadata from './metadata';
+import Metadata from './create-metadata';
 import Component from '../decorator/metadata/component';
 import Scope, { SCOPE } from '../decorator/metadata/scope';
 import { findClassMetadata, getAllMetadata } from './index';
