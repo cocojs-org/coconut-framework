@@ -1,24 +1,23 @@
 import Metadata, { createMetadata } from './metadata';
 import { type Field } from '../ioc-container/decorator-context';
 
-// 元数据类本身的集合
-const metadataClsCollection: Map<string, Metadata> = new Map();
+// 元数据类本身和自身id的映射
+const idMetadataClassMap: Map<string, Metadata> = new Map();
 
 type MetadataSet = Array<{ metadata: Metadata; dependencies?: MetadataSet }>;
 
+// 元数据子类的元数据
 export interface MetaMetadata {
   classMetadata: Metadata[];
 }
+const metaMetadataMap: Map<Class<Metadata>, MetaMetadata> = new Map();
+
+// 非元数据子类（业务类）的元数据
 export interface BizMetadata {
   classMetadata: Metadata[];
   fieldMetadata: Map<Field, Metadata[]>;
   methodMetadata: Map<Field, Metadata[]>;
 }
-
-// 元数据子类的元数据
-const metaMetadataMap: Map<Class<Metadata>, MetaMetadata> = new Map();
-
-// 非元数据子类（业务类）的元数据（合法的）
 const bizMetadataMap: Map<Class<any>, BizMetadata> = new Map();
 
 function getFromMap(Cls: Class<any>) {
@@ -198,7 +197,7 @@ function listMethodMetadata(
     return [];
   }
   return value.methodMetadata.get(field).filter((i) => {
-    return findMetadataCls ? i instanceof findMetadataCls : true;
+    return findMetadataCls ? i.constructor === findMetadataCls : true;
   });
 }
 
@@ -386,26 +385,32 @@ function getAllMetadata(): [
 /**
  * 保存元数据类本身，方便运行时被调用
  */
-function registerMetadataCls(cls: Class<any>) {
-  const name = cls.name;
-  if (!name) {
-    console.error('元数据类没有name', name, cls);
-    throw new Error('元数据类没有name');
+function buildMetaClassIdMap() {
+  for (const cls of metaMetadataMap.keys()) {
+    const name = cls.name;
+    if (!name) {
+      console.error('元数据类没有name', name, cls);
+      throw new Error('元数据类没有name');
+    }
+    if (idMetadataClassMap.has(name)) {
+      // 为什么元数据类不能重名？
+      // 本来是可以的，因为元数据类和装饰器哪怕重名都是不严格相等的，注意引入路径即可
+      // 但是框架允许通过name查找，那么就不允许重名了，不然麻烦
+      // TODO: 重复的注册也挪到validate里面
+      // console.error('相同的类不应该注解2次啊', name);
+      // throw new Error('元数据类不允许重名！');
+    }
+    idMetadataClassMap.set(name, cls);
   }
-  if (metadataClsCollection.has(name)) {
-    // 为什么元数据类不能重名？
-    // 本来是可以的，因为元数据类和装饰器哪怕重名都是不严格相等的，注意引入路径即可
-    // 但是框架允许通过name查找，那么就不允许重名了，不然麻烦
-    // TODO: 重复的注册也挪到validate里面
-    // console.error('相同的类不应该注解2次啊', name);
-    // throw new Error('元数据类不允许重名！');
-  }
-  metadataClsCollection.set(name, cls);
+}
+
+function getMetaClassById(id: string) {
+  return idMetadataClassMap.get(id);
 }
 
 export {
-  metadataClsCollection,
-  registerMetadataCls,
+  getMetaClassById,
+  buildMetaClassIdMap,
   addClassMetadata,
   addFieldMetadata,
   addMethodMetadata,

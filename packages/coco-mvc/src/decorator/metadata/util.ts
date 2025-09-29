@@ -10,7 +10,7 @@ import {
  * @public
  */
 @target([Target.Type.Class])
-@component(Component.Scope.Prototype)
+@component()
 class Util extends Metadata {}
 
 export default Util;

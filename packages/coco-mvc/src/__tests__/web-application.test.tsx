@@ -4,7 +4,8 @@ describe('@webApplication', () => {
   let application;
   let view;
   let component;
-  let Component;
+  let scope;
+  let SCOPE;
   let webApplication;
   beforeEach(async () => {
     jest.resetModules();
@@ -12,7 +13,8 @@ describe('@webApplication', () => {
     Application = cocoMvc.Application;
     view = cocoMvc.view;
     component = cocoMvc.component;
-    Component = cocoMvc.Component;
+    scope = cocoMvc.scope;
+    SCOPE = cocoMvc.SCOPE;
     webApplication = cocoMvc.webApplication;
     application = new Application();
     cocoMvc.registerApplication(application);
@@ -23,13 +25,12 @@ describe('@webApplication', () => {
     jest.resetModules();
   });
 
-  xtest('通过对象传入要注册的ioc组件，默认singleton模式', async () => {
-    // TODO: component装饰器要重新实现
+  test('通过对象传入要注册的ioc组件，默认singleton模式', async () => {
     class Theme {}
     @webApplication()
     class Application {
       @component()
-      theme() {
+      theme(): Theme {
         return new Theme();
       }
     }
@@ -40,13 +41,13 @@ describe('@webApplication', () => {
     expect(t1).toBe(t2);
   });
 
-  xtest('通过对象传入要注册的ioc组件，可以设置prototype模式', async () => {
-    // TODO: component装饰器要重新实现
+  test('通过对象传入要注册的ioc组件，可以设置prototype模式', async () => {
     class Button {}
     @webApplication()
     class Application {
-      @component(Component.Scope.Prototype)
-      button() {
+      @scope(SCOPE.Prototype)
+      @component()
+      button(): Button {
         return new Button();
       }
     }

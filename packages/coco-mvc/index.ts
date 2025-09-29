@@ -4,7 +4,9 @@ export {
   autowired,
   Component,
   component,
-  type Scope,
+  Scope,
+  scope,
+  SCOPE,
   Configuration,
   configuration,
   ConstructorParam,
@@ -37,16 +39,24 @@ export { default as Bind } from './src/decorator/metadata/bind.ts';
 export { default as bind } from './src/decorator/bind.ts';
 export { default as Controller } from './src/decorator/metadata/controller.ts';
 export { default as controller } from './src/decorator/controller.ts';
+export { default as Cookie } from './src/decorator/metadata/cookie.ts';
+export { default as cookie } from './src/decorator/cookie.ts';
+export { default as Document } from './src/decorator/metadata/document.ts';
+export { default as document } from './src/decorator/document.ts';
 export { default as GlobalData } from './src/decorator/metadata/global-data.ts';
 export { default as globalData } from './src/decorator/global-data.ts';
 export { default as Layout } from './src/decorator/metadata/layout.ts';
 export { default as layout } from './src/decorator/layout.ts';
+export { default as LocalStorage } from './src/decorator/metadata/local-storage.ts';
+export { default as localStorage } from './src/decorator/local-storage.ts';
 export { default as Page } from './src/decorator/metadata/page.ts';
 export { default as page } from './src/decorator/page.ts';
 export { default as Ref } from './src/decorator/metadata/ref.ts';
 export { default as ref } from './src/decorator/ref.ts';
 export { default as Refs } from './src/decorator/metadata/refs.ts';
 export { default as refs } from './src/decorator/refs.ts';
+export { default as SessionStorage } from './src/decorator/metadata/session-storage.ts';
+export { default as sessionStorage } from './src/decorator/session-storage.ts';
 export { default as View } from './src/decorator/metadata/view.ts';
 export { default as view } from './src/decorator/view.ts';
 export { default as WebApplication } from './src/decorator/metadata/web-application.ts';

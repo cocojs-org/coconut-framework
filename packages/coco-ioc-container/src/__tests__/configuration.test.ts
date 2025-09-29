@@ -4,14 +4,16 @@ describe('configuration装饰器', () => {
   let configuration;
   let cocoMvc;
   let component;
-  let Component;
+  let scope;
+  let SCOPE;
   let consoleErrorSpy;
   beforeEach(async () => {
     consoleErrorSpy = jest.spyOn(console, 'error');
     consoleErrorSpy.mockImplementation(() => {});
     cocoMvc = await import('coco-mvc');
     component = cocoMvc.component;
-    Component = cocoMvc.Component;
+    scope = cocoMvc.scope;
+    SCOPE = cocoMvc.SCOPE;
     configuration = cocoMvc.configuration;
     Application = cocoMvc.Application;
     application = new Application();
@@ -54,31 +56,31 @@ describe('configuration装饰器', () => {
     );
   });
 
-  xtest('通过对象传入要注册的ioc组件，默认singleton模式', () => {
-    // TODO: component装饰器要重新实现
+  test('通过对象传入要注册的ioc组件，默认singleton模式', () => {
     class Theme {}
 
     @configuration()
     class WebAppConfiguration {
       @component()
-      theme() {
+      theme(): Theme {
         return new Theme();
       }
     }
     application.start();
     const t1 = application.getComponent(Theme);
     const t2 = application.getComponent(Theme);
-    expect(t1 === t2).toBe(true);
+    expect(t1).toBeInstanceOf(Theme);
+    expect(t1).toBe(t2);
   });
 
-  xtest('通过对象传入要注册的ioc组件，可以设置prototype模式', () => {
-    // TODO: component装饰器要重新实现
+  test('通过对象传入要注册的ioc组件，可以设置prototype模式', () => {
     class Button {}
 
     @configuration()
     class WebAppConfiguration {
-      @component(Component.Scope.Prototype)
-      button() {
+      @scope(SCOPE.Prototype)
+      @component()
+      button(): Button {
         return new Button();
       }
     }
@@ -86,6 +88,8 @@ describe('configuration装饰器', () => {
     application.start();
     const b1 = application.getComponent(Button);
     const b2 = application.getComponent(Button);
-    expect(b1 === b2).toBe(false);
+    expect(b1).toBeInstanceOf(Button);
+    expect(b2).toBeInstanceOf(Button);
+    expect(b1).not.toBe(b2);
   });
 });

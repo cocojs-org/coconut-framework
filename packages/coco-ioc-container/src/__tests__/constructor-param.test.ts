@@ -5,15 +5,16 @@ describe('constructor-param', () => {
   let cocoMvc;
   let autowired;
   let component;
-  let Component;
+  let scope;
+  let SCOPE;
   let constructorParam;
 
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
     Application = cocoMvc.Application;
     component = cocoMvc.component;
-    Component = cocoMvc.Component;
-    autowired = cocoMvc.autowired;
+    scope = cocoMvc.scope;
+    SCOPE = cocoMvc.SCOPE;
     constructorParam = cocoMvc.constructorParam;
     application = new Application();
     cocoMvc.registerApplication(application);
@@ -251,7 +252,8 @@ describe('constructor-param', () => {
   xdescribe('初始化的组件的scope都是prototype', () => {
     xtest('不能通过constructorParam装饰器注入自己', () => {
       @constructorParam()
-      @component(Component.Scope.Prototype)
+      @scope(SCOPE.Prototype)
+      @component()
       class Button {
         constructor(button: Button) {}
       }

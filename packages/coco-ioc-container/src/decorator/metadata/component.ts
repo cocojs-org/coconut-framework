@@ -6,23 +6,11 @@ import { register, NAME } from 'shared';
 /**
  * @public
  */
-export enum Scope {
-  // 单例模式
-  Singleton = 0,
-  // 每次new新实例
-  Prototype = 1,
-}
-
-/**
- * @public
- */
+// @scope(SCOPE.Singleton) 这里暂时不添加scope装饰器了，因为不设置默认就是singleton，还可以避免 scope <-> target 循环依赖的问题
 @target([Target.Type.Class, Target.Type.Method])
 class Component extends Metadata {
-  static Scope = Scope;
-
-  // TODO: scope单独成装饰器
-  scope: Scope = Scope.Singleton;
+  value?: Class<any>;
 }
 
 export default Component;
-register(NAME.Component, Component);
+register(NAME.Component, Component); // TODO: 是否可以删除

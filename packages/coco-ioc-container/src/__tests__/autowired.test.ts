@@ -8,12 +8,16 @@ describe('autowired', () => {
   let controller;
   let component;
   let Component;
+  let scope;
+  let SCOPE;
 
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
     view = cocoMvc.view;
     autowired = cocoMvc.autowired;
     component = cocoMvc.component;
+    scope = cocoMvc.scope;
+    SCOPE = cocoMvc.SCOPE;
     controller = cocoMvc.controller;
     Component = cocoMvc.Component;
     webApplication = cocoMvc.webApplication;
@@ -28,7 +32,7 @@ describe('autowired', () => {
     jest.resetModules();
   });
 
-  test('注入一个view组件，且拿到的实例也是不同的', async () => {
+  test('注入一个view组件，且拿到的实例也是不同的', () => {
     @view()
     class Button {}
 
@@ -87,7 +91,7 @@ describe('autowired', () => {
     expect(throwError).toBe(true);
   });
 
-  test('注入一个默认配置的组件，默认单例组件', async () => {
+  test('注入一个默认配置的组件，默认单例组件', () => {
     @component()
     class Theme {}
 
@@ -123,7 +127,7 @@ describe('autowired', () => {
     expect(buttonB.buttonA.buttonB).toBe(undefined);
   });
 
-  xtest('注入一个配置的组件，默认是单例组件', async () => {
+  xtest('注入一个配置的组件，默认是单例组件', () => {
     class User {}
 
     @webApplication()
@@ -146,12 +150,13 @@ describe('autowired', () => {
     expect(userInfo1.user).toBe(userInfo2.user);
   });
 
-  xtest('注入一个配置的组件，原型模式则返回不同的组件', async () => {
+  xtest('注入一个配置的组件，原型模式则返回不同的组件', () => {
     class Computer {}
 
     @webApplication()
     class Application {
-      @component(Component.Scope.Prototype)
+      @scope(SCOPE.Prototype)
+      @component()
       computer() {
         return new Computer();
       }

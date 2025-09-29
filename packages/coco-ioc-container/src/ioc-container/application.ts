@@ -8,13 +8,15 @@ import {
   listFieldMetadata,
   findClassMetadata,
   listFieldByMetadataCls,
-  metadataClsCollection,
   listMethodMetadata,
+  buildMetaClassIdMap,
+  getMetaClassById,
+  listClassMetadata,
+  listMethodByMetadataCls,
 } from '../metadata/index';
 import {
   get,
   clear as clearDecoratorParams,
-  isIncludesClassDecorator,
   isIncludesMethodDecorator,
 } from './decorator-params';
 import {
@@ -32,6 +34,13 @@ import { Qualifier } from '../decorator/metadata/index';
 import PropertiesConfig from './properties-config';
 import { Diagnose, printDiagnose } from 'shared';
 import validate from '../metadata/validate';
+import Scope, { SCOPE } from '../decorator/metadata/scope';
+import {
+  buildComponentMetadataSet,
+  findComponentDecorator,
+  findComponentDecoratorScope,
+} from '../metadata/component-metadata';
+import { scope } from '../test';
 
 /**
  * 表示一个web应用实例
@@ -59,6 +68,8 @@ class Application {
       if (this.diagnoseList.length > 0) {
         this.diagnoseList.forEach(printDiagnose);
       }
+      buildComponentMetadataSet();
+      buildMetaClassIdMap();
       this.buildIocComponentDefinition();
     }
     // todo 不用清空装饰器参数记录
@@ -106,14 +117,10 @@ class Application {
    * 框架会经常使用元数据类进行过滤涮选，直接import引入过于麻烦，且经常导致文件循环依赖
    */
   public getMetadataCls(name: string) {
-    if (
-      typeof name !== 'string' ||
-      !name.trim() ||
-      !metadataClsCollection.has(name)
-    ) {
+    if (typeof name !== 'string' || !name.trim() || !getMetaClassById(name)) {
       return null;
     } else {
-      return metadataClsCollection.get(name);
+      return getMetaClassById(name);
     }
   }
 
@@ -201,7 +208,11 @@ class Application {
     }
   }
 
-  // 如果有类装饰器，则添加到ioc组件定义中
+  /**
+   * 找到所有类组件，添加到iocComponentDefinition中，便于后续实例化
+   * 遍历所有的业务类，如果有类装饰器，那么就是类组件
+   * 遍历所有配置类的方法，如果有@component装饰器，那么也是类组件
+   */
   private buildIocComponentDefinition() {
     const bizMetadata = getAllMetadata()[1];
     // 处理@component和带有@component的元数据类
@@ -209,13 +220,20 @@ class Application {
       const beDecoratedCls = entity[0];
       const params = entity[1];
       if (bizMetadata.has(beDecoratedCls)) {
-        // TODO: 这里不应该从装饰器中找component，因为可能是非法的，应该从元数据中找
-        if (isIncludesClassDecorator(beDecoratedCls, Component, 2)) {
-          const meta = findClassMetadata(beDecoratedCls, Component, 2);
-          addDefinition(
+        const componentMetadata = findComponentDecorator(beDecoratedCls);
+        if (componentMetadata) {
+          // 确定存在component类装饰器，再确定scope值
+          let scope: SCOPE;
+          const selfScopeMetadata = listClassMetadata(
             beDecoratedCls,
-            meta.scope === Component.Scope.Singleton
-          );
+            Scope
+          ) as Scope[];
+          if (selfScopeMetadata.length > 0) {
+            scope = selfScopeMetadata[0].value;
+          } else {
+            scope = findComponentDecoratorScope(componentMetadata);
+          }
+          addDefinition(beDecoratedCls, scope === SCOPE.Singleton);
           params.forEach(
             ({
               metadataClass,
@@ -259,22 +277,24 @@ class Application {
             }
           );
         } else {
-          const methodDecoratorParams = isIncludesMethodDecorator(
-            beDecoratedCls,
-            Component
-          );
-          if (methodDecoratorParams) {
-            const metadata: Component[] = listMethodMetadata(
+          const methods = listMethodByMetadataCls(beDecoratedCls, Component);
+          for (const method of methods) {
+            const componentMetas: Component[] = listMethodMetadata(
               beDecoratedCls,
-              methodDecoratorParams.field,
+              method,
               Component
             ) as Component[];
+            const scopeMetas: Scope[] = listMethodMetadata(
+              beDecoratedCls,
+              method,
+              Scope
+            ) as Scope[];
             addDefinition(
-              methodDecoratorParams.metadataParam.value,
-              metadata[0].scope === Component.Scope.Singleton,
+              componentMetas[0].value,
+              !scopeMetas.length || scopeMetas[0].value === SCOPE.Singleton,
               {
                 configurationCls: beDecoratedCls,
-                method: methodDecoratorParams.field,
+                method,
               }
             );
           }

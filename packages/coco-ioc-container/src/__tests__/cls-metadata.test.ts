@@ -5,6 +5,9 @@ describe('decorator', () => {
   let component;
   let Component;
   let Target;
+  let scope;
+  let Scope;
+  let SCOPE;
 
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
@@ -12,6 +15,9 @@ describe('decorator', () => {
     component = cocoMvc.component;
     Component = cocoMvc.Component;
     Target = cocoMvc.Target;
+    scope = cocoMvc.scope;
+    Scope = cocoMvc.Scope;
+    SCOPE = cocoMvc.SCOPE;
     application = new Application();
     cocoMvc.registerApplication(application);
   });
@@ -22,15 +28,20 @@ describe('decorator', () => {
     jest.resetModules();
   });
 
-  test('组件类的元数据正确', async () => {
-    @component(Component.Scope.Singleton)
+  test('组件类的元数据正确', () => {
+    @scope(SCOPE.Singleton)
+    @component()
     class Button {}
 
     application.start();
     const asExpected = cocoMvc.checkClassMetadataAsExpected(Button, [
       {
         Metadata: Component,
-        fieldValues: { scope: Component.Scope.Singleton },
+        fieldValues: {},
+      },
+      {
+        Metadata: Scope,
+        fieldValues: { value: SCOPE.Singleton },
       },
     ]);
     expect(asExpected).toBe(true);

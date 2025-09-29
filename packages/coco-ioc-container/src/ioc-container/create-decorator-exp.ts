@@ -12,7 +12,6 @@ import {
 export type { Decorator };
 import { isClass, lowercaseFirstLetter, once } from '../share/util';
 import { addDecoratorParams } from './decorator-params';
-import { registerMetadataCls } from '../metadata';
 import type Metadata from '../metadata/metadata';
 import type Application from './application';
 
@@ -60,9 +59,6 @@ function createDecoratorExpFactory(fn: any) {
         : lowercaseFirstLetter(metadataClsOrName.name);
     let MetadataCls =
       typeof metadataClsOrName !== 'string' ? metadataClsOrName : null;
-    if (MetadataCls) {
-      registerMetadataCls(MetadataCls);
-    }
     function decoratorExpress(userParam: UserParam, decorateSelf?: true) {
       return function (value, context: C) {
         switch (context.kind) {
@@ -70,7 +66,6 @@ function createDecoratorExpFactory(fn: any) {
             if (decorateSelf) {
               if (MetadataCls === null) {
                 MetadataCls = value;
-                registerMetadataCls(MetadataCls);
                 fn(value, {
                   decoratorName,
                   metadataKind: KindClass,

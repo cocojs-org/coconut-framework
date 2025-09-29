@@ -11,7 +11,7 @@ import {
  * @public
  */
 @target([Target.Type.Class])
-@component(Component.Scope.Singleton)
+@component()
 class Store extends Metadata {}
 
 export default Store;

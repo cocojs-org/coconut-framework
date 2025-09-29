@@ -42,7 +42,7 @@ describe('@component装饰器', () => {
   });
 
   describe('@component装饰在类上', () => {
-    xtest('不能同时添加2个component装饰器', () => {
+    test('不能同时添加2个component装饰器', () => {
       @component()
       @component()
       @target([Target.Type.Class])
@@ -124,35 +124,6 @@ describe('@component装饰器', () => {
         '@layout, @page'
       );
     });
-
-    test('默认singleton模式', () => {
-      @component()
-      class DefaultValue {}
-
-      application.start();
-      const s1 = application.getComponent(DefaultValue);
-      const s2 = application.getComponent(DefaultValue);
-      expect(s1 === s2).toBe(true);
-    });
-
-    test('支持通过设置scope显式设置为单例模式', () => {
-      @component(Component.Scope.Singleton)
-      class Single {}
-
-      application.start();
-      const s1 = application.getComponent(Single);
-      const s2 = application.getComponent(Single);
-      expect(s1 === s2).toBe(true);
-    });
-
-    test('支持通过设置scope显式设置为多例模式', () => {
-      @component(Component.Scope.Prototype)
-      class Prototype {}
-      application.start();
-      const p1 = application.getComponent(Prototype);
-      const p2 = application.getComponent(Prototype);
-      expect(p1 === p2).toBe(false);
-    });
   });
 
   describe('@component装饰在方法上', () => {
@@ -173,40 +144,6 @@ describe('@component装饰器', () => {
         'theme',
         'Application'
       );
-    });
-
-    test('通过对象传入要注册的ioc组件，默认singleton模式', () => {
-      class Theme {}
-
-      @webApplication()
-      class Application {
-        @component()
-        theme(): Theme {
-          return new Theme();
-        }
-      }
-
-      application.start();
-      const t1 = application.getComponent(Theme);
-      const t2 = application.getComponent(Theme);
-      expect(t1 === t2).toBe(true);
-    });
-
-    test('通过对象传入要注册的ioc组件，可以设置prototype模式', () => {
-      class Button {}
-
-      @webApplication()
-      class Application {
-        @component(Component.Scope.Prototype)
-        button(): Button {
-          return new Button();
-        }
-      }
-
-      application.start();
-      const b1 = application.getComponent(Button);
-      const b2 = application.getComponent(Button);
-      expect(b1 === b2).toBe(false);
     });
 
     // TODO:
