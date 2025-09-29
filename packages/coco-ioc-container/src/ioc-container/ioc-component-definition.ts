@@ -4,10 +4,25 @@ import {
   KindField,
   KindMethod,
 } from '../create-decorator-exp';
+import { get } from '../create-decorator-exp/decorator-params';
 import type Application from './application';
 import type Metadata from '../metadata/create-metadata';
 import { isDescendantOf, uppercaseFirstLetter } from '../share/util';
 import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
+import {
+  buildComponentMetadataSet,
+  clear as clearComponentMetadataSet,
+  findComponentDecorator,
+  findComponentDecoratorScope,
+} from './ioc-component-definition-helper';
+import {
+  getAllMetadata,
+  listClassMetadata,
+  listMethodByMetadataCls,
+  listMethodMetadata,
+} from '../metadata';
+import Scope, { SCOPE } from '../decorator/metadata/scope';
+import Component from '../decorator/metadata/component';
 
 /**
  * @public
@@ -305,15 +320,108 @@ function clear() {
   clsDefinitionMap.clear();
 }
 
+function doBuildIocComponentDefinition() {
+  const bizMetadata = getAllMetadata()[1];
+  // 处理@component和带有@component的元数据类
+  for (const entity of get().entries()) {
+    const beDecoratedCls = entity[0];
+    const params = entity[1];
+    if (bizMetadata.has(beDecoratedCls)) {
+      const componentMetadata = findComponentDecorator(beDecoratedCls);
+      if (componentMetadata) {
+        // 确定存在component类装饰器，再确定scope值
+        let scope: SCOPE;
+        const selfScopeMetadata = listClassMetadata(
+          beDecoratedCls,
+          Scope
+        ) as Scope[];
+        if (selfScopeMetadata.length > 0) {
+          scope = selfScopeMetadata[0].value;
+        } else {
+          scope = findComponentDecoratorScope(componentMetadata);
+        }
+        addDefinition(beDecoratedCls, scope === SCOPE.Singleton);
+        params.forEach(
+          ({ metadataClass, metadataKind, componentPostConstruct, field }) => {
+            if (componentPostConstruct) {
+              switch (metadataKind) {
+                case KindClass:
+                  addPostConstruct(
+                    beDecoratedCls,
+                    genClassPostConstruct(
+                      metadataClass,
+                      componentPostConstruct as ComponentClassPostConstructFn
+                    )
+                  );
+                  break;
+                case KindField:
+                  addPostConstruct(
+                    beDecoratedCls,
+                    genFieldPostConstruct(
+                      metadataClass,
+                      componentPostConstruct,
+                      field
+                    )
+                  );
+                  break;
+                case KindMethod:
+                  addPostConstruct(
+                    beDecoratedCls,
+                    genMethodPostConstruct(
+                      metadataClass,
+                      componentPostConstruct,
+                      field
+                    )
+                  );
+                  break;
+              }
+            }
+          }
+        );
+      } else {
+        const methods = listMethodByMetadataCls(beDecoratedCls, Component);
+        for (const method of methods) {
+          const componentMetas: Component[] = listMethodMetadata(
+            beDecoratedCls,
+            method,
+            Component
+          ) as Component[];
+          const scopeMetas: Scope[] = listMethodMetadata(
+            beDecoratedCls,
+            method,
+            Scope
+          ) as Scope[];
+          addDefinition(
+            componentMetas[0].value,
+            !scopeMetas.length || scopeMetas[0].value === SCOPE.Singleton,
+            {
+              configurationCls: beDecoratedCls,
+              method,
+            }
+          );
+        }
+      }
+    }
+  }
+}
+/**
+ * 找到所有类组件，添加到iocComponentDefinition中，便于后续实例化
+ * 遍历所有的业务类，如果有类装饰器，那么就是类组件
+ * 遍历所有配置类的方法，如果有@component装饰器，那么也是类组件
+ */
+function buildIocComponentDefinition() {
+  buildComponentMetadataSet();
+
+  doBuildIocComponentDefinition();
+
+  clearComponentMetadataSet();
+}
+
 export {
   type Id,
   clear,
   existDefinition,
   getInstantiateDefinition,
   getDefinition,
-  addDefinition,
-  addPostConstruct,
-  genClassPostConstruct,
-  genFieldPostConstruct,
-  genMethodPostConstruct,
+  buildIocComponentDefinition,
 };

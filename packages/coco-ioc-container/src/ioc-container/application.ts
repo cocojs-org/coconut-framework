@@ -2,38 +2,19 @@ import { getComponents, getViewComponent } from './component-factory';
 import {
   Metadata,
   buildMetadata,
-  getAllMetadata,
   listBeDecoratedClsByClassMetadata,
   listFieldMetadata,
   findClassMetadata,
   listFieldByMetadataCls,
-  listMethodMetadata,
   getMetaClassById,
-  listClassMetadata,
-  listMethodByMetadataCls,
 } from '../metadata';
 import {
   get,
   clear as clearDecoratorParams,
 } from '../create-decorator-exp/decorator-params';
-import {
-  addDefinition,
-  addPostConstruct,
-  ComponentClassPostConstructFn,
-  genClassPostConstruct,
-  genFieldPostConstruct,
-  genMethodPostConstruct,
-} from './ioc-component-definition';
-import { KindClass, KindField, KindMethod } from '../create-decorator-exp';
-import Component from '../decorator/metadata/component';
+import { buildIocComponentDefinition } from './ioc-component-definition';
 import { Qualifier } from '../decorator/metadata/index';
 import PropertiesConfig from './properties-config';
-import Scope, { SCOPE } from '../decorator/metadata/scope';
-import {
-  buildComponentMetadataSet,
-  findComponentDecorator,
-  findComponentDecoratorScope,
-} from '../metadata/component-metadata';
 
 /**
  * 表示一个web应用实例
@@ -54,7 +35,7 @@ class Application {
     {
       this.collectFieldOrMethodDecoratorParams();
       buildMetadata(get());
-      this.buildIocComponentDefinition();
+      buildIocComponentDefinition();
     }
     // TODO: 不用清空装饰器参数记录
     clearDecoratorParams();
@@ -153,102 +134,6 @@ class Application {
          * }
          */
         new Cls();
-      }
-    }
-  }
-
-  /**
-   * 找到所有类组件，添加到iocComponentDefinition中，便于后续实例化
-   * 遍历所有的业务类，如果有类装饰器，那么就是类组件
-   * 遍历所有配置类的方法，如果有@component装饰器，那么也是类组件
-   */
-  private buildIocComponentDefinition() {
-    buildComponentMetadataSet();
-    const bizMetadata = getAllMetadata()[1];
-    // 处理@component和带有@component的元数据类
-    for (const entity of get().entries()) {
-      const beDecoratedCls = entity[0];
-      const params = entity[1];
-      if (bizMetadata.has(beDecoratedCls)) {
-        const componentMetadata = findComponentDecorator(beDecoratedCls);
-        if (componentMetadata) {
-          // 确定存在component类装饰器，再确定scope值
-          let scope: SCOPE;
-          const selfScopeMetadata = listClassMetadata(
-            beDecoratedCls,
-            Scope
-          ) as Scope[];
-          if (selfScopeMetadata.length > 0) {
-            scope = selfScopeMetadata[0].value;
-          } else {
-            scope = findComponentDecoratorScope(componentMetadata);
-          }
-          addDefinition(beDecoratedCls, scope === SCOPE.Singleton);
-          params.forEach(
-            ({
-              metadataClass,
-              metadataKind,
-              componentPostConstruct,
-              field,
-            }) => {
-              if (componentPostConstruct) {
-                switch (metadataKind) {
-                  case KindClass:
-                    addPostConstruct(
-                      beDecoratedCls,
-                      genClassPostConstruct(
-                        metadataClass,
-                        componentPostConstruct as ComponentClassPostConstructFn
-                      )
-                    );
-                    break;
-                  case KindField:
-                    addPostConstruct(
-                      beDecoratedCls,
-                      genFieldPostConstruct(
-                        metadataClass,
-                        componentPostConstruct,
-                        field
-                      )
-                    );
-                    break;
-                  case KindMethod:
-                    addPostConstruct(
-                      beDecoratedCls,
-                      genMethodPostConstruct(
-                        metadataClass,
-                        componentPostConstruct,
-                        field
-                      )
-                    );
-                    break;
-                }
-              }
-            }
-          );
-        } else {
-          const methods = listMethodByMetadataCls(beDecoratedCls, Component);
-          for (const method of methods) {
-            const componentMetas: Component[] = listMethodMetadata(
-              beDecoratedCls,
-              method,
-              Component
-            ) as Component[];
-            const scopeMetas: Scope[] = listMethodMetadata(
-              beDecoratedCls,
-              method,
-              Scope
-            ) as Scope[];
-            addDefinition(
-              componentMetas[0].value,
-              !scopeMetas.length || scopeMetas[0].value === SCOPE.Singleton,
-              {
-                configurationCls: beDecoratedCls,
-                method,
-              }
-            );
-          }
-        }
       }
     }
   }
