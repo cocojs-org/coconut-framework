@@ -13,7 +13,7 @@ import {
   clear as clearDecoratorParams,
 } from '../create-decorator-exp/decorator-params';
 import { buildIocComponentDefinition } from './ioc-component-definition';
-import { Qualifier } from '../decorator/metadata/index';
+import Qualifier from '../decorator/metadata/qualifier';
 import PropertiesConfig from './properties-config';
 
 /**
