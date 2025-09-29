@@ -1,11 +1,10 @@
 import {
-  Context,
+  createDecoratorExpByName,
   Decorator,
   KindClass,
   KindField,
   KindMethod,
-} from '../ioc-container/decorator-context';
-import { createDecoratorExpByName } from '../ioc-container/create-decorator-exp';
+} from '../create-decorator-exp';
 
 /**
  * @public

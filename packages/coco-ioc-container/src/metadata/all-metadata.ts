@@ -1,5 +1,5 @@
 import Metadata, { createMetadata } from './create-metadata';
-import { type Field } from '../ioc-container/decorator-context';
+import { type Field } from '../create-decorator-exp';
 
 // 元数据类本身和自身id的映射
 const idMetadataClassMap: Map<string, Metadata> = new Map();

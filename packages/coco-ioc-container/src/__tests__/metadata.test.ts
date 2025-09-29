@@ -11,10 +11,7 @@ import {
   listFieldMetadata,
 } from '../metadata/index.ts';
 import Metadata, { createMetadata } from '../metadata/create-metadata.ts';
-import {
-  createDecoratorExp,
-  Decorator,
-} from '../ioc-container/create-decorator-exp.ts';
+import { createDecoratorExp, Decorator } from '../create-decorator-exp';
 
 // TODO: 不要基于源文件做测试，而是基于打包后的包做测试
 describe('metadata/create-metadata', () => {

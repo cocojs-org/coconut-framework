@@ -1,0 +1,33 @@
+import {
+  type Context,
+  type Decorator,
+  type Field,
+  type Kind,
+  KindClass,
+  KindField,
+  KindMethod,
+  KindGetter,
+  KindSetter,
+  KindAccessor,
+} from './decorator-context';
+import {
+  createDecoratorExp,
+  createDecoratorExpByName,
+  createDecoratorExpFactory,
+} from './create-decorator-exp-factory';
+
+export {
+  type Context,
+  type Decorator,
+  type Field,
+  KindClass,
+  KindField,
+  KindMethod,
+  KindGetter,
+  KindSetter,
+  KindAccessor,
+  type Kind,
+  createDecoratorExp,
+  createDecoratorExpByName,
+  createDecoratorExpFactory,
+};

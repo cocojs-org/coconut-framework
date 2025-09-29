@@ -1,10 +1,6 @@
 import { Diagnose, printDiagnose } from 'shared';
-import {
-  KindClass,
-  KindField,
-  KindMethod,
-} from '../ioc-container/decorator-context';
-import { params } from '../ioc-container/decorator-params';
+import { KindClass, KindField, KindMethod } from '../create-decorator-exp';
+import { type params } from '../create-decorator-exp/decorator-params';
 import {
   type BizMetadata,
   type MetaMetadata,

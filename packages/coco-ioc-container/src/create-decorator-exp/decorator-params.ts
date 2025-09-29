@@ -1,4 +1,4 @@
-import type { ComponentPostConstructFn } from './ioc-component-definition';
+import type { ComponentPostConstructFn } from '../ioc-container/ioc-component-definition';
 import {
   type Field,
   type Kind,

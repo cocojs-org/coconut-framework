@@ -13,7 +13,7 @@ export type { Decorator };
 import { isClass, lowercaseFirstLetter, once } from '../share/util';
 import { addDecoratorParams } from './decorator-params';
 import type Metadata from '../metadata/create-metadata';
-import type Application from './application';
+import type Application from '../ioc-container/application';
 
 interface CreateDecoratorExpOption {
   /**

@@ -3,7 +3,7 @@ import {
   KindClass,
   KindField,
   KindMethod,
-} from './decorator-context';
+} from '../create-decorator-exp';
 import type Application from './application';
 import type Metadata from '../metadata/create-metadata';
 import { isDescendantOf, uppercaseFirstLetter } from '../share/util';

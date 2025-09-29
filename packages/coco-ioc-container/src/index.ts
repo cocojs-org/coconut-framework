@@ -18,7 +18,9 @@ export { default as value } from './decorator/value';
 export {
   createDecoratorExp,
   createDecoratorExpByName,
-} from './ioc-container/create-decorator-exp';
+  type Decorator,
+  type Field,
+} from './create-decorator-exp';
 export {
   type ComponentPostConstructFn,
   type ComponentClassPostConstructFn,
@@ -27,4 +29,3 @@ export {
 } from './ioc-container/ioc-component-definition';
 export { default as Application } from './ioc-container/application';
 export { default as PropertiesConfig } from './ioc-container/properties-config';
-export type { Decorator, Field } from './ioc-container/decorator-context';

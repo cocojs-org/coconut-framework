@@ -12,7 +12,10 @@ import {
   listClassMetadata,
   listMethodByMetadataCls,
 } from '../metadata';
-import { get, clear as clearDecoratorParams } from './decorator-params';
+import {
+  get,
+  clear as clearDecoratorParams,
+} from '../create-decorator-exp/decorator-params';
 import {
   addDefinition,
   addPostConstruct,
@@ -21,7 +24,7 @@ import {
   genFieldPostConstruct,
   genMethodPostConstruct,
 } from './ioc-component-definition';
-import { KindClass, KindField, KindMethod } from './decorator-context';
+import { KindClass, KindField, KindMethod } from '../create-decorator-exp';
 import Component from '../decorator/metadata/component';
 import { Qualifier } from '../decorator/metadata/index';
 import PropertiesConfig from './properties-config';
