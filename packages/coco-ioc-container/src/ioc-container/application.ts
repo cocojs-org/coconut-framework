@@ -1,16 +1,13 @@
 import { getComponents, getViewComponent } from './component-factory';
 import {
   Metadata,
-  addClassMetadata,
-  addFieldMetadata,
-  addMethodMetadata,
+  buildMetadata,
   getAllMetadata,
   listBeDecoratedClsByClassMetadata,
   listFieldMetadata,
   findClassMetadata,
   listFieldByMetadataCls,
   listMethodMetadata,
-  buildMetaClassIdMap,
   getMetaClassById,
   listClassMetadata,
   listMethodByMetadataCls,
@@ -28,8 +25,6 @@ import { KindClass, KindField, KindMethod } from './decorator-context';
 import Component from '../decorator/metadata/component';
 import { Qualifier } from '../decorator/metadata/index';
 import PropertiesConfig from './properties-config';
-import { Diagnose, printDiagnose } from 'shared';
-import validate from '../metadata/validate';
 import Scope, { SCOPE } from '../decorator/metadata/scope';
 import {
   buildComponentMetadataSet,
@@ -44,8 +39,6 @@ import {
 class Application {
   propertiesConfig: PropertiesConfig;
 
-  diagnoseList: Diagnose[];
-
   constructor(jsonConfig: Record<string, any> = {}) {
     this.propertiesConfig = new PropertiesConfig(jsonConfig);
   }
@@ -57,17 +50,10 @@ class Application {
   public start() {
     {
       this.collectFieldOrMethodDecoratorParams();
-      this.buildMetadata();
-      // TODO: 校验全部放在core里面做到，然后业务上获取的时候先过滤掉非法的元数据，只从合法的元数据中查找
-      this.diagnoseList = validate(getAllMetadata());
-      if (this.diagnoseList.length > 0) {
-        this.diagnoseList.forEach(printDiagnose);
-      }
-      buildComponentMetadataSet();
-      buildMetaClassIdMap();
+      buildMetadata(get());
       this.buildIocComponentDefinition();
     }
-    // todo 不用清空装饰器参数记录
+    // TODO: 不用清空装饰器参数记录
     clearDecoratorParams();
     {
       this.bootComponent();
@@ -168,47 +154,13 @@ class Application {
     }
   }
 
-  // 根据装饰器的参数，构建对应的元数据实例
-  private buildMetadata() {
-    for (const entity of get().entries()) {
-      const beDecoratedCls = entity[0];
-      const list = entity[1];
-      for (const p of list) {
-        const metadataKind = p.metadataKind;
-        const metadataClass = p.metadataClass;
-        const metadataParam = p.metadataParam;
-        const field = p.field;
-        switch (metadataKind) {
-          case KindClass:
-            addClassMetadata(beDecoratedCls, metadataClass, metadataParam);
-            break;
-          case KindField:
-            addFieldMetadata(
-              beDecoratedCls,
-              field,
-              metadataClass,
-              metadataParam
-            );
-            break;
-          case KindMethod:
-            addMethodMetadata(
-              beDecoratedCls,
-              field,
-              metadataClass,
-              metadataParam
-            );
-            break;
-        }
-      }
-    }
-  }
-
   /**
    * 找到所有类组件，添加到iocComponentDefinition中，便于后续实例化
    * 遍历所有的业务类，如果有类装饰器，那么就是类组件
    * 遍历所有配置类的方法，如果有@component装饰器，那么也是类组件
    */
   private buildIocComponentDefinition() {
+    buildComponentMetadataSet();
     const bizMetadata = getAllMetadata()[1];
     // 处理@component和带有@component的元数据类
     for (const entity of get().entries()) {
