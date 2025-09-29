@@ -5,7 +5,6 @@
 const map = new Map();
 export const NAME = {
   scheduleUpdateOnFiber: 'scheduleUpdateOnFiber',
-  Component: 'Component',
   throwException: 'throwException',
   dispatchEventForPluginEventSystem: 'dispatchEventForPluginEventSystem',
   accumulateTwoPhaseListeners: 'accumulateTwoPhaseListeners',

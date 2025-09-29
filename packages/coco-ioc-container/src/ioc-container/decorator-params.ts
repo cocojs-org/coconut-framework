@@ -23,18 +23,6 @@ export type params = {
 };
 const decoratorParamMap: Map<Class<any>, params[]> = new Map();
 
-function isComponentSubMetadata(p: params, upward: number = 2) {
-  if (upward < 0) {
-    return false;
-  }
-  const Component = getFromShare(NAME.Component);
-  if (p.metadataKind === KindClass && p.metadataClass === Component) {
-    return true;
-  } else {
-    const params = decoratorParamMap.get(p.metadataClass) || [];
-    return !!params.find((p) => isComponentSubMetadata(p, upward - 1));
-  }
-}
 /**
  * 保存装饰器参数
  * @param beDecoratedCls 被装饰的类
