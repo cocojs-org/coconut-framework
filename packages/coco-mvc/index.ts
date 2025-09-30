@@ -19,7 +19,7 @@ export {
   Value,
   value,
   createDecoratorExp,
-  createDecoratorExpByName,
+  createPlaceholderDecoratorExp,
   Application,
   PropertiesConfig,
   type Decorator,

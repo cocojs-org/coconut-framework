@@ -12,7 +12,7 @@ import {
 } from './decorator-context';
 import {
   createDecoratorExp,
-  createDecoratorExpByName,
+  createPlaceholderDecoratorExp,
   createDecoratorExpFactory,
 } from './create-decorator-exp-factory';
 
@@ -28,6 +28,6 @@ export {
   KindAccessor,
   type Kind,
   createDecoratorExp,
-  createDecoratorExpByName,
+  createPlaceholderDecoratorExp,
   createDecoratorExpFactory,
 };

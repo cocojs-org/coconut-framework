@@ -1,5 +1,5 @@
 import {
-  createDecoratorExpByName,
+  createPlaceholderDecoratorExp,
   Decorator,
   KindClass,
   KindField,
@@ -21,5 +21,7 @@ export enum Type {
 const target: (
   type: Type[],
   decoratorSelf?: true
-) => Decorator<ClassDecoratorContext> = createDecoratorExpByName('target');
+) => Decorator<ClassDecoratorContext> = createPlaceholderDecoratorExp();
+
+// TODO: @target有可能先装饰其他非Target吗？可以的话需要抛出异常
 export default target;

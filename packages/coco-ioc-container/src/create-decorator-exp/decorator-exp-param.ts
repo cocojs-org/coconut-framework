@@ -6,7 +6,6 @@ import { type Field, type Kind } from './decorator-context';
 import { isClass } from '../share/util';
 
 export type Params = {
-  decoratorName?: string;
   metadataKind: Kind;
   metadataClass: Class<any>;
   metadataParam: any;

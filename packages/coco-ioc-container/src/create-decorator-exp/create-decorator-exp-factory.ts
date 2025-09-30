@@ -18,39 +18,30 @@ import {
 } from '../share/util';
 import { addDecoratorParams } from './decorator-exp-param';
 import {
-  addOptionForCreateDecoratorExp,
-  polyfillClassOptionForCreateDecoratorExpByName,
+  addDecoratorOption,
   type CreateDecoratorExpOption,
 } from './create-decorator-options';
 
 function createDecoratorExpFactory(fn: any) {
   return function <UserParam, C extends Context>(
-    metadataClsOrName: MetadataClass<any> | string,
+    metadataClass?: MetadataClass<any>,
     option?: CreateDecoratorExpOption
   ): (userParam?: UserParam, decorateSelf?: true) => Decorator<C> {
-    const decoratorName =
-      typeof metadataClsOrName === 'string'
-        ? metadataClsOrName
-        : lowercaseFirstLetter(metadataClsOrName.name);
-    let MetadataCls =
-      typeof metadataClsOrName !== 'string' ? metadataClsOrName : null;
-    addOptionForCreateDecoratorExp(
-      MetadataCls || uppercaseFirstLetter(decoratorName),
-      option
-    );
+    const createByClass = typeof metadataClass === 'function';
+    let MetadataCls = null;
+    if (createByClass) {
+      MetadataCls = metadataClass;
+      addDecoratorOption(MetadataCls, option);
+    }
     function decoratorExpress(userParam: UserParam, decorateSelf?: true) {
       return function (beDecoratedCls, context: C) {
         switch (context.kind) {
           case KindClass: {
             if (decorateSelf && MetadataCls === null) {
               MetadataCls = beDecoratedCls;
-              polyfillClassOptionForCreateDecoratorExpByName(
-                uppercaseFirstLetter(decoratorName),
-                MetadataCls
-              );
+              addDecoratorOption(MetadataCls, option);
             }
             fn(beDecoratedCls, {
-              decoratorName,
               metadataKind: KindClass,
               metadataClass: MetadataCls,
               metadataParam: userParam,
@@ -80,7 +71,6 @@ function createDecoratorExpFactory(fn: any) {
             case KindField:
             case KindMethod:
               fn(this.constructor, {
-                decoratorName,
                 metadataKind: context.kind,
                 metadataClass: MetadataCls,
                 metadataParam: userParam,
@@ -121,24 +111,19 @@ function createDecoratorExp(
 }
 
 /**
- * 使用装饰器名字创建一个装饰器函数
+ * 创建一个未绑定元数据的装饰器表达式，后续通过表达式的第二个参数来绑定
  * 适用于装饰器装饰自己元数据类的场景
  * @public
  */
-function createDecoratorExpByName(
-  decoratorName: string,
+function createPlaceholderDecoratorExp(
   option?: CreateDecoratorExpOption
 ): (userParam?: any, decorateSelf?: true) => Decorator<DecoratorContext> {
-  if (typeof decoratorName !== 'string') {
-    throw new Error(
-      'createDecoratorExpByName的第一个参数类型是字符串，表示装饰器的名字'
-    );
-  }
-  return doCreateDecoratorExp(decoratorName, option);
+  // TODO: 感觉返回2个函数好一点，1个用于绑定元数据，1个用于装饰其他元数据
+  return doCreateDecoratorExp(undefined, option);
 }
 
 export {
   createDecoratorExp,
-  createDecoratorExpByName,
+  createPlaceholderDecoratorExp,
   createDecoratorExpFactory,
 };

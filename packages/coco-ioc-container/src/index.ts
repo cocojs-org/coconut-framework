@@ -17,7 +17,7 @@ export { default as Value } from './decorator/metadata/value';
 export { default as value } from './decorator/value';
 export {
   createDecoratorExp,
-  createDecoratorExpByName,
+  createPlaceholderDecoratorExp,
   type Decorator,
   type Field,
 } from './create-decorator-exp';

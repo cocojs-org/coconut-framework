@@ -1,6 +1,6 @@
 import {
   createDecoratorExp,
-  createDecoratorExpByName,
+  createPlaceholderDecoratorExp,
   createDecoratorExpFactory,
   type Decorator,
   KindClass,
@@ -26,7 +26,6 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     class A {}
     expect(fn).toBeCalledTimes(1);
     expect(fn).toBeCalledWith(A, {
-      decoratorName: 'meta',
       metadataClass: Meta,
       metadataKind: KindClass,
       metadataParam: param,
@@ -43,7 +42,6 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     class A {}
     expect(fn).toBeCalledTimes(1);
     expect(fn).toBeCalledWith(A, {
-      decoratorName: 'meta1',
       metadataClass: Meta1,
       metadataKind: KindClass,
       metadataParam: param,
@@ -70,7 +68,6 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     new A();
     expect(fn).toBeCalledTimes(1);
     expect(fn).toBeCalledWith(A, {
-      decoratorName: 'meta2',
       metadataClass: Meta2,
       metadataKind: KindField,
       metadataParam: param,
@@ -93,7 +90,6 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     new A();
     expect(fn).toBeCalledTimes(1);
     expect(fn).toBeCalledWith(A, {
-      decoratorName: 'meta3',
       metadataClass: Meta3,
       metadataKind: KindMethod,
       metadataParam: param,
@@ -116,7 +112,6 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     new A();
     expect(fn).toBeCalledTimes(1);
     expect(fn).toBeCalledWith(A, {
-      decoratorName: 'meta4',
       metadataClass: Meta4,
       metadataKind: KindField,
       metadataParam: param,
@@ -145,7 +140,6 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     new A();
     expect(fn).toBeCalledTimes(1);
     expect(fn).toBeCalledWith(A, {
-      decoratorName: 'meta5',
       metadataClass: Meta5,
       metadataKind: KindMethod,
       metadataParam: param,
@@ -256,69 +250,6 @@ describe('create-decorator-exp:createDecoratorExp', () => {
     try {
       // @ts-ignore
       createDecoratorExp(function () {});
-    } catch (e) {
-      shouldThrowError = true;
-    }
-    expect(shouldThrowError).toBe(true);
-  });
-});
-
-describe('create-decorator-exp:createDecoratorExpByName', () => {
-  beforeEach(async () => {});
-
-  afterEach(async () => {
-    jest.resetModules();
-  });
-
-  test('createDecoratorExpByName第一个参数使用字符串', async () => {
-    let shouldThrowError = false;
-    try {
-      createDecoratorExpByName('abc');
-    } catch (e) {
-      shouldThrowError = true;
-    }
-    expect(shouldThrowError).toBe(false);
-  });
-
-  test('createDecoratorExpByName第一个参数不能使用数字', async () => {
-    let shouldThrowError = false;
-    try {
-      // @ts-ignore
-      createDecoratorExpByName(1);
-    } catch (e) {
-      shouldThrowError = true;
-    }
-    expect(shouldThrowError).toBe(true);
-  });
-
-  test('createDecoratorExpByName第一个参数不能使用对象', async () => {
-    let shouldThrowError = false;
-    try {
-      // @ts-ignore
-      createDecoratorExpByName({});
-    } catch (e) {
-      shouldThrowError = true;
-    }
-    expect(shouldThrowError).toBe(true);
-  });
-
-  test('createDecoratorExpByName第一个参数不能使用函数', async () => {
-    let shouldThrowError = false;
-    try {
-      // @ts-ignore
-      createDecoratorExpByName(function () {});
-    } catch (e) {
-      shouldThrowError = true;
-    }
-    expect(shouldThrowError).toBe(true);
-  });
-
-  test('createDecoratorExpByName第一个参数不能使用类', async () => {
-    let shouldThrowError = false;
-    try {
-      class A {}
-      // @ts-ignore
-      createDecoratorExpByName(A);
     } catch (e) {
       shouldThrowError = true;
     }

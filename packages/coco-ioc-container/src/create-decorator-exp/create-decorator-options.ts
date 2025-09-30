@@ -60,29 +60,13 @@ const metadataDecoratorOptions: Map<
 const metadataIdDecoratorOptions: Map<string, CreateDecoratorExpOption> =
   new Map();
 
-function addOptionForCreateDecoratorExp(
-  metadataClass: Class<any> | string,
+function addDecoratorOption(
+  metadataClass: Class<any>,
   options: CreateDecoratorExpOption = null
 ) {
-  let id;
-  if (typeof metadataClass === 'string') {
-    id = metadataClass;
-  } else {
-    metadataDecoratorOptions.set(metadataClass, options);
-    id = getId(metadataClass);
-  }
+  const id = getId(metadataClass);
   metadataIdDecoratorOptions.set(id, options);
-}
-
-// 针对createDecoratorExpByName构建的装饰器，一开始是id，后续才知道元数据类
-function polyfillClassOptionForCreateDecoratorExpByName(
-  metadataId: string,
-  metadataClass: Class<any>
-) {
-  const options = metadataIdDecoratorOptions.get(metadataId);
-  if (options !== undefined) {
-    metadataDecoratorOptions.set(metadataClass, options);
-  }
+  metadataDecoratorOptions.set(metadataClass, options);
 }
 
 function getOption(metadataClassOrId: Class<any> | string) {
@@ -98,10 +82,4 @@ function clear() {
   metadataIdDecoratorOptions.clear;
 }
 
-export {
-  type CreateDecoratorExpOption,
-  addOptionForCreateDecoratorExp,
-  polyfillClassOptionForCreateDecoratorExpByName,
-  getOption,
-  clear,
-};
+export { type CreateDecoratorExpOption, addDecoratorOption, getOption, clear };
