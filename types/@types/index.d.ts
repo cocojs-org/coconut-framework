@@ -10,6 +10,5 @@ declare interface Class<T> {
 declare interface MetadataClass<T> {
   new (...args: any): T;
   toString(): string;
-  componentPostConstruct?(): void;
   classDecoratorModifyPrototype?(prototype: any): void;
 }

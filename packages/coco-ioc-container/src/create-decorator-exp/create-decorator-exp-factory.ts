@@ -33,13 +33,45 @@ function createDecoratorExpFactory(fn: any) {
       MetadataCls = metadataClass;
       addDecoratorOption(MetadataCls, option);
     }
-    function decoratorExpress(userParam: UserParam, decorateSelf?: true) {
+
+    function selfDecoratorExp(userParam: UserParam) {
       return function (beDecoratedCls, context: C) {
         switch (context.kind) {
           case KindClass: {
-            if (decorateSelf && MetadataCls === null) {
+            if (MetadataCls === null) {
               MetadataCls = beDecoratedCls;
               addDecoratorOption(MetadataCls, option);
+            } else {
+              throw new Error('decorateSelf函数只能调用一次');
+            }
+            fn(beDecoratedCls, {
+              metadataKind: KindClass,
+              metadataClass: MetadataCls,
+              metadataParam: userParam,
+            });
+            // 修改prototype
+            if (
+              typeof MetadataCls?.classDecoratorModifyPrototype === 'function'
+            ) {
+              MetadataCls?.classDecoratorModifyPrototype(
+                beDecoratedCls.prototype
+              );
+            }
+            break;
+          }
+          default:
+            throw new Error(`暂不支持装饰${context.kind}类型。`);
+        }
+        return undefined;
+      };
+    }
+
+    function decoratorExpress(userParam: UserParam) {
+      return function (beDecoratedCls, context: C) {
+        switch (context.kind) {
+          case KindClass: {
+            if (MetadataCls === null) {
+              throw new Error('你需要先执行bindMetadata函数');
             }
             fn(beDecoratedCls, {
               metadataKind: KindClass,
@@ -89,6 +121,9 @@ function createDecoratorExpFactory(fn: any) {
       };
     }
 
+    if (!createByClass) {
+      decoratorExpress.selfDecoratorExp = selfDecoratorExp;
+    }
     return decoratorExpress;
   };
 }
@@ -118,7 +153,6 @@ function createDecoratorExp(
 function createPlaceholderDecoratorExp(
   option?: CreateDecoratorExpOption
 ): (userParam?: any, decorateSelf?: true) => Decorator<DecoratorContext> {
-  // TODO: 感觉返回2个函数好一点，1个用于绑定元数据，1个用于装饰其他元数据
   return doCreateDecoratorExp(undefined, option);
 }
 
