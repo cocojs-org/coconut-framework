@@ -11,7 +11,7 @@ import {
 import {
   get,
   clear as clearDecoratorParams,
-} from '../create-decorator-exp/decorator-params';
+} from '../create-decorator-exp/decorator-exp-param';
 import { buildIocComponentDefinition } from './ioc-component-definition';
 import Qualifier from '../decorator/metadata/qualifier';
 import PropertiesConfig from './properties-config';

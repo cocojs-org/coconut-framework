@@ -1,6 +1,6 @@
 import { Diagnose, printDiagnose } from 'shared';
 import { KindClass, KindField, KindMethod } from '../create-decorator-exp';
-import { type params } from '../create-decorator-exp/decorator-params';
+import { type Params } from '../create-decorator-exp/decorator-exp-param';
 import {
   type BizMetadata,
   type MetaMetadata,
@@ -27,7 +27,7 @@ import validate from './validate';
 
 // 使用装饰器参数生成对应的元数据实例
 function createMetadataByDecoratorParam(
-  decoratorMap: Map<Class<any>, params[]>
+  decoratorMap: Map<Class<any>, Params[]>
 ) {
   for (const entity of decoratorMap.entries()) {
     const beDecoratedCls = entity[0];
@@ -61,7 +61,7 @@ function createMetadataByDecoratorParam(
  * 构建元数据信息，为运行时做准备
  * @param decoratorMap 收集到的所有装饰器参数
  */
-function buildMetadata(decoratorMap: Map<Class<any>, params[]>) {
+function buildMetadata(decoratorMap: Map<Class<any>, Params[]>) {
   createMetadataByDecoratorParam(decoratorMap);
   // TODO: 校验全部放在core里面做到，然后业务上获取的时候先过滤掉非法的元数据，只从合法的元数据中查找
   const diagnoseList: Diagnose[] = validate(getAllMetadata());

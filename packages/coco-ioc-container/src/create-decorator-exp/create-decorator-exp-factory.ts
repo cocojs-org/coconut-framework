@@ -16,7 +16,7 @@ import {
   once,
   uppercaseFirstLetter,
 } from '../share/util';
-import { addDecoratorParams } from './decorator-params';
+import { addDecoratorParams } from './decorator-exp-param';
 import {
   addOptionForCreateDecoratorExp,
   polyfillClassOptionForCreateDecoratorExpByName,
