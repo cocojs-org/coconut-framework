@@ -22,6 +22,14 @@ export function uppercaseFirstLetter(str: string) {
   return transformStr(str, fn);
 }
 
+// 返回元数据类的id
+export function getId(MetadataClass: Class<any>) {
+  if (typeof MetadataClass !== 'function') {
+    return '';
+  }
+  return uppercaseFirstLetter(MetadataClass.name);
+}
+
 export function className2DecoratorName(className: string) {
   return `@${lowercaseFirstLetter(className)}`;
 }

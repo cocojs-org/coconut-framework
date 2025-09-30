@@ -4,7 +4,6 @@ import {
   KindField,
   KindMethod,
 } from '../create-decorator-exp';
-import { get } from '../create-decorator-exp/decorator-params';
 import type Application from './application';
 import type Metadata from '../metadata/create-metadata';
 import { isDescendantOf, uppercaseFirstLetter } from '../share/util';
@@ -25,67 +24,6 @@ import Scope, { SCOPE } from '../decorator/metadata/scope';
 import Component from '../decorator/metadata/component';
 
 /**
- * @public
- * @param metadata - 元数据实例对象
- * @param application - 全局的application对象
- */
-export type ComponentClassPostConstructFn = (
-  metadata: Metadata,
-  application: Application
-) => void;
-/**
- * @public
- * @param metadata - 元数据实例对象
- * @param application - 全局的application对象
- * @param field - 被装饰的字段名
- */
-export type ComponentFieldPostConstructFn = (
-  metadata: Metadata,
-  application: Application,
-  field: Field
-) => void;
-/**
- * @public
- */
-export type ComponentMethodPostConstructFn = (
-  metadata: Metadata,
-  application: Application,
-  field: Field
-) => void;
-/**
- * @public
- */
-export type ComponentPostConstructFn =
-  | ComponentClassPostConstructFn
-  | ComponentFieldPostConstructFn
-  | ComponentMethodPostConstructFn;
-
-export interface ComponentClassPostConstruct {
-  kind: typeof KindClass;
-  metadataCls: Class<any>;
-  fn: ComponentClassPostConstructFn;
-}
-
-export interface ComponentFieldPostConstruct {
-  kind: typeof KindField;
-  metadataCls: Class<any>;
-  fn: ComponentFieldPostConstructFn;
-  field: Field;
-}
-
-export interface ComponentMethodPostConstruct {
-  kind: typeof KindMethod;
-  metadataCls: Class<any>;
-  fn: ComponentMethodPostConstructFn;
-  field: Field;
-}
-
-export type ComponentPostConstruct =
-  | ComponentClassPostConstruct
-  | ComponentFieldPostConstruct
-  | ComponentMethodPostConstruct;
-
-/**
  * 所有被扫描的规范的组件
  * 包括：
  * 1. 项目中添加@component类装饰的组件
@@ -103,13 +41,6 @@ export interface IocComponentDefinition<T> {
 
   // 实例化方式
   instantiateType: 'new' | 'method';
-
-  /**
-   * 元数据的定义后置处理方法
-   * new表达式后立刻执行
-   */
-  componentPostConstruct?: ComponentPostConstruct[];
-
   // 当实例化方式为method时对应的选项
   methodInstantiateOpts?: {
     configurationCls: Class<any>; // 配置类
@@ -123,30 +54,7 @@ function newIocComponentDefinition<T>(
   isSingleton: boolean,
   instantiateType: 'new' | 'method'
 ): IocComponentDefinition<T> {
-  return { id, cls, isSingleton, instantiateType, componentPostConstruct: [] };
-}
-
-function genClassPostConstruct(
-  metadataCls: Class<any>,
-  fn: ComponentClassPostConstructFn
-): ComponentClassPostConstruct {
-  return { kind: KindClass, metadataCls, fn };
-}
-
-function genFieldPostConstruct(
-  metadataCls: Class<any>,
-  fn: ComponentFieldPostConstructFn,
-  field: Field
-): ComponentFieldPostConstruct {
-  return { kind: KindField, metadataCls, fn, field };
-}
-
-function genMethodPostConstruct(
-  metadataCls: Class<any>,
-  fn: ComponentMethodPostConstructFn,
-  field: Field
-): ComponentMethodPostConstruct {
-  return { kind: KindMethod, metadataCls, fn, field };
+  return { id, cls, isSingleton, instantiateType };
 }
 
 type Id = string;
@@ -186,61 +94,6 @@ function addDefinition(
   }
   idDefinitionMap.set(id, componentDefinition);
   clsDefinitionMap.set(cls, componentDefinition);
-}
-
-function addPostConstruct(cls: Class<any>, pc: ComponentPostConstruct) {
-  const definition = clsDefinitionMap.get(cls);
-  if (!definition) {
-    if (__TEST__) {
-      throw new Error('没有对应的cls');
-    }
-  }
-  switch (pc.kind) {
-    case KindClass:
-      if (
-        definition.componentPostConstruct.find(
-          (i) => i.metadataCls === pc.metadataCls
-        )
-      ) {
-        if (__TEST__) {
-          throw new Error('一个类装饰器只能有一个对应的postConstruct');
-        }
-      }
-      break;
-    case KindField: {
-      const pcs =
-        definition.componentPostConstruct as ComponentFieldPostConstruct[];
-      const fieldPc = pc as ComponentFieldPostConstruct;
-      if (
-        pcs.find(
-          (i) =>
-            i.metadataCls === fieldPc.metadataCls && i.field === fieldPc.field
-        )
-      ) {
-        if (__TEST__) {
-          throw new Error('重复的postConstruct');
-        }
-      }
-      break;
-    }
-    case KindMethod: {
-      const pcs =
-        definition.componentPostConstruct as ComponentMethodPostConstruct[];
-      const fieldPc = pc as ComponentMethodPostConstruct;
-      if (
-        pcs.find(
-          (i) =>
-            i.metadataCls === fieldPc.metadataCls && i.field === fieldPc.field
-        )
-      ) {
-        if (__TEST__) {
-          throw new Error('重复的postConstruct');
-        }
-      }
-      break;
-    }
-  }
-  definition.componentPostConstruct.push(pc);
 }
 
 /**
@@ -322,10 +175,7 @@ function clear() {
 
 function doBuildIocComponentDefinition() {
   const bizMetadata = getAllMetadata()[1];
-  // 处理@component和带有@component的元数据类
-  for (const entity of get().entries()) {
-    const beDecoratedCls = entity[0];
-    const params = entity[1];
+  for (const beDecoratedCls of bizMetadata.keys()) {
     if (bizMetadata.has(beDecoratedCls)) {
       const componentMetadata = findComponentDecorator(beDecoratedCls);
       if (componentMetadata) {
@@ -341,43 +191,6 @@ function doBuildIocComponentDefinition() {
           scope = findComponentDecoratorScope(componentMetadata);
         }
         addDefinition(beDecoratedCls, scope === SCOPE.Singleton);
-        params.forEach(
-          ({ metadataClass, metadataKind, componentPostConstruct, field }) => {
-            if (componentPostConstruct) {
-              switch (metadataKind) {
-                case KindClass:
-                  addPostConstruct(
-                    beDecoratedCls,
-                    genClassPostConstruct(
-                      metadataClass,
-                      componentPostConstruct as ComponentClassPostConstructFn
-                    )
-                  );
-                  break;
-                case KindField:
-                  addPostConstruct(
-                    beDecoratedCls,
-                    genFieldPostConstruct(
-                      metadataClass,
-                      componentPostConstruct,
-                      field
-                    )
-                  );
-                  break;
-                case KindMethod:
-                  addPostConstruct(
-                    beDecoratedCls,
-                    genMethodPostConstruct(
-                      metadataClass,
-                      componentPostConstruct,
-                      field
-                    )
-                  );
-                  break;
-              }
-            }
-          }
-        );
       } else {
         const methods = listMethodByMetadataCls(beDecoratedCls, Component);
         for (const method of methods) {

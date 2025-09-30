@@ -10,43 +10,18 @@ import {
   type Kind,
 } from './decorator-context';
 export type { Decorator };
-import { isClass, lowercaseFirstLetter, once } from '../share/util';
+import {
+  isClass,
+  lowercaseFirstLetter,
+  once,
+  uppercaseFirstLetter,
+} from '../share/util';
 import { addDecoratorParams } from './decorator-params';
-import type Metadata from '../metadata/create-metadata';
-import type Application from '../ioc-container/application';
-
-interface CreateDecoratorExpOption {
-  /**
-   * 类实例化之后，会调用类的装饰器的componentPostConstruct做自定义的处理
-   * @param metadata 装饰器参数实例化的元数据实例
-   * @param application 全局application对象
-   * @param field 被装饰的field名
-   * @returns
-   */
-  componentPostConstruct?: (
-    metadata: Metadata,
-    application: Application,
-    field?: string
-  ) => void;
-  /**
-   * 本装饰器的使用规则
-   * @returns
-   */
-  validator?: {
-    /**
-     * 装饰器合法性规则
-     * @param currentMeta 当前装饰器的元数据
-     * @param otherMeta 其他装饰器的元数据
-     * @param application 全局application对象
-     * @returns
-     */
-    validate?: (
-      currentMeta: { metadata: Metadata; kind: Kind; field?: string },
-      otherMeta: { class: Metadata[]; fields: Metadata[] },
-      application: Application
-    ) => boolean;
-  };
-}
+import {
+  setOption as setDecoratorOption,
+  addClassOptionById as addClassDecoratorOptionById,
+  type CreateDecoratorExpOption,
+} from './decorator-options';
 
 function createDecoratorExpFactory(fn: any) {
   return function <UserParam, C extends Context>(
@@ -59,35 +34,43 @@ function createDecoratorExpFactory(fn: any) {
         : lowercaseFirstLetter(metadataClsOrName.name);
     let MetadataCls =
       typeof metadataClsOrName !== 'string' ? metadataClsOrName : null;
+    setDecoratorOption(
+      MetadataCls || uppercaseFirstLetter(decoratorName),
+      option
+    );
     function decoratorExpress(userParam: UserParam, decorateSelf?: true) {
-      return function (value, context: C) {
+      return function (beDecoratedCls, context: C) {
         switch (context.kind) {
           case KindClass: {
             if (decorateSelf) {
               if (MetadataCls === null) {
-                MetadataCls = value;
-                fn(value, {
+                MetadataCls = beDecoratedCls;
+                addClassDecoratorOptionById(
+                  uppercaseFirstLetter(decoratorName),
+                  MetadataCls
+                );
+                fn(beDecoratedCls, {
                   decoratorName,
                   metadataKind: KindClass,
-                  metadataClass: value,
+                  metadataClass: MetadataCls,
                   metadataParam: userParam,
-                  componentPostConstruct: option?.componentPostConstruct,
                 });
               }
             } else {
-              fn(value, {
+              fn(beDecoratedCls, {
                 decoratorName,
                 metadataKind: KindClass,
                 metadataClass: MetadataCls,
                 metadataParam: userParam,
-                componentPostConstruct: option?.componentPostConstruct,
               });
             }
             // 修改prototype
             if (
               typeof MetadataCls?.classDecoratorModifyPrototype === 'function'
             ) {
-              MetadataCls?.classDecoratorModifyPrototype(value.prototype);
+              MetadataCls?.classDecoratorModifyPrototype(
+                beDecoratedCls.prototype
+              );
             }
             break;
           }
@@ -111,7 +94,6 @@ function createDecoratorExpFactory(fn: any) {
                 metadataClass: MetadataCls,
                 metadataParam: userParam,
                 field: context.name as string,
-                componentPostConstruct: option?.componentPostConstruct,
               });
               break;
             case KindClass:

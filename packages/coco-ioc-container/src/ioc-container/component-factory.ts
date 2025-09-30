@@ -4,6 +4,7 @@ import {
   getDefinition,
 } from './ioc-component-definition';
 import {
+  getFromMap,
   listClassMetadata,
   listFieldByMetadataCls,
   listFieldMetadata,
@@ -11,6 +12,7 @@ import {
 } from '../metadata';
 import type Application from './application';
 import { KindClass, KindField, KindMethod } from '../create-decorator-exp';
+import { getOption as getDecoratorOption } from '../create-decorator-exp/decorator-options';
 import ConstructorParam from '../decorator/metadata/constructor-param';
 import Autowired from '../decorator/metadata/autowired';
 import {
@@ -38,50 +40,39 @@ function createComponent<T>(
     const configuration = new configurationCls();
     component = configuration[method]();
   }
-  for (const cpc of definition.componentPostConstruct) {
-    switch (cpc.kind) {
-      case KindClass: {
-        const metadata = listClassMetadata(cls, cpc.metadataCls);
-        if (metadata.length === 1) {
-          cpc.fn.call(component, metadata[0], application);
-        } else {
-          if (__TEST__) {
-            console.error('元数据应该只有一个', cls, cpc.metadataCls);
-          }
-        }
-        break;
+  const metadatas = getFromMap(cls);
+  if (metadatas) {
+    const { classMetadata, methodMetadata, fieldMetadata } = metadatas;
+    for (const meta of classMetadata) {
+      const option = getDecoratorOption(meta.constructor as Class<any>);
+      if (option) {
+        option.componentPostConstruct.call(component, meta, application);
       }
-      case KindField: {
-        const metadata = listFieldMetadata(cls, cpc.field, cpc.metadataCls);
-        if (metadata.length === 1) {
-          cpc.fn.call(component, metadata[0], application, cpc.field);
-        } else {
-          if (__TEST__) {
-            console.error(
-              '元数据应该只有一个',
-              cls,
-              cpc.metadataCls,
-              cpc.field
-            );
-          }
+    }
+    for (const [field, metaList] of fieldMetadata.entries()) {
+      for (const meta of metaList) {
+        const option = getDecoratorOption(meta.constructor as Class<any>);
+        if (option) {
+          option.componentPostConstruct.call(
+            component,
+            meta,
+            application,
+            field
+          );
         }
-        break;
       }
-      case KindMethod: {
-        const metadata = listMethodMetadata(cls, cpc.field, cpc.metadataCls);
-        if (metadata.length === 1) {
-          cpc.fn.call(component, metadata[0], application, cpc.field);
-        } else {
-          if (__TEST__) {
-            console.error(
-              '元数据应该只有一个',
-              cls,
-              cpc.metadataCls,
-              cpc.field
-            );
-          }
+    }
+    for (const [method, metaList] of methodMetadata.entries()) {
+      for (const meta of metaList) {
+        const option = getDecoratorOption(meta.constructor as Class<any>);
+        if (option) {
+          option.componentPostConstruct.call(
+            component,
+            meta,
+            application,
+            method
+          );
         }
-        break;
       }
     }
   }

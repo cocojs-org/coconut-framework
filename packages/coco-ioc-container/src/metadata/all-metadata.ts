@@ -409,6 +409,7 @@ function getMetaClassById(id: string) {
 }
 
 export {
+  getFromMap,
   getMetaClassById,
   buildMetaClassIdMap,
   addClassMetadata,

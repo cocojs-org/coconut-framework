@@ -21,11 +21,5 @@ export {
   type Decorator,
   type Field,
 } from './create-decorator-exp';
-export {
-  type ComponentPostConstructFn,
-  type ComponentClassPostConstructFn,
-  type ComponentMethodPostConstructFn,
-  type ComponentFieldPostConstructFn,
-} from './ioc-container/ioc-component-definition';
 export { default as Application } from './ioc-container/application';
 export { default as PropertiesConfig } from './ioc-container/properties-config';

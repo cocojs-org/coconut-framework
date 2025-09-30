@@ -1,4 +1,3 @@
-import type { ComponentPostConstructFn } from '../ioc-container/ioc-component-definition';
 import {
   type Field,
   type Kind,
@@ -6,7 +5,6 @@ import {
   KindMethod,
 } from './decorator-context';
 import { isClass } from '../share/util';
-import { get as getFromShare, NAME } from 'shared';
 
 export type params = {
   decoratorName?: string;
@@ -19,7 +17,6 @@ export type params = {
    * todo 测试是否支持Symbol类型
    */
   field?: Field;
-  componentPostConstruct?: ComponentPostConstructFn;
 };
 const decoratorParamMap: Map<Class<any>, params[]> = new Map();
 
@@ -36,7 +33,7 @@ export function addDecoratorParams(beDecoratedCls: Class<any>, params: params) {
     return;
   }
 
-  // todo 装饰器不应该允许重复添加，但是又需要允许添加类装饰器，field装饰器这样的场景
+  // TODO: 装饰器不应该允许重复添加，但是又需要允许添加类装饰器，field装饰器这样的场景
   if (!decoratorParamMap.has(beDecoratedCls)) {
     decoratorParamMap.set(beDecoratedCls, []);
   }

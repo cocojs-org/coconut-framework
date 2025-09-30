@@ -32,16 +32,20 @@ class Application {
    * 在测试时，组件是在执行到对应的行装饰器才会执行，所以需要先收集在启动。
    */
   public start() {
-    {
-      this.collectFieldOrMethodDecoratorParams();
-      buildMetadata(get());
-      buildIocComponentDefinition();
-    }
+    // 收集所有的装饰器参数
+    this.collectFieldOrMethodDecoratorParams();
+
+    // 用装饰器参数初始化元数据数据
+    buildMetadata(get());
+
+    // 用元数据信息初始化ioc组件数据
+    buildIocComponentDefinition();
+
     // TODO: 不用清空装饰器参数记录
     clearDecoratorParams();
-    {
-      this.bootComponent();
-    }
+
+    // 实例化配置启动项的组件
+    this.bootComponent();
   }
 
   /**
