@@ -18,10 +18,10 @@ import {
 } from '../share/util';
 import { addDecoratorParams } from './decorator-params';
 import {
-  setOption as setDecoratorOption,
-  addClassOptionById as addClassDecoratorOptionById,
+  addOptionForCreateDecoratorExp,
+  polyfillClassOptionForCreateDecoratorExpByName,
   type CreateDecoratorExpOption,
-} from './decorator-options';
+} from './create-decorator-options';
 
 function createDecoratorExpFactory(fn: any) {
   return function <UserParam, C extends Context>(
@@ -34,7 +34,7 @@ function createDecoratorExpFactory(fn: any) {
         : lowercaseFirstLetter(metadataClsOrName.name);
     let MetadataCls =
       typeof metadataClsOrName !== 'string' ? metadataClsOrName : null;
-    setDecoratorOption(
+    addOptionForCreateDecoratorExp(
       MetadataCls || uppercaseFirstLetter(decoratorName),
       option
     );
@@ -42,28 +42,19 @@ function createDecoratorExpFactory(fn: any) {
       return function (beDecoratedCls, context: C) {
         switch (context.kind) {
           case KindClass: {
-            if (decorateSelf) {
-              if (MetadataCls === null) {
-                MetadataCls = beDecoratedCls;
-                addClassDecoratorOptionById(
-                  uppercaseFirstLetter(decoratorName),
-                  MetadataCls
-                );
-                fn(beDecoratedCls, {
-                  decoratorName,
-                  metadataKind: KindClass,
-                  metadataClass: MetadataCls,
-                  metadataParam: userParam,
-                });
-              }
-            } else {
-              fn(beDecoratedCls, {
-                decoratorName,
-                metadataKind: KindClass,
-                metadataClass: MetadataCls,
-                metadataParam: userParam,
-              });
+            if (decorateSelf && MetadataCls === null) {
+              MetadataCls = beDecoratedCls;
+              polyfillClassOptionForCreateDecoratorExpByName(
+                uppercaseFirstLetter(decoratorName),
+                MetadataCls
+              );
             }
+            fn(beDecoratedCls, {
+              decoratorName,
+              metadataKind: KindClass,
+              metadataClass: MetadataCls,
+              metadataParam: userParam,
+            });
             // 修改prototype
             if (
               typeof MetadataCls?.classDecoratorModifyPrototype === 'function'

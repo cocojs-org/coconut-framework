@@ -1,5 +1,5 @@
 /**
- * ioc组件的装饰器的componentPostConsturct，方便实例化ioc-component
+ * 创建装饰器表达式的选项
  */
 import type Metadata from '../metadata/create-metadata';
 import type Application from '../ioc-container/application';
@@ -51,14 +51,16 @@ interface CreateDecoratorExpOption {
   componentPostConstruct?: ComponentPostConstruct;
 }
 
+// 元数据类 <--> 装饰器选项
 const metadataDecoratorOptions: Map<
   Class<any>,
   CreateDecoratorExpOption
 > = new Map();
+// 元数据类id <--> 装饰器选项
 const metadataIdDecoratorOptions: Map<string, CreateDecoratorExpOption> =
   new Map();
 
-function setOption(
+function addOptionForCreateDecoratorExp(
   metadataClass: Class<any> | string,
   options: CreateDecoratorExpOption = null
 ) {
@@ -72,8 +74,11 @@ function setOption(
   metadataIdDecoratorOptions.set(id, options);
 }
 
-// 针对一开始使用id添加选项的情况，补充元数据类
-function addClassOptionById(metadataId: string, metadataClass: Class<any>) {
+// 针对createDecoratorExpByName构建的装饰器，一开始是id，后续才知道元数据类
+function polyfillClassOptionForCreateDecoratorExpByName(
+  metadataId: string,
+  metadataClass: Class<any>
+) {
   const options = metadataIdDecoratorOptions.get(metadataId);
   if (options !== undefined) {
     metadataDecoratorOptions.set(metadataClass, options);
@@ -95,8 +100,8 @@ function clear() {
 
 export {
   type CreateDecoratorExpOption,
-  setOption,
-  addClassOptionById,
+  addOptionForCreateDecoratorExp,
+  polyfillClassOptionForCreateDecoratorExpByName,
   getOption,
   clear,
 };
