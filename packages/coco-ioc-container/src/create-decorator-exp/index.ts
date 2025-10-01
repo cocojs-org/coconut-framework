@@ -11,6 +11,8 @@ import {
   KindAccessor,
 } from './decorator-context';
 import {
+  type DecoratorExp,
+  type DecoratorExpWithDecoratorSelf,
   createDecoratorExp,
   createPlaceholderDecoratorExp,
   createDecoratorExpFactory,
@@ -27,6 +29,8 @@ export {
   KindSetter,
   KindAccessor,
   type Kind,
+  type DecoratorExp,
+  type DecoratorExpWithDecoratorSelf,
   createDecoratorExp,
   createPlaceholderDecoratorExp,
   createDecoratorExpFactory,

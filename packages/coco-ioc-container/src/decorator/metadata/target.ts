@@ -4,8 +4,7 @@ import target, { Type } from '../target';
 /**
  * @public
  */
-// @ts-ignore TODO: fix it
-@(target.decorateSelf?.([Type.Class]))
+@target.decorateSelf([Type.Class])
 class Target extends Metadata {
   static Type = Type;
 

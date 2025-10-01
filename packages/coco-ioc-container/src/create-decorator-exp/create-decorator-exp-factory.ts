@@ -22,11 +22,20 @@ import {
   type CreateDecoratorExpOption,
 } from './create-decorator-options';
 
+interface DecoratorExp {
+  (userParam?: any): Decorator<DecoratorContext>;
+  decorateSelf?: (userParam?: any) => Decorator<DecoratorContext>;
+}
+interface DecoratorExpWithDecoratorSelf<T extends any> {
+  (userParam?: T): Decorator<DecoratorContext>;
+  decorateSelf: (userParam?: T) => Decorator<DecoratorContext>;
+}
+
 function createDecoratorExpFactory(fn: any) {
   return function <UserParam, C extends Context>(
     metadataClass?: MetadataClass<any>,
     option?: CreateDecoratorExpOption
-  ): (userParam?: UserParam, decorateSelf?: true) => Decorator<C> {
+  ): DecoratorExp | DecoratorExpWithDecoratorSelf<any> {
     const createByClass = typeof metadataClass === 'function';
     let MetadataCls = null;
     if (createByClass) {
@@ -34,7 +43,7 @@ function createDecoratorExpFactory(fn: any) {
       addDecoratorOption(MetadataCls, option);
     }
 
-    function selfDecoratorExp(userParam: UserParam) {
+    function decorateSelf(userParam: UserParam) {
       return function (beDecoratedCls, context: C) {
         switch (context.kind) {
           case KindClass: {
@@ -122,7 +131,7 @@ function createDecoratorExpFactory(fn: any) {
     }
 
     if (!createByClass) {
-      decoratorExpress.selfDecoratorExp = selfDecoratorExp;
+      decoratorExpress.decorateSelf = decorateSelf;
     }
     return decoratorExpress;
   };
@@ -138,11 +147,11 @@ const doCreateDecoratorExp = createDecoratorExpFactory(addDecoratorParams);
 function createDecoratorExp(
   metadataCls: Class<any>,
   option?: CreateDecoratorExpOption
-): (userParam?: any) => Decorator<DecoratorContext> {
+): DecoratorExp {
   if (!isClass(metadataCls)) {
     throw new Error('createDecoratorExp的第一个参数类型是类');
   }
-  return doCreateDecoratorExp(metadataCls, option);
+  return doCreateDecoratorExp(metadataCls, option) as DecoratorExp;
 }
 
 /**
@@ -150,13 +159,18 @@ function createDecoratorExp(
  * 适用于装饰器装饰自己元数据类的场景
  * @public
  */
-function createPlaceholderDecoratorExp(
+function createPlaceholderDecoratorExp<T>(
   option?: CreateDecoratorExpOption
-): (userParam?: any, decorateSelf?: true) => Decorator<DecoratorContext> {
-  return doCreateDecoratorExp(undefined, option);
+): DecoratorExpWithDecoratorSelf<T> {
+  return doCreateDecoratorExp(
+    undefined,
+    option
+  ) as DecoratorExpWithDecoratorSelf<T>;
 }
 
 export {
+  type DecoratorExp,
+  type DecoratorExpWithDecoratorSelf,
   createDecoratorExp,
   createPlaceholderDecoratorExp,
   createDecoratorExpFactory,
