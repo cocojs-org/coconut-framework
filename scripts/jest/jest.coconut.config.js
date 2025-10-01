@@ -16,10 +16,8 @@ module.exports = {
   transform: {
     '\\.[jt]sx?$': '<rootDir>/scripts/jest/transformer.js',
   },
-  // todo掉得coco-mvc之外的，也就是说只测试打包后的包吧，简单一些
   moduleNameMapper: {
     'coco-mvc': '<rootDir>/packages/coco-mvc/dist/coco-mvc.cjs.js',
-    shared$: '<rootDir>/packages/shared/src/index.ts',
   },
   globals: {
     __DEV__: false,

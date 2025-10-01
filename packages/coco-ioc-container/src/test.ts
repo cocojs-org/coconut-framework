@@ -1,5 +1,5 @@
 export * from './index.ts';
-import Metadata from './metadata/create-metadata.ts';
+import Metadata, { createMetadata } from './metadata/create-metadata.ts';
 import { createDecoratorExpFactory } from './create-decorator-exp/index';
 
 function isEqual(a: unknown, b: unknown) {
@@ -97,8 +97,15 @@ function checkMetadataForMetadataAsExpected(
 }
 
 import {
+  addClassMetadata,
+  addFieldMetadata,
   getMetadata,
   getAllMetadata,
+  listClassMetadata,
+  listFieldMetadata,
+  findClassMetadata,
+  listBeDecoratedClsByClassMetadata,
+  listBeDecoratedClsByFieldMetadata,
   clear as clearMetadata,
 } from './metadata/index.ts';
 import { clear as clearComponentFactory } from './ioc-container/component-factory';
@@ -112,4 +119,17 @@ function clear() {
   clearPreventCircularDependency();
 }
 
-export { checkClassMetadataAsExpected, createDecoratorExpFactory };
+export {
+  checkClassMetadataAsExpected,
+  createDecoratorExpFactory,
+  createMetadata,
+  addClassMetadata,
+  addFieldMetadata,
+  getAllMetadata,
+  listClassMetadata,
+  listFieldMetadata,
+  findClassMetadata,
+  listBeDecoratedClsByClassMetadata,
+  listBeDecoratedClsByFieldMetadata,
+  clearMetadata,
+};

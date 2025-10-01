@@ -1,20 +1,16 @@
-import {
-  addClassMetadata,
-  addFieldMetadata,
-  addMethodMetadata,
-  clear,
-  findClassMetadata,
-  getAllMetadata,
-  listBeDecoratedClsByClassMetadata,
-  listBeDecoratedClsByFieldMetadata,
-  listClassMetadata,
-  listFieldMetadata,
-} from '../metadata/index.ts';
-import Metadata, { createMetadata } from '../metadata/create-metadata.ts';
-import { createDecoratorExp, Decorator } from '../create-decorator-exp';
-
-// TODO: 不要基于源文件做测试，而是基于打包后的包做测试
 describe('metadata/create-metadata', () => {
+  let cocoMvc;
+  let createMetadata;
+
+  beforeEach(async () => {
+    cocoMvc = await import('coco-mvc');
+    createMetadata = cocoMvc.createMetadata;
+  });
+  afterEach(async () => {
+    cocoMvc.cleanCache();
+    jest.resetModules();
+  });
+
   test('纯对象类型会取自身的prop，全部浅赋值，不管元数据如何定义', () => {
     class M {
       name: string;
@@ -85,10 +81,19 @@ describe('metadata/create-metadata', () => {
 });
 
 describe('addClassMetadata', () => {
-  beforeEach(async () => {});
+  let cocoMvc;
+  let addClassMetadata;
+  let getAllMetadata;
+  let Metadata;
 
+  beforeEach(async () => {
+    cocoMvc = await import('coco-mvc');
+    addClassMetadata = cocoMvc.addClassMetadata;
+    getAllMetadata = cocoMvc.getAllMetadata;
+    Metadata = cocoMvc.Metadata;
+  });
   afterEach(async () => {
-    clear();
+    cocoMvc.cleanCache();
     jest.resetModules();
   });
 
@@ -110,10 +115,19 @@ describe('addClassMetadata', () => {
 });
 
 describe('addFieldOrMethodMetadata', () => {
-  beforeEach(async () => {});
+  let cocoMvc;
+  let addFieldMetadata;
+  let getAllMetadata;
+  let Metadata;
 
+  beforeEach(async () => {
+    cocoMvc = await import('coco-mvc');
+    addFieldMetadata = cocoMvc.addFieldMetadata;
+    getAllMetadata = cocoMvc.getAllMetadata;
+    Metadata = cocoMvc.Metadata;
+  });
   afterEach(async () => {
-    clear();
+    cocoMvc.cleanCache();
     jest.resetModules();
   });
 
@@ -139,6 +153,19 @@ describe('addFieldOrMethodMetadata', () => {
 });
 
 describe('listClassMetadata', () => {
+  let cocoMvc;
+  let addClassMetadata;
+  let listClassMetadata;
+
+  beforeEach(async () => {
+    cocoMvc = await import('coco-mvc');
+    addClassMetadata = cocoMvc.addClassMetadata;
+    listClassMetadata = cocoMvc.listClassMetadata;
+  });
+  afterEach(async () => {
+    cocoMvc.cleanCache();
+    jest.resetModules();
+  });
   test('listClassMetadata', async () => {
     class T {}
     class M {}
@@ -154,6 +181,20 @@ describe('listClassMetadata', () => {
 });
 
 describe('ioc-container/metadata', () => {
+  let cocoMvc;
+  let addFieldMetadata;
+  let listFieldMetadata;
+
+  beforeEach(async () => {
+    cocoMvc = await import('coco-mvc');
+    addFieldMetadata = cocoMvc.addFieldMetadata;
+    listFieldMetadata = cocoMvc.listFieldMetadata;
+  });
+  afterEach(async () => {
+    cocoMvc.cleanCache();
+    jest.resetModules();
+  });
+
   test('listFieldMetadata', async () => {
     class T {}
     class M {}
@@ -169,10 +210,21 @@ describe('ioc-container/metadata', () => {
 });
 
 describe('findClassMetadata', () => {
-  beforeEach(async () => {});
+  let cocoMvc;
+  let addClassMetadata;
+  let findClassMetadata;
+  let Metadata;
+  let createDecoratorExp;
 
+  beforeEach(async () => {
+    cocoMvc = await import('coco-mvc');
+    addClassMetadata = cocoMvc.addClassMetadata;
+    findClassMetadata = cocoMvc.findClassMetadata;
+    Metadata = cocoMvc.Metadata;
+    createDecoratorExp = cocoMvc.createDecoratorExp;
+  });
   afterEach(async () => {
-    clear();
+    cocoMvc.cleanCache();
     jest.resetModules();
   });
 
@@ -187,8 +239,7 @@ describe('findClassMetadata', () => {
   test('可以找到直接注解对应的元数据的注解的元数据', async () => {
     class T {}
     class Parent extends Metadata {}
-    const p: () => Decorator<ClassDecoratorContext> =
-      createDecoratorExp(Parent);
+    const p = createDecoratorExp(Parent);
 
     @p()
     class Child {}
@@ -202,10 +253,20 @@ describe('findClassMetadata', () => {
 });
 
 describe('listBeDecoratedClsByClassMetadata', () => {
-  beforeEach(async () => {});
+  let cocoMvc;
+  let addClassMetadata;
+  let listBeDecoratedClsByClassMetadata;
+  let Metadata;
 
+  beforeEach(async () => {
+    cocoMvc = await import('coco-mvc');
+    addClassMetadata = cocoMvc.addClassMetadata;
+    listBeDecoratedClsByClassMetadata =
+      cocoMvc.listBeDecoratedClsByClassMetadata;
+    Metadata = cocoMvc.Metadata;
+  });
   afterEach(async () => {
-    clear();
+    cocoMvc.cleanCache();
     jest.resetModules();
   });
 
@@ -222,10 +283,20 @@ describe('listBeDecoratedClsByClassMetadata', () => {
 });
 
 describe('listBeDecoratedClsByFieldMetadata', () => {
-  beforeEach(async () => {});
+  let cocoMvc;
+  let addFieldMetadata;
+  let getAllMetadata;
+  let listBeDecoratedClsByFieldMetadata;
 
+  beforeEach(async () => {
+    cocoMvc = await import('coco-mvc');
+    addFieldMetadata = cocoMvc.addFieldMetadata;
+    getAllMetadata = cocoMvc.getAllMetadata;
+    listBeDecoratedClsByFieldMetadata =
+      cocoMvc.listBeDecoratedClsByFieldMetadata;
+  });
   afterEach(async () => {
-    clear();
+    cocoMvc.cleanCache();
     jest.resetModules();
   });
 
