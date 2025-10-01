@@ -1,17 +1,20 @@
-import {
-  createDecoratorExp,
-  createPlaceholderDecoratorExp,
-  createDecoratorExpFactory,
-  type Decorator,
-  KindClass,
-  KindField,
-  KindMethod,
-} from '../create-decorator-exp';
-
 describe('create-decorator-exp:createDecoratorExpFactory', () => {
-  beforeEach(async () => {});
+  let cocoMvc;
+  let createDecoratorExpFactory;
+  let KindClass;
+  let KindField;
+  let KindMethod;
+
+  beforeEach(async () => {
+    cocoMvc = await import('coco-mvc');
+    createDecoratorExpFactory = cocoMvc.createDecoratorExpFactory;
+    KindClass = cocoMvc.KindClass;
+    KindField = cocoMvc.KindField;
+    KindMethod = cocoMvc.KindMethod;
+  });
 
   afterEach(async () => {
+    cocoMvc.cleanCache();
     jest.resetModules();
   });
 
@@ -160,7 +163,8 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
       const create = createDecoratorExpFactory(fn);
 
       class Meta6 {}
-      const m: () => Decorator<ClassGetterDecoratorContext> = create(Meta6);
+      // TODO: 如果在测试文件中引用类型？const m: () => Decorator<ClassGetterDecoratorContext> = create(Meta6);
+      const m = create(Meta6);
 
       class A {
         @m()
@@ -195,9 +199,16 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
 });
 
 describe('create-decorator-exp:createDecoratorExp', () => {
-  beforeEach(async () => {});
+  let cocoMvc;
+  let createDecoratorExp;
+
+  beforeEach(async () => {
+    cocoMvc = await import('coco-mvc');
+    createDecoratorExp = cocoMvc.createDecoratorExp;
+  });
 
   afterEach(async () => {
+    cocoMvc.cleanCache();
     jest.resetModules();
   });
 

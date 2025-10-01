@@ -24,6 +24,9 @@ export {
   PropertiesConfig,
   type Decorator,
   type Field,
+  KindClass,
+  KindField,
+  KindMethod,
 } from 'coco-ioc-container';
 export * from 'coco-reactive';
 export * from 'coco-router';

@@ -1,6 +1,9 @@
 export * from './index';
 
-export { checkClassMetadataAsExpected } from 'coco-ioc-container';
+export {
+  checkClassMetadataAsExpected,
+  createDecoratorExpFactory,
+} from 'coco-ioc-container';
 export { TestWebRender } from 'coco-render';
 export {
   render,

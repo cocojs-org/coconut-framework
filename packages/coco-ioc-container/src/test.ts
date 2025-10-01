@@ -1,5 +1,6 @@
 export * from './index.ts';
 import Metadata from './metadata/create-metadata.ts';
+import { createDecoratorExpFactory } from './create-decorator-exp/index';
 
 function isEqual(a: unknown, b: unknown) {
   if (
@@ -111,4 +112,4 @@ function clear() {
   clearPreventCircularDependency();
 }
 
-export { checkClassMetadataAsExpected };
+export { checkClassMetadataAsExpected, createDecoratorExpFactory };
