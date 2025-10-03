@@ -32,7 +32,7 @@ describe('store', () => {
     consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();

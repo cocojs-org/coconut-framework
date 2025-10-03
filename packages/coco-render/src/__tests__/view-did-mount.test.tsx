@@ -19,13 +19,13 @@ describe('viewDidMount', () => {
     cocoMvc.registerApplication(application);
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
   });
 
-  test('App的viewDidMount被调用', async () => {
+  test('App的viewDidMount被调用', () => {
     @view()
     class Button {
       @reactive()

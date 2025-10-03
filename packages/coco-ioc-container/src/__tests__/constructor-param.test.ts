@@ -20,7 +20,7 @@ describe('constructor-param', () => {
     cocoMvc.registerApplication(application);
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();

@@ -13,12 +13,12 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     KindMethod = cocoMvc.KindMethod;
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     jest.resetModules();
   });
 
-  test('类装饰器，不需要实例化就拿到装饰器参数', async () => {
+  test('类装饰器，不需要实例化就拿到装饰器参数', () => {
     const fn = jest.fn();
     const create = createDecoratorExpFactory(fn);
 
@@ -35,7 +35,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     });
   });
 
-  test('类装饰器，实例化多次但不会再次调用记录装饰器参数的回调', async () => {
+  test('类装饰器，实例化多次但不会再次调用记录装饰器参数的回调', () => {
     const fn = jest.fn();
     const createDE = createDecoratorExpFactory(fn);
     class Meta1 {}
@@ -56,7 +56,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     expect(fn).toBeCalledTimes(1);
   });
 
-  test('filed装饰器，需要实例化一次拿到装饰器参数', async () => {
+  test('filed装饰器，需要实例化一次拿到装饰器参数', () => {
     const fn = jest.fn();
     const create = createDecoratorExpFactory(fn);
 
@@ -78,7 +78,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     });
   });
 
-  test('method装饰器，需要实例化一次拿到装饰器参数', async () => {
+  test('method装饰器，需要实例化一次拿到装饰器参数', () => {
     const fn = jest.fn();
     const create = createDecoratorExpFactory(fn);
 
@@ -100,7 +100,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     });
   });
 
-  test('filed装饰器，只有第一次实例化会记录装饰器参数，后续实例化都不会', async () => {
+  test('filed装饰器，只有第一次实例化会记录装饰器参数，后续实例化都不会', () => {
     const fn = jest.fn();
     const create = createDecoratorExpFactory(fn);
 
@@ -128,7 +128,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     expect(fn).toBeCalledTimes(1);
   });
 
-  test('method装饰器，只有第一次实例化会记录装饰器参数，后续实例化都不会', async () => {
+  test('method装饰器，只有第一次实例化会记录装饰器参数，后续实例化都不会', () => {
     const fn = jest.fn();
     const create = createDecoratorExpFactory(fn);
 
@@ -156,7 +156,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     expect(fn).toBeCalledTimes(1);
   });
 
-  test('不能装饰getter', async () => {
+  test('不能装饰getter', () => {
     let shouldThrowError = false;
     try {
       const fn = jest.fn();
@@ -178,7 +178,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     expect(shouldThrowError).toBe(true);
   });
 
-  test('不能装饰setter', async () => {
+  test('不能装饰setter', () => {
     let shouldThrowError = false;
     try {
       const fn = jest.fn();
@@ -207,12 +207,12 @@ describe('create-decorator-exp:createDecoratorExp', () => {
     createDecoratorExp = cocoMvc.createDecoratorExp;
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     jest.resetModules();
   });
 
-  test('createDecoratorExp第一个参数可以使用类', async () => {
+  test('createDecoratorExp第一个参数可以使用类', () => {
     let shouldThrowError = false;
     try {
       class A {}
@@ -223,7 +223,7 @@ describe('create-decorator-exp:createDecoratorExp', () => {
     expect(shouldThrowError).toBe(false);
   });
 
-  test('createDecoratorExp第一个参数不能使用数字', async () => {
+  test('createDecoratorExp第一个参数不能使用数字', () => {
     let shouldThrowError = false;
     try {
       // @ts-ignore
@@ -234,7 +234,7 @@ describe('create-decorator-exp:createDecoratorExp', () => {
     expect(shouldThrowError).toBe(true);
   });
 
-  test('createDecoratorExp第一个参数不能使用字符串', async () => {
+  test('createDecoratorExp第一个参数不能使用字符串', () => {
     let shouldThrowError = false;
     try {
       // @ts-ignore
@@ -245,7 +245,7 @@ describe('create-decorator-exp:createDecoratorExp', () => {
     expect(shouldThrowError).toBe(true);
   });
 
-  test('createDecoratorExp第一个参数不能使用对象', async () => {
+  test('createDecoratorExp第一个参数不能使用对象', () => {
     let shouldThrowError = false;
     try {
       // @ts-ignore
@@ -256,7 +256,7 @@ describe('create-decorator-exp:createDecoratorExp', () => {
     expect(shouldThrowError).toBe(true);
   });
 
-  test('createDecoratorExp第一个参数不能使用函数', async () => {
+  test('createDecoratorExp第一个参数不能使用函数', () => {
     let shouldThrowError = false;
     try {
       // @ts-ignore

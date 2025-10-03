@@ -25,7 +25,7 @@ describe('@qualifier装饰器: 通过装饰器配置', () => {
     cocoMvc.registerApplication(application);
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
@@ -168,7 +168,7 @@ describe('@qualifier装饰器: 通过动态配置', () => {
     Application = cocoMvc.Application;
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();

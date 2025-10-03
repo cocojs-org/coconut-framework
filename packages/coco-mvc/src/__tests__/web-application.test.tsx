@@ -25,7 +25,7 @@ describe('@webApplication', () => {
     jest.resetModules();
   });
 
-  test('通过对象传入要注册的ioc组件，默认singleton模式', async () => {
+  test('通过对象传入要注册的ioc组件，默认singleton模式', () => {
     class Theme {}
     @webApplication()
     class Application {
@@ -41,7 +41,7 @@ describe('@webApplication', () => {
     expect(t1).toBe(t2);
   });
 
-  test('通过对象传入要注册的ioc组件，可以设置prototype模式', async () => {
+  test('通过对象传入要注册的ioc组件，可以设置prototype模式', () => {
     class Button {}
     @webApplication()
     class Application {

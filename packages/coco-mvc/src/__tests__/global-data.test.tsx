@@ -16,7 +16,7 @@ describe('global-data', () => {
     cocoMvc.unregisterApplication();
   });
 
-  test('可以获取到globalData，并且是同一引用', async () => {
+  test('可以获取到globalData，并且是同一引用', () => {
     @globalData()
     class Login {
       token: string = 'mock token';

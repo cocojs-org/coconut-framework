@@ -50,7 +50,7 @@ describe('class装饰器', () => {
     ]);
   });
 
-  it('多个类装饰器执行顺序，执行addInitializer回调顺序和calling decorator顺序一致。', async () => {
+  it('多个类装饰器执行顺序，执行addInitializer回调顺序和calling decorator顺序一致。', () => {
     const log = [];
     function a() {
       log.push('evaluating decorator a');

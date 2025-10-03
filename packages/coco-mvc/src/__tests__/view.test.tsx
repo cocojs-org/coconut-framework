@@ -25,7 +25,7 @@ describe('view', () => {
     jest.resetModules();
   });
 
-  test('可以扫描到view组件并渲染', async () => {
+  test('可以扫描到view组件并渲染', () => {
     @view()
     class Button {
       @reactive()

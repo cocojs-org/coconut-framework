@@ -25,7 +25,7 @@ describe('decorator', () => {
     jest.resetModules();
   });
 
-  test('正常渲染一个组件', async () => {
+  test('正常渲染一个组件', () => {
     @view()
     class Button {
       @reactive()

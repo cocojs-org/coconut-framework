@@ -6,7 +6,7 @@ describe('metadata/create-metadata', () => {
     cocoMvc = await import('coco-mvc');
     createMetadata = cocoMvc.createMetadata;
   });
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     jest.resetModules();
   });
@@ -92,12 +92,12 @@ describe('addClassMetadata', () => {
     getAllMetadata = cocoMvc.getAllMetadata;
     Metadata = cocoMvc.Metadata;
   });
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     jest.resetModules();
   });
 
-  test('为Metadata子类添加元数据', async () => {
+  test('为Metadata子类添加元数据', () => {
     class MM extends Metadata {}
     class B {}
     addClassMetadata(MM, B, {});
@@ -105,7 +105,7 @@ describe('addClassMetadata', () => {
     expect(metadataSet.size).toStrictEqual(1);
   });
 
-  test('为普通类添加元数据', async () => {
+  test('为普通类添加元数据', () => {
     class M {}
     class B {}
     addClassMetadata(M, B, {});
@@ -126,12 +126,12 @@ describe('addFieldOrMethodMetadata', () => {
     getAllMetadata = cocoMvc.getAllMetadata;
     Metadata = cocoMvc.Metadata;
   });
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     jest.resetModules();
   });
 
-  test('给Metadata子类添加field元数据会报错', async () => {
+  test('给Metadata子类添加field元数据会报错', () => {
     class MM extends Metadata {}
     class B {}
     let error = false;
@@ -143,7 +143,7 @@ describe('addFieldOrMethodMetadata', () => {
     expect(error).toBeTruthy();
   });
 
-  test('为普通类添加field元数据', async () => {
+  test('为普通类添加field元数据', () => {
     class M {}
     class B {}
     addFieldMetadata(M, 'f', B, {});
@@ -162,11 +162,11 @@ describe('listClassMetadata', () => {
     addClassMetadata = cocoMvc.addClassMetadata;
     listClassMetadata = cocoMvc.listClassMetadata;
   });
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     jest.resetModules();
   });
-  test('listClassMetadata', async () => {
+  test('listClassMetadata', () => {
     class T {}
     class M {}
     class M1 {}
@@ -190,12 +190,12 @@ describe('ioc-container/metadata', () => {
     addFieldMetadata = cocoMvc.addFieldMetadata;
     listFieldMetadata = cocoMvc.listFieldMetadata;
   });
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     jest.resetModules();
   });
 
-  test('listFieldMetadata', async () => {
+  test('listFieldMetadata', () => {
     class T {}
     class M {}
     class M1 {}
@@ -223,12 +223,12 @@ describe('findClassMetadata', () => {
     Metadata = cocoMvc.Metadata;
     createDecoratorExp = cocoMvc.createDecoratorExp;
   });
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     jest.resetModules();
   });
 
-  test('可以找到直接注解对应的元数据', async () => {
+  test('可以找到直接注解对应的元数据', () => {
     class T {}
     class M {}
     addClassMetadata(T, M, {});
@@ -236,7 +236,7 @@ describe('findClassMetadata', () => {
     expect(m).toBeInstanceOf(M);
   });
 
-  test('可以找到直接注解对应的元数据的注解的元数据', async () => {
+  test('可以找到直接注解对应的元数据的注解的元数据', () => {
     class T {}
     class Parent extends Metadata {}
     const p = createDecoratorExp(Parent);
@@ -265,12 +265,12 @@ describe('listBeDecoratedClsByClassMetadata', () => {
       cocoMvc.listBeDecoratedClsByClassMetadata;
     Metadata = cocoMvc.Metadata;
   });
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     jest.resetModules();
   });
 
-  test('只会找业务类的类元数据', async () => {
+  test('只会找业务类的类元数据', () => {
     class T {}
     class T1 extends Metadata {}
     class M {}
@@ -295,12 +295,12 @@ describe('listBeDecoratedClsByFieldMetadata', () => {
     listBeDecoratedClsByFieldMetadata =
       cocoMvc.listBeDecoratedClsByFieldMetadata;
   });
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     jest.resetModules();
   });
 
-  test('只会找业务类的类元数据', async () => {
+  test('只会找业务类的类元数据', () => {
     class T {}
     class M {}
     addFieldMetadata(T, 'f', M, {});

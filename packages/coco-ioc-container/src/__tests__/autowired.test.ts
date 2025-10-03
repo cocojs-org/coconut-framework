@@ -26,7 +26,7 @@ describe('autowired', () => {
     cocoMvc.registerApplication(application);
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();

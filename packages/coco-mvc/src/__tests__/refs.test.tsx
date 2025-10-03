@@ -26,7 +26,7 @@ describe('refs', () => {
     jest.resetModules();
   });
 
-  test('支持函数形式绑定host组件或自定义组件', async () => {
+  test('支持函数形式绑定host组件或自定义组件', () => {
     @view()
     class View {
       id() {

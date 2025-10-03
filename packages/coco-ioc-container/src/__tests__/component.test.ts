@@ -33,7 +33,7 @@ describe('@component装饰器', () => {
     cocoMvc.registerApplication(application);
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     // _test_helper.iocContainer.clear();
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();

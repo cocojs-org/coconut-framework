@@ -26,13 +26,13 @@ describe('router', () => {
     });
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
   });
 
-  test('路由切换，页面也会重新渲染', async () => {
+  test('路由切换，页面也会重新渲染', () => {
     @route('/')
     @page()
     class IndexPage {

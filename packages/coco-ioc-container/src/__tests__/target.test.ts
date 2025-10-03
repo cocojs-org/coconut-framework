@@ -25,14 +25,14 @@ describe('@target装饰器', () => {
     cocoMvc.registerApplication(application);
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
     consoleErrorSpy.mockRestore();
   });
 
-  test('filed上不能使用target装饰器', async () => {
+  test('filed上不能使用target装饰器', () => {
     @component()
     class Button {
       @target([Target.Type.Field])
@@ -49,7 +49,7 @@ describe('@target装饰器', () => {
     );
   });
 
-  test('method上不能使用target装饰器', async () => {
+  test('method上不能使用target装饰器', () => {
     @component()
     class Button {
       @target([Target.Type.Method])
@@ -68,7 +68,7 @@ describe('@target装饰器', () => {
     );
   });
 
-  test('元数据类不能缺少target装饰器', async () => {
+  test('元数据类不能缺少target装饰器', () => {
     @component()
     class AutoBind extends Metadata {}
 
@@ -79,7 +79,7 @@ describe('@target装饰器', () => {
     );
   });
 
-  test('业务类不需要target装饰器', async () => {
+  test('业务类不需要target装饰器', () => {
     @component()
     @target([Target.Type.Field])
     class Button {}
@@ -91,7 +91,7 @@ describe('@target装饰器', () => {
     );
   });
 
-  test('装饰目标是field的装饰器不能装饰在class上', async () => {
+  test('装饰目标是field的装饰器不能装饰在class上', () => {
     @target([Target.Type.Field])
     class FieldDecorator extends Metadata {}
     const fieldDecorator = createDecoratorExp(FieldDecorator);
@@ -109,7 +109,7 @@ describe('@target装饰器', () => {
     );
   });
 
-  test('装饰目标是class的装饰器不能装饰在field上', async () => {
+  test('装饰目标是class的装饰器不能装饰在field上', () => {
     @target([Target.Type.Class])
     class ClassDecorator extends Metadata {}
     const classDecorator = createDecoratorExp(ClassDecorator);
@@ -130,7 +130,7 @@ describe('@target装饰器', () => {
     );
   });
 
-  test('装饰目标是class的装饰器不能装饰在method上', async () => {
+  test('装饰目标是class的装饰器不能装饰在method上', () => {
     @target([Target.Type.Class])
     class ClassDecorator extends Metadata {}
     const classDecorator = createDecoratorExp(ClassDecorator);

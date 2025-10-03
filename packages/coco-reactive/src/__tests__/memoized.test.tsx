@@ -19,13 +19,13 @@ describe('memoized', () => {
     cocoMvc.registerApplication(application);
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
   });
 
-  test('memoized直接依赖reactive，当reactive不变时，memoized不会重新计算', async () => {
+  test('memoized直接依赖reactive，当reactive不变时，memoized不会重新计算', () => {
     const memoizedFn = jest.fn();
 
     @view()
@@ -78,7 +78,7 @@ describe('memoized', () => {
     expect(memoizedFn).toHaveBeenCalledTimes(2);
   });
 
-  test('memoized依赖props的number类型属性，当props不变时，memoized不会重新计算', async () => {
+  test('memoized依赖props的number类型属性，当props不变时，memoized不会重新计算', () => {
     const memoizedFn = jest.fn();
 
     @view()
@@ -129,7 +129,7 @@ describe('memoized', () => {
     expect(getByText(container, '李四:2')).toBeTruthy();
   });
 
-  test('memoized依赖props的对象属性，当对象引用不变时，memoized不会重新计算', async () => {
+  test('memoized依赖props的对象属性，当对象引用不变时，memoized不会重新计算', () => {
     const memoizedFn = jest.fn();
 
     const user1 = { count: 1 };
@@ -181,7 +181,7 @@ describe('memoized', () => {
     expect(getByText(container, '李四:2')).toBeTruthy();
   });
 
-  test('memoized a依赖reactive a，memoized b依赖memoized a，当reactive a更新时，memoized b也能更新', async () => {
+  test('memoized a依赖reactive a，memoized b依赖memoized a，当reactive a更新时，memoized b也能更新', () => {
     const memoizedFn = jest.fn();
 
     @view()
@@ -226,7 +226,7 @@ describe('memoized', () => {
     expect(getByText(container, '张三：2分')).toBeTruthy();
   });
 
-  test('memoized取消依赖reactive时，再修改reactive，memoized不会重新计算', async () => {
+  test('memoized取消依赖reactive时，再修改reactive，memoized不会重新计算', () => {
     const memoizedFn = jest.fn();
 
     @view()
@@ -300,7 +300,7 @@ describe('memoized', () => {
     expect(memoizedFn).toHaveBeenCalledTimes(5);
   });
 
-  test('memoized a 依赖memoized b, memoized b取消依赖reactive，再修改reactive，memoized a也不会重新计算', async () => {
+  test('memoized a 依赖memoized b, memoized b取消依赖reactive，再修改reactive，memoized a也不会重新计算', () => {
     const memoizedFn1 = jest.fn();
     const memoizedFn2 = jest.fn();
 

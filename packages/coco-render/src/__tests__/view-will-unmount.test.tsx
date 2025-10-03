@@ -19,13 +19,13 @@ describe('viewWillUnmount', () => {
     cocoMvc.registerApplication(application);
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
   });
 
-  test('viewWillUnmount被调用', async () => {
+  test('viewWillUnmount被调用', () => {
     @view()
     class Button {
       @reactive()
@@ -66,9 +66,7 @@ describe('viewWillUnmount', () => {
     expect(button).toBeTruthy();
     expect(getByText(button, 'count:1')).toBeTruthy();
     header.click();
-    await waitFor(() => {
-      expect(getByText(header, 'not show')).toBeTruthy();
-      expect(buttonWillUnmount).toHaveBeenCalledTimes(1);
-    });
+    expect(getByText(header, 'not show')).toBeTruthy();
+    expect(buttonWillUnmount).toHaveBeenCalledTimes(1);
   });
 });

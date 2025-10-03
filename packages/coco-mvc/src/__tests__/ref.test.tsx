@@ -26,7 +26,7 @@ describe('ref', () => {
     jest.resetModules();
   });
 
-  test('支持属性形式绑定浏览器标签或组件', async () => {
+  test('支持属性形式绑定浏览器标签或组件', () => {
     @view()
     class View {
       id() {

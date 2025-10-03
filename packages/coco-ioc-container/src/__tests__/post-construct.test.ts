@@ -15,13 +15,13 @@ describe('decorator', () => {
     cocoMvc.registerApplication(application);
   });
 
-  afterEach(async () => {
+  afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
   });
 
-  test('类的postConstruct调用是从下往上的', async () => {
+  test('类的postConstruct调用是从下往上的', () => {
     class A extends Metadata {}
     const a = cocoMvc.createDecoratorExp(A, {
       componentPostConstruct: function () {
