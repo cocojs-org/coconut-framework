@@ -24,5 +24,5 @@ export {
   type Decorator,
   type Field,
 } from './create-decorator-exp';
-export { default as Application } from './ioc-container/application';
-export { default as PropertiesConfig } from './ioc-container/properties-config';
+export { default as Application } from './application';
+export { default as PropertiesConfig } from './properties/properties-config';

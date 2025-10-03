@@ -1,6 +1,6 @@
 import { createDecoratorExp, type Decorator } from '../create-decorator-exp';
 import Value from './metadata/value';
-import type Application from '../ioc-container/application';
+import type Application from '../application';
 
 export default createDecoratorExp(Value, {
   componentPostConstruct: function (

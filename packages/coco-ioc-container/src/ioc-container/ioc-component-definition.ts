@@ -4,7 +4,7 @@ import {
   KindField,
   KindMethod,
 } from '../create-decorator-exp';
-import type Application from './application';
+import type Application from '../application';
 import type Metadata from '../metadata/create-metadata';
 import { isDescendantOf, uppercaseFirstLetter } from '../share/util';
 import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';

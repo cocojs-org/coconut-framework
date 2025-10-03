@@ -1,4 +1,7 @@
-import { getComponents, getViewComponent } from './component-factory';
+import {
+  getComponents,
+  getViewComponent,
+} from '../ioc-container/component-factory';
 import {
   Metadata,
   buildMetadata,
@@ -12,9 +15,9 @@ import {
   get,
   clear as clearDecoratorParams,
 } from '../create-decorator-exp/decorator-exp-param';
-import { buildIocComponentDefinition } from './ioc-component-definition';
+import { buildIocComponentDefinition } from '../ioc-container/ioc-component-definition';
 import Qualifier from '../decorator/metadata/qualifier';
-import PropertiesConfig from './properties-config';
+import PropertiesConfig from '../properties/properties-config';
 
 /**
  * 表示一个web应用实例

@@ -2,7 +2,7 @@
  * 创建装饰器表达式的选项
  */
 import type Metadata from '../metadata/create-metadata';
-import type Application from '../ioc-container/application';
+import type Application from '../application';
 import { getId } from '../share/util';
 import { Field } from './decorator-context';
 

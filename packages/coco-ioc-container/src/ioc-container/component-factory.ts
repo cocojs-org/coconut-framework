@@ -10,7 +10,7 @@ import {
   listFieldMetadata,
   listMethodMetadata,
 } from '../metadata';
-import type Application from './application';
+import type Application from '../application';
 import { KindClass, KindField, KindMethod } from '../create-decorator-exp';
 import { getOption as getDecoratorOption } from '../create-decorator-exp/create-decorator-options';
 import ConstructorParam from '../decorator/metadata/constructor-param';
