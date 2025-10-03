@@ -6,29 +6,21 @@ describe('@component装饰器', () => {
   let Metadata;
   let target;
   let Target;
-  let view;
-  let page;
-  let layout;
-  let controller;
   let component;
-  let Component;
+  let createDecoratorExp;
   let consoleErrorSpy;
 
   beforeEach(async () => {
     consoleErrorSpy = jest.spyOn(console, 'error');
     consoleErrorSpy.mockImplementation(() => {});
     cocoMvc = await import('coco-mvc');
-    view = cocoMvc.view;
-    page = cocoMvc.page;
-    layout = cocoMvc.layout;
     target = cocoMvc.target;
     component = cocoMvc.component;
-    controller = cocoMvc.controller;
     Metadata = cocoMvc.Metadata;
     Target = cocoMvc.Target;
-    Component = cocoMvc.Component;
     webApplication = cocoMvc.webApplication;
     Application = cocoMvc.Application;
+    createDecoratorExp = cocoMvc.createDecoratorExp;
     application = new Application();
     cocoMvc.registerApplication(application);
   });
@@ -57,7 +49,11 @@ describe('@component装饰器', () => {
     });
 
     test('不能同时添加component装饰器和一个一级复合装饰器', () => {
-      @view()
+      @component()
+      @target([Target.Type.Class])
+      class FirstLevel extends Metadata {}
+      const firstLevel = createDecoratorExp(FirstLevel);
+      @firstLevel()
       @component()
       @target([Target.Type.Class])
       class ErrorButton extends Metadata {}
@@ -66,12 +62,22 @@ describe('@component装饰器', () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'CO10001：每个类最多只能添加一个component装饰器，但 %s 添加了：%s',
         'ErrorButton',
-        '@component, @view'
+        '@component, @firstLevel'
       );
     });
 
     test('不能同时添加component装饰器和一个二级复合装饰器', () => {
-      @page()
+      @component()
+      @target([Target.Type.Class])
+      class FirstLevel extends Metadata {}
+      const firstLevel = createDecoratorExp(FirstLevel);
+
+      @firstLevel()
+      @target([Target.Type.Class])
+      class SecondLevel extends Metadata {}
+      const secondLevel = createDecoratorExp(SecondLevel);
+
+      @secondLevel()
       @component()
       @target([Target.Type.Class])
       class ErrorButton extends Metadata {}
@@ -80,13 +86,22 @@ describe('@component装饰器', () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'CO10001：每个类最多只能添加一个component装饰器，但 %s 添加了：%s',
         'ErrorButton',
-        '@component, @page'
+        '@component, @secondLevel'
       );
     });
 
     test('不能同时添加2个一级复合装饰器', () => {
-      @controller()
-      @view()
+      @component()
+      @target([Target.Type.Class])
+      class FirstLevel1 extends Metadata {}
+      const firstLevel1 = createDecoratorExp(FirstLevel1);
+
+      @component()
+      @target([Target.Type.Class])
+      class FirstLevel2 extends Metadata {}
+      const firstLevel2 = createDecoratorExp(FirstLevel2);
+      @firstLevel1()
+      @firstLevel2()
       @target([Target.Type.Class])
       class ErrorButton extends Metadata {}
 
@@ -94,26 +109,54 @@ describe('@component装饰器', () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'CO10001：每个类最多只能添加一个component装饰器，但 %s 添加了：%s',
         'ErrorButton',
-        '@view, @controller'
+        '@firstLevel2, @firstLevel1'
       );
     });
 
     test('不能同时添加一个一级复合装饰器和一个二级复合装饰器', () => {
-      @page()
-      @view()
+      @component()
+      @target([Target.Type.Class])
+      class FirstLevel1 extends Metadata {}
+      const firstLevel1 = createDecoratorExp(FirstLevel1);
+
+      @firstLevel1()
+      @target([Target.Type.Class])
+      class SecondLevel1 extends Metadata {}
+      const secondLevel1 = createDecoratorExp(SecondLevel1);
+
+      @component()
+      @target([Target.Type.Class])
+      class FirstLevel2 extends Metadata {}
+      const firstLevel2 = createDecoratorExp(FirstLevel2);
+
+      @secondLevel1()
+      @firstLevel2()
       @target([Target.Type.Class])
       class ErrorButton extends Metadata {}
       application.start();
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'CO10001：每个类最多只能添加一个component装饰器，但 %s 添加了：%s',
         'ErrorButton',
-        '@view, @page'
+        '@firstLevel2, @secondLevel1'
       );
     });
 
     test('不能同时添加2个二级component复合装饰器', () => {
-      @page()
-      @layout()
+      @component()
+      @target([Target.Type.Class])
+      class FirstLevel1 extends Metadata {}
+      const firstLevel1 = createDecoratorExp(FirstLevel1);
+
+      @firstLevel1()
+      @target([Target.Type.Class])
+      class SecondLevel1 extends Metadata {}
+      const secondLevel1 = createDecoratorExp(SecondLevel1);
+      @firstLevel1()
+      @target([Target.Type.Class])
+      class SecondLevel2 extends Metadata {}
+      const secondLevel2 = createDecoratorExp(SecondLevel2);
+      @secondLevel1()
+      @secondLevel2()
       @target([Target.Type.Class])
       class ErrorButton extends Metadata {}
 
@@ -121,7 +164,7 @@ describe('@component装饰器', () => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         'CO10001：每个类最多只能添加一个component装饰器，但 %s 添加了：%s',
         'ErrorButton',
-        '@layout, @page'
+        '@secondLevel2, @secondLevel1'
       );
     });
   });
