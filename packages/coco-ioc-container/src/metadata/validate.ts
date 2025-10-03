@@ -105,7 +105,7 @@
  * 2. 只能在有view装饰器或者view复合装饰器组件上使用
  */
 /**
- * controller
+ * effect
  * 1. 只能用在class上，且只能装饰一次
  * 2. 不能和其他component复合装饰器同时使用
  */
@@ -137,7 +137,7 @@
       page: {},
       layout: {},
     },
-    controller: {},
+    effect: {},
     "global-data": {},
     store: {},
     render: {},

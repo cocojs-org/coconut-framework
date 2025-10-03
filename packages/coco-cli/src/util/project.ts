@@ -7,7 +7,7 @@ class Project {
   static CONFIG_DIR = 'config';
   static PAGE_DIR = 'page';
   static LAYOUT_DIR = 'layout';
-  static CONTROLLER_DIR = 'controller';
+  static EFFECT_DIR = 'effect';
   static API_DIR = 'api';
   static STORE_DIR = 'store';
   static GLOBAL_DATA_DIR = 'global-data';

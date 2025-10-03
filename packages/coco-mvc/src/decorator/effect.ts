@@ -1,6 +1,6 @@
 import { createDecoratorExp, type Decorator } from 'coco-ioc-container';
-import Controller from './metadata/controller';
+import Effect from './metadata/effect';
 
 export default createDecoratorExp(
-  Controller
+  Effect
 ) as () => Decorator<ClassDecoratorContext>;

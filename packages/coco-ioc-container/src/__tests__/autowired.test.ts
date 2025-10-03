@@ -5,7 +5,6 @@ describe('autowired', () => {
   let cocoMvc;
   let view;
   let autowired;
-  let controller;
   let component;
   let Component;
   let scope;
@@ -18,7 +17,6 @@ describe('autowired', () => {
     component = cocoMvc.component;
     scope = cocoMvc.scope;
     SCOPE = cocoMvc.SCOPE;
-    controller = cocoMvc.controller;
     Component = cocoMvc.Component;
     webApplication = cocoMvc.webApplication;
     Application = cocoMvc.Application;

@@ -86,9 +86,9 @@ export const scanPathConfig = [
   {
     // 控制器
     type: PATH_TYPE.FOLDER,
-    path: Project.CONTROLLER_DIR,
+    path: Project.EFFECT_DIR,
     fileExt: '.ts',
-    decorator: '@controller',
+    decorator: '@effect',
   },
   {
     // 通用组件
