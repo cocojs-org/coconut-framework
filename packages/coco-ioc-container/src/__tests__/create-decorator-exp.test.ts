@@ -200,16 +200,50 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
 
 describe('create-decorator-exp:createDecoratorExp', () => {
   let cocoMvc;
+  let Metadata;
   let createDecoratorExp;
+  let createPlaceholderDecoratorExp;
 
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
+    Metadata = cocoMvc.Metadata;
     createDecoratorExp = cocoMvc.createDecoratorExp;
+    createPlaceholderDecoratorExp = cocoMvc.createPlaceholderDecoratorExp;
   });
 
   afterEach(() => {
     cocoMvc.cleanCache();
     jest.resetModules();
+  });
+
+  test('一个元数据创建多个装饰器会报错', () => {
+    let errorMsg = '';
+    class M extends Metadata {}
+    try {
+      createDecoratorExp(M);
+      createDecoratorExp(M);
+    } catch (error) {
+      errorMsg = error.message;
+    }
+    expect(errorMsg).toBe(
+      'CO10014：元数据类 M 创建了不止一个装饰器，每个元数据类只能创建一个对应的装饰器。'
+    );
+  });
+
+  test('一个元数据创建多个装饰器会报错', () => {
+    let errorMsg = '';
+
+    const d = createPlaceholderDecoratorExp();
+    @d.decorateSelf()
+    class M extends Metadata {}
+    try {
+      createDecoratorExp(M);
+    } catch (error) {
+      errorMsg = error.message;
+    }
+    expect(errorMsg).toBe(
+      'CO10014：元数据类 M 创建了不止一个装饰器，每个元数据类只能创建一个对应的装饰器。'
+    );
   });
 
   test('createDecoratorExp第一个参数可以使用类', () => {
@@ -265,5 +299,39 @@ describe('create-decorator-exp:createDecoratorExp', () => {
       shouldThrowError = true;
     }
     expect(shouldThrowError).toBe(true);
+  });
+
+  describe('create-decorator-exp:createPlaceholderDecoratorExp', () => {
+    let cocoMvc;
+    let Metadata;
+    let createPlaceholderDecoratorExp;
+
+    beforeEach(async () => {
+      cocoMvc = await import('coco-mvc');
+      Metadata = cocoMvc.Metadata;
+      createPlaceholderDecoratorExp = cocoMvc.createPlaceholderDecoratorExp;
+    });
+
+    afterEach(() => {
+      cocoMvc.cleanCache();
+      jest.resetModules();
+    });
+
+    test('一个元数据创建多个装饰器会报错', () => {
+      let errorMsg = '';
+      try {
+        const d1 = createPlaceholderDecoratorExp();
+        const d2 = createPlaceholderDecoratorExp();
+
+        @d1.decorateSelf()
+        @d2.decorateSelf()
+        class M extends Metadata {}
+      } catch (error) {
+        errorMsg = error.message;
+      }
+      expect(errorMsg).toBe(
+        'CO10014：元数据类 M 创建了不止一个装饰器，每个元数据类只能创建一个对应的装饰器。'
+      );
+    });
   });
 });

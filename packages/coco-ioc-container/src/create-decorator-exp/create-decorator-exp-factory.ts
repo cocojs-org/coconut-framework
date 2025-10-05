@@ -7,24 +7,32 @@ import {
   KindGetter,
   KindSetter,
   KindAccessor,
-  type Kind,
 } from './decorator-context';
 export type { Decorator };
-import {
-  isClass,
-  lowercaseFirstLetter,
-  once,
-  uppercaseFirstLetter,
-} from '../share/util';
+import { isClass, once } from '../share/util';
 import { addDecoratorParams } from './decorator-exp-param';
 import {
   addDecoratorOption,
   type CreateDecoratorExpOption,
 } from './create-decorator-options';
+import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
+
+let createdDecoratorMetadataSet: Set<Class<any>> = new Set();
+
+function checkIfMetadataCreateMoreThenOneDecorator(metadataClass: Class<any>) {
+  if (!createdDecoratorMetadataSet.has(metadataClass)) {
+    createdDecoratorMetadataSet.add(metadataClass);
+  } else {
+    throw new Error(
+      stringifyDiagnose(
+        createDiagnose(DiagnoseCode.CO10014, metadataClass.name)
+      )
+    );
+  }
+}
 
 interface DecoratorExp {
   (userParam?: any): Decorator<DecoratorContext>;
-  decorateSelf?: (userParam?: any) => Decorator<DecoratorContext>;
 }
 interface DecoratorExpWithDecoratorSelf<T extends any> {
   (userParam?: T): Decorator<DecoratorContext>;
@@ -41,6 +49,7 @@ function createDecoratorExpFactory(fn: any) {
     if (createByClass) {
       MetadataCls = metadataClass;
       addDecoratorOption(MetadataCls, option);
+      checkIfMetadataCreateMoreThenOneDecorator(MetadataCls);
     }
 
     function decorateSelf(userParam: UserParam) {
@@ -50,6 +59,7 @@ function createDecoratorExpFactory(fn: any) {
             if (MetadataCls === null) {
               MetadataCls = beDecoratedCls;
               addDecoratorOption(MetadataCls, option);
+              checkIfMetadataCreateMoreThenOneDecorator(MetadataCls);
             } else {
               throw new Error('decorateSelf函数只能调用一次');
             }

@@ -17,6 +17,7 @@ export enum DiagnoseCode {
   'CO10011' = 'CO10011', // 要实例化的类没有注册为ioc组件
   'CO10012' = 'CO10012', // 通过autowired注入的依赖不能是自己
   'CO10013' = 'CO10013', // 实例化过程中发现循环依赖
+  'CO10014' = 'CO10014', // 一个元数据类创建了不止一个装饰器
 }
 
 const DiagnoseCodeMsg = {
@@ -35,6 +36,7 @@ const DiagnoseCodeMsg = {
   [DiagnoseCode.CO10011]: `实例化组件失败，%s 类不是ioc组件`,
   [DiagnoseCode.CO10012]: `%s 类 %s 字段不能使用autowired注入自身，字段置为undefined`,
   [DiagnoseCode.CO10013]: `实例化组件失败，%s 类的构造函数的依赖 %s 类也没有完全初始化，可能是循环依赖了？`,
+  [DiagnoseCode.CO10014]: `元数据类 %s 创建了不止一个装饰器，每个元数据类只能创建一个对应的装饰器。`,
 };
 
 export function createDiagnose(code: DiagnoseCode, ...args: any[]): Diagnose {
