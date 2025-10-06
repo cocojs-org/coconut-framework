@@ -36,7 +36,7 @@ describe('ReactDOMTextarea', () => {
     ref = cocoMvc.ref;
     getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application, getMetaClassById);
 
     renderTextarea = function(component, container) {
       if (!container) {
@@ -52,7 +52,7 @@ describe('ReactDOMTextarea', () => {
   })
   afterEach(() => {
     cocoMvc.cleanCache();
-    cocoMvc.unregisterApplication();
+    cocoMvc.unregisterMvcApi();
     consoleErrorSpy.mockRestore();
   })
 

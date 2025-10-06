@@ -20,11 +20,11 @@ describe('ReactDOM unknown attribute', () => {
     getMetaClassById = cocoMvc.getMetaClassById;
     view = cocoMvc.view
     application = new Application();
-    cocoMvc.registerApplication(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application, getMetaClassById);
   })
 
   afterEach(() => {
-    cocoMvc.unregisterApplication();
+    cocoMvc.unregisterMvcApi();
     jest.resetModules();
   })
 

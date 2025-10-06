@@ -1,10 +1,10 @@
 /**
- * 提供当前应用实例，方便reconciler获取元数据和装饰器参数
+ * 提供coco-mvc的公共实例和方法，方便reconciler获取元数据等能力
  */
-let _application = null;
+let _application = null; // 应用实例
 let _getMetaClassById = null;
 
-function getApplication() {
+function getCommonApi() {
   if (!_application || !_getMetaClassById) {
     throw new Error('公共实例或方法还未赋值');
   }
@@ -15,11 +15,11 @@ function getApplication() {
 }
 
 /**
- * 应用启动时，注册当前应用，便于调和模块使用
+ * 注册公共方法
  * @param application
  * @param getMetaClassById
  */
-function registerApplication(application, getMetaClassById) {
+function registerCommonApi(application, getMetaClassById) {
   if (_application || _getMetaClassById) {
     throw new Error('已经注入了公共实例或方法，重复注入是一个bug，请检查');
   }
@@ -28,15 +28,15 @@ function registerApplication(application, getMetaClassById) {
 }
 
 /**
- * 应用结束时，取消注册当前应用
+ * 清空公共方法
  */
-function unregisterApplication() {
+function unregisterCommonApi() {
   _application = null;
   _getMetaClassById = null;
 }
 
 export {
-  getApplication,
-  registerApplication,
-  unregisterApplication,
+  getCommonApi as getMvcApi ,
+  registerCommonApi as registerMvcApi,
+  unregisterCommonApi as unregisterMvcApi,
 }

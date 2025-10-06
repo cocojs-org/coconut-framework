@@ -28,7 +28,7 @@ describe('ReactDOMComponent', () => {
     jsx = cocoMvc.jsx;
     getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application, getMetaClassById);
     consoleErrorSpy = jest.spyOn(console, 'error');
     consoleErrorSpy.mockImplementation(() => {})
     consoleLogSpy = jest.spyOn(console, 'log');
@@ -37,7 +37,7 @@ describe('ReactDOMComponent', () => {
 
   afterEach(() => {
     cocoMvc.cleanCache();
-    cocoMvc.unregisterApplication();
+    cocoMvc.unregisterMvcApi();
     jest.resetModules();
     consoleErrorSpy.mockRestore();
     consoleLogSpy.mockRestore();

@@ -7,6 +7,6 @@ import { reference } from './ReactFiberThrow';
 reference();
 
 export { classComponentUpdater, flushSync, batchedUpdates, updateContainer, createContainer, getPublicRootInstance, findHostInstance, finishQueueingConcurrentUpdates }
-export { registerApplication, unregisterApplication } from './coco-mvc/application.js'
+export { registerMvcApi, unregisterMvcApi } from './coco-mvc/common-api.js'
 
 register(NAME.scheduleUpdateOnFiber, scheduleUpdateOnFiber);

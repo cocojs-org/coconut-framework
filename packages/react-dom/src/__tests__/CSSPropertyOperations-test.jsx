@@ -27,11 +27,11 @@ describe('CSSPropertyOperations', () => {
     view = cocoMvc.view
     getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application, getMetaClassById);
   })
 
   afterEach(() => {
-    cocoMvc.unregisterApplication();
+    cocoMvc.unregisterMvcApi();
     jest.resetModules();
 
     consoleErrorSpy.mockRestore();

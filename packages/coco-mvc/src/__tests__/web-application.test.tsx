@@ -22,11 +22,11 @@ describe('@webApplication装饰器', () => {
     WebApplication = cocoMvc.WebApplication;
     getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application, getMetaClassById);
   });
   afterEach(() => {
     cocoMvc.cleanCache();
-    cocoMvc.unregisterApplication();
+    cocoMvc.unregisterMvcApi();
     jest.resetModules();
   });
 

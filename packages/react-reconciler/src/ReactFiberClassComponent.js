@@ -7,7 +7,7 @@ import {
 } from './ReactFiberClassUpdateQueue';
 import {get, NAME} from "shared";
 import { Update } from "./ReactFiberFlags";
-import { getApplication } from './coco-mvc/application';
+import { getMvcApi } from './coco-mvc/common-api';
 import { isMounted } from './ReactFiberTreeReflection';
 import { connectStore } from './coco-mvc/autowired';
 import { initProps, updateProps } from './coco-mvc/props';
@@ -61,7 +61,7 @@ function adoptClassInstance(workInProgress, instance) {
 }
 
 function constructClassInstance(workInProgress, ctor, props) {
-  const {application, getMetaClassById} = getApplication();
+  const {application, getMetaClassById} = getMvcApi();
   const instance = application.getViewComponent(ctor, props);
   const Reactive = getMetaClassById('Reactive');
   const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
@@ -86,7 +86,7 @@ function mountClassInstance(
   initializeUpdateQueue(workInProgress)
 
   if (__DEV__) {
-    const { application, getMetaClassById } = getApplication();
+    const { application, getMetaClassById } = getMvcApi();
     const Reactive = getMetaClassById('Reactive');
     const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
     for (const field of fields) {
@@ -122,7 +122,7 @@ function updateClassInstance(
   newState = workInProgress.memoizedState;
 
   updateProps(instance, newProps);
-  const { application, getMetaClassById } = getApplication();
+  const { application, getMetaClassById } = getMvcApi();
   const Reactive = getMetaClassById('Reactive');
   const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
   for (const field of fields) {

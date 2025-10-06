@@ -12,8 +12,8 @@ import {
   createContainer,
   getPublicRootInstance,
   findHostInstance,
-  registerApplication,
-  unregisterApplication
+  registerMvcApi,
+  unregisterMvcApi
 } from 'react-reconciler';
 import { markContainerAsRoot, unmarkContainerAsRoot } from './ReactDomComponentTree';
 import {restoreControlledState} from './ReactDomComponent.js';
@@ -83,4 +83,4 @@ export function findDOMNode(componentOrElement) {
   return findHostInstance(componentOrElement);
 }
 
-export { registerApplication, unregisterApplication }
+export { registerMvcApi, unregisterMvcApi }

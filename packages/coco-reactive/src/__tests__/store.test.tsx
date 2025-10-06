@@ -32,13 +32,13 @@ describe('store', () => {
     Application = cocoMvc.Application;
     getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application, getMetaClassById);
     consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
   afterEach(() => {
     cocoMvc.cleanCache();
-    cocoMvc.unregisterApplication();
+    cocoMvc.unregisterMvcApi();
     jest.resetModules();
     consoleWarnSpy.mockRestore();
   });

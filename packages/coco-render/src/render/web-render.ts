@@ -1,5 +1,5 @@
 // @ts-ignore todo fix it
-import { render as renderApp, registerApplication } from 'react-dom';
+import { render as renderApp, registerMvcApi } from 'react-dom';
 import { type Application, getMetaClassById } from 'coco-ioc-container';
 import render from '../decorator/render';
 import { jsx } from 'react';
@@ -13,7 +13,7 @@ class WebRender extends Render {
   container: HTMLElement;
 
   init(application: Application) {
-    registerApplication(application, getMetaClassById);
+    registerMvcApi(application, getMetaClassById);
     this.container = document.getElementById('root');
     if (!this.container) {
       console.error('未找到根节点');
@@ -24,7 +24,7 @@ class WebRender extends Render {
     return renderApp(jsx(component, undefined), this.container);
   }
 
-  // todo unregisterApplication
+  // todo unregisterMvcApi
 }
 
 export default WebRender;

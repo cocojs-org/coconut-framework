@@ -32,7 +32,7 @@ describe('router', () => {
 
   afterEach(() => {
     cocoMvc.cleanCache();
-    cocoMvc.unregisterApplication();
+    cocoMvc.unregisterMvcApi();
     jest.resetModules();
   });
 

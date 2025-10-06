@@ -1,5 +1,5 @@
 // @ts-ignore todo fix it
-import { render as renderApp, registerApplication } from 'react-dom';
+import { render as renderApp, registerMvcApi } from 'react-dom';
 import { type Application, getMetaClassById } from 'coco-ioc-container';
 import render from '../decorator/render';
 import { jsx } from 'react';
@@ -10,7 +10,7 @@ class TestWebRender extends Render {
   container: HTMLElement;
 
   init(application: Application) {
-    registerApplication(application, getMetaClassById);
+    registerMvcApi(application, getMetaClassById);
     this.container = document.createElement('div');
   }
 
@@ -18,7 +18,7 @@ class TestWebRender extends Render {
     return renderApp(jsx(component, undefined), this.container);
   }
 
-  // todo unregisterApplication
+  // todo unregisterMvcApi
 }
 
 export default TestWebRender;

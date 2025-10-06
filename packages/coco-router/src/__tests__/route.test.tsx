@@ -28,7 +28,7 @@ describe('@route装饰器', () => {
 
   afterEach(() => {
     cocoMvc.cleanCache();
-    cocoMvc.unregisterApplication();
+    cocoMvc.unregisterMvcApi();
     jest.resetModules();
   });
 

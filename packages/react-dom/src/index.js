@@ -3,8 +3,8 @@ export {
   render,
   unmountComponentAtNode,
   findDOMNode,
-  registerApplication,
-  unregisterApplication,
+  registerMvcApi,
+  unregisterMvcApi,
 } from './client/ReactDom'
 
 export {

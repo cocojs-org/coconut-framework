@@ -54,7 +54,7 @@ describe('ReactDOMInput', () => {
     jsx = cocoMvc.jsx;
     getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application, getMetaClassById);
 
     container = document.createElement('div');
     document.body.appendChild(container);
@@ -62,7 +62,7 @@ describe('ReactDOMInput', () => {
   afterEach(() => {
     document.body.removeChild(container);
     cocoMvc.cleanCache();
-    cocoMvc.unregisterApplication();
+    cocoMvc.unregisterMvcApi();
     consoleErrorSpy.mockRestore();
   })
 

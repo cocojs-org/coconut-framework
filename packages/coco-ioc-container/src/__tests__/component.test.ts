@@ -28,13 +28,13 @@ describe('@component装饰器', () => {
     defineMetadataId = cocoMvc.defineMetadataId;
     getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application, getMetaClassById);
   });
 
   afterEach(() => {
     // _test_helper.iocContainer.clear();
     cocoMvc.cleanCache();
-    cocoMvc.unregisterApplication();
+    cocoMvc.unregisterMvcApi();
     jest.resetModules();
     consoleErrorSpy.mockRestore();
   });

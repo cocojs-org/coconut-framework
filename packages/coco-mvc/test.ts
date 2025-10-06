@@ -19,7 +19,7 @@ export {
   render,
   findDOMNode,
   unmountComponentAtNode,
-  registerApplication,
-  unregisterApplication,
+  registerMvcApi,
+  unregisterMvcApi,
   cleanCache,
 } from 'react-dom';

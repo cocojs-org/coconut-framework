@@ -1,7 +1,7 @@
 /**
  * 关于autowired装饰器相关逻辑
  */
-import { getApplication } from './application';
+import { getMvcApi } from './common-api';
 import { StoreSubscriber } from 'coco-reactive';
 
 // 在一个组件中多次注入同一个store
@@ -11,7 +11,7 @@ let warnedAutowiredSameStoreInOneComponentMultipleTimes;
  * 视图组件实例，如果其类自动注入了store，那么关联*视图组件实例*和*store实例*
  */
 function connectStore(ctor, instance) {
-  const { application, getMetaClassById } = getApplication();
+  const { application, getMetaClassById } = getMvcApi();
   // 找到所有的注入
   const Autowired = getMetaClassById('Autowired');
   const autowiredFields = application.listFieldByMetadataCls(ctor, Autowired, true);
