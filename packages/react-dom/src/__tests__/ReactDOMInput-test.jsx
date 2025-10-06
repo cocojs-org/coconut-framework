@@ -14,7 +14,18 @@
 function emptyFunction() {}
 
 describe('ReactDOMInput', () => {
-  let cocoMvc, Application, application, jsx, view, reactive, ref, container, consoleErrorSpy, setUntrackedValue, setUntrackedChecked;
+  let cocoMvc;
+  let Application;
+  let application;
+  let jsx;
+  let view;
+  let reactive;
+  let ref;
+  let container;
+  let consoleErrorSpy;
+  let setUntrackedValue;
+  let setUntrackedChecked;
+  let getMetaClassById;
 
   function dispatchEventOnNode(node, type) {
     node.dispatchEvent(new Event(type, {bubbles: true, cancelable: true}));
@@ -36,13 +47,14 @@ describe('ReactDOMInput', () => {
     consoleErrorSpy.mockImplementation(() => {})
 
     cocoMvc = (await import('coco-mvc'));
-    Application = (await import('coco-mvc')).Application;
-    view = (await import('coco-mvc')).view;
-    reactive = (await import('coco-mvc')).reactive;
-    ref = (await import('coco-mvc')).ref;
-    jsx = (await import('coco-mvc')).jsx;
+    Application = cocoMvc.Application;
+    view = cocoMvc.view;
+    reactive = cocoMvc.reactive;
+    ref = cocoMvc.ref;
+    jsx = cocoMvc.jsx;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
 
     container = document.createElement('div');
     document.body.appendChild(container);

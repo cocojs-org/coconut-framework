@@ -13,6 +13,7 @@ import * as ReactTestUtils from './test-units/ReactTestUnits';
 
 let cocoMvc;
 let Application
+let getMetaClassById
 let application
 let view
 let consoleErrorSpy;
@@ -24,8 +25,9 @@ describe('CSSPropertyOperations', () => {
     cocoMvc = (await import('coco-mvc'));
     Application = cocoMvc.Application;
     view = cocoMvc.view
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   })
 
   afterEach(() => {

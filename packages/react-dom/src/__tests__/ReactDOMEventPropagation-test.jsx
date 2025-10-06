@@ -11,17 +11,26 @@
 
 
 describe('ReactDOMEventListener', () => {
-  let cocoMvc, Application, application, jsx, view, reactive, ref, container;
+  let cocoMvc;
+  let Application;
+  let application;
+  let jsx;
+  let view;
+  let reactive;
+  let ref;
+  let container;
+  let getMetaClassById;
 
   beforeEach(async () => {
     cocoMvc = (await import('coco-mvc'));
-    Application = (await import('coco-mvc')).Application;
-    view = (await import('coco-mvc')).view;
-    reactive = (await import('coco-mvc')).reactive;
-    ref = (await import('coco-mvc')).ref;
-    jsx = (await import('coco-mvc')).jsx;
+    Application = cocoMvc.Application;
+    view = cocoMvc.view;
+    reactive = cocoMvc.reactive;
+    ref = cocoMvc.ref;
+    jsx = cocoMvc.jsx;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   })
   afterEach(() => {
     cocoMvc.cleanCache();

@@ -22,7 +22,6 @@ describe('@qualifier装饰器: 通过装饰器配置', () => {
     webApplication = cocoMvc.webApplication;
     Application = cocoMvc.Application;
     application = new Application();
-    cocoMvc.registerApplication(application);
   });
 
   afterEach(() => {
@@ -158,6 +157,7 @@ describe('@qualifier装饰器: 通过动态配置', () => {
   let qualifier;
   let Qualifier;
   let component;
+  let getMetaClassById;
 
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
@@ -168,6 +168,7 @@ describe('@qualifier装饰器: 通过动态配置', () => {
     component = cocoMvc.component;
     webApplication = cocoMvc.webApplication;
     Application = cocoMvc.Application;
+    getMetaClassById = cocoMvc.getMetaClassById;
   });
 
   afterEach(() => {
@@ -179,7 +180,7 @@ describe('@qualifier装饰器: 通过动态配置', () => {
   test('支持通过id获取Qualifier类', () => {
     application = new Application({});
     application.start();
-    const cls = application.getMetadataCls('Qualifier');
+    const cls = getMetaClassById('Qualifier');
     expect(cls).toBe(Qualifier);
   });
 
@@ -189,7 +190,6 @@ describe('@qualifier装饰器: 通过动态配置', () => {
         qualifier: 'Child',
       },
     });
-    cocoMvc.registerApplication(application);
 
     @component()
     class Parent {}

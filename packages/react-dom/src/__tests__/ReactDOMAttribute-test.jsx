@@ -8,17 +8,19 @@
  *
  * packages/react-dom/src/__tests__/ReactDOMAttribute-test.js
  */
-let cocoMvc;
-let Application
-let application
-let view
 describe('ReactDOM unknown attribute', () => {
+  let cocoMvc;
+  let Application
+  let application
+  let view
+  let getMetaClassById;
   beforeEach(async () => {
     cocoMvc = (await import('coco-mvc'));
-    Application = (await import('coco-mvc')).Application;
-    view = (await import('coco-mvc')).view
+    Application = cocoMvc.Application;
+    getMetaClassById = cocoMvc.getMetaClassById;
+    view = cocoMvc.view
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   })
 
   afterEach(() => {

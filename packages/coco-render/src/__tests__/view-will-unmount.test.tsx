@@ -8,6 +8,7 @@ let cocoMvc;
 let view;
 let reactive;
 let bind;
+let getMetaClassById;
 describe('viewWillUnmount', () => {
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
@@ -15,8 +16,9 @@ describe('viewWillUnmount', () => {
     reactive = cocoMvc.reactive;
     bind = cocoMvc.bind;
     Application = cocoMvc.Application;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
 
   afterEach(() => {

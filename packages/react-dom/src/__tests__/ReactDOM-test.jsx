@@ -11,17 +11,19 @@
 import { getByRole, getByText, getRoles, waitFor } from '@testing-library/dom';
 import * as ReactTestUtils from './test-units/ReactTestUnits';
 
-let cocoMvc;
-let Application
-let application
-let view
 describe('ReactDOM', () => {
+  let cocoMvc;
+  let Application
+  let application
+  let view
+  let getMetaClassById;
   beforeEach(async () => {
     cocoMvc = (await import('coco-mvc'));
-    Application = (await import('coco-mvc')).Application;
-    view = (await import('coco-mvc')).view
+    Application = cocoMvc.Application;
+    view = cocoMvc.view
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   })
 
   afterEach(() => {

@@ -6,6 +6,7 @@ describe('@route装饰器', () => {
   let page;
   let RouteMetadata;
   let TestWebRender;
+  let getMetaClassById;
 
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
@@ -14,6 +15,7 @@ describe('@route装饰器', () => {
     page = cocoMvc.page;
     Application = cocoMvc.Application;
     TestWebRender = cocoMvc.TestWebRender;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application({
       Render: {
         qualifier: 'TestWebRender',
@@ -32,7 +34,7 @@ describe('@route装饰器', () => {
 
   test('支持通过id获取Route类', () => {
     application.start();
-    const cls = application.getMetadataCls('Route');
+    const cls = getMetaClassById('Route');
     expect(cls).toBe(RouteMetadata);
   });
 });

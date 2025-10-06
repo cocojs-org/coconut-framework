@@ -19,7 +19,6 @@ describe('decorator', () => {
     Scope = cocoMvc.Scope;
     SCOPE = cocoMvc.SCOPE;
     application = new Application();
-    cocoMvc.registerApplication(application);
   });
 
   afterEach(() => {

@@ -4,6 +4,7 @@ describe('@render装饰器', () => {
   let cocoMvc;
   let view;
   let RenderMatadata;
+  let getMetaClassById;
   let consoleWarnSpy;
 
   beforeEach(async () => {
@@ -11,8 +12,9 @@ describe('@render装饰器', () => {
     view = cocoMvc.view;
     RenderMatadata = cocoMvc.RenderMatadata;
     Application = cocoMvc.Application;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
     consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
@@ -25,7 +27,7 @@ describe('@render装饰器', () => {
 
   test('支持通过id获取Render类', () => {
     application.start();
-    const cls = application.getMetadataCls('Render');
+    const cls = getMetaClassById('Render');
     expect(cls).toBe(RenderMatadata);
   });
 });

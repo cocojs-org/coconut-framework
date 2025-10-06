@@ -9,6 +9,7 @@ describe('router', () => {
   let Router;
   let RouterMetadata;
   let TestWebRender;
+  let getMetaClassById;
 
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
@@ -18,6 +19,7 @@ describe('router', () => {
     page = cocoMvc.page;
     Application = cocoMvc.Application;
     TestWebRender = cocoMvc.TestWebRender;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application({
       Render: {
         qualifier: 'TestWebRender',
@@ -36,7 +38,7 @@ describe('router', () => {
 
   test('支持通过id获取Router类', () => {
     application.start();
-    const cls = application.getMetadataCls('Router');
+    const cls = getMetaClassById('Router');
     expect(cls).toBe(RouterMetadata);
   });
 

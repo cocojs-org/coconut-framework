@@ -21,6 +21,7 @@ export {
   createDecoratorExp,
   createPlaceholderDecoratorExp,
   defineMetadataId,
+  getMetaClassById,
   Application,
   PropertiesConfig,
   type Decorator,

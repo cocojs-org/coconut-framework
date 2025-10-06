@@ -3,21 +3,24 @@ import { getByRole, getByText, waitFor } from '@testing-library/dom';
 const appDidMount = jest.fn();
 const buttonDidUpdate = jest.fn();
 
-let Application;
-let application;
-let cocoMvc;
-let view;
-let reactive;
-let bind;
 describe('viewDidUpdate', () => {
+  let Application;
+  let application;
+  let cocoMvc;
+  let view;
+  let reactive;
+  let bind;
+  let getMetaClassById;
+
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
     view = cocoMvc.view;
     reactive = cocoMvc.reactive;
     bind = cocoMvc.bind;
     Application = cocoMvc.Application;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
 
   afterEach(() => {
@@ -26,7 +29,7 @@ describe('viewDidUpdate', () => {
     jest.resetModules();
   });
 
-  test('App的viewDidMount被调用', () => {
+  test('App的viewDidUpdate被调用', () => {
     @view()
     class Button {
       @reactive()

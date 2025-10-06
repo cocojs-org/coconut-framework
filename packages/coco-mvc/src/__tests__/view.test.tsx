@@ -7,7 +7,14 @@ import {
 } from '@testing-library/dom';
 
 describe('view', () => {
-  let cocoMvc, Application, application, view, reactive, bind, View;
+  let cocoMvc;
+  let Application;
+  let application;
+  let view;
+  let reactive;
+  let bind;
+  let View;
+  let getMetaClassById;
   beforeEach(async () => {
     jest.resetModules();
     cocoMvc = await import('coco-mvc');
@@ -16,8 +23,9 @@ describe('view', () => {
     bind = cocoMvc.bind;
     reactive = cocoMvc.reactive;
     View = cocoMvc.View;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
   afterEach(() => {
     cocoMvc.cleanCache();
@@ -27,7 +35,7 @@ describe('view', () => {
 
   test('支持通过id获取View类', () => {
     application.start();
-    const cls = application.getMetadataCls('View');
+    const cls = getMetaClassById('View');
     expect(cls).toBe(View);
   });
 

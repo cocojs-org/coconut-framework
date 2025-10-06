@@ -10,6 +10,7 @@ describe('autowired', () => {
   let Component;
   let scope;
   let SCOPE;
+  let getMetaClassById;
 
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
@@ -22,8 +23,9 @@ describe('autowired', () => {
     Component = cocoMvc.Component;
     webApplication = cocoMvc.webApplication;
     Application = cocoMvc.Application;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
 
   afterEach(() => {
@@ -34,7 +36,7 @@ describe('autowired', () => {
 
   test('支持通过id获取Autowired类', () => {
     application.start();
-    const cls = application.getMetadataCls('Autowired');
+    const cls = getMetaClassById('Autowired');
     expect(cls).toBe(Autowired);
   });
 

@@ -7,7 +7,14 @@ import {
 } from '@testing-library/dom';
 
 describe('decorator', () => {
-  let cocoMvc, Application, application, view, reactive, bind, Bind;
+  let cocoMvc,
+    Application,
+    application,
+    view,
+    reactive,
+    bind,
+    Bind,
+    getMetaClassById;
   beforeEach(async () => {
     jest.resetModules();
     cocoMvc = await import('coco-mvc');
@@ -16,8 +23,9 @@ describe('decorator', () => {
     bind = cocoMvc.bind;
     Bind = cocoMvc.Bind;
     reactive = cocoMvc.reactive;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
   afterEach(() => {
     cocoMvc.cleanCache();
@@ -27,7 +35,7 @@ describe('decorator', () => {
 
   test('支持通过id获取Bind类', () => {
     application.start();
-    const cls = application.getMetadataCls('Bind');
+    const cls = getMetaClassById('Bind');
     expect(cls).toBe(Bind);
   });
 

@@ -7,7 +7,15 @@ import {
 } from '@testing-library/dom';
 
 describe('ref', () => {
-  let cocoMvc, Application, application, view, reactive, bind, ref, Ref;
+  let cocoMvc;
+  let Application;
+  let application;
+  let view;
+  let reactive;
+  let bind;
+  let ref;
+  let Ref;
+  let getMetaClassById;
   const mockFn = jest.fn();
   beforeEach(async () => {
     jest.resetModules();
@@ -18,8 +26,9 @@ describe('ref', () => {
     reactive = cocoMvc.reactive;
     ref = cocoMvc.ref;
     Ref = cocoMvc.Ref;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
   afterEach(() => {
     cocoMvc.cleanCache();
@@ -29,7 +38,7 @@ describe('ref', () => {
 
   test('支持通过id获取Ref类', () => {
     application.start();
-    const cls = application.getMetadataCls('Ref');
+    const cls = getMetaClassById('Ref');
     expect(cls).toBe(Ref);
   });
 

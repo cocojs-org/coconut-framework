@@ -6,7 +6,8 @@ describe('@globalData装饰器', () => {
     bind,
     globalData,
     GlobalData,
-    autowired;
+    autowired,
+    getMetaClassById;
   beforeEach(async () => {
     jest.resetModules();
     cocoMvc = await import('coco-mvc');
@@ -16,8 +17,9 @@ describe('@globalData装饰器', () => {
     globalData = cocoMvc.globalData;
     GlobalData = cocoMvc.GlobalData;
     autowired = cocoMvc.autowired;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
   afterEach(() => {
     cocoMvc.cleanCache();
@@ -26,7 +28,7 @@ describe('@globalData装饰器', () => {
 
   test('支持通过id获取GlobalData类', () => {
     application.start();
-    const cls = application.getMetadataCls('GlobalData');
+    const cls = getMetaClassById('GlobalData');
     expect(cls).toBe(GlobalData);
   });
 

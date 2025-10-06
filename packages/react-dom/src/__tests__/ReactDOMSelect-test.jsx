@@ -11,7 +11,16 @@
 import * as ReactTestUtils from './test-units/ReactTestUnits';
 
 describe('ReactDOMSelect', () => {
-  let cocoMvc, Application, application, jsx, view, reactive, ref, container, consoleErrorSpy;
+  let cocoMvc;
+  let Application;
+  let application;
+  let jsx;
+  let view;
+  let reactive;
+  let ref;
+  let container;
+  let consoleErrorSpy;
+  let getMetaClassById;
   const noop = function() {};
 
   beforeEach(async () => {
@@ -21,13 +30,14 @@ describe('ReactDOMSelect', () => {
     consoleErrorSpy.mockImplementation(() => {})
 
     cocoMvc = (await import('coco-mvc'));
-    Application = (await import('coco-mvc')).Application;
-    view = (await import('coco-mvc')).view;
-    reactive = (await import('coco-mvc')).reactive;
-    ref = (await import('coco-mvc')).ref;
-    jsx = (await import('coco-mvc')).jsx;
+    Application = cocoMvc.Application;
+    view = cocoMvc.view;
+    reactive = cocoMvc.reactive;
+    ref = cocoMvc.ref;
+    jsx = cocoMvc.jsx;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
 
     container = document.createElement('div');
     document.body.appendChild(container);

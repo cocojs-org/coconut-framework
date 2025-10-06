@@ -9,7 +9,6 @@ import {
   listFieldMetadata,
   findClassMetadata,
   listFieldByMetadataCls,
-  getMetaClassById,
 } from '../metadata';
 import {
   get,
@@ -82,14 +81,6 @@ class Application {
    */
   public getViewComponent<T>(viewClass: Class<T>, props?: any[]) {
     return getViewComponent(this, viewClass, props);
-  }
-
-  /**
-   * 通过元数据类id查找元数据类本身
-   */
-  public getMetadataCls(id: string) {
-    // TODO: 感觉变成static更好一些
-    return getMetaClassById(id);
   }
 
   /**

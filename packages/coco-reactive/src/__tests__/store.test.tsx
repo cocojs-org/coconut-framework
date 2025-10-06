@@ -17,6 +17,7 @@ let Store;
 let autowired;
 let memoized;
 let bind;
+let getMetaClassById;
 let consoleWarnSpy;
 
 describe('store', () => {
@@ -29,8 +30,9 @@ describe('store', () => {
     memoized = cocoMvc.memoized;
     bind = cocoMvc.bind;
     Application = cocoMvc.Application;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
     consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
   });
 
@@ -43,7 +45,7 @@ describe('store', () => {
 
   test('支持通过id获取Store类', () => {
     application.start();
-    const cls = application.getMetadataCls('Store');
+    const cls = getMetaClassById('Store');
     expect(cls).toBe(Store);
   });
 

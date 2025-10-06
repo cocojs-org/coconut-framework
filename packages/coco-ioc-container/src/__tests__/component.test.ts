@@ -10,6 +10,7 @@ describe('@component装饰器', () => {
   let Component;
   let createDecoratorExp;
   let defineMetadataId;
+  let getMetaClassById;
   let consoleErrorSpy;
 
   beforeEach(async () => {
@@ -25,8 +26,9 @@ describe('@component装饰器', () => {
     Application = cocoMvc.Application;
     createDecoratorExp = cocoMvc.createDecoratorExp;
     defineMetadataId = cocoMvc.defineMetadataId;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
 
   afterEach(() => {
@@ -39,7 +41,7 @@ describe('@component装饰器', () => {
 
   test('支持通过id获取Component类', () => {
     application.start();
-    const cls = application.getMetadataCls('Component');
+    const cls = getMetaClassById('Component');
     expect(cls).toBe(Component);
   });
 

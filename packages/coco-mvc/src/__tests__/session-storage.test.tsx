@@ -3,14 +3,16 @@ describe('@sessionStorage装饰器', () => {
   let Application;
   let application;
   let SessionStorage;
+  let getMetaClassById;
 
   beforeEach(async () => {
     jest.resetModules();
     cocoMvc = await import('coco-mvc');
     Application = cocoMvc.Application;
     SessionStorage = cocoMvc.SessionStorage;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
   afterEach(() => {
     cocoMvc.cleanCache();
@@ -20,7 +22,7 @@ describe('@sessionStorage装饰器', () => {
 
   test('支持通过id获取SessionStorage类', () => {
     application.start();
-    const cls = application.getMetadataCls('SessionStorage');
+    const cls = getMetaClassById('SessionStorage');
     expect(cls).toBe(SessionStorage);
   });
 });

@@ -17,16 +17,18 @@ let Application
 let application
 let jsx
 let view
+let getMetaClassById
 let consoleErrorSpy
 let consoleLogSpy
 describe('ReactDOMComponent', () => {
   beforeEach(async () => {
     cocoMvc = (await import('coco-mvc'));
-    Application = (await import('coco-mvc')).Application;
-    view = (await import('coco-mvc')).view
-    jsx = (await import('coco-mvc')).jsx;
+    Application = cocoMvc.Application;
+    view = cocoMvc.view
+    jsx = cocoMvc.jsx;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
     consoleErrorSpy = jest.spyOn(console, 'error');
     consoleErrorSpy.mockImplementation(() => {})
     consoleLogSpy = jest.spyOn(console, 'log');

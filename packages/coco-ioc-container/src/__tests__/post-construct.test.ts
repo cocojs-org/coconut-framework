@@ -12,7 +12,6 @@ describe('decorator', () => {
     Metadata = cocoMvc.Metadata;
     component = cocoMvc.component;
     application = new Application();
-    cocoMvc.registerApplication(application);
   });
 
   afterEach(() => {

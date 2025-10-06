@@ -8,6 +8,7 @@ describe('@webApplication装饰器', () => {
   let SCOPE;
   let webApplication;
   let WebApplication;
+  let getMetaClassById;
 
   beforeEach(async () => {
     jest.resetModules();
@@ -19,8 +20,9 @@ describe('@webApplication装饰器', () => {
     SCOPE = cocoMvc.SCOPE;
     webApplication = cocoMvc.webApplication;
     WebApplication = cocoMvc.WebApplication;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
   afterEach(() => {
     cocoMvc.cleanCache();
@@ -30,7 +32,7 @@ describe('@webApplication装饰器', () => {
 
   test('支持通过id获取WebApplication类', () => {
     application.start();
-    const cls = application.getMetadataCls('WebApplication');
+    const cls = getMetaClassById('WebApplication');
     expect(cls).toBe(WebApplication);
   });
 

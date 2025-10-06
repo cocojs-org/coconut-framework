@@ -7,6 +7,7 @@ describe('constructor-param', () => {
   let SCOPE;
   let constructorParam;
   let ConstructorParam;
+  let getMetaClassById;
 
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
@@ -16,8 +17,9 @@ describe('constructor-param', () => {
     SCOPE = cocoMvc.SCOPE;
     constructorParam = cocoMvc.constructorParam;
     ConstructorParam = cocoMvc.ConstructorParam;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
 
   afterEach(() => {
@@ -28,7 +30,7 @@ describe('constructor-param', () => {
 
   test('支持通过id获取ConstructorParam类', () => {
     application.start();
-    const cls = application.getMetadataCls('ConstructorParam');
+    const cls = getMetaClassById('ConstructorParam');
     expect(cls).toBe(ConstructorParam);
   });
 

@@ -26,4 +26,4 @@ export {
 } from './create-decorator-exp';
 export { default as Application } from './application';
 export { default as PropertiesConfig } from './properties/properties-config';
-export { defineMetadataId } from './metadata';
+export { defineMetadataId, getMetaClassById } from './metadata';

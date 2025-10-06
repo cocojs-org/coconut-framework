@@ -3,14 +3,16 @@ describe('@localStorage装饰器', () => {
   let Application;
   let application;
   let LocalStorage;
+  let getMetaClassById;
 
   beforeEach(async () => {
     jest.resetModules();
     cocoMvc = await import('coco-mvc');
     Application = cocoMvc.Application;
     LocalStorage = cocoMvc.LocalStorage;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
   afterEach(() => {
     cocoMvc.cleanCache();
@@ -20,7 +22,7 @@ describe('@localStorage装饰器', () => {
 
   test('支持通过id获取LocalStorage类', () => {
     application.start();
-    const cls = application.getMetadataCls('LocalStorage');
+    const cls = getMetaClassById('LocalStorage');
     expect(cls).toBe(LocalStorage);
   });
 });

@@ -3,14 +3,16 @@ describe('@layout装饰器', () => {
   let Application;
   let application;
   let Layout;
+  let getMetaClassById;
 
   beforeEach(async () => {
     jest.resetModules();
     cocoMvc = await import('coco-mvc');
     Application = cocoMvc.Application;
     Layout = cocoMvc.Layout;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
   afterEach(() => {
     cocoMvc.cleanCache();
@@ -20,7 +22,7 @@ describe('@layout装饰器', () => {
 
   test('支持通过id获取Layout类', () => {
     application.start();
-    const cls = application.getMetadataCls('Layout');
+    const cls = getMetaClassById('Layout');
     expect(cls).toBe(Layout);
   });
 });

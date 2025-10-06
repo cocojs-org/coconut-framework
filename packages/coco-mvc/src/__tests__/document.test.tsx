@@ -3,14 +3,16 @@ describe('@document装饰器', () => {
   let Application;
   let application;
   let Document;
+  let getMetaClassById;
 
   beforeEach(async () => {
     jest.resetModules();
     cocoMvc = await import('coco-mvc');
     Application = cocoMvc.Application;
     Document = cocoMvc.Document;
+    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerApplication(application);
+    cocoMvc.registerApplication(application, getMetaClassById);
   });
   afterEach(() => {
     cocoMvc.cleanCache();
@@ -20,7 +22,7 @@ describe('@document装饰器', () => {
 
   test('支持通过id获取Document类', () => {
     application.start();
-    const cls = application.getMetadataCls('Document');
+    const cls = getMetaClassById('Document');
     expect(cls).toBe(Document);
   });
 });
