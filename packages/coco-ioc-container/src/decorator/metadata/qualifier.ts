@@ -1,7 +1,7 @@
 import Target from './target';
 import target from '../target';
 import Metadata from '../../metadata/create-metadata';
-import { assignMetadataId } from '../../metadata/id';
+import { defineMetadataId } from '../../metadata/id';
 
 /**
  * @public
@@ -11,5 +11,5 @@ class Qualifier extends Metadata {
   value: string;
 }
 
-assignMetadataId(Qualifier);
+defineMetadataId(Qualifier);
 export default Qualifier;

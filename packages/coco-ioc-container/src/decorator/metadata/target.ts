@@ -1,6 +1,6 @@
 import Metadata from '../../metadata/create-metadata';
 import target, { Type } from '../target';
-import { assignMetadataId } from '../../metadata/id';
+import { defineMetadataId } from '../../metadata/id';
 
 /**
  * @public
@@ -12,5 +12,5 @@ class Target extends Metadata {
   value: Type[];
 }
 
-assignMetadataId(Target);
+defineMetadataId(Target);
 export default Target;

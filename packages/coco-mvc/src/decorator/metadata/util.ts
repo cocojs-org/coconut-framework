@@ -4,7 +4,7 @@ import {
   Component,
   target,
   Target,
-  assignMetadataId,
+  defineMetadataId,
 } from 'coco-ioc-container';
 
 /**
@@ -14,5 +14,5 @@ import {
 @component()
 class Util extends Metadata {}
 
-assignMetadataId(Util);
+defineMetadataId(Util);
 export default Util;

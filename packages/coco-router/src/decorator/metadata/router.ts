@@ -3,12 +3,12 @@ import {
   Metadata,
   Target,
   target,
-  assignMetadataId,
+  defineMetadataId,
 } from 'coco-ioc-container';
 
 @target([Target.Type.Class])
 @component()
 class Router extends Metadata {}
 
-assignMetadataId(Router);
+defineMetadataId(Router);
 export default Router;

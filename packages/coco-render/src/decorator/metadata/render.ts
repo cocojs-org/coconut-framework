@@ -3,12 +3,12 @@ import {
   component,
   target,
   Target,
-  assignMetadataId,
+  defineMetadataId,
 } from 'coco-ioc-container';
 
 @target([Target.Type.Class])
 @component()
 class Render extends Metadata {}
 
-assignMetadataId(Render);
+defineMetadataId(Render);
 export default Render;

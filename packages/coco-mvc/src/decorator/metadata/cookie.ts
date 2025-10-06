@@ -1,4 +1,4 @@
-import { Metadata, target, Target, assignMetadataId } from 'coco-ioc-container';
+import { Metadata, target, Target, defineMetadataId } from 'coco-ioc-container';
 import util from '../util';
 
 /**
@@ -8,5 +8,5 @@ import util from '../util';
 @util()
 class Cookie extends Metadata {}
 
-assignMetadataId(Cookie);
+defineMetadataId(Cookie);
 export default Cookie;

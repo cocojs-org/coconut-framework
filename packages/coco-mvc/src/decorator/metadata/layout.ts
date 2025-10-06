@@ -1,4 +1,4 @@
-import { Metadata, target, Target, assignMetadataId } from 'coco-ioc-container';
+import { Metadata, target, Target, defineMetadataId } from 'coco-ioc-container';
 import view from '../view';
 
 /**
@@ -8,5 +8,5 @@ import view from '../view';
 @view()
 class Layout extends Metadata {}
 
-assignMetadataId(Layout);
+defineMetadataId(Layout);
 export default Layout;

@@ -12,7 +12,7 @@ describe('@scope装饰器', () => {
   let SCOPE;
   let consoleErrorSpy;
   let createDecoratorExp;
-  let assignMetadataId;
+  let defineMetadataId;
 
   beforeEach(async () => {
     consoleErrorSpy = jest.spyOn(console, 'error');
@@ -28,7 +28,7 @@ describe('@scope装饰器', () => {
     webApplication = cocoMvc.webApplication;
     Application = cocoMvc.Application;
     createDecoratorExp = cocoMvc.createDecoratorExp;
-    assignMetadataId = cocoMvc.assignMetadataId;
+    defineMetadataId = cocoMvc.defineMetadataId;
     application = new Application();
     cocoMvc.registerApplication(application);
   });
@@ -78,7 +78,7 @@ describe('@scope装饰器', () => {
       @scope(SCOPE.Prototype)
       @component()
       class PrototypeMeta extends Metadata {}
-      assignMetadataId(PrototypeMeta);
+      defineMetadataId(PrototypeMeta);
       const prototype = createDecoratorExp(PrototypeMeta);
 
       @scope(SCOPE.Prototype)
@@ -98,7 +98,7 @@ describe('@scope装饰器', () => {
       @scope(SCOPE.Prototype)
       @component()
       class PrototypeMeta extends Metadata {}
-      assignMetadataId(PrototypeMeta);
+      defineMetadataId(PrototypeMeta);
       const prototype = createDecoratorExp(PrototypeMeta);
 
       @scope(SCOPE.Singleton)

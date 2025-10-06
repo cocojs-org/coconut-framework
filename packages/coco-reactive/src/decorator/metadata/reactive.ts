@@ -1,4 +1,4 @@
-import { Metadata, target, Target, assignMetadataId } from 'coco-ioc-container';
+import { Metadata, target, Target, defineMetadataId } from 'coco-ioc-container';
 
 /**
  * 加在field表明是响应式
@@ -8,5 +8,5 @@ import { Metadata, target, Target, assignMetadataId } from 'coco-ioc-container';
 @target([Target.Type.Field, Target.Type.Class])
 class Reactive extends Metadata {}
 
-assignMetadataId(Reactive);
+defineMetadataId(Reactive);
 export default Reactive;

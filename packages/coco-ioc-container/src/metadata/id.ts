@@ -20,8 +20,12 @@ const idMetadataClassMap: Map<string, Metadata> = new Map();
 /**
  * 为元数据类添加id
  * @param MetadataClass 元数据类
+ * @param prefix id的前缀，用于区分不同的应用或类库，避免冲突
  */
-function assignMetadataId(MetadataClass: Class<any>): void {
+function defineMetadataId(
+  MetadataClass: Class<any>,
+  prefix: string = ''
+): void {
   const descriptor = Object.getOwnPropertyDescriptor(MetadataClass, 'id');
   if (descriptor) {
     if (descriptor.writable) {
@@ -37,7 +41,7 @@ function assignMetadataId(MetadataClass: Class<any>): void {
     }
   }
   Object.defineProperty(MetadataClass, 'id', {
-    value: MetadataClass.name,
+    value: prefix + MetadataClass.name,
     enumerable: false,
     configurable: false,
     writable: false,
@@ -76,4 +80,4 @@ function getMetaClassById(id: string) {
   }
 }
 
-export { assignMetadataId, buildMetaClassIdMap, getMetaClassById };
+export { defineMetadataId, buildMetaClassIdMap, getMetaClassById };

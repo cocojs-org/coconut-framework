@@ -22,7 +22,7 @@ import {
 } from './all-metadata';
 import Metadata from './create-metadata';
 import validate from './validate';
-import { buildMetaClassIdMap, getMetaClassById, assignMetadataId } from './id';
+import { buildMetaClassIdMap, getMetaClassById, defineMetadataId } from './id';
 
 // 使用装饰器参数生成对应的元数据实例
 function createMetadataByDecoratorParam(
@@ -92,5 +92,5 @@ export {
   getAllMetadata,
   buildMetadata,
   Metadata,
-  assignMetadataId,
+  defineMetadataId,
 };

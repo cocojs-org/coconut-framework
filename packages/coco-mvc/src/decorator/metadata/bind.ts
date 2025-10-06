@@ -1,4 +1,4 @@
-import { Metadata, target, Target, assignMetadataId } from 'coco-ioc-container';
+import { Metadata, target, Target, defineMetadataId } from 'coco-ioc-container';
 
 /**
  * @public
@@ -6,5 +6,5 @@ import { Metadata, target, Target, assignMetadataId } from 'coco-ioc-container';
 @target([Target.Type.Method])
 class Bind extends Metadata {}
 
-assignMetadataId(Bind);
+defineMetadataId(Bind);
 export default Bind;

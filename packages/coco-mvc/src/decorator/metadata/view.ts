@@ -6,7 +6,7 @@ import {
   scope,
   target,
   Target,
-  assignMetadataId,
+  defineMetadataId,
 } from 'coco-ioc-container';
 import { ReactNoopUpdateQueue } from 'react';
 
@@ -26,5 +26,5 @@ class View extends Metadata {
   }
 }
 
-assignMetadataId(View);
+defineMetadataId(View);
 export default View;

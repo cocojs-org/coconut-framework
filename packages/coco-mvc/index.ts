@@ -20,7 +20,7 @@ export {
   value,
   createDecoratorExp,
   createPlaceholderDecoratorExp,
-  assignMetadataId,
+  defineMetadataId,
   Application,
   PropertiesConfig,
   type Decorator,

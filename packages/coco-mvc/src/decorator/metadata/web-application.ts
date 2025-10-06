@@ -3,7 +3,7 @@ import {
   target,
   Target,
   configuration,
-  assignMetadataId,
+  defineMetadataId,
 } from 'coco-ioc-container';
 
 /**
@@ -13,5 +13,5 @@ import {
 @configuration()
 class WebApplication extends Metadata {}
 
-assignMetadataId(WebApplication);
+defineMetadataId(WebApplication);
 export default WebApplication;

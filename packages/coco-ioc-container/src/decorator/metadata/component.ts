@@ -1,7 +1,7 @@
 import Metadata from '../../metadata/create-metadata';
 import Target from './target';
 import target from '../target';
-import { assignMetadataId } from '../../metadata/id';
+import { defineMetadataId } from '../../metadata/id';
 
 /**
  * Component不添加@scope(SCOPE.Singleton)的原因：
@@ -15,5 +15,5 @@ class Component extends Metadata {
   value?: Class<any>;
 }
 
-assignMetadataId(Component);
+defineMetadataId(Component);
 export default Component;
