@@ -1,13 +1,12 @@
 describe('constructor-param', () => {
   let Application;
   let application;
-  let webApplication;
   let cocoMvc;
-  let autowired;
   let component;
   let scope;
   let SCOPE;
   let constructorParam;
+  let ConstructorParam;
 
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
@@ -16,6 +15,7 @@ describe('constructor-param', () => {
     scope = cocoMvc.scope;
     SCOPE = cocoMvc.SCOPE;
     constructorParam = cocoMvc.constructorParam;
+    ConstructorParam = cocoMvc.ConstructorParam;
     application = new Application();
     cocoMvc.registerApplication(application);
   });
@@ -24,6 +24,12 @@ describe('constructor-param', () => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
+  });
+
+  test('支持通过id获取ConstructorParam类', () => {
+    application.start();
+    const cls = application.getMetadataCls('ConstructorParam');
+    expect(cls).toBe(ConstructorParam);
   });
 
   test('注入原始数据类型会自动传入undefined', () => {

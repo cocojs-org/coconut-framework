@@ -1,4 +1,4 @@
-import { Metadata, target, Target } from 'coco-ioc-container';
+import { Metadata, target, Target, assignMetadataId } from 'coco-ioc-container';
 import util from '../util';
 
 /**
@@ -8,4 +8,5 @@ import util from '../util';
 @util()
 class Api extends Metadata {}
 
+assignMetadataId(Api);
 export default Api;

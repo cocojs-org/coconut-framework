@@ -1,10 +1,10 @@
 import {
   Metadata,
   component,
-  Component,
   target,
   Target,
   type Application,
+  assignMetadataId,
 } from 'coco-ioc-container';
 
 /**
@@ -14,4 +14,5 @@ import {
 @component()
 class Store extends Metadata {}
 
+assignMetadataId(Store);
 export default Store;

@@ -5,6 +5,7 @@ describe('autowired', () => {
   let cocoMvc;
   let view;
   let autowired;
+  let Autowired;
   let component;
   let Component;
   let scope;
@@ -14,6 +15,7 @@ describe('autowired', () => {
     cocoMvc = await import('coco-mvc');
     view = cocoMvc.view;
     autowired = cocoMvc.autowired;
+    Autowired = cocoMvc.Autowired;
     component = cocoMvc.component;
     scope = cocoMvc.scope;
     SCOPE = cocoMvc.SCOPE;
@@ -28,6 +30,12 @@ describe('autowired', () => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
+  });
+
+  test('支持通过id获取Autowired类', () => {
+    application.start();
+    const cls = application.getMetadataCls('Autowired');
+    expect(cls).toBe(Autowired);
   });
 
   test('注入一个view组件，且拿到的实例也是不同的', () => {

@@ -5,6 +5,7 @@ import {
   scope,
   target,
   Target,
+  assignMetadataId,
 } from 'coco-ioc-container';
 
 /**
@@ -15,4 +16,5 @@ import {
 @scope(SCOPE.Prototype)
 class Effect extends Metadata {}
 
+assignMetadataId(Effect);
 export default Effect;

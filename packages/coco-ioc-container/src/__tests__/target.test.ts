@@ -8,6 +8,7 @@ describe('@target装饰器', () => {
   let component;
   let createDecoratorExp;
   let Component;
+  let assignMetadataId;
   let consoleErrorSpy;
 
   beforeEach(async () => {
@@ -21,6 +22,7 @@ describe('@target装饰器', () => {
     Target = cocoMvc.Target;
     Component = cocoMvc.Component;
     Application = cocoMvc.Application;
+    assignMetadataId = cocoMvc.assignMetadataId;
     application = new Application();
     cocoMvc.registerApplication(application);
   });
@@ -30,6 +32,12 @@ describe('@target装饰器', () => {
     cocoMvc.unregisterApplication();
     jest.resetModules();
     consoleErrorSpy.mockRestore();
+  });
+
+  test('支持通过id获取Target类', () => {
+    application.start();
+    const cls = application.getMetadataCls('Target');
+    expect(cls).toBe(Target);
   });
 
   test('filed上不能使用target装饰器', () => {
@@ -71,6 +79,7 @@ describe('@target装饰器', () => {
   test('元数据类不能缺少target装饰器', () => {
     @component()
     class AutoBind extends Metadata {}
+    assignMetadataId(AutoBind);
 
     application.start();
     expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -94,6 +103,7 @@ describe('@target装饰器', () => {
   test('装饰目标是field的装饰器不能装饰在class上', () => {
     @target([Target.Type.Field])
     class FieldDecorator extends Metadata {}
+    assignMetadataId(FieldDecorator);
     const fieldDecorator = createDecoratorExp(FieldDecorator);
 
     @component()
@@ -112,6 +122,7 @@ describe('@target装饰器', () => {
   test('装饰目标是class的装饰器不能装饰在field上', () => {
     @target([Target.Type.Class])
     class ClassDecorator extends Metadata {}
+    assignMetadataId(ClassDecorator);
     const classDecorator = createDecoratorExp(ClassDecorator);
 
     @component()
@@ -133,6 +144,7 @@ describe('@target装饰器', () => {
   test('装饰目标是class的装饰器不能装饰在method上', () => {
     @target([Target.Type.Class])
     class ClassDecorator extends Metadata {}
+    assignMetadataId(ClassDecorator);
     const classDecorator = createDecoratorExp(ClassDecorator);
 
     @component()

@@ -13,6 +13,7 @@ let application;
 let cocoMvc;
 let view;
 let store;
+let Store;
 let autowired;
 let memoized;
 let bind;
@@ -23,6 +24,7 @@ describe('store', () => {
     cocoMvc = await import('coco-mvc');
     view = cocoMvc.view;
     store = cocoMvc.store;
+    Store = cocoMvc.Store;
     autowired = cocoMvc.autowired;
     memoized = cocoMvc.memoized;
     bind = cocoMvc.bind;
@@ -37,6 +39,12 @@ describe('store', () => {
     cocoMvc.unregisterApplication();
     jest.resetModules();
     consoleWarnSpy.mockRestore();
+  });
+
+  test('支持通过id获取Store类', () => {
+    application.start();
+    const cls = application.getMetadataCls('Store');
+    expect(cls).toBe(Store);
   });
 
   it('注入的store都是同一个对象的引用', () => {

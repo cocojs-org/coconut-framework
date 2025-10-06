@@ -1,4 +1,4 @@
-import { Metadata, target, Target } from 'coco-ioc-container';
+import { Metadata, target, Target, assignMetadataId } from 'coco-ioc-container';
 
 /**
  * @public
@@ -8,4 +8,5 @@ class Route extends Metadata {
   value: string;
 }
 
+assignMetadataId(Route);
 export default Route;

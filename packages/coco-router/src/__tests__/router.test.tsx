@@ -7,11 +7,13 @@ describe('router', () => {
   let route;
   let page;
   let Router;
+  let RouterMetadata;
   let TestWebRender;
 
   beforeEach(async () => {
     cocoMvc = await import('coco-mvc');
     Router = cocoMvc.Router;
+    RouterMetadata = cocoMvc.RouterMetadata;
     route = cocoMvc.route;
     page = cocoMvc.page;
     Application = cocoMvc.Application;
@@ -30,6 +32,12 @@ describe('router', () => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
+  });
+
+  test('支持通过id获取Router类', () => {
+    application.start();
+    const cls = application.getMetadataCls('Router');
+    expect(cls).toBe(RouterMetadata);
   });
 
   test('路由切换，页面也会重新渲染', () => {

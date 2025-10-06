@@ -1,4 +1,4 @@
-describe('@webApplication', () => {
+describe('@webApplication装饰器', () => {
   let cocoMvc;
   let Application;
   let application;
@@ -7,6 +7,8 @@ describe('@webApplication', () => {
   let scope;
   let SCOPE;
   let webApplication;
+  let WebApplication;
+
   beforeEach(async () => {
     jest.resetModules();
     cocoMvc = await import('coco-mvc');
@@ -16,6 +18,7 @@ describe('@webApplication', () => {
     scope = cocoMvc.scope;
     SCOPE = cocoMvc.SCOPE;
     webApplication = cocoMvc.webApplication;
+    WebApplication = cocoMvc.WebApplication;
     application = new Application();
     cocoMvc.registerApplication(application);
   });
@@ -23,6 +26,12 @@ describe('@webApplication', () => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
+  });
+
+  test('支持通过id获取WebApplication类', () => {
+    application.start();
+    const cls = application.getMetadataCls('WebApplication');
+    expect(cls).toBe(WebApplication);
   });
 
   test('通过对象传入要注册的ioc组件，默认singleton模式', () => {

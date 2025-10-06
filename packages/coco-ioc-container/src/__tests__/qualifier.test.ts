@@ -156,6 +156,7 @@ describe('@qualifier装饰器: 通过动态配置', () => {
   let view;
   let autowired;
   let qualifier;
+  let Qualifier;
   let component;
 
   beforeEach(async () => {
@@ -163,6 +164,7 @@ describe('@qualifier装饰器: 通过动态配置', () => {
     view = cocoMvc.view;
     autowired = cocoMvc.autowired;
     qualifier = cocoMvc.qualifier;
+    Qualifier = cocoMvc.Qualifier;
     component = cocoMvc.component;
     webApplication = cocoMvc.webApplication;
     Application = cocoMvc.Application;
@@ -172,6 +174,13 @@ describe('@qualifier装饰器: 通过动态配置', () => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
+  });
+
+  test('支持通过id获取Qualifier类', () => {
+    application = new Application({});
+    application.start();
+    const cls = application.getMetadataCls('Qualifier');
+    expect(cls).toBe(Qualifier);
   });
 
   test('@autowired注入的组件存在多个子组件，使用动态配置指定一个子组件', () => {

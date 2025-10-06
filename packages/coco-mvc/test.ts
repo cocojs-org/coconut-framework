@@ -14,7 +14,7 @@ export {
   listBeDecoratedClsByFieldMetadata,
   clearMetadata,
 } from 'coco-ioc-container';
-export { TestWebRender } from 'coco-render';
+export { TestWebRender, RenderMatadata } from 'coco-render';
 export {
   render,
   findDOMNode,

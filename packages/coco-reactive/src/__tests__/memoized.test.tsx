@@ -6,6 +6,7 @@ let cocoMvc;
 let view;
 let reactive;
 let memoized;
+let Memoized;
 let bind;
 describe('memoized', () => {
   beforeEach(async () => {
@@ -13,6 +14,7 @@ describe('memoized', () => {
     view = cocoMvc.view;
     reactive = cocoMvc.reactive;
     memoized = cocoMvc.memoized;
+    Memoized = cocoMvc.Memoized;
     bind = cocoMvc.bind;
     Application = cocoMvc.Application;
     application = new Application();
@@ -23,6 +25,12 @@ describe('memoized', () => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
+  });
+
+  test('支持通过id获取Memoized类', () => {
+    application.start();
+    const cls = application.getMetadataCls('Memoized');
+    expect(cls).toBe(Memoized);
   });
 
   test('memoized直接依赖reactive，当reactive不变时，memoized不会重新计算', () => {

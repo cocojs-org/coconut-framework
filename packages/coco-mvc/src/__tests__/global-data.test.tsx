@@ -1,19 +1,33 @@
-describe('global-data', () => {
-  let cocoMvc, Application, application, view, bind, globalData, autowired;
+describe('@globalData装饰器', () => {
+  let cocoMvc,
+    Application,
+    application,
+    view,
+    bind,
+    globalData,
+    GlobalData,
+    autowired;
   beforeEach(async () => {
     jest.resetModules();
     cocoMvc = await import('coco-mvc');
-    Application = (await import('coco-mvc')).Application;
-    view = (await import('coco-mvc')).view;
-    bind = (await import('coco-mvc')).bind;
-    globalData = (await import('coco-mvc')).globalData;
-    autowired = (await import('coco-mvc')).autowired;
+    Application = cocoMvc.Application;
+    view = cocoMvc.view;
+    bind = cocoMvc.bind;
+    globalData = cocoMvc.globalData;
+    GlobalData = cocoMvc.GlobalData;
+    autowired = cocoMvc.autowired;
     application = new Application();
     cocoMvc.registerApplication(application);
   });
   afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
+  });
+
+  test('支持通过id获取GlobalData类', () => {
+    application.start();
+    const cls = application.getMetadataCls('GlobalData');
+    expect(cls).toBe(GlobalData);
   });
 
   test('可以获取到globalData，并且是同一引用', () => {

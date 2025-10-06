@@ -7,15 +7,15 @@ import {
 } from '@testing-library/dom';
 
 describe('view', () => {
-  let cocoMvc, Application, application, view, reactive, bind;
+  let cocoMvc, Application, application, view, reactive, bind, View;
   beforeEach(async () => {
     jest.resetModules();
     cocoMvc = await import('coco-mvc');
-    Application = (await import('coco-mvc')).Application;
-    view = (await import('coco-mvc')).view;
-    bind = (await import('coco-mvc')).bind;
-    reactive = (await import('coco-mvc')).reactive;
-    ref = (await import('coco-mvc')).ref;
+    Application = cocoMvc.Application;
+    view = cocoMvc.view;
+    bind = cocoMvc.bind;
+    reactive = cocoMvc.reactive;
+    View = cocoMvc.View;
     application = new Application();
     cocoMvc.registerApplication(application);
   });
@@ -23,6 +23,12 @@ describe('view', () => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
+  });
+
+  test('支持通过id获取View类', () => {
+    application.start();
+    const cls = application.getMetadataCls('View');
+    expect(cls).toBe(View);
   });
 
   test('可以扫描到view组件并渲染', () => {

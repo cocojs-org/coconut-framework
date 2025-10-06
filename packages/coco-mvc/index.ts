@@ -20,6 +20,7 @@ export {
   value,
   createDecoratorExp,
   createPlaceholderDecoratorExp,
+  assignMetadataId,
   Application,
   PropertiesConfig,
   type Decorator,
@@ -56,6 +57,8 @@ export { default as Refs } from './src/decorator/metadata/refs.ts';
 export { default as refs } from './src/decorator/refs.ts';
 export { default as SessionStorage } from './src/decorator/metadata/session-storage.ts';
 export { default as sessionStorage } from './src/decorator/session-storage.ts';
+export { default as Util } from './src/decorator/metadata/util.ts';
+export { default as util } from './src/decorator/util.ts';
 export { default as View } from './src/decorator/metadata/view.ts';
 export { default as view } from './src/decorator/view.ts';
 export { default as WebApplication } from './src/decorator/metadata/web-application.ts';

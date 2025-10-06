@@ -7,11 +7,9 @@ import {
   addClassMetadata,
   addFieldMetadata,
   addMethodMetadata,
-  buildMetaClassIdMap,
   clear,
   findClassMetadata,
   getAllMetadata,
-  getMetaClassById,
   getMetadata,
   getFromMap,
   listBeDecoratedClsByClassMetadata,
@@ -24,6 +22,7 @@ import {
 } from './all-metadata';
 import Metadata from './create-metadata';
 import validate from './validate';
+import { buildMetaClassIdMap, getMetaClassById, assignMetadataId } from './id';
 
 // 使用装饰器参数生成对应的元数据实例
 function createMetadataByDecoratorParam(
@@ -64,11 +63,12 @@ function createMetadataByDecoratorParam(
 function buildMetadata(decoratorMap: Map<Class<any>, Params[]>) {
   createMetadataByDecoratorParam(decoratorMap);
   // TODO: 校验全部放在core里面做到，然后业务上获取的时候先过滤掉非法的元数据，只从合法的元数据中查找
-  const diagnoseList: Diagnose[] = validate(getAllMetadata());
+  const [metadataMap, bizMap] = getAllMetadata();
+  const diagnoseList: Diagnose[] = validate([metadataMap, bizMap]);
   if (diagnoseList.length > 0) {
     diagnoseList.forEach(printDiagnose);
   }
-  buildMetaClassIdMap();
+  buildMetaClassIdMap(metadataMap);
 }
 
 export {
@@ -92,4 +92,5 @@ export {
   getAllMetadata,
   buildMetadata,
   Metadata,
+  assignMetadataId,
 };

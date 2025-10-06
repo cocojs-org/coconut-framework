@@ -7,16 +7,17 @@ import {
 } from '@testing-library/dom';
 
 describe('refs', () => {
-  let cocoMvc, Application, application, view, reactive, bind, refs;
+  let cocoMvc, Application, application, view, reactive, bind, refs, Refs;
   const mockFn = jest.fn();
   beforeEach(async () => {
     jest.resetModules();
     cocoMvc = await import('coco-mvc');
-    Application = (await import('coco-mvc')).Application;
-    view = (await import('coco-mvc')).view;
-    bind = (await import('coco-mvc')).bind;
-    reactive = (await import('coco-mvc')).reactive;
-    refs = (await import('coco-mvc')).refs;
+    Application = cocoMvc.Application;
+    view = cocoMvc.view;
+    bind = cocoMvc.bind;
+    reactive = cocoMvc.reactive;
+    refs = cocoMvc.refs;
+    Refs = cocoMvc.Refs;
     application = new Application();
     cocoMvc.registerApplication(application);
   });
@@ -24,6 +25,12 @@ describe('refs', () => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
+  });
+
+  test('支持通过id获取Refs类', () => {
+    application.start();
+    const cls = application.getMetadataCls('Refs');
+    expect(cls).toBe(Refs);
   });
 
   test('支持函数形式绑定host组件或自定义组件', () => {

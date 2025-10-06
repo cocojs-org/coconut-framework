@@ -2,6 +2,7 @@ describe('configuration装饰器', () => {
   let Application;
   let application;
   let configuration;
+  let Configuration;
   let cocoMvc;
   let component;
   let scope;
@@ -15,6 +16,7 @@ describe('configuration装饰器', () => {
     scope = cocoMvc.scope;
     SCOPE = cocoMvc.SCOPE;
     configuration = cocoMvc.configuration;
+    Configuration = cocoMvc.Configuration;
     Application = cocoMvc.Application;
     application = new Application();
     cocoMvc.registerApplication(application);
@@ -25,6 +27,12 @@ describe('configuration装饰器', () => {
     cocoMvc.unregisterApplication();
     jest.resetModules();
     consoleErrorSpy.mockRestore();
+  });
+
+  test('支持通过id获取Configuration类', () => {
+    application.start();
+    const cls = application.getMetadataCls('Configuration');
+    expect(cls).toBe(Configuration);
   });
 
   test('field和method都不能使用configuration装饰器', () => {

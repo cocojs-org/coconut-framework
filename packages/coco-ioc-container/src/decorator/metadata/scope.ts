@@ -1,6 +1,7 @@
 import Target from './target';
 import target from '../target';
 import Metadata from '../../metadata/create-metadata';
+import { assignMetadataId } from '../../metadata/id';
 
 /**
  * @public
@@ -20,4 +21,5 @@ class Scope extends Metadata {
   value: SCOPE = SCOPE.Singleton;
 }
 
+assignMetadataId(Scope);
 export default Scope;

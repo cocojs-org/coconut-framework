@@ -4,6 +4,7 @@ import {
   Component,
   target,
   Target,
+  assignMetadataId,
 } from 'coco-ioc-container';
 
 /**
@@ -13,4 +14,5 @@ import {
 @component()
 class GlobalData extends Metadata {}
 
+assignMetadataId(GlobalData);
 export default GlobalData;

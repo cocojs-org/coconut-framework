@@ -7,15 +7,15 @@ import {
 } from '@testing-library/dom';
 
 describe('decorator', () => {
-  let cocoMvc, Application, application, view, reactive, bind;
+  let cocoMvc, Application, application, view, reactive, bind, Bind;
   beforeEach(async () => {
     jest.resetModules();
     cocoMvc = await import('coco-mvc');
-    Application = (await import('coco-mvc')).Application;
-    view = (await import('coco-mvc')).view;
-    bind = (await import('coco-mvc')).bind;
-    reactive = (await import('coco-mvc')).reactive;
-    ref = (await import('coco-mvc')).ref;
+    Application = cocoMvc.Application;
+    view = cocoMvc.view;
+    bind = cocoMvc.bind;
+    Bind = cocoMvc.Bind;
+    reactive = cocoMvc.reactive;
     application = new Application();
     cocoMvc.registerApplication(application);
   });
@@ -23,6 +23,12 @@ describe('decorator', () => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterApplication();
     jest.resetModules();
+  });
+
+  test('支持通过id获取Bind类', () => {
+    application.start();
+    const cls = application.getMetadataCls('Bind');
+    expect(cls).toBe(Bind);
   });
 
   test('正常渲染一个组件', () => {

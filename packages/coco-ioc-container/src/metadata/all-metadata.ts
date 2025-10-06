@@ -1,9 +1,6 @@
 import Metadata, { createMetadata } from './create-metadata';
 import { type Field } from '../create-decorator-exp';
 
-// 元数据类本身和自身id的映射
-const idMetadataClassMap: Map<string, Metadata> = new Map();
-
 type MetadataSet = Array<{ metadata: Metadata; dependencies?: MetadataSet }>;
 
 // 元数据子类的元数据
@@ -382,36 +379,8 @@ function getAllMetadata(): [
   return [metaMetadataMap, bizMetadataMap];
 }
 
-/**
- * 保存元数据类本身，方便运行时被调用
- */
-function buildMetaClassIdMap() {
-  for (const cls of metaMetadataMap.keys()) {
-    const name = cls.name;
-    if (!name) {
-      console.error('元数据类没有name', name, cls);
-      throw new Error('元数据类没有name');
-    }
-    if (idMetadataClassMap.has(name)) {
-      // 为什么元数据类不能重名？
-      // 本来是可以的，因为元数据类和装饰器哪怕重名都是不严格相等的，注意引入路径即可
-      // 但是框架允许通过name查找，那么就不允许重名了，不然麻烦
-      // TODO: 重复的注册也挪到validate里面
-      // console.error('相同的类不应该注解2次啊', name);
-      // throw new Error('元数据类不允许重名！');
-    }
-    idMetadataClassMap.set(name, cls);
-  }
-}
-
-function getMetaClassById(id: string) {
-  return idMetadataClassMap.get(id);
-}
-
 export {
   getFromMap,
-  getMetaClassById,
-  buildMetaClassIdMap,
   addClassMetadata,
   addFieldMetadata,
   addMethodMetadata,

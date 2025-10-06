@@ -85,15 +85,11 @@ class Application {
   }
 
   /**
-   * 通过元数据类名字查找元数据类本身
-   * 框架会经常使用元数据类进行过滤涮选，直接import引入过于麻烦，且经常导致文件循环依赖
+   * 通过元数据类id查找元数据类本身
    */
-  public getMetadataCls(name: string) {
-    if (typeof name !== 'string' || !name.trim() || !getMetaClassById(name)) {
-      return null;
-    } else {
-      return getMetaClassById(name);
-    }
+  public getMetadataCls(id: string) {
+    // TODO: 感觉变成static更好一些
+    return getMetaClassById(id);
   }
 
   /**
