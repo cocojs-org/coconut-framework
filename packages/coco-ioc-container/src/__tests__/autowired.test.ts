@@ -68,16 +68,22 @@ describe('autowired', () => {
     expect(button.button).toBe(undefined);
   });
 
-  test('没有定义的组件，就会注入undefined', () => {
-    @component()
-    class Button {
-      @autowired()
-      like: Like;
-    }
+  test('没有定义的组件，能正常解析，但运行是报错：ReferenceError: Xxx is not defined', () => {
+    let errmsg = '';
+    try {
+      @component()
+      class Button {
+        @autowired()
+        like: Like;
+      }
 
-    application.start();
-    const button = application.getComponent(Button);
-    expect(button.like).toBe(undefined);
+      application.start();
+      const button = application.getComponent(Button);
+      expect(button.like).toBe(undefined);
+    } catch (e) {
+      errmsg = e.message;
+    }
+    expect(errmsg).toBe('Like is not defined');
   });
 
   test('没有注册的组件，会抛异常', () => {
