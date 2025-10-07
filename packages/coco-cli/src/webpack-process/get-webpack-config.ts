@@ -12,7 +12,9 @@ async function readWebpack(cmd?: string) {
     console.warn(`配置文件不存在：${filepath}`);
     return {};
   }
-  return (await import(filepath)).webpack ?? {}; // Merging undefined is not supported
+  // TODO: .default 有没有优雅的写法？
+  const content = (await import(filepath))?.default;
+  return content?.webpack ?? {}; // Merging undefined is not supported
 }
 
 const buildInConfig = {
