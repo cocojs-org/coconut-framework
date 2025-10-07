@@ -3,8 +3,6 @@ import { rollup } from 'rollup';
 import process from 'node:process';
 import typescript from '@rollup/plugin-typescript';
 import babel from '@rollup/plugin-babel';
-import postcss from 'rollup-plugin-postcss';
-import tailwindcss from 'tailwindcss';
 
 export const build = async () => {
   const result = await rollup({
@@ -43,10 +41,6 @@ export const build = async () => {
             },
           ],
         ],
-      }),
-      postcss({
-        plugins: [tailwindcss()],
-        extract: true,
       }),
     ],
   });
