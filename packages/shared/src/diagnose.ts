@@ -21,6 +21,7 @@ export enum DiagnoseCode {
   'CO10015' = 'CO10015', // 元数据类本身存在id属性，且不能修改
   'CO10016' = 'CO10016', // 元数据类没有id属性或者id属性不是字符串
   'CO10017' = 'CO10017', // 元数据类id属性存在重复
+  'CO10018' = 'CO10018', // createDecoratorExp的第一个参数不是类，或者不是Metadata的子类
 }
 
 const DiagnoseCodeMsg = {
@@ -43,6 +44,7 @@ const DiagnoseCodeMsg = {
   [DiagnoseCode.CO10015]: `元数据类 %s 本身存在id属性，且不能被修改。`,
   [DiagnoseCode.CO10016]: `元数据类 %s 没有id属性或者id属性不是字符串，忘记调用assignMetadataId方法？`,
   [DiagnoseCode.CO10017]: `元数据类 %s 和 %s 的id属性相同，id属性不能重复。`,
+  [DiagnoseCode.CO10018]: `createDecoratorExp的第一个参数 %s 必须是Metadata的子类。`,
 };
 
 export function createDiagnose(code: DiagnoseCode, ...args: any[]): Diagnose {

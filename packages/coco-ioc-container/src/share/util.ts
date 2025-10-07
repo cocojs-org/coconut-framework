@@ -52,21 +52,38 @@ export function constructOf<T>(o: any): Class<T> {
   return o.constructor;
 }
 
-export function isDescendantOf(
-  childClass: Class<any>,
-  parentClass: Class<any>
-) {
-  if (typeof childClass !== 'function' || typeof parentClass !== 'function') {
+/**
+ * s是否是p的直接子类，后代类不算
+ * @param s
+ * @param p
+ * @returns boolean
+ */
+export function isSubClassOf(s: any, p: any) {
+  return (
+    typeof s === 'function' &&
+    typeof p === 'function' &&
+    Object.getPrototypeOf(s) === p
+  );
+}
+
+/**
+ * s是否是p的后代类
+ * @param s
+ * @param p
+ * @returns
+ */
+export function isDescendantOf(s: Class<any>, p: Class<any>) {
+  if (typeof s !== 'function' || typeof p !== 'function') {
     return false;
   }
   // 直接相等的情况
-  if (childClass === parentClass) {
+  if (s === p) {
     return false;
   }
 
-  let proto = Object.getPrototypeOf(childClass.prototype);
+  let proto = Object.getPrototypeOf(s.prototype);
   while (proto) {
-    if (proto === parentClass.prototype) {
+    if (proto === p.prototype) {
       return true;
     }
     proto = Object.getPrototypeOf(proto);
@@ -92,9 +109,10 @@ export function once(fn?: () => void): (THIS: any) => void {
   return onceFn;
 }
 
-// 判断入参是否是类
+// 判断入参是否是类，因为class会转成function，所以不通过toString判断
 export function isClass(v: any) {
-  // todo class会不会被转移成function？
-  // todo v.toString().includes('class')改为是否是Metadata的子类
-  return typeof v === 'function' && v.toString().includes('class');
+  // TODO: 是否要添加类名首字母必须大写的校验
+  return (
+    typeof v === 'function' && v.prototype && v.prototype.constructor === v
+  );
 }

@@ -9,13 +9,14 @@ import {
   KindAccessor,
 } from './decorator-context';
 export type { Decorator };
-import { isClass, once } from '../share/util';
+import { isSubClassOf, once } from '../share/util';
 import { addDecoratorParams } from './decorator-exp-param';
 import {
   addDecoratorOption,
   type CreateDecoratorExpOption,
 } from './create-decorator-options';
 import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
+import Metadata from '../metadata/create-metadata';
 
 let createdDecoratorMetadataSet: Set<Class<any>> = new Set();
 
@@ -158,8 +159,10 @@ function createDecoratorExp(
   metadataCls: Class<any>,
   option?: CreateDecoratorExpOption
 ): DecoratorExp {
-  if (!isClass(metadataCls)) {
-    throw new Error('createDecoratorExp的第一个参数类型是类');
+  if (!isSubClassOf(metadataCls, Metadata)) {
+    throw new Error(
+      stringifyDiagnose(createDiagnose(DiagnoseCode.CO10018, metadataCls?.name))
+    );
   }
   return doCreateDecoratorExp(metadataCls, option) as DecoratorExp;
 }

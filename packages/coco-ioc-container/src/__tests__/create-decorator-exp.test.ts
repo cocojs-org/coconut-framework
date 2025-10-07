@@ -246,15 +246,17 @@ describe('create-decorator-exp:createDecoratorExp', () => {
     );
   });
 
-  test('createDecoratorExp第一个参数可以使用类', () => {
-    let shouldThrowError = false;
+  test('createDecoratorExp第一个参数必须是Metadata的子类', () => {
+    let errorMsg = '';
     try {
       class A {}
       createDecoratorExp(A);
     } catch (e) {
-      shouldThrowError = true;
+      errorMsg = e.message;
     }
-    expect(shouldThrowError).toBe(false);
+    expect(errorMsg).toBe(
+      'CO10018：createDecoratorExp的第一个参数 A 必须是Metadata的子类。'
+    );
   });
 
   test('createDecoratorExp第一个参数不能使用数字', () => {
