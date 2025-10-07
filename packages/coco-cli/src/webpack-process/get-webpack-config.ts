@@ -4,14 +4,14 @@ import fs from 'node:fs';
 import { merge } from 'webpack-merge';
 import { configFileName, defaultConfigName } from '../util/env';
 
-function readWebpack(cmd?: string) {
+async function readWebpack(cmd?: string) {
   const filename = cmd ? configFileName(cmd) : defaultConfigName;
   const filepath = path.resolve(process.cwd(), `config/${filename}`);
   if (!fs.existsSync(filepath)) {
     console.warn(`配置文件不存在：${filepath}`);
     return {};
   }
-  return require(filepath).webpack ?? {}; // Merging undefined is not supported
+  return (await import(filepath)).webpack ?? {}; // Merging undefined is not supported
 }
 
 const buildInConfig = {
@@ -113,9 +113,9 @@ const buildInConfig = {
   ],
 };
 
-function getWebpackConfig(cmd: string) {
-  const baseConfig = readWebpack();
-  const envConfig = readWebpack(cmd);
+async function getWebpackConfig(cmd: string) {
+  const baseConfig = await readWebpack();
+  const envConfig = await readWebpack(cmd);
   return merge(buildInConfig, baseConfig, envConfig);
 }
 

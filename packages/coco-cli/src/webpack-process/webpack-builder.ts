@@ -7,7 +7,8 @@ class WebpackBuilder {
 
   public async build() {
     return new Promise<void>(async (resolve, reject) => {
-      const compiler = Webpack(getWebpackConfig('build'));
+      const config = await getWebpackConfig('build');
+      const compiler = Webpack(config);
       compiler.run((err, stats) => {
         console.log(
           stats.toString({
@@ -26,7 +27,7 @@ class WebpackBuilder {
   }
 
   public async startServer() {
-    const { devServer, ...config } = getWebpackConfig('dev');
+    const { devServer, ...config } = await getWebpackConfig('dev');
     const compiler = Webpack(config);
     const devServerOptions = { ...devServer, open: true };
     this.server = new WebpackDevServer(devServerOptions, compiler);
