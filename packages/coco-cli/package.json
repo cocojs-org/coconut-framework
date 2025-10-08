@@ -27,6 +27,7 @@
     "@babel/preset-typescript": "^7.26.0",
     "@babel/traverse": "^7.26.7",
     "@babel/types": "^7.26.7",
+    "@cocojs/type-extractor": "^0.0.16",
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-typescript": "^12.1.2",
     "babel-loader": "^10.0.0",
@@ -45,10 +46,6 @@
     "webpack-merge": "^6.0.1"
   },
   "devDependencies": {
-    "@cocojs/type-extractor": "^0.0.16",
     "@types/node": "^22.15.18"
-  },
-  "peerDependencies": {
-    "@cocojs/type-extractor": "^0.0.16"
   }
 }
