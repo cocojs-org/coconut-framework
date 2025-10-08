@@ -38,10 +38,12 @@ export { Application };
 
 ${
   process.env.NODE_ENV === 'test'
-    ? `// 测试时由测试用例启动Application`
+    ? `
+// 测试时由测试用例启动Application
+`
     : `
-    const application = new Application(applicationJson);
-    application.start();
+const application = new Application(applicationJson);
+application.start();
     `
 }
   `;

@@ -2,7 +2,7 @@ import devApp from './dev-app';
 import buildApp from './build-app';
 import { build as buildLib } from './build-lib';
 import { createApp, createLib } from './create';
-
+// TODO: 添加测试用例验证模版的基本功能都是正确的？
 /**
  * 应用项目命令
  * coco app create 搭建框架
