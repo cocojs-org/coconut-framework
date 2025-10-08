@@ -18,7 +18,7 @@ export const build = async () => {
           resolveJsonModule: true,
           plugins: [
             {
-              transform: '@cocojs/typescript-transformer',
+              transform: '@cocojs/type-extractor',
               transformProgram: true,
             },
           ],

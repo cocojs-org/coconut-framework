@@ -80,13 +80,14 @@ async function create(type: 'app' | 'lib') {
   );
   // 目前coco-mvc和coco-cli的版本号保持一致
   const version = cliPackageJson.version;
-  const transformerVersion =
-    cliPackageJson.devDependencies['@cocojs/typescript-transformer'];
+  // TODO: cli库是不是可以去掉依赖@cocojs/type-extractor
+  const typeExtractorVersion =
+    cliPackageJson.devDependencies['@cocojs/type-extractor'];
   const renderedContent = await ejs.renderFile(packageJsonEjs, {
     name: projectName,
     author,
     version,
-    transformerVersion,
+    typeExtractorVersion,
   });
   await fse.outputFileSync(
     path.join(targetDir, 'package.json'),

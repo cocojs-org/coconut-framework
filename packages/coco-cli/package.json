@@ -45,10 +45,10 @@
     "webpack-merge": "^6.0.1"
   },
   "devDependencies": {
-    "@cocojs/typescript-transformer": "^0.0.15",
+    "@cocojs/type-extractor": "^0.0.16",
     "@types/node": "^22.15.18"
   },
   "peerDependencies": {
-    "@cocojs/typescript-transformer": "^0.0.15"
+    "@cocojs/type-extractor": "^0.0.16"
   }
 }

@@ -2,6 +2,7 @@ describe('@component装饰器', () => {
   let Application;
   let application;
   let webApplication;
+  let configuration;
   let cocoMvc;
   let Metadata;
   let target;
@@ -22,6 +23,7 @@ describe('@component装饰器', () => {
     Component = cocoMvc.Component;
     Metadata = cocoMvc.Metadata;
     Target = cocoMvc.Target;
+    configuration = cocoMvc.configuration;
     webApplication = cocoMvc.webApplication;
     Application = cocoMvc.Application;
     createDecoratorExp = cocoMvc.createDecoratorExp;
@@ -200,7 +202,7 @@ describe('@component装饰器', () => {
   });
 
   describe('@component装饰在方法上', () => {
-    test('当使用component注入第三方组件时，必须是配置类内部。', () => {
+    test('使用component注入第三方组件，必须在配置类内部。', () => {
       class Theme {}
       @component()
       class Application {
@@ -217,6 +219,24 @@ describe('@component装饰器', () => {
         'theme',
         'Application'
       );
+    });
+
+    test('当返回的类型未定义时，会运行时报错：ReferenceError: Xxx is not defined', () => {
+      let errmsg = '';
+      try {
+        @configuration()
+        class Application {
+          @component()
+          theme(): Theme {
+            return new Theme();
+          }
+        }
+
+        application.start();
+      } catch (e) {
+        errmsg = e.message;
+      }
+      expect(errmsg).toBe('Theme is not defined');
     });
 
     // TODO:
