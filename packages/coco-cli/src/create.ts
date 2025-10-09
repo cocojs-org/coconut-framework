@@ -5,6 +5,8 @@ import prompts from 'prompts';
 import path from 'path';
 import fse from 'fs-extra';
 
+// TODO: 包改为create-coco，提供create-coco.js这个脚本，单独包含createApp和createLib的实现。coco负责dev和build
+
 async function create(type: 'app' | 'lib') {
   let userCancelled = false;
   const response = await prompts(

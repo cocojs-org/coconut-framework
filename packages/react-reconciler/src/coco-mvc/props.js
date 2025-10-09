@@ -8,6 +8,7 @@ const NoReactiveProps = ['children'];
 function initProps(instance, newProps) {
   instance.props = newProps;
   const _values = {};
+  // TODO: 好像publisher应该是props的每个key单独一个，而不是只有一个？
   const publisher = new Publisher();
   for (const field of Object.keys(newProps)) {
     if (NoReactiveProps.indexOf(field) !== -1) {
@@ -38,9 +39,6 @@ function initProps(instance, newProps) {
 
 function updateProps(instance, newProps) {
   for (const field of Object.keys(newProps)) {
-    if (NoReactiveProps.indexOf(field) !== -1) {
-        continue;
-    }
     instance.props[field] = newProps[field];
   }
 }
