@@ -1,6 +1,6 @@
 {
   "name": "coco-mvc",
-  "version": "0.0.1-alpha202510081626",
+  "version": "0.0.1-alpha202510092123",
   "description": "使用@装饰器构建web应用。",
   "main": "dist/coco-mvc.cjs.js",
   "types": "dist/index.d.ts",
