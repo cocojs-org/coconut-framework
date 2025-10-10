@@ -6,9 +6,7 @@ import {
 import Reactive from './metadata/reactive';
 import Publisher from '../memoized/publisher';
 import Subscriber from '../memoized/subscriber';
-import { reactiveSetterField } from 'shared';
-
-let didWarnedReadValueFromUnderscoreName = false;
+import { reactiveAssignField } from 'shared';
 
 export default createDecoratorExp(Reactive, {
   componentPostConstruct(
@@ -37,21 +35,9 @@ export default createDecoratorExp(Reactive, {
       },
     });
 
-    // 使用单独的field名称来更新this.name
-    Object.defineProperty(this, reactiveSetterField(name), {
+    Object.defineProperty(this, reactiveAssignField(name), {
       configurable: false,
       enumerable: false,
-      get: function () {
-        if (__DEV__) {
-          if (!didWarnedReadValueFromUnderscoreName) {
-            didWarnedReadValueFromUnderscoreName = true;
-            console.error(
-              `${reactiveSetterField(name)}仅仅用于更新${name}，想要取值直接使用this.${name}即可`
-            );
-          }
-        }
-        return _value;
-      },
       set(v: any): boolean {
         _value = v;
         return true;

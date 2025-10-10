@@ -11,7 +11,7 @@ import { getMvcApi } from './coco-mvc/common-api';
 import { isMounted } from './ReactFiberTreeReflection';
 import { connectStore } from './coco-mvc/autowired';
 import { initProps, updateProps } from './coco-mvc/props';
-import { reactiveSetterField } from 'shared';
+import { reactiveAssignField } from 'shared';
 
 let didWarnAboutDirectlyAssigningPropsToState;
 if (__DEV__) {
@@ -126,7 +126,7 @@ function updateClassInstance(
   const Reactive = getMetaClassById('Reactive');
   const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
   for (const field of fields) {
-    instance[reactiveSetterField(field)] = newState[field]
+    instance[reactiveAssignField(field)] = newState[field]
   }
 
   // TODO: 新旧state对比，新旧props对比，判断是否需要update
