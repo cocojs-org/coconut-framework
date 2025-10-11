@@ -80,7 +80,7 @@ const cocoMvcDtsProd = [
     mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
   {
-    packageName: 'coco-reactive',
+    packageName: 'coco-view',
     tsconfigJson: 'tsconfig.json',
     mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },
@@ -128,7 +128,7 @@ const cocoMvcDtsTest = [
     mainEntryPointFilePath: './dts-tmp/test.d.ts'
   },
   {
-    packageName: 'coco-reactive',
+    packageName: 'coco-view',
     tsconfigJson: 'tsconfig.json',
     mainEntryPointFilePath: './dts-tmp/index.d.ts'
   },

@@ -3,9 +3,9 @@
   "compilerOptions": {
     "paths": {
       "coco-ioc-container": ["../coco-ioc-container/dist"],
-      "coco-router": ["../coco-router/dist"],
-      "coco-reactive": ["../coco-reactive/dist"],
       "coco-render": ["../coco-render/dist"],
+      "coco-router": ["../coco-router/dist"],
+      "coco-view": ["../coco-view/dist"],
       "shared": ["../shared/dist"],
       "react": ["../react/dist"],
       "react-dom": ["../react-dom/dist"]

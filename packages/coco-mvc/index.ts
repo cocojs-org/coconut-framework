@@ -30,7 +30,7 @@ export {
   KindField,
   KindMethod,
 } from 'coco-ioc-container';
-export * from 'coco-reactive';
+export * from 'coco-view';
 export * from 'coco-router';
 export * from 'react';
 export { Render, WebRender } from 'coco-render';

@@ -1,7 +1,7 @@
 /**
  * 当前路由
  */
-import { store } from 'coco-reactive';
+import { store } from 'coco-view';
 
 @store()
 class Route {

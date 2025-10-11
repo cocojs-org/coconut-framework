@@ -16,17 +16,9 @@
     "updateVersion": "pnpm run test && pnpm run _modifyPkgVersion",
     "prepare": "husky install && ts-patch install -s"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com:coco-core/coconut-framework.git"
-  },
   "keywords": [],
   "author": "jiangchenguang",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/coco-core/coconut-framework/issues"
-  },
-  "homepage": "https://github.com/coco-core/coconut-framework",
   "devDependencies": {
     "@babel/cli": "^7.26.4",
     "@babel/core": "^7.24.3",

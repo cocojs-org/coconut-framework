@@ -2,7 +2,7 @@
  * 关于autowired装饰器相关逻辑
  */
 import { getMvcApi } from './common-api';
-import { StoreSubscriber } from 'coco-reactive';
+import { StoreSubscriber } from 'coco-view';
 
 // 在一个组件中多次注入同一个store
 let warnedAutowiredSameStoreInOneComponentMultipleTimes;

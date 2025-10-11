@@ -1,7 +1,7 @@
 /**
  * 视图组件的props
  */
-import { Publisher, Subscriber } from 'coco-reactive';
+import { Publisher, Subscriber } from 'coco-view';
 
 const NoReactiveProps = ['children'];
 

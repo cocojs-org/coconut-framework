@@ -8,7 +8,7 @@
     "paths": {
       "coco-ioc-container": ["../coco-ioc-container"],
       "coco-router": ["../coco-router"],
-      "coco-reactive": ["../coco-reactive"],
+      "coco-view": ["../coco-view"],
       "coco-render": ["../coco-render"],
       "shared": ["../shared"],
       "react": ["../react"],
@@ -20,7 +20,7 @@
   "references": [
     { "path": "../coco-ioc-container" },
     { "path": "../coco-router" },
-    { "path": "../coco-reactive" },
+    { "path": "../coco-view" },
     { "path": "../coco-render" },
     { "path": "../shared" },
     { "path": "../react" },

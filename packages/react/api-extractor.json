@@ -16,9 +16,9 @@
   },
   "bundledPackages": [
     "coco-ioc-container",
-    "coco-reactive",
-    "coco-router",
     "coco-render",
+    "coco-router",
+    "coco-view",
     "react",
     "react-dom"
   ]
