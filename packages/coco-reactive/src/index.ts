@@ -1,9 +1,15 @@
-export { default as Reactive } from './decorator/metadata/reactive';
-export { default as reactive } from './decorator/reactive';
+export { default as Layout } from './decorator/metadata/layout';
+export { default as layout } from './decorator/layout';
 export { default as Memoized } from './decorator/metadata/memoized';
 export { default as memoized } from './decorator/memoized';
+export { default as Page } from './decorator/metadata/page';
+export { default as page } from './decorator/page';
+export { default as Reactive } from './decorator/metadata/reactive';
+export { default as reactive } from './decorator/reactive';
 export { default as Store } from './decorator/metadata/store';
 export { default as store } from './decorator/store';
+export { default as View } from './decorator/metadata/view';
+export { default as view } from './decorator/view';
 export { default as Publisher } from './memoized/publisher';
 export { default as Subscriber } from './memoized/subscriber';
 export { default as StorePublisher } from './memoized/store-publisher';

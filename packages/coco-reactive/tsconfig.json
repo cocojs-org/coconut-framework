@@ -7,10 +7,15 @@
     "outDir": "dts-tmp",
     "paths": {
       "coco-ioc-container": ["../coco-ioc-container"],
+      "react": ["../react"],
       "shared": ["../shared"]
     }
   },
   "include": ["src"],
   "exclude": ["src/__tests__"],
-  "references": [{ "path": "../coco-ioc-container" }, { "path": "../shared" }]
+  "references": [
+    { "path": "../coco-ioc-container" },
+    { "path": "../react" },
+    { "path": "../shared" }
+  ]
 }

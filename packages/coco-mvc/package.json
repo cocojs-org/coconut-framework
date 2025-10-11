@@ -21,10 +21,9 @@
     "dist"
   ],
   "keywords": [
-    "mvc",
-    "decorator"
+    "cocojs"
   ],
   "author": "jiangchenguang",
-  "homepage": "https://github.com/coco-core/coconut-framework",
+  "homepage": "https://github.com/cocojs-org/coconut-framework",
   "license": "MIT"
 }
