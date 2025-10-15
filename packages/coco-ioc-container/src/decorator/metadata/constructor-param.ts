@@ -8,7 +8,7 @@ import { defineMetadataId } from '../../metadata/id';
  */
 @target([Target.Type.Class])
 class ConstructorParam extends Metadata {
-  value: Class<any>[];
+    value: Class<any>[];
 }
 
 defineMetadataId(ConstructorParam);

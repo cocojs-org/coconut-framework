@@ -7,9 +7,9 @@ import { defineMetadataId } from '../../metadata/id';
  */
 @target.decorateSelf([Type.Class])
 class Target extends Metadata {
-  static Type = Type;
+    static Type = Type;
 
-  value: Type[];
+    value: Type[];
 }
 
 defineMetadataId(Target);

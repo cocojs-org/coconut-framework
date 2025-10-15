@@ -3,43 +3,43 @@ import type StoreSubscriber from './store-subscriber';
 let id = 0;
 
 class StorePublisher {
-  private id: number;
+    private id: number;
 
-  private subscribers: StoreSubscriber[] = [];
+    private subscribers: StoreSubscriber[] = [];
 
-  constructor() {
-    this.id = id++;
-  }
-
-  addListener(subscriber: StoreSubscriber) {
-    if (this.subscribers.indexOf(subscriber) >= 0) {
-      if (__DEV__) {
-        console.warn('不需要重复添加订阅');
-      }
-      return;
+    constructor() {
+        this.id = id++;
     }
-    this.subscribers.push(subscriber);
-  }
 
-  removeListener(subscriber: StoreSubscriber) {
-    const idx = this.subscribers.indexOf(subscriber);
-    if (idx >= 0) {
-      this.subscribers.splice(idx, 1);
+    addListener(subscriber: StoreSubscriber) {
+        if (this.subscribers.indexOf(subscriber) >= 0) {
+            if (__DEV__) {
+                console.warn('不需要重复添加订阅');
+            }
+            return;
+        }
+        this.subscribers.push(subscriber);
     }
-  }
 
-  broadcast() {
-    for (const sub of this.subscribers) {
-      sub.exec();
+    removeListener(subscriber: StoreSubscriber) {
+        const idx = this.subscribers.indexOf(subscriber);
+        if (idx >= 0) {
+            this.subscribers.splice(idx, 1);
+        }
     }
-  }
 
-  getSubscribers() {
-    if (__DEV__) {
-      return this.subscribers;
+    broadcast() {
+        for (const sub of this.subscribers) {
+            sub.exec();
+        }
     }
-    return null;
-  }
+
+    getSubscribers() {
+        if (__DEV__) {
+            return this.subscribers;
+        }
+        return null;
+    }
 }
 
 export default StorePublisher;

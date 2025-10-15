@@ -1,8 +1,8 @@
 {
-  "bootComponents": {
-    "Router": {}
-  },
-  "Render": {
-    "qualifier": "WebRender"
-  }
+    "bootComponents": {
+        "Router": {}
+    },
+    "Render": {
+        "qualifier": "WebRender"
+    }
 }

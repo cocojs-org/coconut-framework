@@ -12,47 +12,44 @@ import { Render } from 'coco-render';
 @router()
 @constructorParam()
 class HistoryRouter extends Router {
-  constructor(render: Render) {
-    super();
-    this.render = render;
-  }
-
-  handleRouteChange = () => {
-    const pathname = window.location.pathname;
-    const { pageComponent, params } = this.routeComponentMapper.match(pathname);
-    this.route.pathname = pathname;
-    this.route.params = params || {};
-    if (pageComponent) {
-      this.render.render(pageComponent);
-    } else {
-      // todo 404 page
+    constructor(render: Render) {
+        super();
+        this.render = render;
     }
-  };
 
-  init(application: Application) {
-    const routeComponentMap = application.getByClassMetadata(RouteMeta) as Map<
-      Class<any>,
-      RouteMeta
-    >;
-    this.routeComponentMapper = new RouteComponentMapper();
-    this.routeComponentMapper.init(routeComponentMap);
-    this.route = application.getComponent(Route);
-  }
+    handleRouteChange = () => {
+        const pathname = window.location.pathname;
+        const { pageComponent, params } = this.routeComponentMapper.match(pathname);
+        this.route.pathname = pathname;
+        this.route.params = params || {};
+        if (pageComponent) {
+            this.render.render(pageComponent);
+        } else {
+            // todo 404 page
+        }
+    };
 
-  start() {
-    window.addEventListener('popstate', this.handleRouteChange);
-    // 初始化渲染
-    this.handleRouteChange();
-  }
+    init(application: Application) {
+        const routeComponentMap = application.getByClassMetadata(RouteMeta) as Map<Class<any>, RouteMeta>;
+        this.routeComponentMapper = new RouteComponentMapper();
+        this.routeComponentMapper.init(routeComponentMap);
+        this.route = application.getComponent(Route);
+    }
 
-  removeListener() {
-    window.removeEventListener('popstate', this.handleRouteChange);
-  }
+    start() {
+        window.addEventListener('popstate', this.handleRouteChange);
+        // 初始化渲染
+        this.handleRouteChange();
+    }
 
-  public navigateTo(url: string) {
-    window.history.pushState({}, '', url);
-    this.handleRouteChange();
-  }
+    removeListener() {
+        window.removeEventListener('popstate', this.handleRouteChange);
+    }
+
+    public navigateTo(url: string) {
+        window.history.pushState({}, '', url);
+        this.handleRouteChange();
+    }
 }
 
 export default HistoryRouter;

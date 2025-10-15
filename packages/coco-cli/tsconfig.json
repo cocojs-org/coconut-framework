@@ -1,15 +1,15 @@
 {
-  "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dts-tmp",
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "target": "ES2020",
-    "lib": ["ES2020"],
-    "module": "node16",
-    "moduleResolution": "node16",
-    "skipLibCheck": true,
-    "typeRoots": ["../../types", "./node_modules/@types"]
-  },
-  "include": ["src"]
+    "compilerOptions": {
+        "rootDir": "src",
+        "outDir": "dts-tmp",
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "target": "ES2020",
+        "lib": ["ES2020"],
+        "module": "node16",
+        "moduleResolution": "node16",
+        "skipLibCheck": true,
+        "typeRoots": ["../../types", "./node_modules/@types"]
+    },
+    "include": ["src"]
 }

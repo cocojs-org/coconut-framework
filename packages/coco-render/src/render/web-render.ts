@@ -10,21 +10,21 @@ import Render from '../component/render';
  */
 @render()
 class WebRender extends Render {
-  container: HTMLElement;
+    container: HTMLElement;
 
-  init(application: Application) {
-    registerMvcApi(application, getMetaClassById);
-    this.container = document.getElementById('root');
-    if (!this.container) {
-      console.error('未找到根节点');
+    init(application: Application) {
+        registerMvcApi(application, getMetaClassById);
+        this.container = document.getElementById('root');
+        if (!this.container) {
+            console.error('未找到根节点');
+        }
     }
-  }
 
-  public render(component: any) {
-    return renderApp(jsx(component, undefined), this.container);
-  }
+    public render(component: any) {
+        return renderApp(jsx(component, undefined), this.container);
+    }
 
-  // todo unregisterMvcApi
+    // todo unregisterMvcApi
 }
 
 export default WebRender;

@@ -1,21 +1,17 @@
 {
-  "extends": ["../../tsconfig.json"],
-  "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "rootDir": "src",
-    "outDir": "dts-tmp",
-    "paths": {
-      "coco-ioc-container": ["../coco-ioc-container"],
-      "react": ["../react"],
-      "shared": ["../shared"]
-    }
-  },
-  "include": ["src"],
-  "exclude": ["src/__tests__"],
-  "references": [
-    { "path": "../coco-ioc-container" },
-    { "path": "../react" },
-    { "path": "../shared" }
-  ]
+    "extends": ["../../tsconfig.json"],
+    "compilerOptions": {
+        "composite": true,
+        "declaration": true,
+        "rootDir": "src",
+        "outDir": "dts-tmp",
+        "paths": {
+            "coco-ioc-container": ["../coco-ioc-container"],
+            "react": ["../react"],
+            "shared": ["../shared"]
+        }
+    },
+    "include": ["src"],
+    "exclude": ["src/__tests__"],
+    "references": [{ "path": "../coco-ioc-container" }, { "path": "../react" }, { "path": "../shared" }]
 }

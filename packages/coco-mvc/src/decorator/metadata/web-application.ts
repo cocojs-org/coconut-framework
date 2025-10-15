@@ -1,10 +1,4 @@
-import {
-  Metadata,
-  target,
-  Target,
-  configuration,
-  defineMetadataId,
-} from 'coco-ioc-container';
+import { Metadata, target, Target, configuration, defineMetadataId } from 'coco-ioc-container';
 
 /**
  * @public

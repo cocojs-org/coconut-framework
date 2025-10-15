@@ -1,10 +1,10 @@
 {
-  "private": true,
-  "name": "coco-render",
-  "types": "dist/index.d.ts",
-  "description": "渲染器",
-  "version": "0.0.0",
-  "scripts": {},
-  "author": "jiangchenguang",
-  "license": "MIT"
+    "private": true,
+    "name": "coco-render",
+    "types": "dist/index.d.ts",
+    "description": "渲染器",
+    "version": "0.0.0",
+    "scripts": {},
+    "author": "jiangchenguang",
+    "license": "MIT"
 }

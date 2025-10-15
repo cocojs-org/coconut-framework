@@ -8,13 +8,13 @@ import type Route from './route.ts';
  */
 @router()
 abstract class Router {
-  protected route: Route;
+    protected route: Route;
 
-  protected render: Render;
+    protected render: Render;
 
-  protected routeComponentMapper: RouteComponentMapper;
+    protected routeComponentMapper: RouteComponentMapper;
 
-  public abstract navigateTo(url: string): void;
+    public abstract navigateTo(url: string): void;
 }
 
 export default Router;

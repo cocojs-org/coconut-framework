@@ -11,12 +11,12 @@ export type Field = string;
 
 export type Kind = typeof KindClass | typeof KindField | typeof KindMethod;
 export type Context =
-  | ClassDecoratorContext
-  | ClassFieldDecoratorContext
-  | ClassMethodDecoratorContext
-  | ClassSetterDecoratorContext
-  | ClassGetterDecoratorContext
-  | ClassAccessorDecoratorContext;
+    | ClassDecoratorContext
+    | ClassFieldDecoratorContext
+    | ClassMethodDecoratorContext
+    | ClassSetterDecoratorContext
+    | ClassGetterDecoratorContext
+    | ClassAccessorDecoratorContext;
 
 /**
  * @public

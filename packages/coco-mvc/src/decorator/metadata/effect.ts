@@ -1,12 +1,4 @@
-import {
-  Metadata,
-  component,
-  SCOPE,
-  scope,
-  target,
-  Target,
-  defineMetadataId,
-} from 'coco-ioc-container';
+import { Metadata, component, SCOPE, scope, target, Target, defineMetadataId } from 'coco-ioc-container';
 
 /**
  * @public

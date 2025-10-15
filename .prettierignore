@@ -5,5 +5,7 @@ coverage
 .github
 .DS_Store
 docs
-packages/react-reconciler
+packages/react
 packages/react-dom
+packages/react-reconciler
+packages/react-shared

@@ -1,7 +1,7 @@
 const config = {
-  webpack: {
-    mode: 'development',
-  },
+    webpack: {
+        mode: 'development',
+    },
 };
 
 export default config;

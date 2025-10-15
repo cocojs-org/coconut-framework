@@ -1,151 +1,136 @@
 import {
-  type Context,
-  type Decorator,
-  KindClass,
-  KindField,
-  KindMethod,
-  KindGetter,
-  KindSetter,
-  KindAccessor,
+    type Context,
+    type Decorator,
+    KindClass,
+    KindField,
+    KindMethod,
+    KindGetter,
+    KindSetter,
+    KindAccessor,
 } from './decorator-context';
 export type { Decorator };
 import { isSubClassOf, once } from '../share/util';
 import { addDecoratorParams } from './decorator-exp-param';
-import {
-  addDecoratorOption,
-  type CreateDecoratorExpOption,
-} from './create-decorator-options';
+import { addDecoratorOption, type CreateDecoratorExpOption } from './create-decorator-options';
 import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
 import Metadata from '../metadata/create-metadata';
 
 let createdDecoratorMetadataSet: Set<Class<any>> = new Set();
 
 function checkIfMetadataCreateMoreThenOneDecorator(metadataClass: Class<any>) {
-  if (!createdDecoratorMetadataSet.has(metadataClass)) {
-    createdDecoratorMetadataSet.add(metadataClass);
-  } else {
-    throw new Error(
-      stringifyDiagnose(
-        createDiagnose(DiagnoseCode.CO10014, metadataClass.name)
-      )
-    );
-  }
+    if (!createdDecoratorMetadataSet.has(metadataClass)) {
+        createdDecoratorMetadataSet.add(metadataClass);
+    } else {
+        throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10014, metadataClass.name)));
+    }
 }
 
 interface DecoratorExp {
-  (userParam?: any): Decorator<DecoratorContext>;
+    (userParam?: any): Decorator<DecoratorContext>;
 }
 interface DecoratorExpWithDecoratorSelf<T extends any> {
-  (userParam?: T): Decorator<DecoratorContext>;
-  decorateSelf: (userParam?: T) => Decorator<DecoratorContext>;
+    (userParam?: T): Decorator<DecoratorContext>;
+    decorateSelf: (userParam?: T) => Decorator<DecoratorContext>;
 }
 
 function createDecoratorExpFactory(fn: any) {
-  return function <UserParam, C extends Context>(
-    metadataClass?: MetadataClass<any>,
-    option?: CreateDecoratorExpOption
-  ): DecoratorExp | DecoratorExpWithDecoratorSelf<any> {
-    const createByClass = typeof metadataClass === 'function';
-    let MetadataCls = null;
-    if (createByClass) {
-      MetadataCls = metadataClass;
-      addDecoratorOption(MetadataCls, option);
-      checkIfMetadataCreateMoreThenOneDecorator(MetadataCls);
-    }
-
-    function decorateSelf(userParam: UserParam) {
-      return function (beDecoratedCls, context: C) {
-        switch (context.kind) {
-          case KindClass: {
-            if (MetadataCls === null) {
-              MetadataCls = beDecoratedCls;
-              addDecoratorOption(MetadataCls, option);
-              checkIfMetadataCreateMoreThenOneDecorator(MetadataCls);
-            } else {
-              throw new Error('decorateSelf函数只能调用一次');
-            }
-            fn(beDecoratedCls, {
-              metadataKind: KindClass,
-              metadataClass: MetadataCls,
-              metadataParam: userParam,
-            });
-            // 修改prototype
-            if (
-              typeof MetadataCls?.classDecoratorModifyPrototype === 'function'
-            ) {
-              MetadataCls?.classDecoratorModifyPrototype(
-                beDecoratedCls.prototype
-              );
-            }
-            break;
-          }
-          default:
-            throw new Error(`暂不支持装饰${context.kind}类型。`);
+    return function <UserParam, C extends Context>(
+        metadataClass?: MetadataClass<any>,
+        option?: CreateDecoratorExpOption
+    ): DecoratorExp | DecoratorExpWithDecoratorSelf<any> {
+        const createByClass = typeof metadataClass === 'function';
+        let MetadataCls = null;
+        if (createByClass) {
+            MetadataCls = metadataClass;
+            addDecoratorOption(MetadataCls, option);
+            checkIfMetadataCreateMoreThenOneDecorator(MetadataCls);
         }
-        return undefined;
-      };
-    }
 
-    function decoratorExpress(userParam: UserParam) {
-      return function (beDecoratedCls, context: C) {
-        switch (context.kind) {
-          case KindClass: {
-            if (MetadataCls === null) {
-              throw new Error('你需要先执行bindMetadata函数');
-            }
-            fn(beDecoratedCls, {
-              metadataKind: KindClass,
-              metadataClass: MetadataCls,
-              metadataParam: userParam,
-            });
-            // 修改prototype
-            if (
-              typeof MetadataCls?.classDecoratorModifyPrototype === 'function'
-            ) {
-              MetadataCls?.classDecoratorModifyPrototype(
-                beDecoratedCls.prototype
-              );
-            }
-            break;
-          }
-          case KindGetter:
-          case KindSetter:
-          case KindAccessor:
-            throw new Error(`暂不支持装饰${context.kind}类型。`);
-          case KindMethod:
-          case KindField:
-          default:
-            // ignore
-            break;
+        function decorateSelf(userParam: UserParam) {
+            return function (beDecoratedCls, context: C) {
+                switch (context.kind) {
+                    case KindClass: {
+                        if (MetadataCls === null) {
+                            MetadataCls = beDecoratedCls;
+                            addDecoratorOption(MetadataCls, option);
+                            checkIfMetadataCreateMoreThenOneDecorator(MetadataCls);
+                        } else {
+                            throw new Error('decorateSelf函数只能调用一次');
+                        }
+                        fn(beDecoratedCls, {
+                            metadataKind: KindClass,
+                            metadataClass: MetadataCls,
+                            metadataParam: userParam,
+                        });
+                        // 修改prototype
+                        if (typeof MetadataCls?.classDecoratorModifyPrototype === 'function') {
+                            MetadataCls?.classDecoratorModifyPrototype(beDecoratedCls.prototype);
+                        }
+                        break;
+                    }
+                    default:
+                        throw new Error(`暂不支持装饰${context.kind}类型。`);
+                }
+                return undefined;
+            };
         }
-        const initializerOnce = once(function initializer() {
-          switch (context.kind) {
-            case KindField:
-            case KindMethod:
-              fn(this.constructor, {
-                metadataKind: context.kind,
-                metadataClass: MetadataCls,
-                metadataParam: userParam,
-                field: context.name as string,
-              });
-              break;
-            case KindClass:
-              // ignore
-              break;
-          }
-        });
-        context.addInitializer(function () {
-          initializerOnce(this);
-        });
-        return undefined;
-      };
-    }
 
-    if (!createByClass) {
-      decoratorExpress.decorateSelf = decorateSelf;
-    }
-    return decoratorExpress;
-  };
+        function decoratorExpress(userParam: UserParam) {
+            return function (beDecoratedCls, context: C) {
+                switch (context.kind) {
+                    case KindClass: {
+                        if (MetadataCls === null) {
+                            throw new Error('你需要先执行bindMetadata函数');
+                        }
+                        fn(beDecoratedCls, {
+                            metadataKind: KindClass,
+                            metadataClass: MetadataCls,
+                            metadataParam: userParam,
+                        });
+                        // 修改prototype
+                        if (typeof MetadataCls?.classDecoratorModifyPrototype === 'function') {
+                            MetadataCls?.classDecoratorModifyPrototype(beDecoratedCls.prototype);
+                        }
+                        break;
+                    }
+                    case KindGetter:
+                    case KindSetter:
+                    case KindAccessor:
+                        throw new Error(`暂不支持装饰${context.kind}类型。`);
+                    case KindMethod:
+                    case KindField:
+                    default:
+                        // ignore
+                        break;
+                }
+                const initializerOnce = once(function initializer() {
+                    switch (context.kind) {
+                        case KindField:
+                        case KindMethod:
+                            fn(this.constructor, {
+                                metadataKind: context.kind,
+                                metadataClass: MetadataCls,
+                                metadataParam: userParam,
+                                field: context.name as string,
+                            });
+                            break;
+                        case KindClass:
+                            // ignore
+                            break;
+                    }
+                });
+                context.addInitializer(function () {
+                    initializerOnce(this);
+                });
+                return undefined;
+            };
+        }
+
+        if (!createByClass) {
+            decoratorExpress.decorateSelf = decorateSelf;
+        }
+        return decoratorExpress;
+    };
 }
 
 const doCreateDecoratorExp = createDecoratorExpFactory(addDecoratorParams);
@@ -155,16 +140,11 @@ const doCreateDecoratorExp = createDecoratorExpFactory(addDecoratorParams);
  * 适用于装饰器不装饰自己元数据类的场景
  * @public
  */
-function createDecoratorExp(
-  metadataCls: Class<any>,
-  option?: CreateDecoratorExpOption
-): DecoratorExp {
-  if (!isSubClassOf(metadataCls, Metadata)) {
-    throw new Error(
-      stringifyDiagnose(createDiagnose(DiagnoseCode.CO10018, metadataCls?.name))
-    );
-  }
-  return doCreateDecoratorExp(metadataCls, option) as DecoratorExp;
+function createDecoratorExp(metadataCls: Class<any>, option?: CreateDecoratorExpOption): DecoratorExp {
+    if (!isSubClassOf(metadataCls, Metadata)) {
+        throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10018, metadataCls?.name)));
+    }
+    return doCreateDecoratorExp(metadataCls, option) as DecoratorExp;
 }
 
 /**
@@ -172,19 +152,14 @@ function createDecoratorExp(
  * 适用于装饰器装饰自己元数据类的场景
  * @public
  */
-function createPlaceholderDecoratorExp<T>(
-  option?: CreateDecoratorExpOption
-): DecoratorExpWithDecoratorSelf<T> {
-  return doCreateDecoratorExp(
-    undefined,
-    option
-  ) as DecoratorExpWithDecoratorSelf<T>;
+function createPlaceholderDecoratorExp<T>(option?: CreateDecoratorExpOption): DecoratorExpWithDecoratorSelf<T> {
+    return doCreateDecoratorExp(undefined, option) as DecoratorExpWithDecoratorSelf<T>;
 }
 
 export {
-  type DecoratorExp,
-  type DecoratorExpWithDecoratorSelf,
-  createDecoratorExp,
-  createPlaceholderDecoratorExp,
-  createDecoratorExpFactory,
+    type DecoratorExp,
+    type DecoratorExpWithDecoratorSelf,
+    createDecoratorExp,
+    createPlaceholderDecoratorExp,
+    createDecoratorExpFactory,
 };

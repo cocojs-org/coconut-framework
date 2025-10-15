@@ -10,24 +10,24 @@ import { createApp, createLib } from './create';
  * coco app dev 开发
  */
 function execAppCmd(action: string) {
-  switch (action) {
-    case 'create': {
-      createApp();
-      break;
+    switch (action) {
+        case 'create': {
+            createApp();
+            break;
+        }
+        case 'build': {
+            buildApp();
+            break;
+        }
+        case 'dev': {
+            devApp();
+            break;
+        }
+        default: {
+            console.log(`Unknown app action: ${action}`);
+            break;
+        }
     }
-    case 'build': {
-      buildApp();
-      break;
-    }
-    case 'dev': {
-      devApp();
-      break;
-    }
-    default: {
-      console.log(`Unknown app action: ${action}`);
-      break;
-    }
-  }
 }
 
 /**
@@ -36,42 +36,42 @@ function execAppCmd(action: string) {
  * coco lib build 构建
  */
 function execLibCmd(action: string) {
-  switch (action) {
-    case 'create': {
-      createLib();
-      break;
+    switch (action) {
+        case 'create': {
+            createLib();
+            break;
+        }
+        case 'build': {
+            buildLib();
+            break;
+        }
+        case 'dev': {
+            devApp();
+            break;
+        }
+        default: {
+            console.log(`Unknown lib action: ${action}`);
+            break;
+        }
     }
-    case 'build': {
-      buildLib();
-      break;
-    }
-    case 'dev': {
-      devApp();
-      break;
-    }
-    default: {
-      console.log(`Unknown lib action: ${action}`);
-      break;
-    }
-  }
 }
 
 function cli(command: string, domain: string, rest: string[]) {
-  const [action] = rest;
-  switch (domain) {
-    case 'app': {
-      execAppCmd(action);
-      break;
+    const [action] = rest;
+    switch (domain) {
+        case 'app': {
+            execAppCmd(action);
+            break;
+        }
+        case 'lib': {
+            execLibCmd(action);
+            break;
+        }
+        default: {
+            console.log(`Unknown domain: ${domain}`);
+            break;
+        }
     }
-    case 'lib': {
-      execLibCmd(action);
-      break;
-    }
-    default: {
-      console.log(`Unknown domain: ${domain}`);
-      break;
-    }
-  }
 }
 import { _test_helper } from './__tests__';
 

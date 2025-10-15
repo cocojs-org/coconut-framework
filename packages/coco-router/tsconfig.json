@@ -1,23 +1,23 @@
 {
-  "extends": ["../../tsconfig.json"],
-  "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "rootDir": "src",
-    "outDir": "dts-tmp",
-    "paths": {
-      "coco-ioc-container": ["../coco-ioc-container"],
-      "coco-render": ["../coco-render"],
-      "coco-view": ["../coco-view"],
-      "shared": ["../shared"]
-    }
-  },
-  "include": ["src"],
-  "exclude": ["src/__tests__"],
-  "references": [
-    { "path": "../coco-ioc-container" },
-    { "path": "../coco-render" },
-    { "path": "../coco-view" },
-    { "path": "../shared" }
-  ]
+    "extends": ["../../tsconfig.json"],
+    "compilerOptions": {
+        "composite": true,
+        "declaration": true,
+        "rootDir": "src",
+        "outDir": "dts-tmp",
+        "paths": {
+            "coco-ioc-container": ["../coco-ioc-container"],
+            "coco-render": ["../coco-render"],
+            "coco-view": ["../coco-view"],
+            "shared": ["../shared"]
+        }
+    },
+    "include": ["src"],
+    "exclude": ["src/__tests__"],
+    "references": [
+        { "path": "../coco-ioc-container" },
+        { "path": "../coco-render" },
+        { "path": "../coco-view" },
+        { "path": "../shared" }
+    ]
 }

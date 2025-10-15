@@ -1,20 +1,20 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
-  "mainEntryPointFilePath": "./dts-tmp/index.d.ts",
-  "apiReport": {
-    "enabled": false
-  },
-  "docModel": {
-    "enabled": false
-  },
-  "dtsRollup": {
-    "enabled": true,
-    "untrimmedFilePath": "./dist/index.d.ts"
-  },
-  "compiler": {
-    "tsconfigFilePath": "./tsconfig.api-extractor.json"
-  },
-  "tsdocMetadata": {
-    "enabled": false
-  }
+    "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+    "mainEntryPointFilePath": "./dts-tmp/index.d.ts",
+    "apiReport": {
+        "enabled": false
+    },
+    "docModel": {
+        "enabled": false
+    },
+    "dtsRollup": {
+        "enabled": true,
+        "untrimmedFilePath": "./dist/index.d.ts"
+    },
+    "compiler": {
+        "tsconfigFilePath": "./tsconfig.api-extractor.json"
+    },
+    "tsdocMetadata": {
+        "enabled": false
+    }
 }

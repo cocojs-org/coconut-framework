@@ -4,27 +4,27 @@
  */
 const map = new Map();
 export const NAME = {
-  scheduleUpdateOnFiber: 'scheduleUpdateOnFiber',
-  throwException: 'throwException',
-  dispatchEventForPluginEventSystem: 'dispatchEventForPluginEventSystem',
-  accumulateTwoPhaseListeners: 'accumulateTwoPhaseListeners',
-  accumulateSinglePhaseListeners: 'accumulateSinglePhaseListeners',
+    scheduleUpdateOnFiber: 'scheduleUpdateOnFiber',
+    throwException: 'throwException',
+    dispatchEventForPluginEventSystem: 'dispatchEventForPluginEventSystem',
+    accumulateTwoPhaseListeners: 'accumulateTwoPhaseListeners',
+    accumulateSinglePhaseListeners: 'accumulateSinglePhaseListeners',
 };
 
 export function register(name: string, fn: any) {
-  if (!map.has(name)) {
-    map.set(name, fn);
-  } else if (__DEV__) {
-    console.warn('不应该重复注册函数', name, fn);
-  }
+    if (!map.has(name)) {
+        map.set(name, fn);
+    } else if (__DEV__) {
+        console.warn('不应该重复注册函数', name, fn);
+    }
 }
 
 export function get(name: string) {
-  if (NAME[name]) {
-    return map.get(name);
-  }
+    if (NAME[name]) {
+        return map.get(name);
+    }
 }
 
 export function clear() {
-  map.clear();
+    map.clear();
 }

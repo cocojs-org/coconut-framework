@@ -6,5 +6,5 @@ import { createDecoratorExp, type Decorator } from '../create-decorator-exp';
 import Component from './metadata/component';
 
 export default createDecoratorExp(Component) as (
-  value?: Class<any>
+    value?: Class<any>
 ) => Decorator<ClassDecoratorContext | ClassMethodDecoratorContext>;

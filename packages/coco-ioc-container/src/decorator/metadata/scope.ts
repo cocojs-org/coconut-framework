@@ -7,10 +7,10 @@ import { defineMetadataId } from '../../metadata/id';
  * @public
  */
 export enum SCOPE {
-  // 单例模式
-  Singleton = 0,
-  // 多例模式：每次new新实例
-  Prototype = 1,
+    // 单例模式
+    Singleton = 0,
+    // 多例模式：每次new新实例
+    Prototype = 1,
 }
 
 /**
@@ -18,7 +18,7 @@ export enum SCOPE {
  */
 @target([Target.Type.Class, Target.Type.Method])
 class Scope extends Metadata {
-  value: SCOPE = SCOPE.Singleton;
+    value: SCOPE = SCOPE.Singleton;
 }
 
 defineMetadataId(Scope);

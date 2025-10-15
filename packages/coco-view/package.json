@@ -1,10 +1,10 @@
 {
-  "private": true,
-  "name": "coco-view",
-  "description": "视图组件相关。",
-  "types": "dist/index.d.ts",
-  "version": "0.0.0",
-  "scripts": {},
-  "author": "jiangchenguang",
-  "license": "MIT"
+    "private": true,
+    "name": "coco-view",
+    "description": "视图组件相关。",
+    "types": "dist/index.d.ts",
+    "version": "0.0.0",
+    "scripts": {},
+    "author": "jiangchenguang",
+    "license": "MIT"
 }

@@ -12,7 +12,7 @@ import { defineMetadataId } from '../../metadata/id';
  */
 @target([Target.Type.Class, Target.Type.Method])
 class Component extends Metadata {
-  value?: Class<any>;
+    value?: Class<any>;
 }
 
 defineMetadataId(Component);

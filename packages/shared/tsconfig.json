@@ -1,10 +1,10 @@
 {
-  "extends": ["../../tsconfig.json"],
-  "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "rootDir": "src",
-    "outDir": "dts-tmp"
-  },
-  "include": ["src"]
+    "extends": ["../../tsconfig.json"],
+    "compilerOptions": {
+        "composite": true,
+        "declaration": true,
+        "rootDir": "src",
+        "outDir": "dts-tmp"
+    },
+    "include": ["src"]
 }

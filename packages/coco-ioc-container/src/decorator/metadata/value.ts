@@ -8,7 +8,7 @@ import { defineMetadataId } from '../../metadata/id';
  */
 @target([Target.Type.Field])
 class Value extends Metadata {
-  value: string;
+    value: string;
 }
 
 defineMetadataId(Value);

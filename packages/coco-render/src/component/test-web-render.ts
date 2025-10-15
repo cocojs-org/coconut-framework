@@ -7,18 +7,18 @@ import Render from './render';
 
 @render()
 class TestWebRender extends Render {
-  container: HTMLElement;
+    container: HTMLElement;
 
-  init(application: Application) {
-    registerMvcApi(application, getMetaClassById);
-    this.container = document.createElement('div');
-  }
+    init(application: Application) {
+        registerMvcApi(application, getMetaClassById);
+        this.container = document.createElement('div');
+    }
 
-  public render(component: any) {
-    return renderApp(jsx(component, undefined), this.container);
-  }
+    public render(component: any) {
+        return renderApp(jsx(component, undefined), this.container);
+    }
 
-  // todo unregisterMvcApi
+    // todo unregisterMvcApi
 }
 
 export default TestWebRender;

@@ -1,15 +1,15 @@
 {
-  "extends": ["../../tsconfig.json"],
-  "compilerOptions": {
-    "composite": true,
-    "declaration": true,
-    "rootDir": "src",
-    "outDir": "dts-tmp",
-    "paths": {
-      "shared": ["../shared/src"]
-    }
-  },
-  "include": ["src"],
-  "exclude": ["src/__tests__"],
-  "references": [{ "path": "../shared" }]
+    "extends": ["../../tsconfig.json"],
+    "compilerOptions": {
+        "composite": true,
+        "declaration": true,
+        "rootDir": "src",
+        "outDir": "dts-tmp",
+        "paths": {
+            "shared": ["../shared/src"]
+        }
+    },
+    "include": ["src"],
+    "exclude": ["src/__tests__"],
+    "references": [{ "path": "../shared" }]
 }

@@ -4,7 +4,7 @@
  * @returns
  */
 function reactiveAssignField(reactiveField: string) {
-  return `${reactiveField}Setter`;
+    return `${reactiveField}Setter`;
 }
 
 export { reactiveAssignField };

@@ -1,8 +1,8 @@
 {
-  "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["dom"],
-    "jsx": "preserve",
-    "resolveJsonModule": true
-  }
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": ["dom"],
+        "jsx": "preserve",
+        "resolveJsonModule": true
+    }
 }

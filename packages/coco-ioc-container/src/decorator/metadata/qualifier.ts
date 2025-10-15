@@ -8,7 +8,7 @@ import { defineMetadataId } from '../../metadata/id';
  */
 @target([Target.Type.Field])
 class Qualifier extends Metadata {
-  value: string;
+    value: string;
 }
 
 defineMetadataId(Qualifier);

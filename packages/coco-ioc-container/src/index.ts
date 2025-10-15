@@ -16,13 +16,13 @@ export { default as qualifier } from './decorator/qualifier';
 export { default as Value } from './decorator/metadata/value';
 export { default as value } from './decorator/value';
 export {
-  createDecoratorExp,
-  createPlaceholderDecoratorExp,
-  KindClass,
-  KindField,
-  KindMethod,
-  type Decorator,
-  type Field,
+    createDecoratorExp,
+    createPlaceholderDecoratorExp,
+    KindClass,
+    KindField,
+    KindMethod,
+    type Decorator,
+    type Field,
 } from './create-decorator-exp';
 export { default as Application } from './application';
 export { default as PropertiesConfig } from './properties/properties-config';

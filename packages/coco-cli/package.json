@@ -1,51 +1,51 @@
 {
-  "name": "@cocojs/cli",
-  "description": "命令行工具（脚手架、开发、构建）。",
-  "version": "0.0.1-alpha202510092123",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "bin": {
-    "coco": "bin/coco.js"
-  },
-  "files": [
-    "bin",
-    "template-app",
-    "template-lib",
-    "runtime-config",
-    "dist"
-  ],
-  "scripts": {},
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
-  "dependencies": {
-    "@babel/core": "^7.26.7",
-    "@babel/generator": "^7.26.5",
-    "@babel/parser": "^7.26.7",
-    "@babel/plugin-proposal-decorators": "^7.25.9",
-    "@babel/plugin-transform-react-jsx": "^7.25.9",
-    "@babel/preset-typescript": "^7.26.0",
-    "@babel/traverse": "^7.26.7",
-    "@babel/types": "^7.26.7",
-    "@cocojs/type-extractor": "^0.0.16",
-    "@rollup/plugin-babel": "^6.0.4",
-    "@rollup/plugin-typescript": "^12.1.2",
-    "babel-loader": "^10.0.0",
-    "chokidar": "^4.0.3",
-    "ejs": "^3.1.10",
-    "fs-extra": "^11.2.0",
-    "glob": "9.3.5",
-    "html-webpack-plugin": "^5.6.3",
-    "prompts": "^2.4.2",
-    "rollup": "^4.36.0",
-    "terser-webpack-plugin": "^5.3.14",
-    "ts-loader": "^9.5.2",
-    "webpack": "^5.98.0",
-    "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.0",
-    "webpack-merge": "^6.0.1"
-  },
-  "devDependencies": {
-    "@types/node": "^22.15.18"
-  }
+    "name": "@cocojs/cli",
+    "description": "命令行工具（脚手架、开发、构建）。",
+    "version": "0.0.1-alpha202510092123",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "bin": {
+        "coco": "bin/coco.js"
+    },
+    "files": [
+        "bin",
+        "template-app",
+        "template-lib",
+        "runtime-config",
+        "dist"
+    ],
+    "scripts": {},
+    "keywords": [],
+    "author": "",
+    "license": "MIT",
+    "dependencies": {
+        "@babel/core": "^7.26.7",
+        "@babel/generator": "^7.26.5",
+        "@babel/parser": "^7.26.7",
+        "@babel/plugin-proposal-decorators": "^7.25.9",
+        "@babel/plugin-transform-react-jsx": "^7.25.9",
+        "@babel/preset-typescript": "^7.26.0",
+        "@babel/traverse": "^7.26.7",
+        "@babel/types": "^7.26.7",
+        "@cocojs/type-extractor": "^0.0.16",
+        "@rollup/plugin-babel": "^6.0.4",
+        "@rollup/plugin-typescript": "^12.1.2",
+        "babel-loader": "^10.0.0",
+        "chokidar": "^4.0.3",
+        "ejs": "^3.1.10",
+        "fs-extra": "^11.2.0",
+        "glob": "9.3.5",
+        "html-webpack-plugin": "^5.6.3",
+        "prompts": "^2.4.2",
+        "rollup": "^4.36.0",
+        "terser-webpack-plugin": "^5.3.14",
+        "ts-loader": "^9.5.2",
+        "webpack": "^5.98.0",
+        "webpack-cli": "^6.0.1",
+        "webpack-dev-server": "^5.2.0",
+        "webpack-merge": "^6.0.1"
+    },
+    "devDependencies": {
+        "@types/node": "^22.15.18"
+    }
 }

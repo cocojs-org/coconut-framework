@@ -8,7 +8,7 @@ import { defineMetadataId } from '../../metadata/id';
  */
 @target([Target.Type.Field])
 class Autowired extends Metadata {
-  value: Class<any>;
+    value: Class<any>;
 }
 
 defineMetadataId(Autowired);

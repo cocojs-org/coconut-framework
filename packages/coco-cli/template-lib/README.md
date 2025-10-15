@@ -21,9 +21,9 @@ npm run build
 
 ### 样式文件
 
-- `src/input.css` - 样式入口文件
-- `dist/bundle.css` - 构建后的样式文件
-- `tailwind.config.js` - Tailwind 配置文件
+-   `src/input.css` - 样式入口文件
+-   `dist/bundle.css` - 构建后的样式文件
+-   `tailwind.config.js` - Tailwind 配置文件
 
 ### 使用方式
 

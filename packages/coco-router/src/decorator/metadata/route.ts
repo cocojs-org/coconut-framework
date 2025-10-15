@@ -5,7 +5,7 @@ import { Metadata, target, Target, defineMetadataId } from 'coco-ioc-container';
  */
 @target([Target.Type.Class])
 class Route extends Metadata {
-  value: string;
+    value: string;
 }
 
 defineMetadataId(Route);

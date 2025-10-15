@@ -1,10 +1,4 @@
-import {
-  component,
-  Metadata,
-  Target,
-  target,
-  defineMetadataId,
-} from 'coco-ioc-container';
+import { component, Metadata, Target, target, defineMetadataId } from 'coco-ioc-container';
 
 @target([Target.Type.Class])
 @component()
