@@ -303,16 +303,9 @@ function getMetadata(Cls?: Class<any>) {
         if (config) {
             const { classMetadata } = config;
             for (const metadata of classMetadata) {
-                let dependencies;
-                if (metadata.constructor === Cls) {
-                    // 自己装饰自己
-                    dependencies = [];
-                } else {
-                    dependencies = getMetadata(metadata.constructor as Class<any>);
-                }
                 result.push({
                     metadata,
-                    dependencies,
+                    dependencies: [],
                 });
             }
         }

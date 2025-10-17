@@ -8,38 +8,18 @@
 import { createDiagnose, DiagnoseCode, printDiagnose, stringifyDiagnose } from 'shared';
 import Metadata from './create-metadata';
 import { MetaMetadata } from './all-metadata';
+import Id from '../decorator/metadata/id';
 
 // 元数据类本身和自身id的映射
 const idMetadataClassMap: Map<string, Metadata> = new Map();
 
 /**
- * 为元数据类添加id
- * @param MetadataClass 元数据类
- * @param prefix id的前缀，用于区分不同的应用或类库，避免冲突
- */
-function defineMetadataId(MetadataClass: Class<any>, prefix: string = ''): void {
-    const descriptor = Object.getOwnPropertyDescriptor(MetadataClass, 'id');
-    if (descriptor) {
-        if (descriptor.writable) {
-            console.error(`框架会在类的上添加id属性，${MetadataClass.name} 原本的id属性会被覆盖`);
-        } else {
-            throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10015, MetadataClass.name)));
-        }
-    }
-    Object.defineProperty(MetadataClass, 'id', {
-        value: prefix + MetadataClass.name,
-        enumerable: false,
-        configurable: false,
-        writable: false,
-    });
-}
-
-/**
  * 保存元数据类本身，方便运行时被调用
  */
 function buildMetaClassIdMap(metaMetadataMap: Map<Class<Metadata>, MetaMetadata>) {
-    for (const cls of metaMetadataMap.keys()) {
-        const id: any = cls['id'];
+    for (const [cls, metadataList] of metaMetadataMap.entries()) {
+        const idMetadata = metadataList.classMetadata.find((m) => m.constructor === Id) as Id | undefined;
+        const id = idMetadata ? idMetadata.value : cls.name; // 如果用户没有显式设置id，则使用类名作为id
         if (typeof id !== 'string' || !id) {
             throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10016, cls.name)));
         }
@@ -58,4 +38,4 @@ function getMetaClassById(id: string) {
     }
 }
 
-export { defineMetadataId, buildMetaClassIdMap, getMetaClassById };
+export { buildMetaClassIdMap, getMetaClassById };

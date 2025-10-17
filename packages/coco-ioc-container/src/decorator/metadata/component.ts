@@ -1,7 +1,7 @@
 import Metadata from '../../metadata/create-metadata';
 import Target from './target';
 import target from '../target';
-import { defineMetadataId } from '../../metadata/id';
+import id from '../id';
 
 /**
  * Component不添加@scope(SCOPE.Singleton)的原因：
@@ -10,10 +10,10 @@ import { defineMetadataId } from '../../metadata/id';
 /**
  * @public
  */
+@id('Component')
 @target([Target.Type.Class, Target.Type.Method])
 class Component extends Metadata {
     value?: Class<any>;
 }
 
-defineMetadataId(Component);
 export default Component;

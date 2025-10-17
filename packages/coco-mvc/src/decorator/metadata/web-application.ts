@@ -1,11 +1,11 @@
-import { Metadata, target, Target, configuration, defineMetadataId } from 'coco-ioc-container';
+import { Metadata, target, Target, configuration, id } from 'coco-ioc-container';
 
 /**
  * @public
  */
+@id('WebApplication')
 @target([Target.Type.Class])
 @configuration()
 class WebApplication extends Metadata {}
 
-defineMetadataId(WebApplication);
 export default WebApplication;

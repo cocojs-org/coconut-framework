@@ -1,10 +1,11 @@
 import Metadata from '../../metadata/create-metadata';
 import target, { Type } from '../target';
-import { defineMetadataId } from '../../metadata/id';
+import id from '../id';
 
 /**
  * @public
  */
+@id('Target')
 @target.decorateSelf([Type.Class])
 class Target extends Metadata {
     static Type = Type;
@@ -12,5 +13,4 @@ class Target extends Metadata {
     value: Type[];
 }
 
-defineMetadataId(Target);
 export default Target;

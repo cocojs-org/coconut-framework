@@ -44,19 +44,5 @@ describe('decorator', () => {
             },
         ]);
         expect(asExpected).toBe(true);
-        const r1 = cocoMvc.checkClassMetadataAsExpected(Target, [
-            {
-                Metadata: Target,
-                fieldValues: { value: [Target.Type.Class] },
-            },
-        ]);
-        expect(r1).toEqual(true);
-        const r2 = cocoMvc.checkClassMetadataAsExpected(Component, [
-            {
-                Metadata: Target,
-                fieldValues: { value: [Target.Type.Class, Target.Type.Method] },
-            },
-        ]);
-        expect(r2).toEqual(true);
     });
 });

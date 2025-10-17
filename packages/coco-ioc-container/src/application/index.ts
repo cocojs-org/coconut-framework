@@ -7,10 +7,18 @@ import {
     findClassMetadata,
     listFieldByMetadataCls,
 } from '../metadata';
-import { get, clear as clearDecoratorParams } from '../create-decorator-exp/decorator-exp-param';
+import {
+    get,
+    clear as clearDecoratorParams,
+    replacePlaceholderMetaClassParams2RealMetadataClassParams,
+} from '../create-decorator-exp/decorator-exp-param';
 import { buildIocComponentDefinition } from '../ioc-container/ioc-component-definition';
 import Qualifier from '../decorator/metadata/qualifier';
 import PropertiesConfig from '../properties/properties-config';
+import {
+    mergePlaceholderClass2RealMetadataClassRelation,
+    getPlaceholderClassMap2RealMetadataClass,
+} from '../create-decorator-exp/create-decorator-options';
 
 /**
  * 表示一个web应用实例
@@ -28,8 +36,15 @@ class Application {
      * 在测试时，组件是在执行到对应的行装饰器才会执行，所以需要先收集在启动。
      */
     public start() {
-        // 收集所有的装饰器参数
+        // 收集field和method装饰器参数
         this.collectFieldOrMethodDecoratorParams();
+
+        {
+            // 创建装饰器表达式的渲染中，占位的元数据类替换成真实的元数据类
+            mergePlaceholderClass2RealMetadataClassRelation();
+            // 收集到的所有的装饰器参数，占位的元数据类替换成真实的元数据类
+            replacePlaceholderMetaClassParams2RealMetadataClassParams(getPlaceholderClassMap2RealMetadataClass());
+        }
 
         // 用装饰器参数初始化元数据数据
         buildMetadata(get());

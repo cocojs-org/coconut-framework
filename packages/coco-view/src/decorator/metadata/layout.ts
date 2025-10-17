@@ -1,12 +1,12 @@
-import { Metadata, target, Target, defineMetadataId } from 'coco-ioc-container';
+import { Metadata, target, Target, id } from 'coco-ioc-container';
 import view from '../view';
 
 /**
  * @public
  */
+@id('Layout')
 @target([Target.Type.Class])
 @view()
 class Layout extends Metadata {}
 
-defineMetadataId(Layout);
 export default Layout;

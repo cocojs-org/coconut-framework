@@ -10,8 +10,12 @@ import {
 } from './decorator-context';
 export type { Decorator };
 import { isSubClassOf, once } from '../share/util';
-import { addDecoratorParams } from './decorator-exp-param';
-import { addDecoratorOption, type CreateDecoratorExpOption } from './create-decorator-options';
+import { addDecoratorParams, IAddDecoratorParams } from './decorator-exp-param';
+import {
+    addCreateDecoratorOption,
+    addPlaceholderClassToRealMetadataClassRelation,
+    type CreateDecoratorExpOption,
+} from './create-decorator-options';
 import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
 import Metadata from '../metadata/create-metadata';
 
@@ -33,38 +37,37 @@ interface DecoratorExpWithDecoratorSelf<T extends any> {
     decorateSelf: (userParam?: T) => Decorator<DecoratorContext>;
 }
 
-function createDecoratorExpFactory(fn: any) {
+function createDecoratorExpFactory(fn: IAddDecoratorParams) {
     return function <UserParam, C extends Context>(
-        metadataClass?: MetadataClass<any>,
+        isPlaceholderExp: boolean,
+        metadataClass: MetadataClass<any>,
         option?: CreateDecoratorExpOption
     ): DecoratorExp | DecoratorExpWithDecoratorSelf<any> {
-        const createByClass = typeof metadataClass === 'function';
-        let MetadataCls = null;
-        if (createByClass) {
-            MetadataCls = metadataClass;
-            addDecoratorOption(MetadataCls, option);
-            checkIfMetadataCreateMoreThenOneDecorator(MetadataCls);
+        const MetaClsOrPlaceholderMetaCls = metadataClass;
+        addCreateDecoratorOption(isPlaceholderExp, MetaClsOrPlaceholderMetaCls, option);
+        if (!isPlaceholderExp) {
+            checkIfMetadataCreateMoreThenOneDecorator(MetaClsOrPlaceholderMetaCls);
         }
 
         function decorateSelf(userParam: UserParam) {
             return function (beDecoratedCls, context: C) {
                 switch (context.kind) {
                     case KindClass: {
-                        if (MetadataCls === null) {
-                            MetadataCls = beDecoratedCls;
-                            addDecoratorOption(MetadataCls, option);
-                            checkIfMetadataCreateMoreThenOneDecorator(MetadataCls);
+                        if (isPlaceholderExp) {
+                            addPlaceholderClassToRealMetadataClassRelation(MetaClsOrPlaceholderMetaCls, beDecoratedCls);
+                            checkIfMetadataCreateMoreThenOneDecorator(beDecoratedCls);
                         } else {
                             throw new Error('decorateSelf函数只能调用一次');
                         }
-                        fn(beDecoratedCls, {
+                        fn(isPlaceholderExp, beDecoratedCls, {
                             metadataKind: KindClass,
-                            metadataClass: MetadataCls,
+                            metadataClass: MetaClsOrPlaceholderMetaCls,
                             metadataParam: userParam,
                         });
                         // 修改prototype
-                        if (typeof MetadataCls?.classDecoratorModifyPrototype === 'function') {
-                            MetadataCls?.classDecoratorModifyPrototype(beDecoratedCls.prototype);
+                        // TODO: 下面应该判断的是beDecoratedCls?.classDecoratorModifyPrototype
+                        if (typeof MetaClsOrPlaceholderMetaCls?.classDecoratorModifyPrototype === 'function') {
+                            MetaClsOrPlaceholderMetaCls?.classDecoratorModifyPrototype(beDecoratedCls.prototype);
                         }
                         break;
                     }
@@ -79,17 +82,14 @@ function createDecoratorExpFactory(fn: any) {
             return function (beDecoratedCls, context: C) {
                 switch (context.kind) {
                     case KindClass: {
-                        if (MetadataCls === null) {
-                            throw new Error('你需要先执行bindMetadata函数');
-                        }
-                        fn(beDecoratedCls, {
+                        fn(isPlaceholderExp, beDecoratedCls, {
                             metadataKind: KindClass,
-                            metadataClass: MetadataCls,
+                            metadataClass: MetaClsOrPlaceholderMetaCls,
                             metadataParam: userParam,
                         });
                         // 修改prototype
-                        if (typeof MetadataCls?.classDecoratorModifyPrototype === 'function') {
-                            MetadataCls?.classDecoratorModifyPrototype(beDecoratedCls.prototype);
+                        if (typeof MetaClsOrPlaceholderMetaCls?.classDecoratorModifyPrototype === 'function') {
+                            MetaClsOrPlaceholderMetaCls?.classDecoratorModifyPrototype(beDecoratedCls.prototype);
                         }
                         break;
                     }
@@ -107,9 +107,9 @@ function createDecoratorExpFactory(fn: any) {
                     switch (context.kind) {
                         case KindField:
                         case KindMethod:
-                            fn(this.constructor, {
+                            fn(isPlaceholderExp, this.constructor, {
                                 metadataKind: context.kind,
-                                metadataClass: MetadataCls,
+                                metadataClass: MetaClsOrPlaceholderMetaCls,
                                 metadataParam: userParam,
                                 field: context.name as string,
                             });
@@ -126,7 +126,7 @@ function createDecoratorExpFactory(fn: any) {
             };
         }
 
-        if (!createByClass) {
+        if (isPlaceholderExp) {
             decoratorExpress.decorateSelf = decorateSelf;
         }
         return decoratorExpress;
@@ -144,7 +144,7 @@ function createDecoratorExp(metadataCls: Class<any>, option?: CreateDecoratorExp
     if (!isSubClassOf(metadataCls, Metadata)) {
         throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10018, metadataCls?.name)));
     }
-    return doCreateDecoratorExp(metadataCls, option) as DecoratorExp;
+    return doCreateDecoratorExp(false, metadataCls, option) as DecoratorExp;
 }
 
 /**
@@ -153,7 +153,9 @@ function createDecoratorExp(metadataCls: Class<any>, option?: CreateDecoratorExp
  * @public
  */
 function createPlaceholderDecoratorExp<T>(option?: CreateDecoratorExpOption): DecoratorExpWithDecoratorSelf<T> {
-    return doCreateDecoratorExp(undefined, option) as DecoratorExpWithDecoratorSelf<T>;
+    // 先提供一个默认的元数据类，再替换为真实的元数据类
+    class PlaceholderMetadata extends Metadata {}
+    return doCreateDecoratorExp(true, PlaceholderMetadata, option) as DecoratorExpWithDecoratorSelf<T>;
 }
 
 export {

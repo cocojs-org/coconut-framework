@@ -8,7 +8,7 @@ describe('@target装饰器', () => {
     let component;
     let createDecoratorExp;
     let Component;
-    let defineMetadataId;
+    let Id;
     let getMetaClassById;
     let consoleErrorSpy;
 
@@ -22,8 +22,8 @@ describe('@target装饰器', () => {
         Metadata = cocoMvc.Metadata;
         Target = cocoMvc.Target;
         Component = cocoMvc.Component;
+        Id = cocoMvc.Id;
         Application = cocoMvc.Application;
-        defineMetadataId = cocoMvc.defineMetadataId;
         getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
         cocoMvc.registerMvcApi(application, getMetaClassById);
@@ -40,6 +40,21 @@ describe('@target装饰器', () => {
         application.start();
         const cls = getMetaClassById('Target');
         expect(cls).toBe(Target);
+    });
+
+    test('Target的类元数据信息是正确的', () => {
+        application.start();
+        const expected = cocoMvc.checkClassMetadataAsExpected(Target, [
+            {
+                Metadata: Target,
+                fieldValues: { value: [Target.Type.Class] },
+            },
+            {
+                Metadata: Id,
+                fieldValues: { value: 'Target' },
+            },
+        ]);
+        expect(expected).toEqual(true);
     });
 
     test('filed上不能使用target装饰器', () => {
@@ -81,7 +96,6 @@ describe('@target装饰器', () => {
     test('元数据类不能缺少target装饰器', () => {
         @component()
         class AutoBind extends Metadata {}
-        defineMetadataId(AutoBind);
 
         application.start();
         expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -102,7 +116,6 @@ describe('@target装饰器', () => {
     test('装饰目标是field的装饰器不能装饰在class上', () => {
         @target([Target.Type.Field])
         class FieldDecorator extends Metadata {}
-        defineMetadataId(FieldDecorator);
         const fieldDecorator = createDecoratorExp(FieldDecorator);
 
         @component()
@@ -121,7 +134,6 @@ describe('@target装饰器', () => {
     test('装饰目标是class的装饰器不能装饰在field上', () => {
         @target([Target.Type.Class])
         class ClassDecorator extends Metadata {}
-        defineMetadataId(ClassDecorator);
         const classDecorator = createDecoratorExp(ClassDecorator);
 
         @component()
@@ -143,7 +155,6 @@ describe('@target装饰器', () => {
     test('装饰目标是class的装饰器不能装饰在method上', () => {
         @target([Target.Type.Class])
         class ClassDecorator extends Metadata {}
-        defineMetadataId(ClassDecorator);
         const classDecorator = createDecoratorExp(ClassDecorator);
 
         @component()

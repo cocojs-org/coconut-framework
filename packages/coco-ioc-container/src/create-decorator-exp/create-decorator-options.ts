@@ -44,11 +44,43 @@ interface CreateDecoratorExpOption {
 const metadataDecoratorOptions: Map<Class<any>, CreateDecoratorExpOption> = new Map();
 // 元数据类id <--> 装饰器选项
 const metadataIdDecoratorOptions: Map<string, CreateDecoratorExpOption> = new Map();
+// 占位的元数据类 <--> 装饰器选项
+const placeholderDecoratorOptions: Map<Class<any>, CreateDecoratorExpOption> = new Map();
+// 占位的元数据类 <--> 真实的元数据类
+const placeholderClassMap2RealMetadataClass: Map<Class<any>, Class<any>> = new Map();
 
-function addDecoratorOption(metadataClass: Class<any>, options: CreateDecoratorExpOption = null) {
-    const id = getId(metadataClass);
-    metadataIdDecoratorOptions.set(id, options);
-    metadataDecoratorOptions.set(metadataClass, options);
+// 记录创建装饰器表达式的选项
+function addCreateDecoratorOption(
+    isPlaceholderExp: boolean,
+    metadataClass: Class<any>,
+    options: CreateDecoratorExpOption = null
+) {
+    if (isPlaceholderExp) {
+        // 是占位的元数据表达式，那么先临时记录到placeholderDecoratorOptions中，后续转存到metadataIdDecoratorOptions, metadataDecoratorOptions中
+        placeholderDecoratorOptions.set(metadataClass, options);
+    } else {
+        // 不是占位的元数据表达式，那么直接记录参数
+        const id = getId(metadataClass);
+        metadataIdDecoratorOptions.set(id, options);
+        metadataDecoratorOptions.set(metadataClass, options);
+    }
+}
+
+// 记录占位的元数据类和真实的元数据类之间的映射
+function addPlaceholderClassToRealMetadataClassRelation(placeholderClass: Class<any>, realMetadataClass: Class<any>) {
+    placeholderClassMap2RealMetadataClass.set(placeholderClass, realMetadataClass);
+}
+
+// 添加占位的装饰器表达式的参数
+function mergePlaceholderClass2RealMetadataClassRelation() {
+    for (const [placeholderClass, decoratorOptions] of placeholderDecoratorOptions.entries()) {
+        const realMetadataClass = placeholderClassMap2RealMetadataClass.get(placeholderClass);
+        if (realMetadataClass) {
+            addCreateDecoratorOption(false, realMetadataClass, decoratorOptions);
+        } else {
+            throw new Error('占位的元数据类没有对应的真实的元数据类');
+        }
+    }
 }
 
 function getOption(metadataClassOrId: Class<any> | string) {
@@ -59,9 +91,23 @@ function getOption(metadataClassOrId: Class<any> | string) {
     }
 }
 
-function clear() {
-    metadataDecoratorOptions.clear();
-    metadataIdDecoratorOptions.clear;
+function getPlaceholderClassMap2RealMetadataClass() {
+    return placeholderClassMap2RealMetadataClass;
 }
 
-export { type CreateDecoratorExpOption, addDecoratorOption, getOption, clear };
+function clear() {
+    metadataDecoratorOptions.clear();
+    metadataIdDecoratorOptions.clear();
+    placeholderDecoratorOptions.clear();
+    placeholderClassMap2RealMetadataClass.clear();
+}
+
+export {
+    type CreateDecoratorExpOption,
+    addCreateDecoratorOption,
+    addPlaceholderClassToRealMetadataClassRelation,
+    mergePlaceholderClass2RealMetadataClassRelation,
+    getOption,
+    clear,
+    getPlaceholderClassMap2RealMetadataClass,
+};

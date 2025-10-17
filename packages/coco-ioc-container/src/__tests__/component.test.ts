@@ -10,9 +10,9 @@ describe('@component装饰器', () => {
     let component;
     let Component;
     let createDecoratorExp;
-    let defineMetadataId;
     let getMetaClassById;
     let consoleErrorSpy;
+    let Id;
 
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -27,8 +27,8 @@ describe('@component装饰器', () => {
         webApplication = cocoMvc.webApplication;
         Application = cocoMvc.Application;
         createDecoratorExp = cocoMvc.createDecoratorExp;
-        defineMetadataId = cocoMvc.defineMetadataId;
         getMetaClassById = cocoMvc.getMetaClassById;
+        Id = cocoMvc.Id;
         application = new Application();
         cocoMvc.registerMvcApi(application, getMetaClassById);
     });
@@ -47,13 +47,27 @@ describe('@component装饰器', () => {
         expect(cls).toBe(Component);
     });
 
+    test('Component的类元数据信息是正确的', () => {
+        application.start();
+        const expected = cocoMvc.checkClassMetadataAsExpected(Component, [
+            {
+                Metadata: Target,
+                fieldValues: { value: [Target.Type.Class, Target.Type.Method] },
+            },
+            {
+                Metadata: Id,
+                fieldValues: { value: 'Component' },
+            },
+        ]);
+        expect(expected).toEqual(true);
+    });
+
     describe('@component装饰在类上', () => {
         test('不能同时添加2个component装饰器', () => {
             @component()
             @component()
             @target([Target.Type.Class])
             class ErrorButton extends Metadata {}
-            defineMetadataId(ErrorButton);
 
             application.start();
             expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -67,13 +81,11 @@ describe('@component装饰器', () => {
             @component()
             @target([Target.Type.Class])
             class FirstLevel extends Metadata {}
-            defineMetadataId(FirstLevel);
             const firstLevel = createDecoratorExp(FirstLevel);
             @firstLevel()
             @component()
             @target([Target.Type.Class])
             class ErrorButton extends Metadata {}
-            defineMetadataId(ErrorButton);
 
             application.start();
             expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -87,20 +99,17 @@ describe('@component装饰器', () => {
             @component()
             @target([Target.Type.Class])
             class FirstLevel extends Metadata {}
-            defineMetadataId(FirstLevel);
             const firstLevel = createDecoratorExp(FirstLevel);
 
             @firstLevel()
             @target([Target.Type.Class])
             class SecondLevel extends Metadata {}
-            defineMetadataId(SecondLevel);
             const secondLevel = createDecoratorExp(SecondLevel);
 
             @secondLevel()
             @component()
             @target([Target.Type.Class])
             class ErrorButton extends Metadata {}
-            defineMetadataId(ErrorButton);
 
             application.start();
             expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -114,19 +123,16 @@ describe('@component装饰器', () => {
             @component()
             @target([Target.Type.Class])
             class FirstLevel1 extends Metadata {}
-            defineMetadataId(FirstLevel1);
             const firstLevel1 = createDecoratorExp(FirstLevel1);
 
             @component()
             @target([Target.Type.Class])
             class FirstLevel2 extends Metadata {}
-            defineMetadataId(FirstLevel2);
             const firstLevel2 = createDecoratorExp(FirstLevel2);
             @firstLevel1()
             @firstLevel2()
             @target([Target.Type.Class])
             class ErrorButton extends Metadata {}
-            defineMetadataId(ErrorButton);
 
             application.start();
             expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -140,26 +146,22 @@ describe('@component装饰器', () => {
             @component()
             @target([Target.Type.Class])
             class FirstLevel1 extends Metadata {}
-            defineMetadataId(FirstLevel1);
             const firstLevel1 = createDecoratorExp(FirstLevel1);
 
             @firstLevel1()
             @target([Target.Type.Class])
             class SecondLevel1 extends Metadata {}
-            defineMetadataId(SecondLevel1);
             const secondLevel1 = createDecoratorExp(SecondLevel1);
 
             @component()
             @target([Target.Type.Class])
             class FirstLevel2 extends Metadata {}
-            defineMetadataId(FirstLevel2);
             const firstLevel2 = createDecoratorExp(FirstLevel2);
 
             @secondLevel1()
             @firstLevel2()
             @target([Target.Type.Class])
             class ErrorButton extends Metadata {}
-            defineMetadataId(ErrorButton);
 
             application.start();
             expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -173,24 +175,20 @@ describe('@component装饰器', () => {
             @component()
             @target([Target.Type.Class])
             class FirstLevel1 extends Metadata {}
-            defineMetadataId(FirstLevel1);
             const firstLevel1 = createDecoratorExp(FirstLevel1);
 
             @firstLevel1()
             @target([Target.Type.Class])
             class SecondLevel1 extends Metadata {}
-            defineMetadataId(SecondLevel1);
             const secondLevel1 = createDecoratorExp(SecondLevel1);
             @firstLevel1()
             @target([Target.Type.Class])
             class SecondLevel2 extends Metadata {}
-            defineMetadataId(SecondLevel2);
             const secondLevel2 = createDecoratorExp(SecondLevel2);
             @secondLevel1()
             @secondLevel2()
             @target([Target.Type.Class])
             class ErrorButton extends Metadata {}
-            defineMetadataId(ErrorButton);
 
             application.start();
             expect(consoleErrorSpy).toHaveBeenCalledWith(

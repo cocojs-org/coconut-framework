@@ -1,10 +1,10 @@
-import { Metadata, target, Target, defineMetadataId } from 'coco-ioc-container';
+import { Metadata, target, Target, id } from 'coco-ioc-container';
 
 /**
  * @public
  */
+@id('Ref')
 @target([Target.Type.Field])
 class Ref extends Metadata {}
 
-defineMetadataId(Ref);
 export default Ref;

@@ -12,7 +12,6 @@ describe('@scope装饰器', () => {
     let SCOPE;
     let consoleErrorSpy;
     let createDecoratorExp;
-    let defineMetadataId;
     let getMetaClassById;
 
     beforeEach(async () => {
@@ -29,7 +28,6 @@ describe('@scope装饰器', () => {
         webApplication = cocoMvc.webApplication;
         Application = cocoMvc.Application;
         createDecoratorExp = cocoMvc.createDecoratorExp;
-        defineMetadataId = cocoMvc.defineMetadataId;
         getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
         cocoMvc.registerMvcApi(application, getMetaClassById);
@@ -80,7 +78,6 @@ describe('@scope装饰器', () => {
             @scope(SCOPE.Prototype)
             @component()
             class PrototypeMeta extends Metadata {}
-            defineMetadataId(PrototypeMeta);
             const prototype = createDecoratorExp(PrototypeMeta);
 
             @scope(SCOPE.Prototype)
@@ -100,7 +97,6 @@ describe('@scope装饰器', () => {
             @scope(SCOPE.Prototype)
             @component()
             class PrototypeMeta extends Metadata {}
-            defineMetadataId(PrototypeMeta);
             const prototype = createDecoratorExp(PrototypeMeta);
 
             @scope(SCOPE.Singleton)

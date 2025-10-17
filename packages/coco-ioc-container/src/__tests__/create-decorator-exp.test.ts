@@ -4,17 +4,25 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     let KindClass;
     let KindField;
     let KindMethod;
+    let Application;
+    let application;
+    let getMetaClassById;
 
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
+        Application = cocoMvc.Application;
         createDecoratorExpFactory = cocoMvc.createDecoratorExpFactory;
         KindClass = cocoMvc.KindClass;
         KindField = cocoMvc.KindField;
         KindMethod = cocoMvc.KindMethod;
+        application = new Application();
+        getMetaClassById = cocoMvc.getMetaClassById;
+        cocoMvc.registerMvcApi(application, getMetaClassById);
     });
 
     afterEach(() => {
         cocoMvc.cleanCache();
+        cocoMvc.unregisterMvcApi();
         jest.resetModules();
     });
 
@@ -23,12 +31,12 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
         const create = createDecoratorExpFactory(fn);
 
         class Meta {}
-        const m = create(Meta);
+        const m = create(false, Meta);
         const param = 22;
         @m(param)
         class A {}
         expect(fn).toBeCalledTimes(1);
-        expect(fn).toBeCalledWith(A, {
+        expect(fn).toBeCalledWith(false, A, {
             metadataClass: Meta,
             metadataKind: KindClass,
             metadataParam: param,
@@ -39,12 +47,12 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
         const fn = jest.fn();
         const createDE = createDecoratorExpFactory(fn);
         class Meta1 {}
-        const m = createDE(Meta1);
+        const m = createDE(false, Meta1);
         const param = 22;
         @m(param)
         class A {}
         expect(fn).toBeCalledTimes(1);
-        expect(fn).toBeCalledWith(A, {
+        expect(fn).toBeCalledWith(false, A, {
             metadataClass: Meta1,
             metadataKind: KindClass,
             metadataParam: param,
@@ -61,7 +69,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
         const create = createDecoratorExpFactory(fn);
 
         class Meta2 {}
-        const m = create(Meta2);
+        const m = create(false, Meta2);
         const param = 22;
         class A {
             @m(param)
@@ -70,7 +78,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
         expect(fn).toBeCalledTimes(0);
         new A();
         expect(fn).toBeCalledTimes(1);
-        expect(fn).toBeCalledWith(A, {
+        expect(fn).toBeCalledWith(false, A, {
             metadataClass: Meta2,
             metadataKind: KindField,
             metadataParam: param,
@@ -83,7 +91,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
         const create = createDecoratorExpFactory(fn);
 
         class Meta3 {}
-        const m = create(Meta3);
+        const m = create(false, Meta3);
         const param = 22;
         class A {
             @m(param)
@@ -92,7 +100,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
         expect(fn).toBeCalledTimes(0);
         new A();
         expect(fn).toBeCalledTimes(1);
-        expect(fn).toBeCalledWith(A, {
+        expect(fn).toBeCalledWith(false, A, {
             metadataClass: Meta3,
             metadataKind: KindMethod,
             metadataParam: param,
@@ -105,7 +113,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
         const create = createDecoratorExpFactory(fn);
 
         class Meta4 {}
-        const m = create(Meta4);
+        const m = create(false, Meta4);
         const param = 22;
         class A {
             @m(param)
@@ -114,7 +122,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
         expect(fn).toBeCalledTimes(0);
         new A();
         expect(fn).toBeCalledTimes(1);
-        expect(fn).toBeCalledWith(A, {
+        expect(fn).toBeCalledWith(false, A, {
             metadataClass: Meta4,
             metadataKind: KindField,
             metadataParam: param,
@@ -133,7 +141,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
         const create = createDecoratorExpFactory(fn);
 
         class Meta5 {}
-        const m = create(Meta5);
+        const m = create(false, Meta5);
         const param = 22;
         class A {
             @m(param)
@@ -142,7 +150,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
         expect(fn).toBeCalledTimes(0);
         new A();
         expect(fn).toBeCalledTimes(1);
-        expect(fn).toBeCalledWith(A, {
+        expect(fn).toBeCalledWith(false, A, {
             metadataClass: Meta5,
             metadataKind: KindMethod,
             metadataParam: param,
@@ -164,7 +172,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
 
             class Meta6 {}
             // TODO: 如果在测试文件中引用类型？const m: () => Decorator<ClassGetterDecoratorContext> = create(Meta6);
-            const m = create(Meta6);
+            const m = create(false, Meta6);
 
             class A {
                 @m()
@@ -185,7 +193,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
             const create = createDecoratorExpFactory(fn);
 
             class Meta7 {}
-            const m = create(Meta7);
+            const m = create(false, Meta7);
 
             class A {
                 @m()
@@ -301,15 +309,29 @@ describe('create-decorator-exp:createDecoratorExp', () => {
         let cocoMvc;
         let Metadata;
         let createPlaceholderDecoratorExp;
+        let Application;
+        let application;
+        let getMetaClassById;
+        let target;
+        let Target;
+        let id;
 
         beforeEach(async () => {
             cocoMvc = await import('coco-mvc');
             Metadata = cocoMvc.Metadata;
             createPlaceholderDecoratorExp = cocoMvc.createPlaceholderDecoratorExp;
+            target = cocoMvc.target;
+            Target = cocoMvc.Target;
+            id = cocoMvc.id;
+            Application = cocoMvc.Application;
+            application = new Application();
+            getMetaClassById = cocoMvc.getMetaClassById;
+            cocoMvc.registerMvcApi(application, getMetaClassById);
         });
 
         afterEach(() => {
             cocoMvc.cleanCache();
+            cocoMvc.unregisterMvcApi();
             jest.resetModules();
         });
 
@@ -326,6 +348,25 @@ describe('create-decorator-exp:createDecoratorExp', () => {
                 errorMsg = error.message;
             }
             expect(errorMsg).toBe('CO10014：元数据类 M 创建了不止一个装饰器，每个元数据类只能创建一个对应的装饰器。');
+        });
+
+        test('2个占位的装饰器，相互装饰，也不会报错', () => {
+            const d1 = createPlaceholderDecoratorExp();
+            const d2 = createPlaceholderDecoratorExp();
+
+            @id('M')
+            @d1.decorateSelf()
+            @d2()
+            @target([Target.Type.Class])
+            class M extends Metadata {}
+
+            @id('M2')
+            @d2.decorateSelf()
+            @d1()
+            @target([Target.Type.Class])
+            class M2 extends Metadata {}
+
+            application.start();
         });
     });
 });
