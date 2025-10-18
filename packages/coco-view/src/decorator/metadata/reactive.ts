@@ -6,7 +6,7 @@ import { Metadata, target, Target, id } from 'coco-ioc-container';
  * @public
  */
 @id('Reactive')
-@target([Target.Type.Field, Target.Type.Class])
+@target([Target.Type.Field])
 class Reactive extends Metadata {}
 
 export default Reactive;
