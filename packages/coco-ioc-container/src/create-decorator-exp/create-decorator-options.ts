@@ -3,7 +3,6 @@
  */
 import type Metadata from '../metadata/instantiate-one-metadata';
 import type Application from '../application';
-import { getId } from '../share/util';
 import { Field } from './decorator-context';
 
 /**
@@ -42,8 +41,6 @@ interface CreateDecoratorExpOption {
 
 // 元数据类 <--> 装饰器选项
 const metadataDecoratorOptions: Map<Class<any>, CreateDecoratorExpOption> = new Map();
-// 元数据类id <--> 装饰器选项
-const metadataIdDecoratorOptions: Map<string, CreateDecoratorExpOption> = new Map();
 // 占位的元数据类 <--> 装饰器选项
 const placeholderDecoratorOptions: Map<Class<any>, CreateDecoratorExpOption> = new Map();
 // 占位的元数据类 <--> 真实的元数据类
@@ -56,12 +53,10 @@ function addCreateDecoratorOption(
     options: CreateDecoratorExpOption = null
 ) {
     if (isPlaceholderExp) {
-        // 是占位的元数据表达式，那么先临时记录到placeholderDecoratorOptions中，后续转存到metadataIdDecoratorOptions, metadataDecoratorOptions中
+        // 是占位的元数据表达式，那么先临时记录到placeholderDecoratorOptions中，后续知道占位元数据类和真正的元数据类的映射关系后再保存到metadataDecoratorOptions中
         placeholderDecoratorOptions.set(metadataClass, options);
     } else {
-        // 不是占位的元数据表达式，那么直接记录参数
-        const id = getId(metadataClass);
-        metadataIdDecoratorOptions.set(id, options);
+        // 不是占位的元数据表达式，那么直接保存在metadataDecoratorOptions中
         metadataDecoratorOptions.set(metadataClass, options);
     }
 }
@@ -83,12 +78,8 @@ function mergePlaceholderClass2RealMetadataClassRelation() {
     }
 }
 
-function getOption(metadataClassOrId: Class<any> | string) {
-    if (typeof metadataClassOrId === 'string') {
-        return metadataIdDecoratorOptions.get(metadataClassOrId);
-    } else {
-        return metadataDecoratorOptions.get(metadataClassOrId);
-    }
+function getCreateDecoratorOption(metadataClass: Class<any>) {
+    return metadataDecoratorOptions.get(metadataClass);
 }
 
 function getPlaceholderClassMap2RealMetadataClass() {
@@ -97,7 +88,6 @@ function getPlaceholderClassMap2RealMetadataClass() {
 
 function clear() {
     metadataDecoratorOptions.clear();
-    metadataIdDecoratorOptions.clear();
     placeholderDecoratorOptions.clear();
     placeholderClassMap2RealMetadataClass.clear();
 }
@@ -107,7 +97,7 @@ export {
     addCreateDecoratorOption,
     addPlaceholderClassToRealMetadataClassRelation,
     mergePlaceholderClass2RealMetadataClassRelation,
-    getOption,
+    getCreateDecoratorOption,
     clear,
     getPlaceholderClassMap2RealMetadataClass,
 };

@@ -1,7 +1,7 @@
 import { type IocComponentDefinition, getInstantiateDefinition, getDefinition } from './ioc-component-definition';
 import { getMetadataByClass, listClassKindMetadata, listFieldByMetadataCls, listFieldKindMetadata } from '../metadata';
 import type Application from '../application';
-import { getOption as getDecoratorOption } from '../create-decorator-exp/create-decorator-options';
+import { getCreateDecoratorOption } from '../create-decorator-exp/create-decorator-options';
 import ConstructorParam from '../decorator/metadata/constructor-param';
 import Autowired from '../decorator/metadata/autowired';
 import { createDiagnose, DiagnoseCode, printDiagnose, stringifyDiagnose } from 'shared';
@@ -28,14 +28,14 @@ function createComponent<T>(
     if (metadatas) {
         const { classMetadata, methodMetadata, fieldMetadata } = metadatas;
         for (const meta of classMetadata) {
-            const option = getDecoratorOption(meta.constructor as Class<any>);
+            const option = getCreateDecoratorOption(meta.constructor as Class<any>);
             if (option) {
                 option.componentPostConstruct.call(component, meta, application);
             }
         }
         for (const [field, metaList] of fieldMetadata.entries()) {
             for (const meta of metaList) {
-                const option = getDecoratorOption(meta.constructor as Class<any>);
+                const option = getCreateDecoratorOption(meta.constructor as Class<any>);
                 if (option) {
                     option.componentPostConstruct.call(component, meta, application, field);
                 }
@@ -43,7 +43,7 @@ function createComponent<T>(
         }
         for (const [method, metaList] of methodMetadata.entries()) {
             for (const meta of metaList) {
-                const option = getDecoratorOption(meta.constructor as Class<any>);
+                const option = getCreateDecoratorOption(meta.constructor as Class<any>);
                 if (option) {
                     option.componentPostConstruct.call(component, meta, application, method);
                 }
