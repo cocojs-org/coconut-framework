@@ -8,6 +8,8 @@ import { isClass } from '../share/util';
 export type Params = {
     metadataKind: Kind;
     metadataClass: Class<any>;
+    // 如果是使用createPlaceholderDecoratorExp创建的装饰器表达式，那么placeholderMetadataClass就是占位的元数据类
+    placeholderMetadataClass?: Class<any>;
     metadataParam: any;
     /**
      * 如果metadataKind是'class'，field是undefined
@@ -74,6 +76,7 @@ export function replacePlaceholderMetaClassParams2RealMetadataClassParams(
             for (const p of paramsList) {
                 if (p.metadataClass === placeholderMetaClass) {
                     p.metadataClass = realMetadataClass;
+                    p.placeholderMetadataClass = placeholderMetaClass;
                 }
             }
         }
