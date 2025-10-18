@@ -1,5 +1,5 @@
 import { type IocComponentDefinition, getInstantiateDefinition, getDefinition } from './ioc-component-definition';
-import { getFromMap, listClassMetadata, listFieldByMetadataCls, listFieldMetadata } from '../metadata';
+import { getMetadataByClass, listClassKindMetadata, listFieldByMetadataCls, listFieldKindMetadata } from '../metadata';
 import type Application from '../application';
 import { getOption as getDecoratorOption } from '../create-decorator-exp/create-decorator-options';
 import ConstructorParam from '../decorator/metadata/constructor-param';
@@ -24,7 +24,7 @@ function createComponent<T>(
         const configuration = new configurationCls();
         component = configuration[method]();
     }
-    const metadatas = getFromMap(cls);
+    const metadatas = getMetadataByClass(cls);
     if (metadatas) {
         const { classMetadata, methodMetadata, fieldMetadata } = metadatas;
         for (const meta of classMetadata) {
@@ -109,7 +109,7 @@ function getComponents(application: Application, userOption: ConstructOption) {
         instantiatingStage.add(targetDefinition.cls);
 
         const constructorArgs = [];
-        const constructorParams = listClassMetadata(instantiateDefinition.cls, ConstructorParam);
+        const constructorParams = listClassKindMetadata(instantiateDefinition.cls, ConstructorParam);
         if (constructorParams.length > 0) {
             // 因为元数据不能重复，所以只有一个
             const constructorParamsParams = (constructorParams[0] as ConstructorParam).value;
@@ -147,7 +147,11 @@ function getComponents(application: Application, userOption: ConstructOption) {
         // 3. 递归实例化field注入
         const autowiredFields = listFieldByMetadataCls(instantiateDefinition.cls, Autowired);
         for (const field of autowiredFields) {
-            const autowiredMetadatas = listFieldMetadata(instantiateDefinition.cls, field, Autowired) as Autowired[];
+            const autowiredMetadatas = listFieldKindMetadata(
+                instantiateDefinition.cls,
+                field,
+                Autowired
+            ) as Autowired[];
             if (autowiredMetadatas.length > 0) {
                 const autowiredCls = autowiredMetadatas[0].value;
                 if (autowiredCls === undefined) {
@@ -159,7 +163,7 @@ function getComponents(application: Application, userOption: ConstructOption) {
                     printDiagnose(diagnose);
                     instance[field] = undefined;
                 } else {
-                    const qualifierMetadatas = listFieldMetadata(
+                    const qualifierMetadatas = listFieldKindMetadata(
                         instantiateDefinition.cls,
                         field,
                         Qualifier
@@ -227,7 +231,7 @@ function getViewComponent(application: Application, viewClass: Class<any>, props
     const instance = createComponent(application, targetDefinition, [props]);
     const autowiredFields = listFieldByMetadataCls(targetDefinition.cls, Autowired);
     for (const field of autowiredFields) {
-        const autowiredMetadatas = listFieldMetadata(targetDefinition.cls, field, Autowired) as Autowired[];
+        const autowiredMetadatas = listFieldKindMetadata(targetDefinition.cls, field, Autowired) as Autowired[];
         if (autowiredMetadatas.length > 0) {
             const autowiredCls = autowiredMetadatas[0].value;
             if (autowiredCls === undefined) {
@@ -239,7 +243,7 @@ function getViewComponent(application: Application, viewClass: Class<any>, props
                 printDiagnose(diagnose);
                 instance[field] = undefined;
             } else {
-                const qualifierMetadatas = listFieldMetadata(targetDefinition.cls, field, Qualifier) as Qualifier[];
+                const qualifierMetadatas = listFieldKindMetadata(targetDefinition.cls, field, Qualifier) as Qualifier[];
                 let qualifier: string;
                 if (qualifierMetadatas.length > 0) {
                     qualifier = qualifierMetadatas[0].value;

@@ -17,7 +17,7 @@ import {
     type CreateDecoratorExpOption,
 } from './create-decorator-options';
 import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
-import Metadata from '../metadata/create-metadata';
+import Metadata from '../metadata/instantiate-one-metadata';
 
 let createdDecoratorMetadataSet: Set<Class<any>> = new Set();
 

@@ -2,9 +2,8 @@ import { getComponents, getViewComponent } from '../ioc-container/component-fact
 import {
     Metadata,
     buildMetadata,
-    listBeDecoratedClsByClassMetadata,
-    listFieldMetadata,
-    findClassMetadata,
+    listBeDecoratedClsByClassKindMetadata,
+    findClassKindMetadataRecursively,
     listFieldByMetadataCls,
 } from '../metadata';
 import {
@@ -13,7 +12,6 @@ import {
     replacePlaceholderMetaClassParams2RealMetadataClassParams,
 } from '../create-decorator-exp/decorator-exp-param';
 import { buildIocComponentDefinition } from '../ioc-container/ioc-component-definition';
-import Qualifier from '../decorator/metadata/qualifier';
 import PropertiesConfig from '../properties/properties-config';
 import {
     mergePlaceholderClass2RealMetadataClassRelation,
@@ -89,27 +87,9 @@ class Application {
         return getViewComponent(this, viewClass, props);
     }
 
-    /**
-     * 为\@autowired装饰器的字段，返回字段类型的组件实例
-     * @param Cls - 类定义
-     * @param deDecoratedCls - 被装饰器的类定义
-     * @param autowiredField - 被装饰器的字段
-     */
-    public getComponentForAutowired<T>(Cls: Class<T>, deDecoratedCls: Class<T>, autowiredField: string): T {
-        const qualifierMetadata = listFieldMetadata(deDecoratedCls, autowiredField, Qualifier) as Qualifier[];
-        let qualifier;
-        if (qualifierMetadata.length) {
-            qualifier = qualifierMetadata[0].value;
-        }
-        return this.getComponent(Cls, { qualifier });
-    }
-
-    public getByClassMetadata(metadataClass: Class<any>) {
-        return listBeDecoratedClsByClassMetadata(metadataClass);
-    }
-
     public listFieldByMetadataCls = listFieldByMetadataCls;
-    public findClassMetadata = findClassMetadata;
+    public findClassKindMetadataRecursively = findClassKindMetadataRecursively;
+    public listBeDecoratedClsByClassKindMetadata = listBeDecoratedClsByClassKindMetadata;
 
     /**
      * 实例化所有业务类（非元数据类），拿到field和method装饰器参数

@@ -1,7 +1,7 @@
 /**
  * 创建装饰器表达式的选项
  */
-import type Metadata from '../metadata/create-metadata';
+import type Metadata from '../metadata/instantiate-one-metadata';
 import type Application from '../application';
 import { getId } from '../share/util';
 import { Field } from './decorator-context';

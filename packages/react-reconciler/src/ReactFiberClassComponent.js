@@ -64,7 +64,7 @@ function constructClassInstance(workInProgress, ctor, props) {
   const {application, getMetaClassById} = getMvcApi();
   const instance = application.getViewComponent(ctor, props);
   const Reactive = getMetaClassById('Reactive');
-  const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
+  const fields = application.listFieldByMetadataCls(ctor, Reactive);
   workInProgress.memoizedState = fields.reduce((prev, field) => {
     prev[field] = instance[field];
     return prev;
@@ -88,7 +88,7 @@ function mountClassInstance(
   if (__DEV__) {
     const { application, getMetaClassById } = getMvcApi();
     const Reactive = getMetaClassById('Reactive');
-    const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
+    const fields = application.listFieldByMetadataCls(ctor, Reactive);
     for (const field of fields) {
       if (instance[field] === newProps) {
         const componentName = ctor.name || 'Component';
@@ -124,7 +124,7 @@ function updateClassInstance(
   updateProps(instance, newProps);
   const { application, getMetaClassById } = getMvcApi();
   const Reactive = getMetaClassById('Reactive');
-  const fields = application.listFieldByMetadataCls(ctor, Reactive, true);
+  const fields = application.listFieldByMetadataCls(ctor, Reactive);
   for (const field of fields) {
     instance[reactiveAssignField(field)] = newState[field]
   }

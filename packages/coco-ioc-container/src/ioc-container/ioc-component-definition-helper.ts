@@ -1,7 +1,7 @@
 /**
  * 所有组件元数据的信息，便于初始化ioc-component-definition
  */
-import Metadata from '../metadata/create-metadata';
+import Metadata from '../metadata/instantiate-one-metadata';
 import Component from '../decorator/metadata/component';
 import Scope, { SCOPE } from '../decorator/metadata/scope';
 import { getAllMetadata } from '../metadata/index';

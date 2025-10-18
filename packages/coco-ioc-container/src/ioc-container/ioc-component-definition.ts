@@ -6,7 +6,7 @@ import {
     findComponentDecorator,
     findComponentDecoratorScope,
 } from './ioc-component-definition-helper';
-import { getAllMetadata, listClassMetadata, listMethodByMetadataCls, listMethodMetadata } from '../metadata';
+import { getAllMetadata, listClassKindMetadata, listMethodByMetadataCls, listMethodKindMetadata } from '../metadata';
 import Scope, { SCOPE } from '../decorator/metadata/scope';
 import Component from '../decorator/metadata/component';
 
@@ -157,7 +157,7 @@ function doBuildIocComponentDefinition() {
             if (componentMetadata) {
                 // 确定存在component类装饰器，再确定scope值
                 let scope: SCOPE;
-                const selfScopeMetadata = listClassMetadata(beDecoratedCls, Scope) as Scope[];
+                const selfScopeMetadata = listClassKindMetadata(beDecoratedCls, Scope) as Scope[];
                 if (selfScopeMetadata.length > 0) {
                     scope = selfScopeMetadata[0].value;
                 } else {
@@ -167,12 +167,12 @@ function doBuildIocComponentDefinition() {
             } else {
                 const methods = listMethodByMetadataCls(beDecoratedCls, Component);
                 for (const method of methods) {
-                    const componentMetas: Component[] = listMethodMetadata(
+                    const componentMetas: Component[] = listMethodKindMetadata(
                         beDecoratedCls,
                         method,
                         Component
                     ) as Component[];
-                    const scopeMetas: Scope[] = listMethodMetadata(beDecoratedCls, method, Scope) as Scope[];
+                    const scopeMetas: Scope[] = listMethodKindMetadata(beDecoratedCls, method, Scope) as Scope[];
                     addDefinition(
                         componentMetas[0].value,
                         !scopeMetas.length || scopeMetas[0].value === SCOPE.Singleton,

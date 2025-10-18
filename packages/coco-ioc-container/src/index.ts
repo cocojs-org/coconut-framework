@@ -1,4 +1,4 @@
-export { default as Metadata } from './metadata/create-metadata';
+export { default as Metadata } from './metadata/instantiate-one-metadata';
 export { default as Autowired } from './decorator/metadata/autowired';
 export { default as autowired } from './decorator/autowired';
 export { default as Component } from './decorator/metadata/component';

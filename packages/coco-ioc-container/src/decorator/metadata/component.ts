@@ -1,4 +1,4 @@
-import Metadata from '../../metadata/create-metadata';
+import Metadata from '../../metadata/instantiate-one-metadata';
 import Target from './target';
 import target from '../target';
 import id from '../id';

@@ -6,15 +6,15 @@
  */
 
 import { createDiagnose, DiagnoseCode, printDiagnose, stringifyDiagnose } from 'shared';
-import Metadata from './create-metadata';
-import { MetaMetadata } from './all-metadata';
+import Metadata from './instantiate-one-metadata';
+import { type MetaMetadata } from './class-metadata';
 import Id from '../decorator/metadata/id';
 
-// 元数据类本身和自身id的映射
-const idMetadataClassMap: Map<string, Metadata> = new Map();
+// 元数据类id和元数据类的映射
+const idClassMap: Map<string, Metadata> = new Map();
 
 /**
- * 保存元数据类本身，方便运行时被调用
+ * 保存元数据类本身，方便运行是通过id获取元数据类
  */
 function buildMetaClassIdMap(metaMetadataMap: Map<Class<Metadata>, MetaMetadata>) {
     for (const [cls, metadataList] of metaMetadataMap.entries()) {
@@ -23,19 +23,23 @@ function buildMetaClassIdMap(metaMetadataMap: Map<Class<Metadata>, MetaMetadata>
         if (typeof id !== 'string' || !id) {
             throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10016, cls.name)));
         }
-        if (idMetadataClassMap.has(id)) {
-            throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10017, cls, idMetadataClassMap.get(id))));
+        if (idClassMap.has(id)) {
+            throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10017, cls, idClassMap.get(id))));
         }
-        idMetadataClassMap.set(id, cls);
+        idClassMap.set(id, cls);
     }
 }
 
 function getMetaClassById(id: string) {
-    if (typeof id !== 'string' || !id.trim() || !idMetadataClassMap.has(id)) {
+    if (typeof id !== 'string' || !id.trim() || !idClassMap.has(id)) {
         return null;
     } else {
-        return idMetadataClassMap.get(id);
+        return idClassMap.get(id);
     }
+}
+
+function clear() {
+    idClassMap.clear();
 }
 
 export { buildMetaClassIdMap, getMetaClassById };

@@ -1,5 +1,5 @@
 export * from './index.ts';
-import Metadata, { createMetadata } from './metadata/create-metadata.ts';
+import Metadata, { instantiateMetadata } from './metadata/instantiate-one-metadata.ts';
 import { createDecoratorExpFactory } from './create-decorator-exp/index';
 
 function isEqual(a: unknown, b: unknown) {
@@ -24,7 +24,20 @@ function isEqual(a: unknown, b: unknown) {
 }
 
 /**
- * 期望特定的类的元信息收集正确的
+ * 获取被装饰器类的类元信息
+ */
+function getClassMetadata(beDecoratedCls?: Class<any>) {
+    if (beDecoratedCls) {
+        const config = getMetadataByClass(beDecoratedCls);
+        if (config) {
+            return config.classMetadata;
+        }
+    }
+    return [];
+}
+
+/**
+ * 期望被装饰的类的类元信息收集正确的
  * Clazz: 想要校验的类
  * expectedMetadataList: Clazz上应该具备的所有元信息
  */
@@ -38,13 +51,13 @@ function checkClassMetadataAsExpected(
     if (!Clazz || expectedMetadataList.length === 0) {
         return false;
     }
-    const metadataList = getMetadata(Clazz);
+    const classMetadataList = getClassMetadata(Clazz);
     // 长度不等，元信息肯定不一致
-    if (metadataList.length !== expectedMetadataList.length) {
+    if (classMetadataList.length !== expectedMetadataList.length) {
         return false;
     }
     const allExpected = Array.from(expectedMetadataList, (_) => false);
-    for (const { metadata } of metadataList) {
+    for (const metadata of classMetadataList) {
         const idx = expectedMetadataList.findIndex((i) => i.Metadata === metadata.constructor);
         if (idx !== -1) {
             let isValueEqual = true;
@@ -88,23 +101,22 @@ function checkMetadataForMetadataAsExpected(
 }
 
 import {
-    addClassMetadata,
-    addFieldMetadata,
-    getMetadata,
+    addClassKindMetadata,
+    addFieldKindMetadata,
+    getMetadataByClass,
     getAllMetadata,
-    listClassMetadata,
-    listFieldMetadata,
-    findClassMetadata,
-    listBeDecoratedClsByClassMetadata,
-    listBeDecoratedClsByFieldMetadata,
-    clear as clearMetadata,
+    listClassKindMetadata,
+    listFieldKindMetadata,
+    findClassKindMetadataRecursively,
+    listBeDecoratedClsByClassKindMetadata,
+    clearAllMetadata,
 } from './metadata/index.ts';
 import { clear as clearComponentFactory } from './ioc-container/component-factory';
 import { clear as clearComponentDefinition } from './ioc-container/ioc-component-definition';
 import { clear as clearPreventCircularDependency } from 'shared';
 
 function clear() {
-    clearMetadata();
+    clearAllMetadata();
     clearComponentFactory();
     clearComponentDefinition();
     clearPreventCircularDependency();
@@ -113,14 +125,13 @@ function clear() {
 export {
     checkClassMetadataAsExpected,
     createDecoratorExpFactory,
-    createMetadata,
-    addClassMetadata,
-    addFieldMetadata,
+    instantiateMetadata,
+    addClassKindMetadata,
+    addFieldKindMetadata,
     getAllMetadata,
-    listClassMetadata,
-    listFieldMetadata,
-    findClassMetadata,
-    listBeDecoratedClsByClassMetadata,
-    listBeDecoratedClsByFieldMetadata,
-    clearMetadata,
+    listClassKindMetadata,
+    listFieldKindMetadata,
+    findClassKindMetadataRecursively,
+    listBeDecoratedClsByClassKindMetadata,
+    clear,
 };

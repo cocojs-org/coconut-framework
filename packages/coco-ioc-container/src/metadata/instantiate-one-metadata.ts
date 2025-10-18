@@ -7,7 +7,14 @@ const defaultProp = 'value';
  */
 export default abstract class Metadata {}
 
-export function createMetadata(metadataCls: Class<Metadata>, args?: any): Metadata {
+/**
+ * 使用装饰器表达式对应的元数据类加上装饰器表达式的参数实例化一个元数据实例
+ * @param metadataCls 元数据类
+ * @param args 装饰器表达式的参数
+ * @returns 元数据实例
+ * @public
+ */
+export function instantiateMetadata(metadataCls: Class<Metadata>, args?: any): Metadata {
     const metadata = new metadataCls();
     if (isPlainObject(args)) {
         /**

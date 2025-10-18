@@ -4,25 +4,23 @@ import { type Params } from '../create-decorator-exp/decorator-exp-param';
 import {
     type BizMetadata,
     type MetaMetadata,
-    addClassMetadata,
-    addFieldMetadata,
-    addMethodMetadata,
-    clear,
-    findClassMetadata,
+    addClassKindMetadata,
+    addFieldKindMetadata,
+    addMethodKindMetadata,
+    findClassKindMetadataRecursively,
     getAllMetadata,
-    getMetadata,
-    getFromMap,
-    listBeDecoratedClsByClassMetadata,
-    listBeDecoratedClsByFieldMetadata,
-    listClassMetadata,
+    clearAllMetadata,
+    getMetadataByClass,
+    listBeDecoratedClsByClassKindMetadata,
+    listClassKindMetadata,
     listFieldByMetadataCls,
-    listFieldMetadata,
+    listFieldKindMetadata,
     listMethodByMetadataCls,
-    listMethodMetadata,
-} from './all-metadata';
-import Metadata from './create-metadata';
+    listMethodKindMetadata,
+} from './class-metadata';
+import Metadata from './instantiate-one-metadata';
 import validate from './validate';
-import { buildMetaClassIdMap, getMetaClassById } from './id';
+import { buildMetaClassIdMap, getMetaClassById } from './id-class-map';
 
 // 使用装饰器参数生成对应的元数据实例
 function createMetadataByDecoratorParam(decoratorMap: Map<Class<any>, Params[]>) {
@@ -36,13 +34,13 @@ function createMetadataByDecoratorParam(decoratorMap: Map<Class<any>, Params[]>)
             const field = p.field;
             switch (metadataKind) {
                 case KindClass:
-                    addClassMetadata(beDecoratedCls, metadataClass, metadataParam);
+                    addClassKindMetadata(beDecoratedCls, metadataClass, metadataParam);
                     break;
                 case KindField:
-                    addFieldMetadata(beDecoratedCls, field, metadataClass, metadataParam);
+                    addFieldKindMetadata(beDecoratedCls, field, metadataClass, metadataParam);
                     break;
                 case KindMethod:
-                    addMethodMetadata(beDecoratedCls, field, metadataClass, metadataParam);
+                    addMethodKindMetadata(beDecoratedCls, field, metadataClass, metadataParam);
                     break;
             }
         }
@@ -68,21 +66,19 @@ export {
     type MetaMetadata,
     type BizMetadata,
     getMetaClassById,
-    addClassMetadata,
-    addFieldMetadata,
-    addMethodMetadata,
-    listClassMetadata,
-    listFieldMetadata,
-    listMethodMetadata,
-    findClassMetadata,
+    addClassKindMetadata,
+    addFieldKindMetadata,
+    addMethodKindMetadata,
+    listClassKindMetadata,
+    listFieldKindMetadata,
+    listMethodKindMetadata,
+    findClassKindMetadataRecursively,
     listFieldByMetadataCls,
     listMethodByMetadataCls,
-    listBeDecoratedClsByClassMetadata,
-    listBeDecoratedClsByFieldMetadata,
-    clear,
-    getFromMap,
-    getMetadata,
+    listBeDecoratedClsByClassKindMetadata,
+    getMetadataByClass,
     getAllMetadata,
+    clearAllMetadata,
     buildMetadata,
     Metadata,
 };
