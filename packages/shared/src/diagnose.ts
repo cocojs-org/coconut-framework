@@ -22,6 +22,9 @@ export enum DiagnoseCode {
     'CO10016' = 'CO10016', // 元数据类没有id属性或者id属性不是字符串
     'CO10017' = 'CO10017', // 元数据类id属性存在重复
     'CO10018' = 'CO10018', // createDecoratorExp的第一个参数不是类，或者不是Metadata的子类
+    'CO10019' = 'CO10019', // 装饰器暂时不是支持装饰 setter getter accessor 类型。
+    'CO10020' = 'CO10020', // [warn]占位的元数据类没有使用decorateSelf函数，但装饰器也没有被使用
+    'CO10021' = 'CO10021', // 占位的元数据类没有使用decorateSelf函数
 }
 
 const DiagnoseCodeMsg = {
@@ -43,6 +46,9 @@ const DiagnoseCodeMsg = {
     [DiagnoseCode.CO10016]: `元数据类 %s 没有id属性或者id属性不是字符串，忘记调用assignMetadataId方法？`,
     [DiagnoseCode.CO10017]: `元数据类 %s 和 %s 的id属性相同，id属性不能重复。`,
     [DiagnoseCode.CO10018]: `createDecoratorExp的第一个参数 %s 必须是Metadata的子类。`,
+    [DiagnoseCode.CO10019]: `框架暂不支持为 %s 添加装饰器。`,
+    [DiagnoseCode.CO10020]: `有一个占位装饰器没有使用decorateSelf关联具体的元数据类，如果不使用的话，直接删除这个装饰器。`,
+    [DiagnoseCode.CO10021]: `%s 类存在一个占位装饰器，但是没有使用decorateSelf装饰器关联真正的元数据类。`,
 };
 
 export function createDiagnose(code: DiagnoseCode, ...args: any[]): Diagnose {

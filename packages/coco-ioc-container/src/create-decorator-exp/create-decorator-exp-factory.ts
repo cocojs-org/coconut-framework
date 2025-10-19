@@ -78,7 +78,7 @@ function createDecoratorExpFactory(fn: IAddDecoratorParams) {
             };
         }
 
-        function decoratorExpress(userParam: UserParam) {
+        function doCreateDecoratorExp(userParam: UserParam) {
             return function (beDecoratedCls, context: C) {
                 switch (context.kind) {
                     case KindClass: {
@@ -93,15 +93,14 @@ function createDecoratorExpFactory(fn: IAddDecoratorParams) {
                         }
                         break;
                     }
+                    case KindMethod:
+                    case KindField:
+                        break;
                     case KindGetter:
                     case KindSetter:
                     case KindAccessor:
-                        throw new Error(`暂不支持装饰${context.kind}类型。`);
-                    case KindMethod:
-                    case KindField:
                     default:
-                        // ignore
-                        break;
+                        throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10019, context.kind)));
                 }
                 const initializerOnce = once(function initializer() {
                     switch (context.kind) {
@@ -114,9 +113,6 @@ function createDecoratorExpFactory(fn: IAddDecoratorParams) {
                                 field: context.name as string,
                             });
                             break;
-                        case KindClass:
-                            // ignore
-                            break;
                     }
                 });
                 context.addInitializer(function () {
@@ -127,9 +123,9 @@ function createDecoratorExpFactory(fn: IAddDecoratorParams) {
         }
 
         if (isPlaceholderExp) {
-            decoratorExpress.decorateSelf = decorateSelf;
+            doCreateDecoratorExp.decorateSelf = decorateSelf;
         }
-        return decoratorExpress;
+        return doCreateDecoratorExp;
     };
 }
 

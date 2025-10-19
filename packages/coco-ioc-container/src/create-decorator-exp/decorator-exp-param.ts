@@ -4,6 +4,7 @@
  */
 import { type Field, type Kind } from './decorator-context';
 import { isClass } from '../share/util';
+import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
 
 export type Params = {
     metadataKind: Kind;
@@ -57,21 +58,20 @@ export function addDecoratorParams(isPlaceholderMetaClass: boolean, beDecoratedC
     }
 }
 
-// 将收集到的装饰器参数中，如果有占位符的元数据类，那么改为真实的元数据类
-export function replacePlaceholderMetaClassParams2RealMetadataClassParams(
-    placeholderClassMap2RealMetadataClass: Map<Class<any>, Class<any>>
-) {
+// 收集到的装饰器参数，其中部分装饰器对应的类是*占位*元数据类，那么替换成真实的元数据类
+export function replacePlaceholderMetaClassParams2RealMetadataClassParams({
+    placeholderClassMap2RealMetadataClass,
+    notCalledDecorateSelfPlaceholderClassList,
+}: {
+    placeholderClassMap2RealMetadataClass: Map<Class<any>, Class<any>>;
+    notCalledDecorateSelfPlaceholderClassList: Class<any>[];
+}) {
     for (const [placeholderMetaClass, beDecoratedClassList] of placeholderMataClassMap2BeDecoratedClass.entries()) {
         const realMetadataClass = placeholderClassMap2RealMetadataClass.get(placeholderMetaClass);
-        if (!realMetadataClass) {
-            console.log(
-                '替换装饰器参数的占位的元数据类，没有找到的真实的元数据类',
-                placeholderClassMap2RealMetadataClass,
-                placeholderMataClassMap2BeDecoratedClass
-            );
-            throw new Error('替换装饰器参数的占位的元数据类，没有找到的真实的元数据类');
-        }
         for (const beDecoratedClass of beDecoratedClassList) {
+            if (!realMetadataClass) {
+                throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10021, beDecoratedClass.name)));
+            }
             const paramsList = decoratorParamMap.get(beDecoratedClass);
             for (const p of paramsList) {
                 if (p.metadataClass === placeholderMetaClass) {
@@ -81,9 +81,18 @@ export function replacePlaceholderMetaClassParams2RealMetadataClassParams(
             }
         }
     }
+
+    // 所有没有执行的decorateSelf函数的占位的装饰器表达式，如果也没有被使用，那么打印警告信息
+    for (const placeholderMetaClass of notCalledDecorateSelfPlaceholderClassList) {
+        if (__DEV__) {
+            if (!placeholderClassMap2RealMetadataClass.has(placeholderMetaClass)) {
+                console.warn(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10020)));
+            }
+        }
+    }
 }
 
-export function get(): Map<Class<any>, Params[]> {
+export function getDecoratorParam(): Map<Class<any>, Params[]> {
     return decoratorParamMap;
 }
 

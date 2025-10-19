@@ -45,6 +45,8 @@ const metadataDecoratorOptions: Map<Class<any>, CreateDecoratorExpOption> = new 
 const placeholderDecoratorOptions: Map<Class<any>, CreateDecoratorExpOption> = new Map();
 // 占位的元数据类 <--> 真实的元数据类
 const placeholderClassMap2RealMetadataClass: Map<Class<any>, Class<any>> = new Map();
+// 没有调用decorateSelf函数的占位的元数据类
+const notCalledDecorateSelfPlaceholderClassList: Class<any>[] = [];
 
 // 记录创建装饰器表达式的选项
 function addCreateDecoratorOption(
@@ -73,7 +75,7 @@ function mergePlaceholderClass2RealMetadataClassRelation() {
         if (realMetadataClass) {
             addCreateDecoratorOption(false, realMetadataClass, decoratorOptions);
         } else {
-            throw new Error('占位的元数据类没有对应的真实的元数据类');
+            notCalledDecorateSelfPlaceholderClassList.push(placeholderClass);
         }
     }
 }
@@ -83,13 +85,14 @@ function getCreateDecoratorOption(metadataClass: Class<any>) {
 }
 
 function getPlaceholderClassMap2RealMetadataClass() {
-    return placeholderClassMap2RealMetadataClass;
+    return { placeholderClassMap2RealMetadataClass, notCalledDecorateSelfPlaceholderClassList };
 }
 
 function clear() {
     metadataDecoratorOptions.clear();
     placeholderDecoratorOptions.clear();
     placeholderClassMap2RealMetadataClass.clear();
+    notCalledDecorateSelfPlaceholderClassList.length = 0;
 }
 
 export {

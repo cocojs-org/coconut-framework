@@ -7,7 +7,7 @@ import {
     listFieldByMetadataCls,
 } from '../metadata';
 import {
-    get,
+    getDecoratorParam,
     clear as clearDecoratorParams,
     replacePlaceholderMetaClassParams2RealMetadataClassParams,
 } from '../create-decorator-exp/decorator-exp-param';
@@ -34,18 +34,10 @@ class Application {
      * 在测试时，组件是在执行到对应的行装饰器才会执行，所以需要先收集在启动。
      */
     public start() {
-        // 收集field和method装饰器参数
-        this.collectFieldOrMethodDecoratorParams();
-
-        {
-            // 创建装饰器表达式的渲染中，占位的元数据类替换成真实的元数据类
-            mergePlaceholderClass2RealMetadataClassRelation();
-            // 收集到的所有的装饰器参数，占位的元数据类替换成真实的元数据类
-            replacePlaceholderMetaClassParams2RealMetadataClassParams(getPlaceholderClassMap2RealMetadataClass());
-        }
+        this.collectFieldOrMethodDecoratorParamsAndReplacePlaceholderMetaClass();
 
         // 用装饰器参数初始化元数据数据
-        buildMetadata(get());
+        buildMetadata(getDecoratorParam());
 
         // 用元数据信息初始化ioc组件数据
         buildIocComponentDefinition();
@@ -92,10 +84,11 @@ class Application {
     public listBeDecoratedClsByClassKindMetadata = listBeDecoratedClsByClassKindMetadata;
 
     /**
-     * 实例化所有业务类（非元数据类），拿到field和method装饰器参数
+     * 收集field和method装饰器参数，并且将占位的元数据类替换成真实的元数据类
      */
-    private collectFieldOrMethodDecoratorParams() {
-        for (const Cls of get().keys()) {
+    private collectFieldOrMethodDecoratorParamsAndReplacePlaceholderMetaClass() {
+        // 收集field和method装饰器参数
+        for (const Cls of getDecoratorParam().keys()) {
             if (Object.getPrototypeOf(Cls) !== Metadata) {
                 /**
                  * TODO: 如果view组件的state需要用到props初始化的话，会导致报错，例如：
@@ -108,6 +101,11 @@ class Application {
                 new Cls();
             }
         }
+
+        // 创建的装饰器表达式的选项，将占位的元数据类替换成真实的元数据类
+        mergePlaceholderClass2RealMetadataClassRelation();
+        // 收集到的所有的装饰器参数，占位的元数据类替换成真实的元数据类
+        replacePlaceholderMetaClassParams2RealMetadataClassParams(getPlaceholderClassMap2RealMetadataClass());
     }
 
     /**
