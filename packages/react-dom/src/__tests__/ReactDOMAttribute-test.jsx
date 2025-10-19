@@ -30,17 +30,17 @@ describe('ReactDOM unknown attribute', () => {
 
   function testUnknownAttributeRemoval(givenValue) {
     const el = document.createElement('div');
-    cocoMvc.render(<div unknown="something" />, el);
+    cocoMvc.renderIntoContainer(<div unknown="something" />, el);
     expect(el.firstChild.getAttribute('unknown')).toBe('something');
-    cocoMvc.render(<div unknown={givenValue} />, el);
+    cocoMvc.renderIntoContainer(<div unknown={givenValue} />, el);
     expect(el.firstChild.hasAttribute('unknown')).toBe(false);
   }
 
   function testUnknownAttributeAssignment(givenValue, expectedDOMValue) {
     const el = document.createElement('div');
-    cocoMvc.render(<div unknown="something" />, el);
+    cocoMvc.renderIntoContainer(<div unknown="something" />, el);
     expect(el.firstChild.getAttribute('unknown')).toBe('something');
-    cocoMvc.render(<div unknown={givenValue} />, el);
+    cocoMvc.renderIntoContainer(<div unknown={givenValue} />, el);
     expect(el.firstChild.getAttribute('unknown')).toBe(expectedDOMValue);
   }
 
@@ -57,9 +57,9 @@ describe('ReactDOM unknown attribute', () => {
 
     it('removes unknown attributes that were rendered but are now missing', () => {
       const el = document.createElement('div');
-      cocoMvc.render(<div unknown="something" />, el);
+      cocoMvc.renderIntoContainer(<div unknown="something" />, el);
       expect(el.firstChild.getAttribute('unknown')).toBe('something');
-      cocoMvc.render(<div />, el);
+      cocoMvc.renderIntoContainer(<div />, el);
       expect(el.firstChild.hasAttribute('unknown')).toBe(false);
     });
 
@@ -121,7 +121,7 @@ describe('ReactDOM unknown attribute', () => {
     it('allows camelCase unknown attributes and warns', () => {
       const el = document.createElement('div');
 
-      cocoMvc.render(<div helloWorld="something" />, el)
+      cocoMvc.renderIntoContainer(<div helloWorld="something" />, el)
 
       expect(el.firstChild.getAttribute('helloworld')).toBe('something');
     });

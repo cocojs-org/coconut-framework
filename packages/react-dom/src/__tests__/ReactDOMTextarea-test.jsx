@@ -42,7 +42,7 @@ describe('ReactDOMTextarea', () => {
       if (!container) {
         container = document.createElement('div');
       }
-      const node = cocoMvc.render(component, container);
+      const node = cocoMvc.renderIntoContainer(component, container);
 
       // Fixing jsdom's quirky behavior -- in reality, the parser should strip
       // off the leading newline but we need to do it by hand here.
@@ -101,9 +101,9 @@ describe('ReactDOMTextarea', () => {
 
   it('should set defaultValue', () => {
     const container = document.createElement('div');
-    cocoMvc.render(<textarea defaultValue="foo" />, container);
-    cocoMvc.render(<textarea defaultValue="bar" />, container);
-    cocoMvc.render(<textarea defaultValue="noise" />, container);
+    cocoMvc.renderIntoContainer(<textarea defaultValue="foo" />, container);
+    cocoMvc.renderIntoContainer(<textarea defaultValue="bar" />, container);
+    cocoMvc.renderIntoContainer(<textarea defaultValue="noise" />, container);
     expect(container.firstChild.defaultValue).toBe('noise');
   });
 
@@ -123,8 +123,8 @@ describe('ReactDOMTextarea', () => {
 
   it('should update defaultValue to empty string', () => {
     const container = document.createElement('div');
-    cocoMvc.render(<textarea defaultValue={'foo'} />, container);
-    cocoMvc.render(<textarea defaultValue={''} />, container);
+    cocoMvc.renderIntoContainer(<textarea defaultValue={'foo'} />, container);
+    cocoMvc.renderIntoContainer(<textarea defaultValue={''} />, container);
     expect(container.firstChild.defaultValue).toBe('');
   });
 
@@ -135,7 +135,7 @@ describe('ReactDOMTextarea', () => {
 
     expect(node.value).toBe('giraffe');
 
-    stub = cocoMvc.render(
+    stub = cocoMvc.renderIntoContainer(
       <textarea value="gorilla" onChange={emptyFunction} />,
       container,
     );
@@ -164,7 +164,7 @@ describe('ReactDOMTextarea', () => {
       return el;
     }));
 
-    cocoMvc.render(<textarea value="" readOnly={true} />, container);
+    cocoMvc.renderIntoContainer(<textarea value="" readOnly={true} />, container);
     expect(counter).toEqual(0);
 
     document.createElement = originalCreateElement;
@@ -177,7 +177,7 @@ describe('ReactDOMTextarea', () => {
 
     expect(node.value).toBe('giraffe');
 
-    stub = cocoMvc.render(
+    stub = cocoMvc.renderIntoContainer(
       <textarea value={true} onChange={emptyFunction} />,
       container,
     );
@@ -191,7 +191,7 @@ describe('ReactDOMTextarea', () => {
 
     expect(node.value).toBe('giraffe');
 
-    stub = cocoMvc.render(
+    stub = cocoMvc.renderIntoContainer(
       <textarea value={false} onChange={emptyFunction} />,
       container,
     );
@@ -210,7 +210,7 @@ describe('ReactDOMTextarea', () => {
         return 'foo';
       },
     };
-    stub = cocoMvc.render(
+    stub = cocoMvc.renderIntoContainer(
       <textarea value={objToString} onChange={emptyFunction} />,
       container,
     );
@@ -235,7 +235,7 @@ describe('ReactDOMTextarea', () => {
     expect(node.value).toBe('giraffe');
 
     const test = () =>
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <textarea value={new TemporalLike()} onChange={emptyFunction} />,
         container,
       );
@@ -251,11 +251,11 @@ describe('ReactDOMTextarea', () => {
   it('should take updates to `defaultValue` for uncontrolled textarea', () => {
     const container = document.createElement('div');
 
-    const node = cocoMvc.render(<textarea defaultValue="0" />, container);
+    const node = cocoMvc.renderIntoContainer(<textarea defaultValue="0" />, container);
 
     expect(node.value).toBe('0');
 
-    cocoMvc.render(<textarea defaultValue="1" />, container);
+    cocoMvc.renderIntoContainer(<textarea defaultValue="1" />, container);
 
     expect(node.value).toBe('0');
   });
@@ -263,18 +263,18 @@ describe('ReactDOMTextarea', () => {
   it('should take updates to children in lieu of `defaultValue` for uncontrolled textarea', () => {
     const container = document.createElement('div');
 
-    const node = cocoMvc.render(<textarea defaultValue="0" />, container);
+    const node = cocoMvc.renderIntoContainer(<textarea defaultValue="0" />, container);
 
     expect(node.value).toBe('0');
 
-    cocoMvc.render(<textarea>1</textarea>, container);
+    cocoMvc.renderIntoContainer(<textarea>1</textarea>, container);
 
     expect(node.value).toBe('0');
   });
 
   it('should not incur unnecessary DOM mutations', () => {
     const container = document.createElement('div');
-    cocoMvc.render(<textarea value="a" onChange={emptyFunction} />, container);
+    cocoMvc.renderIntoContainer(<textarea value="a" onChange={emptyFunction} />, container);
 
     const node = container.firstChild;
     let nodeValue = 'a';
@@ -288,10 +288,10 @@ describe('ReactDOMTextarea', () => {
       }),
     });
 
-    cocoMvc.render(<textarea value="a" onChange={emptyFunction} />, container);
+    cocoMvc.renderIntoContainer(<textarea value="a" onChange={emptyFunction} />, container);
     expect(nodeValueSetter).toHaveBeenCalledTimes(0);
 
-    cocoMvc.render(<textarea value="b" onChange={emptyFunction} />, container);
+    cocoMvc.renderIntoContainer(<textarea value="b" onChange={emptyFunction} />, container);
     expect(nodeValueSetter).toHaveBeenCalledTimes(1);
   });
 
@@ -332,7 +332,7 @@ describe('ReactDOMTextarea', () => {
     expect(node.value).toBe('giraffe');
 
     // Changing children should do nothing, it functions like `defaultValue`.
-    stub = cocoMvc.render(<textarea>gorilla</textarea>, container);
+    stub = cocoMvc.renderIntoContainer(<textarea>gorilla</textarea>, container);
     expect(node.value).toEqual('giraffe');
   });
 
@@ -346,7 +346,7 @@ describe('ReactDOMTextarea', () => {
 
     expect(node.value).toBe('kitten');
 
-    cocoMvc.render(<textarea defaultValue="gorilla" />, container);
+    cocoMvc.renderIntoContainer(<textarea defaultValue="gorilla" />, container);
 
     expect(node.value).toEqual('kitten');
   });
@@ -361,14 +361,14 @@ describe('ReactDOMTextarea', () => {
 
     expect(node.value).toBe('kitten');
 
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <textarea value="puppies" onChange={emptyFunction} />,
       container,
     );
 
     expect(node.value).toBe('puppies');
 
-    cocoMvc.render(<textarea defaultValue="gorilla" />, container);
+    cocoMvc.renderIntoContainer(<textarea defaultValue="gorilla" />, container);
 
     expect(node.value).toEqual('puppies');
   });
@@ -475,9 +475,9 @@ describe('ReactDOMTextarea', () => {
 
   it('should not warn about missing onChange in uncontrolled textareas', () => {
     const container = document.createElement('div');
-    cocoMvc.render(<textarea />, container);
+    cocoMvc.renderIntoContainer(<textarea />, container);
     cocoMvc.unmountComponentAtNode(container);
-    cocoMvc.render(<textarea value={undefined} />, container);
+    cocoMvc.renderIntoContainer(<textarea value={undefined} />, container);
   });
 
   it('does not set textContent if value is unchanged', () => {
@@ -516,7 +516,7 @@ describe('ReactDOMTextarea', () => {
       }
     }
     application.start();
-    cocoMvc.render(<App />, container);
+    cocoMvc.renderIntoContainer(<App />, container);
     defaultValue = node.defaultValue;
     Object.defineProperty(node, 'defaultValue', {get, set});
     instance.count = 1;
@@ -526,7 +526,7 @@ describe('ReactDOMTextarea', () => {
   describe('When given a Symbol value', () => {
     it('treats initial Symbol value as an empty string', () => {
       const container = document.createElement('div');
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <textarea value={Symbol('foobar')} onChange={() => {}} />,
         container,
       );
@@ -542,7 +542,7 @@ describe('ReactDOMTextarea', () => {
 
     it('treats initial Symbol children as an empty string', () => {
       const container = document.createElement('div');
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <textarea onChange={() => {}}>{Symbol('foo')}</textarea>,
         container,
       );
@@ -557,8 +557,8 @@ describe('ReactDOMTextarea', () => {
 
     it('treats updated Symbol value as an empty string', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<textarea value="foo" onChange={() => {}} />, container);
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(<textarea value="foo" onChange={() => {}} />, container);
+      cocoMvc.renderIntoContainer(
         <textarea value={Symbol('foo')} onChange={() => {}} />,
         container,
       );
@@ -574,7 +574,7 @@ describe('ReactDOMTextarea', () => {
 
     it('treats initial Symbol defaultValue as an empty string', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<textarea defaultValue={Symbol('foobar')} />, container);
+      cocoMvc.renderIntoContainer(<textarea defaultValue={Symbol('foobar')} />, container);
       const node = container.firstChild;
 
       // TODO: defaultValue is a reserved prop and is not validated. Check warnings when they are.
@@ -583,8 +583,8 @@ describe('ReactDOMTextarea', () => {
 
     it('treats updated Symbol defaultValue as an empty string', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<textarea defaultValue="foo" />, container);
-      cocoMvc.render(<textarea defaultValue={Symbol('foobar')} />, container);
+      cocoMvc.renderIntoContainer(<textarea defaultValue="foo" />, container);
+      cocoMvc.renderIntoContainer(<textarea defaultValue={Symbol('foobar')} />, container);
       const node = container.firstChild;
 
       // TODO: defaultValue is a reserved prop and is not validated. Check warnings when they are.
@@ -595,7 +595,7 @@ describe('ReactDOMTextarea', () => {
   describe('When given a function value', () => {
     it('treats initial function value as an empty string', () => {
       const container = document.createElement('div');
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <textarea value={() => {}} onChange={() => {}} />,
         container,
       );
@@ -611,7 +611,7 @@ describe('ReactDOMTextarea', () => {
 
     it('treats initial function children as an empty string', () => {
       const container = document.createElement('div');
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <textarea onChange={() => {}}>{() => {}}</textarea>,
         container,
       );
@@ -627,8 +627,8 @@ describe('ReactDOMTextarea', () => {
 
     it('treats updated function value as an empty string', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<textarea value="foo" onChange={() => {}} />, container);
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(<textarea value="foo" onChange={() => {}} />, container);
+      cocoMvc.renderIntoContainer(
         <textarea value={() => {}} onChange={() => {}} />,
         container,
       );
@@ -644,7 +644,7 @@ describe('ReactDOMTextarea', () => {
 
     it('treats initial function defaultValue as an empty string', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<textarea defaultValue={() => {}} />, container);
+      cocoMvc.renderIntoContainer(<textarea defaultValue={() => {}} />, container);
       const node = container.firstChild;
 
       // TODO: defaultValue is a reserved prop and is not validated. Check warnings when they are.
@@ -653,8 +653,8 @@ describe('ReactDOMTextarea', () => {
 
     it('treats updated function defaultValue as an empty string', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<textarea defaultValue="foo" />, container);
-      cocoMvc.render(<textarea defaultValue={() => {}} />, container);
+      cocoMvc.renderIntoContainer(<textarea defaultValue="foo" />, container);
+      cocoMvc.renderIntoContainer(<textarea defaultValue={() => {}} />, container);
       const node = container.firstChild;
 
       // TODO: defaultValue is a reserved prop and is not validated. Check warnings when they are.

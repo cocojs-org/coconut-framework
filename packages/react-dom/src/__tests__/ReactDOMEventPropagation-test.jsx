@@ -50,7 +50,7 @@ describe('ReactDOMEventListener', () => {
 
     container = document.createElement('div');
     document.body.appendChild(container);
-    cocoMvc.render(tree, container);
+    cocoMvc.renderIntoContainer(tree, container);
   }
 
   describe('bubbling events', () => {
@@ -1205,7 +1205,7 @@ describe('ReactDOMEventListener', () => {
       viewDidMount = () => {
         this.innerContainer = document.createElement('div');
         this.ref.current.appendChild(this.innerContainer);
-        cocoMvc.render(this.props.children, this.innerContainer);
+        cocoMvc.renderIntoContainer(this.props.children, this.innerContainer);
       }
 
       viewWillUnmount = () => {
@@ -1299,7 +1299,7 @@ describe('ReactDOMEventListener', () => {
       viewDidMount = () => {
         this.innerContainer = document.createElement('div');
         this.ref.current.appendChild(this.innerContainer);
-        cocoMvc.render(this.props.children, this.innerContainer);
+        cocoMvc.renderIntoContainer(this.props.children, this.innerContainer);
       }
 
       viewWillUnmount = () => {
@@ -1391,7 +1391,7 @@ describe('ReactDOMEventListener', () => {
       viewDidMount = () => {
         this.innerContainer = document.createElement('div');
         this.ref.current.appendChild(this.innerContainer);
-        cocoMvc.render(this.props.children, this.innerContainer);
+        cocoMvc.renderIntoContainer(this.props.children, this.innerContainer);
       }
 
       viewWillUnmount = () => {

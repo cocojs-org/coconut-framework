@@ -13,6 +13,12 @@ export {
     listBeDecoratedClsByClassKindMetadata,
     clear,
 } from 'coco-ioc-container';
-// TODO: renderDecorator改为render，render改为renderApp
-export { TestWebRender, RenderMeta, render as renderDecorator } from 'coco-render';
-export { render, findDOMNode, unmountComponentAtNode, registerMvcApi, unregisterMvcApi, cleanCache } from 'react-dom';
+export { TestWebRender, RenderMeta, render } from 'coco-render';
+export {
+    render as renderIntoContainer,
+    findDOMNode,
+    unmountComponentAtNode,
+    registerMvcApi,
+    unregisterMvcApi,
+    cleanCache,
+} from 'react-dom';

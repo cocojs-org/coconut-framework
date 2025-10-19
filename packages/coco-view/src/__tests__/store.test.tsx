@@ -153,7 +153,7 @@ describe('store', () => {
 
         application.start();
         const container = document.createElement('div');
-        cocoMvc.render(
+        cocoMvc.renderIntoContainer(
             <div>
                 <Form />
                 <Detail />
@@ -206,7 +206,7 @@ describe('store', () => {
 
         application.start();
         const container = document.createElement('div');
-        cocoMvc.render(
+        cocoMvc.renderIntoContainer(
             <div>
                 <Form />
                 <Detail />
@@ -263,7 +263,7 @@ describe('store', () => {
 
         application.start();
         const container = document.createElement('div');
-        cocoMvc.render(
+        cocoMvc.renderIntoContainer(
             <div>
                 <Form />
                 <Detail />
@@ -274,7 +274,7 @@ describe('store', () => {
         const subscribers = userinfo.storePublisher.getSubscribers();
         expect(subscribers.length).toBe(2);
         // 卸载Detail组件
-        cocoMvc.render(
+        cocoMvc.renderIntoContainer(
             <div>
                 <Form />
             </div>,
@@ -304,7 +304,7 @@ describe('store', () => {
 
         application.start();
         const container = document.createElement('div');
-        cocoMvc.render(
+        cocoMvc.renderIntoContainer(
             <div>
                 <Detail />
             </div>,

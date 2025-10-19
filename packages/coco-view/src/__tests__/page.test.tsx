@@ -90,7 +90,7 @@ describe('@page装饰器', () => {
 
         application.start();
         const container = document.createElement('div');
-        cocoMvc.render(<Counter />, container);
+        cocoMvc.renderIntoContainer(<Counter />, container);
         const button = getByRole(container, 'button');
         expect(button).toBeTruthy();
         expect(getByText(button, '1')).toBeTruthy();
@@ -123,7 +123,7 @@ describe('@page装饰器', () => {
 
         application.start();
         const container = document.createElement('div');
-        cocoMvc.render(<Counter />, container);
+        cocoMvc.renderIntoContainer(<Counter />, container);
         const button = getByRole(container, 'button');
         expect(button).toBeTruthy();
         expect(getByText(button, '1')).toBeTruthy();

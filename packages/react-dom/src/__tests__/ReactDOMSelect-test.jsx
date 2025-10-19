@@ -59,12 +59,12 @@ describe('ReactDOMSelect', () => {
     );
     const options = stub.props.children;
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.value).toBe('giraffe');
 
     // Changing `defaultValue` should do nothing.
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <select defaultValue="gorilla">{options}</select>,
       container,
     );
@@ -88,12 +88,12 @@ describe('ReactDOMSelect', () => {
       </select>
     );
     const container = document.createElement('div');
-    const node = cocoMvc.render(el, container);
+    const node = cocoMvc.renderIntoContainer(el, container);
 
     expect(node.value).toBe('giraffe');
 
     node.value = 'monkey';
-    cocoMvc.render(el, container);
+    cocoMvc.renderIntoContainer(el, container);
     // Uncontrolled selects shouldn't change the value after first mounting
     expect(node.value).toEqual('monkey');
   });
@@ -108,14 +108,14 @@ describe('ReactDOMSelect', () => {
     );
     const options = stub.props.children;
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.options[0].selected).toBe(false); // monkey
     expect(node.options[1].selected).toBe(true); // giraffe
     expect(node.options[2].selected).toBe(true); // gorilla
 
     // Changing `defaultValue` should do nothing.
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <select multiple={true} defaultValue={['monkey']}>
         {options}
       </select>,
@@ -137,12 +137,12 @@ describe('ReactDOMSelect', () => {
     );
     const options = stub.props.children;
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.value).toBe('giraffe');
 
     // Changing the `value` prop should change the selected option.
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <select value="gorilla" onChange={noop}>
         {options}
       </select>,
@@ -161,7 +161,7 @@ describe('ReactDOMSelect', () => {
       </select>
     );
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
     expect(node.options[0].selected).toBe(false);
     expect(node.options[2].selected).toBe(true);
   });
@@ -176,12 +176,12 @@ describe('ReactDOMSelect', () => {
     );
     const options = stub.props.children;
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.value).toBe('__proto__');
 
     // Changing the `value` prop should change the selected option.
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <select value="gorilla" onChange={noop}>
         {options}
       </select>,
@@ -208,14 +208,14 @@ describe('ReactDOMSelect', () => {
     );
     const options = stub.props.children;
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.options[0].selected).toBe(false); // monkey
     expect(node.options[1].selected).toBe(true); // giraffe
     expect(node.options[2].selected).toBe(true); // gorilla
 
     // Changing the `value` prop should change the selected options.
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <select multiple={true} value={['monkey']} onChange={noop}>
         {options}
       </select>,
@@ -237,14 +237,14 @@ describe('ReactDOMSelect', () => {
     );
     const options = stub.props.children;
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.options[0].selected).toBe(false); // monkey
     expect(node.options[1].selected).toBe(true); // __proto__
     expect(node.options[2].selected).toBe(true); // gorilla
 
     // Changing the `value` prop should change the selected options.
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <select multiple={true} value={['monkey']} onChange={noop}>
         {options}
       </select>,
@@ -274,9 +274,9 @@ describe('ReactDOMSelect', () => {
   it('should reset child options selected when they are changed and `value` is set', () => {
     const stub = <select multiple={true} value={['a', 'b']} onChange={noop} />;
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <select multiple={true} value={['a', 'b']} onChange={noop}>
         <option value="a">a</option>
         <option value="b">b</option>
@@ -306,7 +306,7 @@ describe('ReactDOMSelect', () => {
       </select>
     );
     const container = document.createElement('div');
-    const node = cocoMvc.render(el, container);
+    const node = cocoMvc.renderIntoContainer(el, container);
 
     expect(node.options[0].selected).toBe(false); // monkey
     expect(node.options[1].selected).toBe(true); // giraffe
@@ -322,7 +322,7 @@ describe('ReactDOMSelect', () => {
         <option value="gorilla">A gorilla!</option>
       </select>
     );
-    cocoMvc.render(el2, container);
+    cocoMvc.renderIntoContainer(el2, container);
 
     expect(node.options[0].selected).toBe(true); // monkey
     expect(node.options[1].selected).toBe(false); // giraffe
@@ -339,14 +339,14 @@ describe('ReactDOMSelect', () => {
     );
     const options = stub.props.children;
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.options[0].selected).toBe(false); // monkey
     expect(node.options[1].selected).toBe(true); // giraffe
     expect(node.options[2].selected).toBe(false); // gorilla
 
     // When making it multiple, giraffe and gorilla should be selected
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <select multiple={true} defaultValue={['giraffe', 'gorilla']}>
         {options}
       </select>,
@@ -368,7 +368,7 @@ describe('ReactDOMSelect', () => {
     );
     const options = stub.props.children;
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.options[0].selected).toBe(false); // monkey
     expect(node.options[1].selected).toBe(true); // giraffe
@@ -376,7 +376,7 @@ describe('ReactDOMSelect', () => {
 
     // When removing multiple, defaultValue is applied again, being omitted
     // means that "monkey" will be selected
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <select defaultValue="gorilla">{options}</select>,
       container,
     );
@@ -395,7 +395,7 @@ describe('ReactDOMSelect', () => {
       </select>
     );
     const container = document.createElement('div');
-    const select = cocoMvc.render(stub, container);
+    const select = cocoMvc.renderIntoContainer(stub, container);
 
     expect(select.options[0].selected).toBe(false);
     expect(select.options[1].selected).toBe(false);
@@ -415,13 +415,13 @@ describe('ReactDOMSelect', () => {
     );
     const options = stub.props.children;
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.options[0].selected).toBe(false); // monkey
     expect(node.options[1].selected).toBe(true); // giraffe
     expect(node.options[2].selected).toBe(false); // gorilla
 
-    cocoMvc.render(<select>{options}</select>, container);
+    cocoMvc.renderIntoContainer(<select>{options}</select>, container);
 
     expect(node.options[0].selected).toBe(false); // monkey
     expect(node.options[1].selected).toBe(true); // giraffe
@@ -438,9 +438,9 @@ describe('ReactDOMSelect', () => {
     );
     const options = stub.props.children;
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <select value="gorilla" onChange={noop}>
         {options}
       </select>,
@@ -451,7 +451,7 @@ describe('ReactDOMSelect', () => {
     expect(node.options[1].selected).toBe(false); // giraffe
     expect(node.options[2].selected).toBe(true); // gorilla
 
-    cocoMvc.render(<select>{options}</select>, container);
+    cocoMvc.renderIntoContainer(<select>{options}</select>, container);
 
     expect(node.options[0].selected).toBe(false); // monkey
     expect(node.options[1].selected).toBe(false); // giraffe
@@ -461,7 +461,7 @@ describe('ReactDOMSelect', () => {
   it('should not control defaultValue if re-adding options', () => {
     const container = document.createElement('div');
 
-    const node = cocoMvc.render(
+    const node = cocoMvc.renderIntoContainer(
       <select multiple={true} defaultValue={['giraffe']}>
         <option key="monkey" value="monkey">
           A monkey!
@@ -480,7 +480,7 @@ describe('ReactDOMSelect', () => {
     expect(node.options[1].selected).toBe(true); // giraffe
     expect(node.options[2].selected).toBe(false); // gorilla
 
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <select multiple={true} defaultValue={['giraffe']}>
         <option key="monkey" value="monkey">
           A monkey!
@@ -495,7 +495,7 @@ describe('ReactDOMSelect', () => {
     expect(node.options[0].selected).toBe(false); // monkey
     expect(node.options[1].selected).toBe(false); // gorilla
 
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <select multiple={true} defaultValue={['giraffe']}>
         <option key="monkey" value="monkey">
           A monkey!
@@ -519,7 +519,7 @@ describe('ReactDOMSelect', () => {
     const container = document.createElement('div');
     let node
 
-    cocoMvc.render(<select value={"monkey"} ref={n => { node = n }} onChange={noop}>
+    cocoMvc.renderIntoContainer(<select value={"monkey"} ref={n => { node = n }} onChange={noop}>
       <option key="monkey" value="monkey">
         A monkey is chosen!
       </option>
@@ -534,7 +534,7 @@ describe('ReactDOMSelect', () => {
     expect(node.options[1].selected).toBe(false); // giraffe
     expect(node.options[2].selected).toBe(false); // gorilla
 
-    cocoMvc.render(<select value={"giraffe"} ref={n => { node = n }} onChange={noop}>
+    cocoMvc.renderIntoContainer(<select value={"giraffe"} ref={n => { node = n }} onChange={noop}>
       <option key="monkey" value="monkey">
         A monkey!
       </option>
@@ -613,7 +613,7 @@ describe('ReactDOMSelect', () => {
     document.body.appendChild(container);
 
     try {
-      const node = cocoMvc.render(stub, container);
+      const node = cocoMvc.renderIntoContainer(stub, container);
 
       node.dispatchEvent(
         new Event('change', {bubbles: true, cancelable: false}),
@@ -645,9 +645,9 @@ describe('ReactDOMSelect', () => {
 
   it('should not warn about missing onChange in uncontrolled textareas', () => {
     const container = document.createElement('div');
-    cocoMvc.render(<select />, container);
+    cocoMvc.renderIntoContainer(<select />, container);
     cocoMvc.unmountComponentAtNode(container);
-    cocoMvc.render(<select value={undefined} />, container);
+    cocoMvc.renderIntoContainer(<select value={undefined} />, container);
   });
 
   it('should be able to safely remove select onChange', () => {
@@ -663,7 +663,7 @@ describe('ReactDOMSelect', () => {
         <option value="gorilla">A gorilla!</option>
       </select>
     );
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     // todo Simulate没有实现
     // expect(() => ReactTestUtils.Simulate.change(node)).not.toThrow();
@@ -680,7 +680,7 @@ describe('ReactDOMSelect', () => {
       </select>
     );
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.options[0].selected).toBe(false); // a
     expect(node.options[1].selected).toBe(true); // b
@@ -708,7 +708,7 @@ describe('ReactDOMSelect', () => {
       }
 
       _renderNested = () => {
-        cocoMvc.render(
+        cocoMvc.renderIntoContainer(
           <select
             onChange={this._handleChange.bind(this)}
             ref={n => (selectNode = n)}
@@ -731,7 +731,7 @@ describe('ReactDOMSelect', () => {
     document.body.appendChild(container);
 
     application.start();
-    cocoMvc.render(<Parent />, container);
+    cocoMvc.renderIntoContainer(<Parent />, container);
 
     expect(selectNode.value).toBe('giraffe');
 
@@ -761,7 +761,7 @@ describe('ReactDOMSelect', () => {
       </select>
     );
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.options[0].selected).toBe(false); // a
     expect(node.options[1].selected).toBe(false); // b

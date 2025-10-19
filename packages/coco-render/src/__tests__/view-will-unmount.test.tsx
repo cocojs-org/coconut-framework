@@ -58,7 +58,7 @@ describe('viewWillUnmount', () => {
         }
         application.start();
         const container = document.createElement('div');
-        cocoMvc.render(<App />, container);
+        cocoMvc.renderIntoContainer(<App />, container);
         const header = getByRole(container, 'heading');
         const button = getByRole(header, 'button');
         expect(button).toBeTruthy();

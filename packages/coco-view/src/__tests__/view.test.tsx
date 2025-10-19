@@ -90,7 +90,7 @@ describe('view', () => {
         }
         application.start();
         const container = document.createElement('div');
-        cocoMvc.render(<Button />, container);
+        cocoMvc.renderIntoContainer(<Button />, container);
         const button = getByRole(container, 'button');
         expect(button).toBeTruthy();
         expect(getByText(button, 'count:1')).toBeTruthy();

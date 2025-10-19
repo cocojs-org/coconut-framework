@@ -45,7 +45,7 @@ describe('CSSPropertyOperations', () => {
       padding: '4px',
     };
     const container = document.createElement('div');
-    const node = cocoMvc.render(<div style={styles} />, container);
+    const node = cocoMvc.renderIntoContainer(<div style={styles} />, container);
     const style = node.getAttribute('style')
     expect(style).toContain('left: 0px; margin: 16px; opacity: 0.5; padding: 4px');
   });
@@ -57,7 +57,7 @@ describe('CSSPropertyOperations', () => {
       right: ' 4 ',
     };
     const container = document.createElement('div');
-    const node = cocoMvc.render(<div style={styles} />, container);
+    const node = cocoMvc.renderIntoContainer(<div style={styles} />, container);
     const style = node.getAttribute('style')
     expect(style).toContain('opacity: 0.5;');
   });
@@ -69,7 +69,7 @@ describe('CSSPropertyOperations', () => {
     };
     let div = <div style={styles} />;
     const root = document.createElement('div');
-    div = cocoMvc.render(div, root);
+    div = cocoMvc.renderIntoContainer(div, root);
     expect(/style=".*"/.test(root.innerHTML)).toBe(true);
   });
 
@@ -80,7 +80,7 @@ describe('CSSPropertyOperations', () => {
     };
     let div = <div style={styles} />;
     const root = document.createElement('div');
-    div = cocoMvc.render(div, root);
+    div = cocoMvc.renderIntoContainer(div, root);
     expect(/style=/.test(root.innerHTML)).toBe(false);
   });
 
@@ -96,7 +96,7 @@ describe('CSSPropertyOperations', () => {
 
     application.start();
     const root = document.createElement('div');
-    cocoMvc.render(<Comp />, root);
+    cocoMvc.renderIntoContainer(<Comp />, root);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'Unsupported style property %s. Did you mean %s?',
       'background-color',
@@ -123,7 +123,7 @@ describe('CSSPropertyOperations', () => {
     };
     application.start();
     const root = document.createElement('div');
-    cocoMvc.render(<Comp style={styles} />, root)
+    cocoMvc.renderIntoContainer(<Comp style={styles} />, root)
     expect(consoleErrorSpy.mock.calls[0]).toEqual([
       'Unsupported style property %s. Did you mean %s?',
       '-ms-transform',
@@ -156,7 +156,7 @@ describe('CSSPropertyOperations', () => {
 
     application.start();
     const root = document.createElement('div');
-    cocoMvc.render(<Comp />, root)
+    cocoMvc.renderIntoContainer(<Comp />, root)
     expect(consoleErrorSpy.mock.calls[0]).toEqual([
       'Unsupported vendor-prefixed style property %s. Did you mean %s?',
       'oTransform',
@@ -190,7 +190,7 @@ describe('CSSPropertyOperations', () => {
 
     application.start();
     const root = document.createElement('div');
-    cocoMvc.render(<Comp />, root);
+    cocoMvc.renderIntoContainer(<Comp />, root);
     expect(consoleErrorSpy.mock.calls[0]).toEqual([
       "Style property values shouldn't contain a semicolon. " +
       'Try "%s: %s" instead.',
@@ -217,7 +217,7 @@ describe('CSSPropertyOperations', () => {
 
     application.start();
     const root = document.createElement('div');
-    cocoMvc.render(<Comp />, root);
+    cocoMvc.renderIntoContainer(<Comp />, root);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       '`NaN` is an invalid value for the `%s` css style property.',
       'fontSize',
@@ -234,7 +234,7 @@ describe('CSSPropertyOperations', () => {
 
     application.start();
     const root = document.createElement('div');
-    cocoMvc.render(<Comp />, root);
+    cocoMvc.renderIntoContainer(<Comp />, root);
   });
 
   it('should warn about style containing an Infinity value', () => {
@@ -249,7 +249,7 @@ describe('CSSPropertyOperations', () => {
 
     application.start();
     const root = document.createElement('div');
-    cocoMvc.render(<Comp />, root);
+    cocoMvc.renderIntoContainer(<Comp />, root);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       '`Infinity` is an invalid value for the `%s` css style property.',
       'fontSize',
@@ -266,7 +266,7 @@ describe('CSSPropertyOperations', () => {
 
     application.start();
     const root = document.createElement('div');
-    cocoMvc.render(<Comp />, root);
+    cocoMvc.renderIntoContainer(<Comp />, root);
 
     expect(root.children[0].style.getPropertyValue('--foo')).toEqual('5');
   });

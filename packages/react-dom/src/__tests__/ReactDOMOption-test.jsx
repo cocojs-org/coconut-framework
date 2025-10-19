@@ -171,11 +171,11 @@ describe('ReactDOMOption', () => {
 
   it('should set attribute for empty value', () => {
     const container = document.createElement('div');
-    const option = cocoMvc.render(<option value="" />, container);
+    const option = cocoMvc.renderIntoContainer(<option value="" />, container);
     expect(option.hasAttribute('value')).toBe(true);
     expect(option.getAttribute('value')).toBe('');
 
-    cocoMvc.render(<option value="lava" />, container);
+    cocoMvc.renderIntoContainer(<option value="lava" />, container);
     expect(option.hasAttribute('value')).toBe(true);
     expect(option.getAttribute('value')).toBe('lava');
   });
@@ -191,11 +191,11 @@ describe('ReactDOMOption', () => {
     );
     const options = stub.props.children;
     const container = document.createElement('div');
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.selectedIndex).toBe(1);
 
-    cocoMvc.render(<select value="gorilla">{options}</select>, container);
+    cocoMvc.renderIntoContainer(<select value="gorilla">{options}</select>, container);
     expect(node.selectedIndex).toEqual(2);
   });
 })

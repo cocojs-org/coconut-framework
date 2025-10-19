@@ -103,9 +103,9 @@ describe('ReactDOMComponent', () => {
 
     application.start();
     const element = <StatefulComponent />;
-    const firstInstance = cocoMvc.render(element, container);
+    const firstInstance = cocoMvc.renderIntoContainer(element, container);
     cocoMvc.unmountComponentAtNode(container);
-    const secondInstance = cocoMvc.render(element, container);
+    const secondInstance = cocoMvc.renderIntoContainer(element, container);
     expect(firstInstance).not.toBe(secondInstance);
   });
 
@@ -248,7 +248,7 @@ describe('ReactDOMComponent', () => {
 
     application.start();
     const container = document.createElement('div');
-    const instance = cocoMvc.render(<Component />, container);
+    const instance = cocoMvc.renderIntoContainer(<Component />, container);
 
     // No longer a public API, but we can test that it works internally by
     // reaching into the updater.
@@ -313,7 +313,7 @@ describe('ReactDOMComponent', () => {
     //
     application.start();
     const container = document.createElement('div');
-    let instance = cocoMvc.render(<LifeCycleComponent />, container);
+    let instance = cocoMvc.renderIntoContainer(<LifeCycleComponent />, container);
     // getInitialState
     expect(instance._testJournal.returnedFromGetInitialState).toEqual(
       GET_INIT_STATE_RETURN_VAL,
@@ -335,7 +335,7 @@ describe('ReactDOMComponent', () => {
     expect(instance._testJournal.lifeCycleInInitialRender).toBe('UNMOUNTED');
 
     // Now *update the component* // coco 没有forceupdate，所以使用render代替
-    instance = cocoMvc.render(<LifeCycleComponent />, container);
+    instance = cocoMvc.renderIntoContainer(<LifeCycleComponent />, container);
 
     // render 2nd time
     expect(instance._testJournal.stateInLaterRender).toEqual(NEXT_RENDER_STATE);
@@ -376,7 +376,7 @@ describe('ReactDOMComponent', () => {
       updateTooltip = () => {
         // Even though this.props.tooltip has an owner, updating it shouldn't
         // throw here because it's mounted as a root component
-        cocoMvc.render(this.props.tooltip, this.container);
+        cocoMvc.renderIntoContainer(this.props.tooltip, this.container);
       };
     }
 
@@ -393,11 +393,11 @@ describe('ReactDOMComponent', () => {
 
     application.start();
     const container = document.createElement('div');
-    cocoMvc.render(<Component text="uno" tooltipText="one" />, container);
+    cocoMvc.renderIntoContainer(<Component text="uno" tooltipText="one" />, container);
 
     // Since `instance` is a root component, we can set its props. This also
     // makes Tooltip rerender the tooltip component, which shouldn't throw.
-    cocoMvc.render(<Component text="dos" tooltipText="two" />, container);
+    cocoMvc.renderIntoContainer(<Component text="dos" tooltipText="two" />, container);
   });
 
   it('should allow state updates in viewDidMount', () => {
@@ -470,7 +470,7 @@ describe('ReactDOMComponent', () => {
     application.start();
     const container = document.createElement('div');
     log = [];
-    cocoMvc.render(<Outer x={1} />, container);
+    cocoMvc.renderIntoContainer(<Outer x={1} />, container);
     expect(log).toEqual([
       'inner viewDidMount',
       'outer viewDidMount',
@@ -478,7 +478,7 @@ describe('ReactDOMComponent', () => {
 
     // Dedup warnings
     log = [];
-    cocoMvc.render(<Outer x={2} />, container);
+    cocoMvc.renderIntoContainer(<Outer x={2} />, container);
     expect(log).toEqual([
       'inner viewDidUpdate',
       'outer viewDidUpdate',

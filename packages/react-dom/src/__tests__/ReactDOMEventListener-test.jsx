@@ -54,11 +54,11 @@ describe('ReactDOMEventListener', () => {
 
       const childContainer = document.createElement('div');
       const parentContainer = document.createElement('div');
-      const childNode = cocoMvc.render(
+      const childNode = cocoMvc.renderIntoContainer(
         <div onMouseOut={onMouseOut}>Child</div>,
         childContainer,
       );
-      const parentNode = cocoMvc.render(
+      const parentNode = cocoMvc.renderIntoContainer(
         <div onMouseOut={onMouseOut}>div</div>,
         parentContainer,
       );
@@ -86,15 +86,15 @@ describe('ReactDOMEventListener', () => {
       const childContainer = document.createElement('div');
       const parentContainer = document.createElement('div');
       const grandParentContainer = document.createElement('div');
-      const childNode = cocoMvc.render(
+      const childNode = cocoMvc.renderIntoContainer(
         <div onMouseOut={onMouseOut}>Child</div>,
         childContainer,
       );
-      const parentNode = cocoMvc.render(
+      const parentNode = cocoMvc.renderIntoContainer(
         <div onMouseOut={onMouseOut}>Parent</div>,
         parentContainer,
       );
-      const grandParentNode = cocoMvc.render(
+      const grandParentNode = cocoMvc.renderIntoContainer(
         <div onMouseOut={onMouseOut}>Parent</div>,
         grandParentContainer,
       );
@@ -150,7 +150,7 @@ describe('ReactDOMEventListener', () => {
         }
 
         application.start();
-        cocoMvc.render(<MyComponent />, container);
+        cocoMvc.renderIntoContainer(<MyComponent />, container);
         container.firstChild.dispatchEvent(
           new MouseEvent('click', {
             bubbles: true,
@@ -167,21 +167,21 @@ describe('ReactDOMEventListener', () => {
 
       const childContainer = document.createElement('div');
       const handleChildMouseOut = () => {
-        cocoMvc.render(<div>1</div>, childContainer);
+        cocoMvc.renderIntoContainer(<div>1</div>, childContainer);
         mock(childNode.textContent);
       };
 
       const parentContainer = document.createElement('div');
       const handleParentMouseOut = () => {
-        cocoMvc.render(<div>2</div>, childContainer);
+        cocoMvc.renderIntoContainer(<div>2</div>, childContainer);
         mock(childNode.textContent);
       };
 
-      const childNode = cocoMvc.render(
+      const childNode = cocoMvc.renderIntoContainer(
         <div onMouseOut={handleChildMouseOut}>Child</div>,
         childContainer,
       );
-      const parentNode = cocoMvc.render(
+      const parentNode = cocoMvc.renderIntoContainer(
         <div onMouseOut={handleParentMouseOut}>Parent</div>,
         parentContainer,
       );
@@ -246,7 +246,7 @@ describe('ReactDOMEventListener', () => {
 
     application.start();
     const container = document.createElement('div');
-    const instance = cocoMvc.render(<Wrapper />, container);
+    const instance = cocoMvc.renderIntoContainer(<Wrapper />, container);
 
     document.body.appendChild(container);
 
@@ -287,7 +287,7 @@ describe('ReactDOMEventListener', () => {
       }
     }
     application.start();
-    const instance = cocoMvc.render(<Wrapper />, container);
+    const instance = cocoMvc.renderIntoContainer(<Wrapper />, container);
 
     instance.inputRef.current.dispatchEvent(
       new Event('invalid', {
@@ -351,7 +351,7 @@ describe('ReactDOMEventListener', () => {
       }
 
       application.start();
-      const instance = cocoMvc.render(<Wrapper />, container);
+      const instance = cocoMvc.renderIntoContainer(<Wrapper />, container);
 
       instance.interimRef.current.onsubmit = nativeEvent =>
         nativeEvent.stopPropagation();
@@ -405,7 +405,7 @@ describe('ReactDOMEventListener', () => {
       }
 
       application.start();
-      const instance = cocoMvc.render(
+      const instance = cocoMvc.renderIntoContainer(
         <Wrapper />,
         container,
       );
@@ -532,7 +532,7 @@ describe('ReactDOMEventListener', () => {
       // We expect that mounting this tree will
       // *not* attach handlers for any top-level events.
       application.start();
-      const instance = cocoMvc.render(
+      const instance = cocoMvc.renderIntoContainer(
         <Wrapper />,
         container,
       );
@@ -575,7 +575,7 @@ describe('ReactDOMEventListener', () => {
       }
 
       application.start();
-      const instance = cocoMvc.render(
+      const instance = cocoMvc.renderIntoContainer(
         <Wrapper />,
         container,
       );
@@ -614,7 +614,7 @@ describe('ReactDOMEventListener', () => {
       }
 
       application.start();
-      const instance = cocoMvc.render(
+      const instance = cocoMvc.renderIntoContainer(
         <Wrapper />,
         container,
       );
@@ -652,7 +652,7 @@ describe('ReactDOMEventListener', () => {
       }
 
       application.start();
-      const instance = cocoMvc.render(
+      const instance = cocoMvc.renderIntoContainer(
         <Wrapper />,
         container,
       );
@@ -694,7 +694,7 @@ describe('ReactDOMEventListener', () => {
       }
 
       application.start();
-      const instance = cocoMvc.render(
+      const instance = cocoMvc.renderIntoContainer(
         <Wrapper />,
         container,
       );
@@ -729,7 +729,7 @@ describe('ReactDOMEventListener', () => {
       }
 
       application.start();
-      const instance = cocoMvc.render(
+      const instance = cocoMvc.renderIntoContainer(
         <Wrapper />,
         container,
       );
@@ -769,7 +769,7 @@ describe('ReactDOMEventListener', () => {
       }
 
       application.start();
-      const instance = cocoMvc.render(
+      const instance = cocoMvc.renderIntoContainer(
         <Wrapper />,
         container,
       );
@@ -802,7 +802,7 @@ describe('ReactDOMEventListener', () => {
         }
       }
       application.start();
-      const instance = cocoMvc.render(
+      const instance = cocoMvc.renderIntoContainer(
         <Wrapper />,
         container,
       );
@@ -841,7 +841,7 @@ describe('ReactDOMEventListener', () => {
       }
 
       application.start();
-      const instance = cocoMvc.render(
+      const instance = cocoMvc.renderIntoContainer(
         <Wrapper />,
         container,
       );
@@ -913,7 +913,7 @@ describe('ReactDOMEventListener', () => {
         }
       }
       application.start();
-      const instance = cocoMvc.render(
+      const instance = cocoMvc.renderIntoContainer(
         <Wrapper />,
         container,
       );
@@ -969,7 +969,7 @@ describe('ReactDOMEventListener', () => {
         }
       }
       application.start();
-      const instance = cocoMvc.render(<Wrapper />, container);
+      const instance = cocoMvc.renderIntoContainer(<Wrapper />, container);
       instance.ref.current.dispatchEvent(
         new Event('scroll', {
           bubbles: false,
@@ -1073,13 +1073,13 @@ describe('ReactDOMEventListener', () => {
       }
 
       application.start();
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <Empty1 />,
         container,
       );
 
       // Update to attach.
-      const wrapper1 = cocoMvc.render(
+      const wrapper1 = cocoMvc.renderIntoContainer(
         <Wrapper1 />,
         container,
       );
@@ -1097,7 +1097,7 @@ describe('ReactDOMEventListener', () => {
 
       // Update to verify deduplication.
       log.length = 0;
-      const wrapper2 = cocoMvc.render(
+      const wrapper2 = cocoMvc.renderIntoContainer(
         <Wrapper2 />,
         container,
       );
@@ -1115,7 +1115,7 @@ describe('ReactDOMEventListener', () => {
 
       // Update to detach.
       log.length = 0;
-      const empty2 = cocoMvc.render(
+      const empty2 = cocoMvc.renderIntoContainer(
         <Empty2 />,
         container,
       );
@@ -1146,8 +1146,8 @@ describe('ReactDOMEventListener', () => {
       }
     };
     try {
-      cocoMvc.render(<input />, document.createElement('div'));
-      cocoMvc.render(<input />, document.createElement('div'));
+      cocoMvc.renderIntoContainer(<input />, document.createElement('div'));
+      cocoMvc.renderIntoContainer(<input />, document.createElement('div'));
     } finally {
       document.addEventListener = originalDocAddEventListener;
     }

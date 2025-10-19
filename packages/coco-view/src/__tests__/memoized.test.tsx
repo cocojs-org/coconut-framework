@@ -112,7 +112,7 @@ describe('memoized', () => {
 
         application.start();
         const container = document.createElement('div');
-        cocoMvc.render(<Button />, container);
+        cocoMvc.renderIntoContainer(<Button />, container);
         const buttons = queryAllByRole(container, 'button');
         expect(buttons.length).toBe(2);
         expect(buttons[0]).toBeTruthy();
@@ -160,13 +160,13 @@ describe('memoized', () => {
         application.start();
         const container = document.createElement('div');
         // 渲染2次
-        cocoMvc.render(<Button count={1} />, container);
-        cocoMvc.render(<Button count={1} />, container);
+        cocoMvc.renderIntoContainer(<Button count={1} />, container);
+        cocoMvc.renderIntoContainer(<Button count={1} />, container);
         expect(memoizedFn).toHaveBeenCalledTimes(1);
         const buttons = queryAllByRole(container, 'button');
         expect(buttons.length).toBe(2);
         expect(getByText(container, '张三:1')).toBeTruthy();
-        cocoMvc.render(<Button count={2} />, container);
+        cocoMvc.renderIntoContainer(<Button count={2} />, container);
         // 修改props.count，所以memoizedFn重新计算
         expect(memoizedFn).toHaveBeenCalledTimes(2);
         expect(getByText(container, '张三:2')).toBeTruthy();
@@ -213,12 +213,12 @@ describe('memoized', () => {
         application.start();
         const container = document.createElement('div');
         // 渲染2次
-        cocoMvc.render(<Button user={user1} />, container);
-        cocoMvc.render(<Button user={user1} />, container);
+        cocoMvc.renderIntoContainer(<Button user={user1} />, container);
+        cocoMvc.renderIntoContainer(<Button user={user1} />, container);
         expect(memoizedFn).toHaveBeenCalledTimes(1);
         const buttons = queryAllByRole(container, 'button');
         expect(getByText(container, '张三:1')).toBeTruthy();
-        cocoMvc.render(<Button user={user2} />, container);
+        cocoMvc.renderIntoContainer(<Button user={user2} />, container);
         // 修改props.user，所以memoizedFn重新计算
         expect(memoizedFn).toHaveBeenCalledTimes(2);
         expect(getByText(container, '张三:2')).toBeTruthy();
@@ -264,7 +264,7 @@ describe('memoized', () => {
 
         application.start();
         const container = document.createElement('div');
-        cocoMvc.render(<Button />, container);
+        cocoMvc.renderIntoContainer(<Button />, container);
         const buttons = queryAllByRole(container, 'button');
         expect(buttons.length).toBe(1);
         expect(buttons[0]).toBeTruthy();
@@ -326,7 +326,7 @@ describe('memoized', () => {
         }
         application.start();
         const container = document.createElement('div');
-        cocoMvc.render(<Button />, container);
+        cocoMvc.renderIntoContainer(<Button />, container);
         const buttons = queryAllByRole(container, 'button');
         expect(getByText(container, '张三:1分')).toBeTruthy();
         expect(memoizedFn).toHaveBeenCalledTimes(1);
@@ -407,7 +407,7 @@ describe('memoized', () => {
         }
         application.start();
         const container = document.createElement('div');
-        cocoMvc.render(<Button />, container);
+        cocoMvc.renderIntoContainer(<Button />, container);
         const buttons = queryAllByRole(container, 'button');
         expect(getByText(container, '张三:1分')).toBeTruthy();
         expect(memoizedFn1).toHaveBeenCalledTimes(1);

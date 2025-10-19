@@ -51,13 +51,13 @@ describe('DOMPropertyOperations', () => {
   describe('setValueForProperty', () => {
     it('should set values as properties by default', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<div title="Tip!" />, container);
+      cocoMvc.renderIntoContainer(<div title="Tip!" />, container);
       expect(container.firstChild.title).toBe('Tip!');
     });
 
     it('should set values as attributes if necessary', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<div role="#" />, container);
+      cocoMvc.renderIntoContainer(<div role="#" />, container);
       expect(container.firstChild.getAttribute('role')).toBe('#');
       expect(container.firstChild.role).toBeUndefined();
     });
@@ -67,7 +67,7 @@ describe('DOMPropertyOperations', () => {
         'http://www.w3.org/2000/svg',
         'svg',
       );
-      cocoMvc.render(<image xlinkHref="about:blank" />, container);
+      cocoMvc.renderIntoContainer(<image xlinkHref="about:blank" />, container);
       expect(
         container.firstChild.getAttributeNS(
           'http://www.w3.org/1999/xlink',
@@ -78,17 +78,17 @@ describe('DOMPropertyOperations', () => {
 
     it('should set values as boolean properties', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<div disabled="disabled" />, container);
+      cocoMvc.renderIntoContainer(<div disabled="disabled" />, container);
       expect(container.firstChild.getAttribute('disabled')).toBe('');
-      cocoMvc.render(<div disabled={true} />, container);
+      cocoMvc.renderIntoContainer(<div disabled={true} />, container);
       expect(container.firstChild.getAttribute('disabled')).toBe('');
-      cocoMvc.render(<div disabled={false} />, container);
+      cocoMvc.renderIntoContainer(<div disabled={false} />, container);
       expect(container.firstChild.getAttribute('disabled')).toBe(null);
-      cocoMvc.render(<div disabled={true} />, container);
-      cocoMvc.render(<div disabled={null} />, container);
+      cocoMvc.renderIntoContainer(<div disabled={true} />, container);
+      cocoMvc.renderIntoContainer(<div disabled={null} />, container);
       expect(container.firstChild.getAttribute('disabled')).toBe(null);
-      cocoMvc.render(<div disabled={true} />, container);
-      cocoMvc.render(<div disabled={undefined} />, container);
+      cocoMvc.renderIntoContainer(<div disabled={true} />, container);
+      cocoMvc.renderIntoContainer(<div disabled={undefined} />, container);
       expect(container.firstChild.getAttribute('disabled')).toBe(null);
     });
 
@@ -102,20 +102,20 @@ describe('DOMPropertyOperations', () => {
       };
 
       const container = document.createElement('div');
-      cocoMvc.render(<div className={obj} />, container);
+      cocoMvc.renderIntoContainer(<div className={obj} />, container);
       expect(container.firstChild.getAttribute('class')).toBe('css-class');
     });
 
     it('should not remove empty attributes for special input properties', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<input value="" onChange={() => {}} />, container);
+      cocoMvc.renderIntoContainer(<input value="" onChange={() => {}} />, container);
       expect(container.firstChild.getAttribute('value')).toBe('');
       expect(container.firstChild.value).toBe('');
     });
 
     it('should not remove empty attributes for special option properties', () => {
       const container = document.createElement('div');
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <select>
           <option value="">empty</option>
           <option>filled</option>
@@ -129,23 +129,23 @@ describe('DOMPropertyOperations', () => {
 
     it('should remove for falsey boolean properties', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<div allowFullScreen={false} />, container);
+      cocoMvc.renderIntoContainer(<div allowFullScreen={false} />, container);
       expect(container.firstChild.hasAttribute('allowFullScreen')).toBe(false);
     });
 
     it('should remove when setting custom attr to null', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<div data-foo="bar" />, container);
+      cocoMvc.renderIntoContainer(<div data-foo="bar" />, container);
       expect(container.firstChild.hasAttribute('data-foo')).toBe(true);
-      cocoMvc.render(<div data-foo={null} />, container);
+      cocoMvc.renderIntoContainer(<div data-foo={null} />, container);
       expect(container.firstChild.hasAttribute('data-foo')).toBe(false);
     });
 
     it('should set className to empty string instead of null', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<div className="selected" />, container);
+      cocoMvc.renderIntoContainer(<div className="selected" />, container);
       expect(container.firstChild.className).toBe('selected');
-      cocoMvc.render(<div className={null} />, container);
+      cocoMvc.renderIntoContainer(<div className={null} />, container);
       // className should be '', not 'null' or null (which becomes 'null' in
       // some browsers)
       expect(container.firstChild.className).toBe('');
@@ -154,25 +154,25 @@ describe('DOMPropertyOperations', () => {
 
     it('should remove property properly for boolean properties', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<div hidden={true} />, container);
+      cocoMvc.renderIntoContainer(<div hidden={true} />, container);
       expect(container.firstChild.hasAttribute('hidden')).toBe(true);
-      cocoMvc.render(<div hidden={false} />, container);
+      cocoMvc.renderIntoContainer(<div hidden={false} />, container);
       expect(container.firstChild.hasAttribute('hidden')).toBe(false);
     });
 
     it('should always assign the value attribute for non-inputs', function() {
       const container = document.createElement('div');
-      cocoMvc.render(<progress />, container);
+      cocoMvc.renderIntoContainer(<progress />, container);
       jest.spyOn(container.firstChild, 'setAttribute');
-      cocoMvc.render(<progress value={30} />, container);
-      cocoMvc.render(<progress value="30" />, container);
+      cocoMvc.renderIntoContainer(<progress value={30} />, container);
+      cocoMvc.renderIntoContainer(<progress value="30" />, container);
       expect(container.firstChild.setAttribute).toHaveBeenCalledTimes(2);
     });
 
     it('should return the progress to intermediate state on null value', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<progress value={30} />, container);
-      cocoMvc.render(<progress value={null} />, container);
+      cocoMvc.renderIntoContainer(<progress value={30} />, container);
+      cocoMvc.renderIntoContainer(<progress value={null} />, container);
       // Ensure we move progress back to an indeterminate state.
       // Regression test for https://github.com/facebook/react/issues/6119
       expect(container.firstChild.hasAttribute('value')).toBe(false);
@@ -180,7 +180,7 @@ describe('DOMPropertyOperations', () => {
 
     it('custom elements shouldnt have non-functions for on* attributes treated as event listeners', () => {
       const container = document.createElement('div');
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <my-custom-element
           onstring={'hello'}
           onobj={{hello: 'world'}}
@@ -215,7 +215,7 @@ describe('DOMPropertyOperations', () => {
 
       const container = document.createElement('div');
       document.body.appendChild(container);
-      cocoMvc.render(<my-custom-element onClick={syntheticEventHandler} />, container);
+      cocoMvc.renderIntoContainer(<my-custom-element onClick={syntheticEventHandler} />, container);
 
       const customElement = container.querySelector('my-custom-element');
       customElement.onclick = nativeEventHandler;
@@ -231,7 +231,7 @@ describe('DOMPropertyOperations', () => {
       const eventHandler = jest.fn(event => (reactInputEvent = event));
       const container = document.createElement('div');
       document.body.appendChild(container);
-      cocoMvc.render(<my-custom-element onInput={eventHandler} />, container);
+      cocoMvc.renderIntoContainer(<my-custom-element onInput={eventHandler} />, container);
       const customElement = container.querySelector('my-custom-element');
       let expectedHandlerCallCount = 0;
 
@@ -242,10 +242,10 @@ describe('DOMPropertyOperations', () => {
       expect(reactInputEvent.nativeEvent).toBe(inputEvent);
 
       // Also make sure that removing and re-adding the event listener works
-      cocoMvc.render(<my-custom-element />, container);
+      cocoMvc.renderIntoContainer(<my-custom-element />, container);
       customElement.dispatchEvent(new Event('input', {bubbles: true}));
       expect(eventHandler).toHaveBeenCalledTimes(expectedHandlerCallCount);
-      cocoMvc.render(<my-custom-element onInput={eventHandler} />, container);
+      cocoMvc.renderIntoContainer(<my-custom-element onInput={eventHandler} />, container);
       customElement.dispatchEvent(new Event('input', {bubbles: true}));
       expectedHandlerCallCount++;
       expect(eventHandler).toHaveBeenCalledTimes(expectedHandlerCallCount);
@@ -268,7 +268,7 @@ describe('DOMPropertyOperations', () => {
         customOnChangeHandler.mockClear();
         customOnClickHandler.mockClear();
       }
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <div>
           <input
             onInput={regularOnInputHandler}
@@ -359,7 +359,7 @@ describe('DOMPropertyOperations', () => {
         customOnChangeHandler.mockClear();
         customOnClickHandler.mockClear();
       }
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <div>
           <input
             type="radio"
@@ -441,7 +441,7 @@ describe('DOMPropertyOperations', () => {
         customOnChangeHandler.mockClear();
         customOnClickHandler.mockClear();
       }
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <div>
           <select
             onInput={regularOnInputHandler}
@@ -506,7 +506,7 @@ describe('DOMPropertyOperations', () => {
       const onChangeHandler = jest.fn();
       const onInputHandler = jest.fn();
       const onClickHandler = jest.fn();
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <my-custom-element
           onChange={onChangeHandler}
           onInput={onInputHandler}
@@ -541,7 +541,7 @@ describe('DOMPropertyOperations', () => {
       const onChangeHandler = jest.fn();
       const onInputHandler = jest.fn();
       const onClickHandler = jest.fn();
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <my-custom-element
           onChange={onChangeHandler}
           onInput={onInputHandler}
@@ -576,7 +576,7 @@ describe('DOMPropertyOperations', () => {
       const onChangeHandler = jest.fn();
       const onInputHandler = jest.fn();
       const onClickHandler = jest.fn();
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <div
           onChange={onChangeHandler}
           onInput={onInputHandler}
@@ -607,14 +607,14 @@ describe('DOMPropertyOperations', () => {
 
     it('innerHTML should not work on custom elements', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<my-custom-element innerHTML="foo" />, container);
+      cocoMvc.renderIntoContainer(<my-custom-element innerHTML="foo" />, container);
       const customElement = container.querySelector('my-custom-element');
       expect(customElement.getAttribute('innerHTML')).toBe(null);
       expect(customElement.hasChildNodes()).toBe(false);
 
       // Render again to verify the update codepath doesn't accidentally let
       // something through.
-      cocoMvc.render(<my-custom-element innerHTML="bar" />, container);
+      cocoMvc.renderIntoContainer(<my-custom-element innerHTML="bar" />, container);
       expect(customElement.getAttribute('innerHTML')).toBe(null);
       expect(customElement.hasChildNodes()).toBe(false);
     });
@@ -623,21 +623,21 @@ describe('DOMPropertyOperations', () => {
   describe('deleteValueForProperty', () => {
     it('should remove attributes for normal properties', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<div title="foo" />, container);
+      cocoMvc.renderIntoContainer(<div title="foo" />, container);
       expect(container.firstChild.getAttribute('title')).toBe('foo');
-      cocoMvc.render(<div />, container);
+      cocoMvc.renderIntoContainer(<div />, container);
       expect(container.firstChild.getAttribute('title')).toBe(null);
     });
 
     it('should not remove attributes for special properties', () => {
       const container = document.createElement('div');
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <input type="text" value="foo" onChange={function() {}} />,
         container,
       );
       expect(container.firstChild.getAttribute('value')).toBe('foo');
       expect(container.firstChild.value).toBe('foo');
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <input type="text" onChange={function() {}} />,
         container,
       );
@@ -654,7 +654,7 @@ describe('DOMPropertyOperations', () => {
 
     it('should not remove attributes for custom component tag', () => {
       const container = document.createElement('div');
-      cocoMvc.render(<my-icon size="5px" />, container);
+      cocoMvc.renderIntoContainer(<my-icon size="5px" />, container);
       expect(container.firstChild.getAttribute('size')).toBe('5px');
     });
   })

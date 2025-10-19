@@ -67,41 +67,41 @@ describe('ReactDOMInput', () => {
   })
 
   it('should warn for controlled value of 0 with missing onChange', () => {
-    cocoMvc.render(<input type="text" value={0} />, container);
+    cocoMvc.renderIntoContainer(<input type="text" value={0} />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.',
     );
   });
 
   it('should warn for controlled value of "" with missing onChange', () => {
-    cocoMvc.render(<input type="text" value="" />, container);
+    cocoMvc.renderIntoContainer(<input type="text" value="" />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.',
     );
   });
 
   it('should warn for controlled value of "0" with missing onChange', () => {
-    cocoMvc.render(<input type="text" value="0" />, container);
+    cocoMvc.renderIntoContainer(<input type="text" value="0" />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.',
     );
   });
 
   it('should warn for controlled value of false with missing onChange', () => {
-    cocoMvc.render(<input type="checkbox" checked={false} />, container);
+    cocoMvc.renderIntoContainer(<input type="checkbox" checked={false} />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'You provided a `checked` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultChecked`. Otherwise, set either `onChange` or `readOnly`.',
     );
   });
 
   it('should warn with checked and no onChange handler with readOnly specified', () => {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="checkbox" checked={false} readOnly={true} />,
       container,
     );
     cocoMvc.unmountComponentAtNode(container);
 
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="checkbox" checked={false} readOnly={false} />,
       container,
     );
@@ -111,26 +111,26 @@ describe('ReactDOMInput', () => {
   });
 
   it('should not warn about missing onChange in uncontrolled inputs', () => {
-    cocoMvc.render(<input />, container);
+    cocoMvc.renderIntoContainer(<input />, container);
     cocoMvc.unmountComponentAtNode(container);
-    cocoMvc.render(<input value={undefined} />, container);
+    cocoMvc.renderIntoContainer(<input value={undefined} />, container);
     cocoMvc.unmountComponentAtNode(container);
-    cocoMvc.render(<input type="text" />, container);
+    cocoMvc.renderIntoContainer(<input type="text" />, container);
     cocoMvc.unmountComponentAtNode(container);
-    cocoMvc.render(<input type="text" value={undefined} />, container);
+    cocoMvc.renderIntoContainer(<input type="text" value={undefined} />, container);
     cocoMvc.unmountComponentAtNode(container);
-    cocoMvc.render(<input type="checkbox" />, container);
+    cocoMvc.renderIntoContainer(<input type="checkbox" />, container);
     cocoMvc.unmountComponentAtNode(container);
-    cocoMvc.render(<input type="checkbox" checked={undefined} />, container);
+    cocoMvc.renderIntoContainer(<input type="checkbox" checked={undefined} />, container);
   });
 
   it('should not warn with value and onInput handler', () => {
-    cocoMvc.render(<input value="..." onInput={() => {}} />, container);
+    cocoMvc.renderIntoContainer(<input value="..." onInput={() => {}} />, container);
   });
 
   it('should properly control a value even if no event listener exists', () => {
     let node;
-    node = cocoMvc.render(<input type="text" value="lion" />, container);
+    node = cocoMvc.renderIntoContainer(<input type="text" value="lion" />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.',
     );
@@ -186,7 +186,7 @@ describe('ReactDOMInput', () => {
     }
 
     application.start();
-    const instance = cocoMvc.render(<ControlledInputs />, container);
+    const instance = cocoMvc.renderIntoContainer(<ControlledInputs />, container);
 
     // Focus the field so we can later blur it.
     // Don't remove unless you've verified the fix in #8240 is still covered.
@@ -238,7 +238,7 @@ describe('ReactDOMInput', () => {
     }
 
     application.start();
-    const instance = cocoMvc.render(<ControlledInputs />, container);
+    const instance = cocoMvc.renderIntoContainer(<ControlledInputs />, container);
 
     setUntrackedValue.call(instance.a, 'giraffe');
     // This must use the native event dispatching. If we simulate, we will
@@ -252,7 +252,7 @@ describe('ReactDOMInput', () => {
   describe('switching text inputs between numeric and string numbers', () => {
     it('does change the number 2 to "2.0" with no change handler', () => {
       const stub = <input type="text" value={2} onChange={jest.fn()} />;
-      const node = cocoMvc.render(stub, container);
+      const node = cocoMvc.renderIntoContainer(stub, container);
 
       setUntrackedValue.call(node, '2.0');
       dispatchEventOnNode(node, 'input');
@@ -263,7 +263,7 @@ describe('ReactDOMInput', () => {
 
     it('does change the string "2" to "2.0" with no change handler', () => {
       const stub = <input type="text" value={'2'} onChange={jest.fn()} />;
-      const node = cocoMvc.render(stub, container);
+      const node = cocoMvc.renderIntoContainer(stub, container);
 
       setUntrackedValue.call(node, '2.0');
       dispatchEventOnNode(node, 'input');
@@ -288,7 +288,7 @@ describe('ReactDOMInput', () => {
       }
 
       application.start();
-      const stub = cocoMvc.render(<Stub />, container);
+      const stub = cocoMvc.renderIntoContainer(<Stub />, container);
       const node = cocoMvc.findDOMNode(stub);
 
       setUntrackedValue.call(node, '2.0');
@@ -312,7 +312,7 @@ describe('ReactDOMInput', () => {
 
     application.start();
     let stub;
-    stub = cocoMvc.render(<Stub />, container);
+    stub = cocoMvc.renderIntoContainer(<Stub />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.',
     );
@@ -333,7 +333,7 @@ describe('ReactDOMInput', () => {
     }
 
     application.start();
-    const stub = cocoMvc.render(<Stub />, container);
+    const stub = cocoMvc.renderIntoContainer(<Stub />, container);
     const node = cocoMvc.findDOMNode(stub);
     stub.value = 0;
 
@@ -341,11 +341,11 @@ describe('ReactDOMInput', () => {
   });
 
   it('updates the value on radio buttons from "" to 0', function() {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="radio" value="" onChange={function() {}} />,
       container,
     );
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="radio" value={0} onChange={function() {}} />,
       container,
     );
@@ -354,11 +354,11 @@ describe('ReactDOMInput', () => {
   });
 
   it('updates the value on checkboxes from "" to 0', function() {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="checkbox" value="" onChange={function() {}} />,
       container,
     );
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="checkbox" value={0} onChange={function() {}} />,
       container,
     );
@@ -377,7 +377,7 @@ describe('ReactDOMInput', () => {
     }
 
     application.start();
-    let stub = cocoMvc.render(<Stub />, container);
+    let stub = cocoMvc.renderIntoContainer(<Stub />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'You provided a `value` prop to a form field without an `onChange` handler. This will render a read-only field. If the field should be mutable use `defaultValue`. Otherwise, set either `onChange` or `readOnly`.',
     );
@@ -389,7 +389,7 @@ describe('ReactDOMInput', () => {
 
   it('should display `defaultValue` of number 0', () => {
     const stub = <input type="text" defaultValue={0} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.getAttribute('value')).toBe('0');
     expect(node.value).toBe('0');
@@ -404,7 +404,7 @@ describe('ReactDOMInput', () => {
     }
 
     application.start();
-    const component = cocoMvc.render(<Test />, container);
+    const component = cocoMvc.renderIntoContainer(<Test />, container);
     const node = cocoMvc.findDOMNode(component);
 
     Object.defineProperty(node, 'defaultValue', {
@@ -424,20 +424,20 @@ describe('ReactDOMInput', () => {
 
   it('should display "true" for `defaultValue` of `true`', () => {
     const stub = <input type="text" defaultValue={true} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.value).toBe('true');
   });
 
   it('should display "false" for `defaultValue` of `false`', () => {
     const stub = <input type="text" defaultValue={false} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.value).toBe('false');
   });
 
   it('should update `defaultValue` for uncontrolled input', () => {
-    const node = cocoMvc.render(
+    const node = cocoMvc.renderIntoContainer(
       <input type="text" defaultValue="0" />,
       container,
     );
@@ -445,14 +445,14 @@ describe('ReactDOMInput', () => {
     expect(node.value).toBe('0');
     expect(node.defaultValue).toBe('0');
 
-    cocoMvc.render(<input type="text" defaultValue="1" />, container);
+    cocoMvc.renderIntoContainer(<input type="text" defaultValue="1" />, container);
 
     expect(node.value).toBe('0');
     expect(node.defaultValue).toBe('1');
   });
 
   it('should update `defaultValue` for uncontrolled date/time input', () => {
-    const node = cocoMvc.render(
+    const node = cocoMvc.renderIntoContainer(
       <input type="date" defaultValue="1980-01-01" />,
       container,
     );
@@ -460,21 +460,21 @@ describe('ReactDOMInput', () => {
     expect(node.value).toBe('1980-01-01');
     expect(node.defaultValue).toBe('1980-01-01');
 
-    cocoMvc.render(<input type="date" defaultValue="2000-01-01" />, container);
+    cocoMvc.renderIntoContainer(<input type="date" defaultValue="2000-01-01" />, container);
 
     expect(node.value).toBe('1980-01-01');
     expect(node.defaultValue).toBe('2000-01-01');
 
-    cocoMvc.render(<input type="date" />, container);
+    cocoMvc.renderIntoContainer(<input type="date" />, container);
   });
 
   it('should take `defaultValue` when changing to uncontrolled input', () => {
-    const node = cocoMvc.render(
+    const node = cocoMvc.renderIntoContainer(
       <input type="text" value="0" readOnly={true} />,
       container,
     );
     expect(node.value).toBe('0');
-    cocoMvc.render(<input type="text" defaultValue="1" />, container);
+    cocoMvc.renderIntoContainer(<input type="text" defaultValue="1" />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'A component is changing a controlled input to be uncontrolled. ' +
       'This is likely caused by the value changing from a defined to ' +
@@ -486,13 +486,13 @@ describe('ReactDOMInput', () => {
   });
 
   it('should render name attribute if it is supplied', () => {
-    const node = cocoMvc.render(<input type="text" name="name" />, container);
+    const node = cocoMvc.renderIntoContainer(<input type="text" name="name" />, container);
     expect(node.name).toBe('name');
     expect(container.firstChild.getAttribute('name')).toBe('name');
   });
 
   it('should not render name attribute if it is not supplied', () => {
-    cocoMvc.render(<input type="text" />, container);
+    cocoMvc.renderIntoContainer(<input type="text" />, container);
     expect(container.firstChild.getAttribute('name')).toBe(null);
   });
 
@@ -504,7 +504,7 @@ describe('ReactDOMInput', () => {
     };
 
     const stub = <input type="text" defaultValue={objToString} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.value).toBe('foobar');
   });
@@ -521,7 +521,7 @@ describe('ReactDOMInput', () => {
       }
     }
     const test = () =>
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <input defaultValue={new TemporalLike()} type="date" />,
         container,
       );
@@ -546,7 +546,7 @@ describe('ReactDOMInput', () => {
       }
     }
     const test = () =>
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <input defaultValue={new TemporalLike()} type="text" />,
         container,
       );
@@ -571,7 +571,7 @@ describe('ReactDOMInput', () => {
       }
     }
     const test = () =>
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <input value={new TemporalLike()} type="date" onChange={() => {}} />,
         container,
       );
@@ -596,7 +596,7 @@ describe('ReactDOMInput', () => {
       }
     }
     const test = () =>
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <input value={new TemporalLike()} type="text" onChange={() => {}} />,
         container,
       );
@@ -611,18 +611,18 @@ describe('ReactDOMInput', () => {
 
   it('should display `value` of number 0', () => {
     const stub = <input type="text" value={0} onChange={emptyFunction} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.value).toBe('0');
   });
 
   it('should allow setting `value` to `true`', () => {
     let stub = <input type="text" value="yolo" onChange={emptyFunction} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.value).toBe('yolo');
 
-    stub = cocoMvc.render(
+    stub = cocoMvc.renderIntoContainer(
       <input type="text" value={true} onChange={emptyFunction} />,
       container,
     );
@@ -631,11 +631,11 @@ describe('ReactDOMInput', () => {
 
   it('should allow setting `value` to `false`', () => {
     let stub = <input type="text" value="yolo" onChange={emptyFunction} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.value).toBe('yolo');
 
-    stub = cocoMvc.render(
+    stub = cocoMvc.renderIntoContainer(
       <input type="text" value={false} onChange={emptyFunction} />,
       container,
     );
@@ -644,7 +644,7 @@ describe('ReactDOMInput', () => {
 
   it('should allow setting `value` to `objToString`', () => {
     let stub = <input type="text" value="foo" onChange={emptyFunction} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     expect(node.value).toBe('foo');
 
@@ -653,7 +653,7 @@ describe('ReactDOMInput', () => {
         return 'foobar';
       },
     };
-    stub = cocoMvc.render(
+    stub = cocoMvc.renderIntoContainer(
       <input type="text" value={objToString} onChange={emptyFunction} />,
       container,
     );
@@ -661,7 +661,7 @@ describe('ReactDOMInput', () => {
   });
 
   it('should not incur unnecessary DOM mutations', () => {
-    cocoMvc.render(<input value="a" onChange={() => {}} />, container);
+    cocoMvc.renderIntoContainer(<input value="a" onChange={() => {}} />, container);
 
     const node = container.firstChild;
     let nodeValue = 'a';
@@ -675,15 +675,15 @@ describe('ReactDOMInput', () => {
       }),
     });
 
-    cocoMvc.render(<input value="a" onChange={() => {}} />, container);
+    cocoMvc.renderIntoContainer(<input value="a" onChange={() => {}} />, container);
     expect(nodeValueSetter).toHaveBeenCalledTimes(0);
 
-    cocoMvc.render(<input value="b" onChange={() => {}} />, container);
+    cocoMvc.renderIntoContainer(<input value="b" onChange={() => {}} />, container);
     expect(nodeValueSetter).toHaveBeenCalledTimes(1);
   });
 
   it('should not incur unnecessary DOM mutations for numeric type conversion', () => {
-    cocoMvc.render(<input value="0" onChange={() => {}} />, container);
+    cocoMvc.renderIntoContainer(<input value="0" onChange={() => {}} />, container);
 
     const node = container.firstChild;
     let nodeValue = '0';
@@ -697,12 +697,12 @@ describe('ReactDOMInput', () => {
       }),
     });
 
-    cocoMvc.render(<input value={0} onChange={() => {}} />, container);
+    cocoMvc.renderIntoContainer(<input value={0} onChange={() => {}} />, container);
     expect(nodeValueSetter).toHaveBeenCalledTimes(0);
   });
 
   it('should not incur unnecessary DOM mutations for the boolean type conversion', () => {
-    cocoMvc.render(<input value="true" onChange={() => {}} />, container);
+    cocoMvc.renderIntoContainer(<input value="true" onChange={() => {}} />, container);
 
     const node = container.firstChild;
     let nodeValue = 'true';
@@ -716,13 +716,13 @@ describe('ReactDOMInput', () => {
       }),
     });
 
-    cocoMvc.render(<input value={true} onChange={() => {}} />, container);
+    cocoMvc.renderIntoContainer(<input value={true} onChange={() => {}} />, container);
     expect(nodeValueSetter).toHaveBeenCalledTimes(0);
   });
 
   it('should properly control a value of number `0`', () => {
     const stub = <input type="text" value={0} onChange={emptyFunction} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     setUntrackedValue.call(node, 'giraffe');
     dispatchEventOnNode(node, 'input');
@@ -731,7 +731,7 @@ describe('ReactDOMInput', () => {
 
   it('should properly control 0.0 for a text input', () => {
     const stub = <input type="text" value={0} onChange={emptyFunction} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     setUntrackedValue.call(node, '0.0');
     dispatchEventOnNode(node, 'input');
@@ -740,7 +740,7 @@ describe('ReactDOMInput', () => {
 
   it('should properly control 0.0 for a number input', () => {
     const stub = <input type="number" value={0} onChange={emptyFunction} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     setUntrackedValue.call(node, '0.0');
     dispatchEventOnNode(node, 'input');
@@ -753,11 +753,11 @@ describe('ReactDOMInput', () => {
   });
 
   it('should properly transition from an empty value to 0', function() {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="text" value="" onChange={emptyFunction} />,
       container,
     );
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="text" value={0} onChange={emptyFunction} />,
       container,
     );
@@ -769,11 +769,11 @@ describe('ReactDOMInput', () => {
   });
 
   it('should properly transition from 0 to an empty value', function() {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="text" value={0} onChange={emptyFunction} />,
       container,
     );
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="text" value="" onChange={emptyFunction} />,
       container,
     );
@@ -785,11 +785,11 @@ describe('ReactDOMInput', () => {
   });
 
   it('should properly transition a text input from 0 to an empty 0.0', function() {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="text" value={0} onChange={emptyFunction} />,
       container,
     );
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="text" value="0.0" onChange={emptyFunction} />,
       container,
     );
@@ -801,11 +801,11 @@ describe('ReactDOMInput', () => {
   });
 
   it('should properly transition a number input from "" to 0', function() {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="number" value="" onChange={emptyFunction} />,
       container,
     );
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="number" value={0} onChange={emptyFunction} />,
       container,
     );
@@ -817,11 +817,11 @@ describe('ReactDOMInput', () => {
   });
 
   it('should properly transition a number input from "" to "0"', function() {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="number" value="" onChange={emptyFunction} />,
       container,
     );
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="number" value="0" onChange={emptyFunction} />,
       container,
     );
@@ -839,7 +839,7 @@ describe('ReactDOMInput', () => {
       handled = true;
     };
     const stub = <input type="text" value={0} onChange={handler} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     setUntrackedValue.call(node, 'giraffe');
 
@@ -850,7 +850,7 @@ describe('ReactDOMInput', () => {
 
   it('should restore uncontrolled inputs to last defaultValue upon reset', () => {
     const inputRef = {current: null};
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <form>
         <input defaultValue="default1" ref={inputRef} />
         <input type="reset" />
@@ -863,7 +863,7 @@ describe('ReactDOMInput', () => {
     dispatchEventOnNode(inputRef.current, 'input');
     expect(inputRef.current.value).toBe('changed');
 
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <form>
         <input defaultValue="default2" ref={inputRef} />
         <input type="reset" />
@@ -881,7 +881,7 @@ describe('ReactDOMInput', () => {
 
   it('should not set a value for submit buttons unnecessarily', () => {
     const stub = <input type="submit" />;
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     const node = container.firstChild;
 
     // The value shouldn't be '', or else the button will have no text; it
@@ -893,11 +893,11 @@ describe('ReactDOMInput', () => {
 
   it('should remove the value attribute on submit inputs when value is updated to undefined', () => {
     const stub = <input type="submit" value="foo" onChange={emptyFunction} />;
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
 
     // Not really relevant to this particular test, but changing to undefined
     // should nonetheless trigger a warning
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="submit" value={undefined} onChange={emptyFunction} />,
       container,
     );
@@ -915,11 +915,11 @@ describe('ReactDOMInput', () => {
 
   it('should remove the value attribute on reset inputs when value is updated to undefined', () => {
     const stub = <input type="reset" value="foo" onChange={emptyFunction} />;
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
 
     // Not really relevant to this particular test, but changing to undefined
     // should nonetheless trigger a warning
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="reset" value={undefined} onChange={emptyFunction} />,
       container,
     );
@@ -937,7 +937,7 @@ describe('ReactDOMInput', () => {
 
   it('should set a value on a submit input', () => {
     const stub = <input type="submit" value="banana" />;
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     const node = container.firstChild;
 
     expect(node.getAttribute('value')).toBe('banana');
@@ -945,33 +945,33 @@ describe('ReactDOMInput', () => {
 
   it('should not set an undefined value on a submit input', () => {
     const stub = <input type="submit" value={undefined} />;
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     const node = container.firstChild;
 
     // Note: it shouldn't be an empty string
     // because that would erase the "submit" label.
     expect(node.getAttribute('value')).toBe(null);
 
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     expect(node.getAttribute('value')).toBe(null);
   });
 
   it('should not set an undefined value on a reset input', () => {
     const stub = <input type="reset" value={undefined} />;
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     const node = container.firstChild;
 
     // Note: it shouldn't be an empty string
     // because that would erase the "reset" label.
     expect(node.getAttribute('value')).toBe(null);
 
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     expect(node.getAttribute('value')).toBe(null);
   });
 
   it('should not set a null value on a submit input', () => {
     const stub = <input type="submit" value={null} />;
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       '`value` prop on `%s` should not be null. ' +
       'Consider using an empty string to clear the component or `undefined` ' +
@@ -984,13 +984,13 @@ describe('ReactDOMInput', () => {
     // because that would erase the "submit" label.
     expect(node.getAttribute('value')).toBe(null);
 
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     expect(node.getAttribute('value')).toBe(null);
   });
 
   it('should not set a null value on a reset input', () => {
     const stub = <input type="reset" value={null} />;
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       '`value` prop on `%s` should not be null. ' +
       'Consider using an empty string to clear the component or `undefined` ' +
@@ -1003,13 +1003,13 @@ describe('ReactDOMInput', () => {
     // because that would erase the "reset" label.
     expect(node.getAttribute('value')).toBe(null);
 
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     expect(node.getAttribute('value')).toBe(null);
   });
 
   it('should set a value on a reset input', () => {
     const stub = <input type="reset" value="banana" />;
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     const node = container.firstChild;
 
     expect(node.getAttribute('value')).toBe('banana');
@@ -1017,7 +1017,7 @@ describe('ReactDOMInput', () => {
 
   it('should set an empty string value on a submit input', () => {
     const stub = <input type="submit" value="" />;
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     const node = container.firstChild;
 
     expect(node.getAttribute('value')).toBe('');
@@ -1025,7 +1025,7 @@ describe('ReactDOMInput', () => {
 
   it('should set an empty string value on a reset input', () => {
     const stub = <input type="reset" value="" />;
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     const node = container.firstChild;
 
     expect(node.getAttribute('value')).toBe('');
@@ -1068,7 +1068,7 @@ describe('ReactDOMInput', () => {
     }
 
     application.start();
-    const stub = cocoMvc.render(<RadioGroup />, container);
+    const stub = cocoMvc.renderIntoContainer(<RadioGroup />, container);
     const aNode = stub.aRef.current;
     const bNode = stub.bRef.current;
     const cNode = stub.cRef.current;
@@ -1130,7 +1130,7 @@ describe('ReactDOMInput', () => {
     }
 
     application.start();
-    const stub = cocoMvc.render(<App />, container);
+    const stub = cocoMvc.renderIntoContainer(<App />, container);
     const buttonNode = cocoMvc.findDOMNode(stub).childNodes[0];
     const firstRadioNode = cocoMvc.findDOMNode(stub).childNodes[1];
     expect(firstRadioNode.checked).toBe(false);
@@ -1158,7 +1158,7 @@ describe('ReactDOMInput', () => {
         sharedParent.appendChild(container2);
       }
       viewDidMount() {
-        cocoMvc.render(<ComponentB />, container2);
+        cocoMvc.renderIntoContainer(<ComponentB />, container2);
       }
       render() {
         return (
@@ -1195,7 +1195,7 @@ describe('ReactDOMInput', () => {
     }
 
     application.start();
-    cocoMvc.render(<ComponentA />, container1);
+    cocoMvc.renderIntoContainer(<ComponentA />, container1);
 
     expect(aNode.checked).toBe(false);
     expect(bNode.checked).toBe(true);
@@ -1215,13 +1215,13 @@ describe('ReactDOMInput', () => {
   });
 
   it('should warn with value and no onChange handler and readOnly specified', () => {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="text" value="zoink" readOnly={true} />,
       container,
     );
     cocoMvc.unmountComponentAtNode(container);
 
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="text" value="zoink" readOnly={false} />,
       container,
     );
@@ -1240,20 +1240,20 @@ describe('ReactDOMInput', () => {
     };
 
     const stub = <input type="text" onChange={unboundInputOnChange} />;
-    const node = cocoMvc.render(stub, container);
+    const node = cocoMvc.renderIntoContainer(stub, container);
 
     setUntrackedValue.call(node, 'giraffe');
     dispatchEventOnNode(node, 'input');
   });
 
   it('should update defaultValue to empty string', () => {
-    cocoMvc.render(<input type="text" defaultValue={'foo'} />, container);
-    cocoMvc.render(<input type="text" defaultValue={''} />, container);
+    cocoMvc.renderIntoContainer(<input type="text" defaultValue={'foo'} />, container);
+    cocoMvc.renderIntoContainer(<input type="text" defaultValue={''} />, container);
     expect(container.firstChild.defaultValue).toBe('');
   });
 
   it('should warn if value is null', () => {
-    cocoMvc.render(<input type="text" value={null} />, container);
+    cocoMvc.renderIntoContainer(<input type="text" value={null} />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       '`value` prop on `%s` should not be null. ' +
       'Consider using an empty string to clear the component or `undefined` ' +
@@ -1262,11 +1262,11 @@ describe('ReactDOMInput', () => {
     );
     cocoMvc.unmountComponentAtNode(container);
 
-    cocoMvc.render(<input type="text" value={null} />, container);
+    cocoMvc.renderIntoContainer(<input type="text" value={null} />, container);
   });
 
   it('should warn if checked and defaultChecked props are specified', () => {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input
         type="radio"
         checked={true}
@@ -1287,7 +1287,7 @@ describe('ReactDOMInput', () => {
     )
     cocoMvc.unmountComponentAtNode(container);
 
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input
         type="radio"
         checked={true}
@@ -1299,7 +1299,7 @@ describe('ReactDOMInput', () => {
   });
 
   it('should warn if value and defaultValue props are specified', () => {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="text" value="foo" defaultValue="bar" readOnly={true} />,
       container,
     );
@@ -1315,7 +1315,7 @@ describe('ReactDOMInput', () => {
     );
     cocoMvc.unmountComponentAtNode(container);
 
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="text" value="foo" defaultValue="bar" readOnly={true} />,
       container,
     );
@@ -1325,9 +1325,9 @@ describe('ReactDOMInput', () => {
     const stub = (
       <input type="text" value="controlled" onChange={emptyFunction} />
     );
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     expect(consoleErrorSpy).not.toHaveBeenCalled();
-    cocoMvc.render(<input type="text" />, container);
+    cocoMvc.renderIntoContainer(<input type="text" />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'A component is changing a controlled input to be uncontrolled. ' +
       'This is likely caused by the value changing from a defined to ' +
@@ -1341,9 +1341,9 @@ describe('ReactDOMInput', () => {
     const stub = (
       <input type="text" value="controlled" onChange={emptyFunction} />
     );
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     expect(consoleErrorSpy).not.toHaveBeenCalled();
-    cocoMvc.render(<input type="text" value={null} />, container);
+    cocoMvc.renderIntoContainer(<input type="text" value={null} />, container);
     expect(consoleErrorSpy.mock.calls[0]).toEqual(
       [
         '`value` prop on `%s` should not be null. ' +
@@ -1365,8 +1365,8 @@ describe('ReactDOMInput', () => {
     const stub = (
       <input type="text" value="controlled" onChange={emptyFunction} />
     );
-    cocoMvc.render(stub, container);
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(stub, container);
+    cocoMvc.renderIntoContainer(
       <input type="text" defaultValue="uncontrolled" />,
       container,
     );
@@ -1381,8 +1381,8 @@ describe('ReactDOMInput', () => {
 
   it('should warn if uncontrolled input (value is undefined) switches to controlled', () => {
     const stub = <input type="text" />;
-    cocoMvc.render(stub, container);
-    cocoMvc.render(<input type="text" value="controlled" />, container);
+    cocoMvc.renderIntoContainer(stub, container);
+    cocoMvc.renderIntoContainer(<input type="text" value="controlled" />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'A component is changing an uncontrolled input to be controlled. ' +
       'This is likely caused by the value changing from undefined to ' +
@@ -1394,7 +1394,7 @@ describe('ReactDOMInput', () => {
 
   it('should warn if uncontrolled input (value is null) switches to controlled', () => {
     const stub = <input type="text" value={null} />;
-    cocoMvc.render(stub, container);
+    cocoMvc.renderIntoContainer(stub, container);
     expect(consoleErrorSpy.mock.calls[0]).toEqual(
       [
         '`value` prop on `%s` should not be null. ' +
@@ -1403,7 +1403,7 @@ describe('ReactDOMInput', () => {
         'input',
       ]
     );
-    cocoMvc.render(<input type="text" value="controlled" />, container);
+    cocoMvc.renderIntoContainer(<input type="text" value="controlled" />, container);
     expect(consoleErrorSpy.mock.calls[1]).toEqual(
       [
         'A component is changing an uncontrolled input to be controlled. ' +
@@ -1419,8 +1419,8 @@ describe('ReactDOMInput', () => {
     const stub = (
       <input type="checkbox" checked={true} onChange={emptyFunction} />
     );
-    cocoMvc.render(stub, container);
-    cocoMvc.render(<input type="checkbox" />, container);
+    cocoMvc.renderIntoContainer(stub, container);
+    cocoMvc.renderIntoContainer(<input type="checkbox" />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'A component is changing a controlled input to be uncontrolled. ' +
       'This is likely caused by the value changing from a defined to ' +
@@ -1434,8 +1434,8 @@ describe('ReactDOMInput', () => {
     const stub = (
       <input type="checkbox" checked={true} onChange={emptyFunction} />
     );
-    cocoMvc.render(stub, container);
-    cocoMvc.render(<input type="checkbox" checked={null} />, container);
+    cocoMvc.renderIntoContainer(stub, container);
+    cocoMvc.renderIntoContainer(<input type="checkbox" checked={null} />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'A component is changing a controlled input to be uncontrolled. ' +
       'This is likely caused by the value changing from a defined to ' +
@@ -1449,8 +1449,8 @@ describe('ReactDOMInput', () => {
     const stub = (
       <input type="checkbox" checked={true} onChange={emptyFunction} />
     );
-    cocoMvc.render(stub, container);
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(stub, container);
+    cocoMvc.renderIntoContainer(
       <input type="checkbox" defaultChecked={true} />,
       container,
     );
@@ -1465,8 +1465,8 @@ describe('ReactDOMInput', () => {
 
   it('should warn if uncontrolled checkbox (checked is undefined) switches to controlled', () => {
     const stub = <input type="checkbox" />;
-    cocoMvc.render(stub, container);
-    cocoMvc.render(<input type="checkbox" checked={true} />, container);
+    cocoMvc.renderIntoContainer(stub, container);
+    cocoMvc.renderIntoContainer(<input type="checkbox" checked={true} />, container);
     expect(consoleErrorSpy.mock.calls[0]).toEqual(
       [
         'A component is changing an uncontrolled input to be controlled. ' +
@@ -1480,8 +1480,8 @@ describe('ReactDOMInput', () => {
 
   it('should warn if uncontrolled checkbox (checked is null) switches to controlled', () => {
     const stub = <input type="checkbox" checked={null} />;
-    cocoMvc.render(stub, container);
-    cocoMvc.render(<input type="checkbox" checked={true} />, container);
+    cocoMvc.renderIntoContainer(stub, container);
+    cocoMvc.renderIntoContainer(<input type="checkbox" checked={true} />, container);
     expect(consoleErrorSpy.mock.calls[0]).toEqual(
       [
         'A component is changing an uncontrolled input to be controlled. ' +
@@ -1495,8 +1495,8 @@ describe('ReactDOMInput', () => {
 
   it('should warn if controlled radio switches to uncontrolled (checked is undefined)', () => {
     const stub = <input type="radio" checked={true} onChange={emptyFunction} />;
-    cocoMvc.render(stub, container);
-    cocoMvc.render(<input type="radio" />, container);
+    cocoMvc.renderIntoContainer(stub, container);
+    cocoMvc.renderIntoContainer(<input type="radio" />, container);
     expect(consoleErrorSpy.mock.calls[0]).toEqual(
       [
         'A component is changing a controlled input to be uncontrolled. ' +
@@ -1510,8 +1510,8 @@ describe('ReactDOMInput', () => {
 
   it('should warn if controlled radio switches to uncontrolled (checked is null)', () => {
     const stub = <input type="radio" checked={true} onChange={emptyFunction} />;
-    cocoMvc.render(stub, container);
-    cocoMvc.render(<input type="radio" checked={null} />, container);
+    cocoMvc.renderIntoContainer(stub, container);
+    cocoMvc.renderIntoContainer(<input type="radio" checked={null} />, container);
     expect(consoleErrorSpy.mock.calls[0]).toEqual(
       [
         'A component is changing a controlled input to be uncontrolled. ' +
@@ -1525,8 +1525,8 @@ describe('ReactDOMInput', () => {
 
   it('should warn if controlled radio switches to uncontrolled with defaultChecked', () => {
     const stub = <input type="radio" checked={true} onChange={emptyFunction} />;
-    cocoMvc.render(stub, container);
-    cocoMvc.render(<input type="radio" defaultChecked={true} />, container);
+    cocoMvc.renderIntoContainer(stub, container);
+    cocoMvc.renderIntoContainer(<input type="radio" defaultChecked={true} />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'A component is changing a controlled input to be uncontrolled. ' +
       'This is likely caused by the value changing from a defined to ' +
@@ -1538,8 +1538,8 @@ describe('ReactDOMInput', () => {
 
   it('should warn if uncontrolled radio (checked is undefined) switches to controlled', () => {
     const stub = <input type="radio" />;
-    cocoMvc.render(stub, container);
-    cocoMvc.render(<input type="radio" checked={true} />, container);
+    cocoMvc.renderIntoContainer(stub, container);
+    cocoMvc.renderIntoContainer(<input type="radio" checked={true} />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'A component is changing an uncontrolled input to be controlled. ' +
       'This is likely caused by the value changing from undefined to ' +
@@ -1551,8 +1551,8 @@ describe('ReactDOMInput', () => {
 
   it('should warn if uncontrolled radio (checked is null) switches to controlled', () => {
     const stub = <input type="radio" checked={null} />;
-    cocoMvc.render(stub, container);
-    cocoMvc.render(<input type="radio" checked={true} />, container);
+    cocoMvc.renderIntoContainer(stub, container);
+    cocoMvc.renderIntoContainer(<input type="radio" checked={true} />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'A component is changing an uncontrolled input to be controlled. ' +
       'This is likely caused by the value changing from undefined to ' +
@@ -1563,25 +1563,25 @@ describe('ReactDOMInput', () => {
   });
 
   it('should not warn if radio value changes but never becomes controlled', () => {
-    cocoMvc.render(<input type="radio" value="value" />, container);
-    cocoMvc.render(<input type="radio" />, container);
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(<input type="radio" value="value" />, container);
+    cocoMvc.renderIntoContainer(<input type="radio" />, container);
+    cocoMvc.renderIntoContainer(
       <input type="radio" value="value" defaultChecked={true} />,
       container,
     );
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="radio" value="value" onChange={() => null} />,
       container,
     );
-    cocoMvc.render(<input type="radio" />, container);
+    cocoMvc.renderIntoContainer(<input type="radio" />, container);
   });
 
   it('should not warn if radio value changes but never becomes uncontrolled', () => {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input type="radio" checked={false} onChange={() => null} />,
       container,
     );
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input
         type="radio"
         value="value"
@@ -1594,7 +1594,7 @@ describe('ReactDOMInput', () => {
   });
 
   it('should warn if radio checked false changes to become uncontrolled', () => {
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input
         type="radio"
         value="value"
@@ -1603,7 +1603,7 @@ describe('ReactDOMInput', () => {
       />,
       container,
     );
-    cocoMvc.render(<input type="radio" value="value" />, container);
+    cocoMvc.renderIntoContainer(<input type="radio" value="value" />, container);
     expect(consoleErrorSpy).toHaveBeenCalledWith(
       'A component is changing a controlled input to be uncontrolled. ' +
       'This is likely caused by the value changing from a defined to ' +
@@ -1637,7 +1637,7 @@ describe('ReactDOMInput', () => {
       return el;
     });
 
-    cocoMvc.render(
+    cocoMvc.renderIntoContainer(
       <input
         value="0"
         onChange={() => {}}
@@ -1660,7 +1660,7 @@ describe('ReactDOMInput', () => {
   });
 
   it('sets value properly with type coming later in props', () => {
-    const input = cocoMvc.render(<input value="hi" type="radio" />, container);
+    const input = cocoMvc.renderIntoContainer(<input value="hi" type="radio" />, container);
     expect(input.value).toBe('hi');
   });
 
@@ -1677,7 +1677,7 @@ describe('ReactDOMInput', () => {
     }
 
     application.start();
-    const input = cocoMvc.render(<Input />, container);
+    const input = cocoMvc.renderIntoContainer(<Input />, container);
     const node = cocoMvc.findDOMNode(input);
 
     // If the value is set before the type, a validation warning will raise and
@@ -1737,7 +1737,7 @@ describe('ReactDOMInput', () => {
       return el;
     });
 
-    cocoMvc.render(<input type="date" defaultValue="1980-01-01" />, container);
+    cocoMvc.renderIntoContainer(<input type="date" defaultValue="1980-01-01" />, container);
 
     expect(log).toEqual([
       'node.setAttribute("type", "date")',
@@ -1779,7 +1779,7 @@ describe('ReactDOMInput', () => {
     it('always sets the attribute when values change on text inputs', function() {
       const Input = getTestInput();
       application.start();
-      const stub = cocoMvc.render(<Input type="text" />, container);
+      const stub = cocoMvc.renderIntoContainer(<Input type="text" />, container);
       const node = cocoMvc.findDOMNode(stub);
 
       setUntrackedValue.call(node, '2');
@@ -1791,7 +1791,7 @@ describe('ReactDOMInput', () => {
     it('does not set the value attribute on number inputs if focused', () => {
       const Input = getTestInput();
       application.start();
-      const stub = cocoMvc.render(
+      const stub = cocoMvc.renderIntoContainer(
         <Input type="number" value="1" />,
         container,
       );
@@ -1808,7 +1808,7 @@ describe('ReactDOMInput', () => {
     it('sets the value attribute on number inputs on blur', () => {
       const Input = getTestInput();
       application.start();
-      const stub = cocoMvc.render(
+      const stub = cocoMvc.renderIntoContainer(
         <Input type="number" value="1" />,
         container,
       );
@@ -1830,7 +1830,7 @@ describe('ReactDOMInput', () => {
     });
 
     it('an uncontrolled number input will not update the value attribute on blur', () => {
-      const node = cocoMvc.render(
+      const node = cocoMvc.renderIntoContainer(
         <input type="number" defaultValue="1" />,
         container,
       );
@@ -1850,7 +1850,7 @@ describe('ReactDOMInput', () => {
     });
 
     it('an uncontrolled text input will not update the value attribute on blur', () => {
-      const node = cocoMvc.render(
+      const node = cocoMvc.renderIntoContainer(
         <input type="text" defaultValue="1" />,
         container,
       );
@@ -1898,7 +1898,7 @@ describe('ReactDOMInput', () => {
       }
 
       application.start();
-      const stub = cocoMvc.render(<Input />, container);
+      const stub = cocoMvc.renderIntoContainer(<Input />, container);
       input = cocoMvc.findDOMNode(stub);
       setUntrackedValue.call(input, 'latest');
       dispatchEventOnNode(input, 'input');
@@ -1955,7 +1955,7 @@ describe('ReactDOMInput', () => {
       }
 
       application.start();
-      const stub = cocoMvc.render(<Input />, container);
+      const stub = cocoMvc.renderIntoContainer(<Input />, container);
       input = cocoMvc.findDOMNode(stub);
       setUntrackedValue.call(input, 'latest');
       dispatchEventOnNode(input, 'input');
@@ -1987,7 +1987,7 @@ describe('ReactDOMInput', () => {
 
   describe('When given a Symbol value', function() {
     it('treats initial Symbol value as an empty string', function() {
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <input value={Symbol('foobar')} onChange={() => {}} />,
         container,
       );
@@ -2003,8 +2003,8 @@ describe('ReactDOMInput', () => {
     });
 
     it('treats updated Symbol value as an empty string', function() {
-      cocoMvc.render(<input value="foo" onChange={() => {}} />, container);
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(<input value="foo" onChange={() => {}} />, container);
+      cocoMvc.renderIntoContainer(
         <input value={Symbol('foobar')} onChange={() => {}} />,
         container,
       );
@@ -2020,7 +2020,7 @@ describe('ReactDOMInput', () => {
     });
 
     it('treats initial Symbol defaultValue as an empty string', function() {
-      cocoMvc.render(<input defaultValue={Symbol('foobar')} />, container);
+      cocoMvc.renderIntoContainer(<input defaultValue={Symbol('foobar')} />, container);
       const node = container.firstChild;
 
       expect(node.value).toBe('');
@@ -2029,8 +2029,8 @@ describe('ReactDOMInput', () => {
     });
 
     it('treats updated Symbol defaultValue as an empty string', function() {
-      cocoMvc.render(<input defaultValue="foo" />, container);
-      cocoMvc.render(<input defaultValue={Symbol('foobar')} />, container);
+      cocoMvc.renderIntoContainer(<input defaultValue="foo" />, container);
+      cocoMvc.renderIntoContainer(<input defaultValue={Symbol('foobar')} />, container);
       const node = container.firstChild;
 
       expect(node.value).toBe('foo');
@@ -2041,7 +2041,7 @@ describe('ReactDOMInput', () => {
 
   describe('When given a function value', function() {
     it('treats initial function value as an empty string', function() {
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <input value={() => {}} onChange={() => {}} />,
         container,
       );
@@ -2057,8 +2057,8 @@ describe('ReactDOMInput', () => {
     });
 
     it('treats updated function value as an empty string', function() {
-      cocoMvc.render(<input value="foo" onChange={() => {}} />, container);
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(<input value="foo" onChange={() => {}} />, container);
+      cocoMvc.renderIntoContainer(
         <input value={() => {}} onChange={() => {}} />,
         container,
       );
@@ -2074,7 +2074,7 @@ describe('ReactDOMInput', () => {
     });
 
     it('treats initial function defaultValue as an empty string', function() {
-      cocoMvc.render(<input defaultValue={() => {}} />, container);
+      cocoMvc.renderIntoContainer(<input defaultValue={() => {}} />, container);
       const node = container.firstChild;
 
       expect(node.value).toBe('');
@@ -2083,8 +2083,8 @@ describe('ReactDOMInput', () => {
     });
 
     it('treats updated function defaultValue as an empty string', function() {
-      cocoMvc.render(<input defaultValue="foo" />, container);
-      cocoMvc.render(<input defaultValue={() => {}} />, container);
+      cocoMvc.renderIntoContainer(<input defaultValue="foo" />, container);
+      cocoMvc.renderIntoContainer(<input defaultValue={() => {}} />, container);
       const node = container.firstChild;
 
       expect(node.value).toBe('foo');
@@ -2099,7 +2099,7 @@ describe('ReactDOMInput', () => {
     // value in order to "dettach" it from defaultValue. This had the unfortunate
     // side-effect of assigning value="on" to radio and checkboxes
     it('does not add "on" in absence of value on a checkbox', function() {
-      cocoMvc.render(
+      cocoMvc.renderIntoContainer(
         <input type="checkbox" defaultChecked={true} />,
         container,
       );
@@ -2110,7 +2110,7 @@ describe('ReactDOMInput', () => {
     });
 
     it('does not add "on" in absence of value on a radio', function() {
-      cocoMvc.render(<input type="radio" defaultChecked={true} />, container);
+      cocoMvc.renderIntoContainer(<input type="radio" defaultChecked={true} />, container);
       const node = container.firstChild;
 
       expect(node.value).toBe('on');

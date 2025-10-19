@@ -3,7 +3,7 @@ describe('@render装饰器', () => {
     let application;
     let cocoMvc;
     let view;
-    let renderDecorator;
+    let render;
     let component;
     let RenderMeta;
     let getMetaClassById;
@@ -12,7 +12,7 @@ describe('@render装饰器', () => {
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
         view = cocoMvc.view;
-        renderDecorator = cocoMvc.renderDecorator;
+        render = cocoMvc.render;
         component = cocoMvc.component;
         RenderMeta = cocoMvc.RenderMeta;
         Application = cocoMvc.Application;
@@ -41,7 +41,7 @@ describe('@render装饰器', () => {
     test('@render装饰器不能装饰在字段上', () => {
         @component()
         class Button {
-            @renderDecorator('field')
+            @render('field')
             field: string;
         }
 
@@ -58,7 +58,7 @@ describe('@render装饰器', () => {
     test('@render装饰器不能装饰在method上', () => {
         @component()
         class Button {
-            @renderDecorator('field')
+            @render('field')
             getName() {}
         }
 
