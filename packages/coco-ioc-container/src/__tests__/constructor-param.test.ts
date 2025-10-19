@@ -8,8 +8,10 @@ describe('constructor-param', () => {
     let constructorParam;
     let ConstructorParam;
     let getMetaClassById;
-
+    let consoleErrorSpy;
     beforeEach(async () => {
+        consoleErrorSpy = jest.spyOn(console, 'error');
+        consoleErrorSpy.mockImplementation(() => {});
         cocoMvc = await import('coco-mvc');
         Application = cocoMvc.Application;
         component = cocoMvc.component;
@@ -26,12 +28,47 @@ describe('constructor-param', () => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
         jest.resetModules();
+        consoleErrorSpy.mockRestore();
     });
 
     test('支持通过id获取ConstructorParam类', () => {
         application.start();
         const cls = getMetaClassById('ConstructorParam');
         expect(cls).toBe(ConstructorParam);
+    });
+
+    test('@constructorParam装饰器不能装饰在字段上', () => {
+        @component()
+        class Button {
+            @constructorParam()
+            field: string;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
+            'Button',
+            'field',
+            '@constructorParam',
+            'class'
+        );
+    });
+
+    test('@constructorParam装饰器不能装饰在method上', () => {
+        @component()
+        class Button {
+            @constructorParam()
+            getName() {}
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10006：%s 类 %s 方法上method装饰器 %s 只能用于装饰%s',
+            'Button',
+            'getName',
+            '@constructorParam',
+            'class'
+        );
     });
 
     test('注入原始数据类型会自动传入undefined', () => {

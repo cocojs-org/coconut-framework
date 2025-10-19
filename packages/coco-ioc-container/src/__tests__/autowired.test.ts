@@ -11,8 +11,10 @@ describe('autowired', () => {
     let scope;
     let SCOPE;
     let getMetaClassById;
-
+    let consoleErrorSpy;
     beforeEach(async () => {
+        consoleErrorSpy = jest.spyOn(console, 'error');
+        consoleErrorSpy.mockImplementation(() => {});
         cocoMvc = await import('coco-mvc');
         view = cocoMvc.view;
         autowired = cocoMvc.autowired;
@@ -32,12 +34,44 @@ describe('autowired', () => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
         jest.resetModules();
+        consoleErrorSpy.mockRestore();
     });
 
     test('支持通过id获取Autowired类', () => {
         application.start();
         const cls = getMetaClassById('Autowired');
         expect(cls).toBe(Autowired);
+    });
+
+    test('@autowired装饰器不能装饰在class上', () => {
+        @component()
+        @autowired()
+        class Button {}
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10004：%s 类上class装饰器 %s 只能用于装饰%s',
+            'Button',
+            '@autowired',
+            'field'
+        );
+    });
+
+    test('@autowired装饰器不能装饰在method上', () => {
+        @component()
+        class Button {
+            @autowired()
+            getName() {}
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10006：%s 类 %s 方法上method装饰器 %s 只能用于装饰%s',
+            'Button',
+            'getName',
+            '@autowired',
+            'field'
+        );
     });
 
     test('注入一个view组件，且拿到的实例也是不同的', () => {

@@ -4,22 +4,28 @@ describe('router', () => {
     let Application;
     let application;
     let cocoMvc;
+    let component;
     let route;
     let page;
     let Router;
-    let RouterMetadata;
+    let router;
+    let RouterMeta;
     let TestWebRender;
     let getMetaClassById;
-
+    let consoleErrorSpy;
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
+        component = cocoMvc.component;
         Router = cocoMvc.Router;
-        RouterMetadata = cocoMvc.RouterMetadata;
+        router = cocoMvc.router;
+        RouterMeta = cocoMvc.RouterMeta;
         route = cocoMvc.route;
         page = cocoMvc.page;
         Application = cocoMvc.Application;
         TestWebRender = cocoMvc.TestWebRender;
         getMetaClassById = cocoMvc.getMetaClassById;
+        consoleErrorSpy = jest.spyOn(console, 'error');
+        consoleErrorSpy.mockImplementation(() => {});
         application = new Application({
             Render: {
                 qualifier: 'TestWebRender',
@@ -34,12 +40,47 @@ describe('router', () => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
         jest.resetModules();
+        consoleErrorSpy.mockRestore();
     });
 
     test('支持通过id获取Router类', () => {
         application.start();
         const cls = getMetaClassById('Router');
-        expect(cls).toBe(RouterMetadata);
+        expect(cls).toBe(RouterMeta);
+    });
+
+    test('@router装饰器不能装饰在字段上', () => {
+        @component()
+        class Button {
+            @router('field')
+            field: string;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
+            'Button',
+            'field',
+            '@router',
+            'class'
+        );
+    });
+
+    test('@router装饰器不能装饰在method上', () => {
+        @component()
+        class Button {
+            @router('field')
+            getName() {}
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10006：%s 类 %s 方法上method装饰器 %s 只能用于装饰%s',
+            'Button',
+            'getName',
+            '@router',
+            'class'
+        );
     });
 
     test('路由切换，页面也会重新渲染', () => {

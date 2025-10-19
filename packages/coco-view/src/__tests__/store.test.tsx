@@ -8,21 +8,23 @@ import {
     waitFor,
 } from '@testing-library/dom';
 
-let Application;
-let application;
-let cocoMvc;
-let view;
-let store;
-let Store;
-let autowired;
-let memoized;
-let bind;
-let getMetaClassById;
-let consoleWarnSpy;
-
 describe('store', () => {
+    let Application;
+    let application;
+    let cocoMvc;
+    let component;
+    let view;
+    let store;
+    let Store;
+    let autowired;
+    let memoized;
+    let bind;
+    let getMetaClassById;
+    let consoleWarnSpy;
+    let consoleErrorSpy;
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
+        component = cocoMvc.component;
         view = cocoMvc.view;
         store = cocoMvc.store;
         Store = cocoMvc.Store;
@@ -34,6 +36,8 @@ describe('store', () => {
         application = new Application();
         cocoMvc.registerMvcApi(application, getMetaClassById);
         consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+        consoleErrorSpy = jest.spyOn(console, 'error');
+        consoleErrorSpy.mockImplementation(() => {});
     });
 
     afterEach(() => {
@@ -41,12 +45,47 @@ describe('store', () => {
         cocoMvc.unregisterMvcApi();
         jest.resetModules();
         consoleWarnSpy.mockRestore();
+        consoleErrorSpy.mockRestore();
     });
 
     test('支持通过id获取Store类', () => {
         application.start();
         const cls = getMetaClassById('Store');
         expect(cls).toBe(Store);
+    });
+
+    test('@store装饰器不能装饰在字段上', () => {
+        @component()
+        class Button {
+            @store('field')
+            field: string;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
+            'Button',
+            'field',
+            '@store',
+            'class'
+        );
+    });
+
+    test('@store装饰器不能装饰在method上', () => {
+        @component()
+        class Button {
+            @store('field')
+            getName() {}
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10006：%s 类 %s 方法上method装饰器 %s 只能用于装饰%s',
+            'Button',
+            'getName',
+            '@store',
+            'class'
+        );
     });
 
     it('注入的store都是同一个对象的引用', () => {

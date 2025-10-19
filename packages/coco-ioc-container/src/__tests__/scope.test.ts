@@ -47,6 +47,23 @@ describe('@scope装饰器', () => {
         expect(cls).toBe(Scope);
     });
 
+    test('@scope装饰器不能装饰在field上', () => {
+        @component()
+        class Button {
+            @scope()
+            field: string;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
+            'Button',
+            'field',
+            '@scope',
+            'class,method'
+        );
+    });
+
     describe('@scope装饰在类上', () => {
         test('本身是singleton的组件装饰器，显式设置singleton模式也还是单例模式', () => {
             @scope(SCOPE.Singleton)

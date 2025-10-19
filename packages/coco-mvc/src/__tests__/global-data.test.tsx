@@ -1,11 +1,22 @@
 describe('@globalData装饰器', () => {
-    let cocoMvc, Application, application, view, bind, globalData, GlobalData, autowired, getMetaClassById;
+    let cocoMvc;
+    let Application;
+    let application;
+    let component;
+    let view;
+    let globalData;
+    let GlobalData;
+    let autowired;
+    let getMetaClassById;
+    let consoleErrorSpy;
     beforeEach(async () => {
+        consoleErrorSpy = jest.spyOn(console, 'error');
+        consoleErrorSpy.mockImplementation(() => {});
         jest.resetModules();
         cocoMvc = await import('coco-mvc');
+        component = cocoMvc.component;
         Application = cocoMvc.Application;
         view = cocoMvc.view;
-        bind = cocoMvc.bind;
         globalData = cocoMvc.globalData;
         GlobalData = cocoMvc.GlobalData;
         autowired = cocoMvc.autowired;
@@ -16,12 +27,48 @@ describe('@globalData装饰器', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        jest.resetModules();
+        consoleErrorSpy.mockRestore();
     });
 
     test('支持通过id获取GlobalData类', () => {
         application.start();
         const cls = getMetaClassById('GlobalData');
         expect(cls).toBe(GlobalData);
+    });
+
+    test('@globalData装饰器不能装饰在字段上', () => {
+        @component()
+        class Button {
+            @globalData('field')
+            field: string;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
+            'Button',
+            'field',
+            '@globalData',
+            'class'
+        );
+    });
+
+    test('@globalData装饰器不能装饰在method上', () => {
+        @component()
+        class Button {
+            @globalData('field')
+            getName() {}
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10006：%s 类 %s 方法上method装饰器 %s 只能用于装饰%s',
+            'Button',
+            'getName',
+            '@globalData',
+            'class'
+        );
     });
 
     test('可以获取到globalData，并且是同一引用', () => {

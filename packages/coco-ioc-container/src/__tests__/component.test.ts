@@ -47,6 +47,23 @@ describe('@component装饰器', () => {
         expect(cls).toBe(Component);
     });
 
+    test('@component装饰器不能装饰在field上', () => {
+        @component()
+        class Button {
+            @component()
+            field: string;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
+            'Button',
+            'field',
+            '@component',
+            'class,method'
+        );
+    });
+
     test('Component的类元数据信息是正确的', () => {
         application.start();
         const expected = cocoMvc.checkClassMetadataAsExpected(Component, [

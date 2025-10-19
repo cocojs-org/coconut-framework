@@ -4,18 +4,22 @@ describe('@route装饰器', () => {
     let cocoMvc;
     let route;
     let page;
-    let RouteMetadata;
+    let component;
+    let RouteMeta;
     let TestWebRender;
     let getMetaClassById;
-
+    let consoleErrorSpy;
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
-        RouteMetadata = cocoMvc.RouteMetadata;
+        component = cocoMvc.component;
+        RouteMeta = cocoMvc.RouteMeta;
         route = cocoMvc.route;
         page = cocoMvc.page;
         Application = cocoMvc.Application;
         TestWebRender = cocoMvc.TestWebRender;
         getMetaClassById = cocoMvc.getMetaClassById;
+        consoleErrorSpy = jest.spyOn(console, 'error');
+        consoleErrorSpy.mockImplementation(() => {});
         application = new Application({
             Render: {
                 qualifier: 'TestWebRender',
@@ -30,11 +34,46 @@ describe('@route装饰器', () => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
         jest.resetModules();
+        consoleErrorSpy.mockRestore();
     });
 
     test('支持通过id获取Route类', () => {
         application.start();
         const cls = getMetaClassById('Route');
-        expect(cls).toBe(RouteMetadata);
+        expect(cls).toBe(RouteMeta);
+    });
+
+    test('@route装饰器不能装饰在字段上', () => {
+        @component()
+        class Button {
+            @route('field')
+            field: string;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
+            'Button',
+            'field',
+            '@route',
+            'class'
+        );
+    });
+
+    test('@route装饰器不能装饰在method上', () => {
+        @component()
+        class Button {
+            @route('field')
+            getName() {}
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10006：%s 类 %s 方法上method装饰器 %s 只能用于装饰%s',
+            'Button',
+            'getName',
+            '@route',
+            'class'
+        );
     });
 });

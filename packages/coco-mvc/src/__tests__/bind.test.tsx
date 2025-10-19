@@ -1,8 +1,20 @@
 import { getByLabelText, getByRole, getByText, queryByTestId, waitFor } from '@testing-library/dom';
 
 describe('decorator', () => {
-    let cocoMvc, Application, application, view, reactive, bind, Bind, getMetaClassById;
+    let cocoMvc;
+    let Application;
+    let application;
+    let view;
+    let reactive;
+    let bind;
+    let Bind;
+    let getMetaClassById;
+    let component;
+    let consoleErrorSpy;
+
     beforeEach(async () => {
+        consoleErrorSpy = jest.spyOn(console, 'error');
+        consoleErrorSpy.mockImplementation(() => {});
         jest.resetModules();
         cocoMvc = await import('coco-mvc');
         Application = cocoMvc.Application;
@@ -10,6 +22,7 @@ describe('decorator', () => {
         bind = cocoMvc.bind;
         Bind = cocoMvc.Bind;
         reactive = cocoMvc.reactive;
+        component = cocoMvc.component;
         getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
         cocoMvc.registerMvcApi(application, getMetaClassById);
@@ -18,12 +31,44 @@ describe('decorator', () => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
         jest.resetModules();
+        consoleErrorSpy.mockRestore();
     });
 
     test('支持通过id获取Bind类', () => {
         application.start();
         const cls = getMetaClassById('Bind');
         expect(cls).toBe(Bind);
+    });
+
+    test('@bind装饰器不能装饰在class上', () => {
+        @component()
+        @bind()
+        class Button {}
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10004：%s 类上class装饰器 %s 只能用于装饰%s',
+            'Button',
+            '@bind',
+            'method'
+        );
+    });
+
+    test('@bind装饰器不能装饰在字段上', () => {
+        @component()
+        class Button {
+            @bind()
+            field: string;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
+            'Button',
+            'field',
+            '@bind',
+            'method'
+        );
     });
 
     test('正常渲染一个组件', () => {

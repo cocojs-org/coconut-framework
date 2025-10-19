@@ -5,19 +5,22 @@ describe('refs', () => {
     let Application;
     let application;
     let view;
-    let reactive;
+    let component;
     let bind;
     let refs;
     let Refs;
     let getMetaClassById;
     const mockFn = jest.fn();
+    let consoleErrorSpy;
     beforeEach(async () => {
+        consoleErrorSpy = jest.spyOn(console, 'error');
+        consoleErrorSpy.mockImplementation(() => {});
         jest.resetModules();
         cocoMvc = await import('coco-mvc');
         Application = cocoMvc.Application;
         view = cocoMvc.view;
         bind = cocoMvc.bind;
-        reactive = cocoMvc.reactive;
+        component = cocoMvc.component;
         refs = cocoMvc.refs;
         Refs = cocoMvc.Refs;
         getMetaClassById = cocoMvc.getMetaClassById;
@@ -28,12 +31,44 @@ describe('refs', () => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
         jest.resetModules();
+        consoleErrorSpy.mockRestore();
     });
 
     test('支持通过id获取Refs类', () => {
         application.start();
         const cls = getMetaClassById('Refs');
         expect(cls).toBe(Refs);
+    });
+
+    test('@ref装饰器不能装饰在class上', () => {
+        @component()
+        @refs()
+        class Button {}
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10004：%s 类上class装饰器 %s 只能用于装饰%s',
+            'Button',
+            '@refs',
+            'field'
+        );
+    });
+
+    test('@refs装饰器不能装饰在method上', () => {
+        @component()
+        class Button {
+            @refs()
+            getName() {}
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10006：%s 类 %s 方法上method装饰器 %s 只能用于装饰%s',
+            'Button',
+            'getName',
+            '@refs',
+            'field'
+        );
     });
 
     test('支持函数形式绑定host组件或自定义组件', () => {

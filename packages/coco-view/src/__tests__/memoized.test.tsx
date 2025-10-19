@@ -6,16 +6,20 @@ let cocoMvc;
 let view;
 let reactive;
 let memoized;
+let component;
 let Memoized;
 let bind;
 let getMetaClassById;
-
+let consoleErrorSpy;
 describe('memoized', () => {
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
+        consoleErrorSpy = jest.spyOn(console, 'error');
+        consoleErrorSpy.mockImplementation(() => {});
         view = cocoMvc.view;
         reactive = cocoMvc.reactive;
         memoized = cocoMvc.memoized;
+        component = cocoMvc.component;
         Memoized = cocoMvc.Memoized;
         bind = cocoMvc.bind;
         Application = cocoMvc.Application;
@@ -25,6 +29,7 @@ describe('memoized', () => {
     });
 
     afterEach(() => {
+        consoleErrorSpy.mockRestore();
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
         jest.resetModules();
@@ -34,6 +39,37 @@ describe('memoized', () => {
         application.start();
         const cls = getMetaClassById('Memoized');
         expect(cls).toBe(Memoized);
+    });
+
+    test('@memoized装饰器不能装饰在字段上', () => {
+        @component()
+        class Button {
+            @memoized('field')
+            field: string;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
+            'Button',
+            'field',
+            '@memoized',
+            'method'
+        );
+    });
+
+    test('@memoized装饰器不能装饰在class上', () => {
+        @component()
+        @memoized()
+        class Button {}
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10004：%s 类上class装饰器 %s 只能用于装饰%s',
+            'Button',
+            '@memoized',
+            'method'
+        );
     });
 
     test('memoized直接依赖reactive，当reactive不变时，memoized不会重新计算', () => {

@@ -1,5 +1,6 @@
 export * from './index';
 import TestWebRender from './component/test-web-render';
-import Render from './decorator/metadata/render';
+import RenderMeta from './decorator/metadata/render';
+import render from './decorator/render';
 
-export { TestWebRender, Render as RenderMatadata };
+export { TestWebRender, RenderMeta, render };
