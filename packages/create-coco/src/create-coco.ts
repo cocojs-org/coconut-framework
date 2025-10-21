@@ -66,8 +66,9 @@ async function create(type: 'app' | 'lib') {
         nodir: true,
     });
     for (const file of noEjsFiles) {
-        const targetPath = path.join(targetDir, path.relative(tempFolderPath, file));
-        fse.copySync(file, targetPath);
+        const sourcePath = path.join(tempFolderPath, file);
+        const targetPath = path.join(targetDir, file);
+        fse.copySync(sourcePath, targetPath);
     }
 
     // 生成package.json
