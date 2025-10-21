@@ -60,7 +60,8 @@ async function create(type: 'app' | 'lib') {
         return;
     }
     // 复制非ejs文件
-    const noEjsFiles = glob.sync(`${tempFolderPath}/**/*`, {
+    const noEjsFiles = glob.sync(`**/*`, {
+        cwd: tempFolderPath,
         ignore: '**/*.ejs',
         nodir: true,
     });
@@ -72,7 +73,7 @@ async function create(type: 'app' | 'lib') {
     // 生成package.json
     const packageJsonEjs = path.resolve(tempFolderPath, 'package.json.ejs');
     const cliPackageJson = jsonfile.readFileSync(path.resolve(__dirname, '..', 'package.json'));
-    // 目前coco-mvc和coco-cli的版本号保持一致
+    // 目前coco-mvc和create-coco的版本号保持一致
     const version = cliPackageJson.version;
     const renderedContent = await ejs.renderFile(packageJsonEjs, {
         name: projectName,

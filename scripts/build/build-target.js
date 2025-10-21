@@ -9,15 +9,15 @@ const cocoMvcInput = path.join(cocoMvc, './index.ts');
 const cocoMvcInputTest = path.join(cocoMvc, './test.ts');
 const cocoMvcOutput = path.join(cocoMvc, './dist/coco-mvc.cjs.js');
 
-const cocoCli = path.join(packages, './coco-cli');
-const cliSrc = path.join(cocoCli, './src/index.ts');
-const cliDist = path.join(cocoCli, '/dist/index.js');
-const createCocoSrc = path.join(cocoCli, './src/create-coco.ts');
-const createCocoDist = path.join(cocoCli, '/dist/create-coco.js');
-const cliBuildDotCocoProcess = path.join(cocoCli, './src/build-dot-coco-process/index.ts');
-const cliBuildCotCocoDist = path.join(cocoCli, '/dist/build-dot-coco-process/index.js');
-const cliWebpackProcess = path.join(cocoCli, './src/webpack-process/index.ts');
-const cliWebpackDist = path.join(cocoCli, '/dist/webpack-process/index.js');
+const createCoco = path.join(packages, './create-coco');
+const cliSrc = path.join(createCoco, './src/index.ts');
+const cliDist = path.join(createCoco, '/dist/index.js');
+const createCocoSrc = path.join(createCoco, './src/create-coco.ts');
+const createCocoDist = path.join(createCoco, '/dist/create-coco.js');
+const cliBuildDotCocoProcess = path.join(createCoco, './src/build-dot-coco-process/index.ts');
+const cliBuildCotCocoDist = path.join(createCoco, '/dist/build-dot-coco-process/index.js');
+const cliWebpackProcess = path.join(createCoco, './src/webpack-process/index.ts');
+const cliWebpackDist = path.join(createCoco, '/dist/webpack-process/index.js');
 
 module.exports.rollupTargets = [
   {
