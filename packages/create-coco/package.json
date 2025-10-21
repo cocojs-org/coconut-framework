@@ -1,7 +1,7 @@
 {
     "name": "create-coco",
     "description": "命令行工具（脚手架、开发、构建）。",
-    "version": "0.0.1-alpha202510212137",
+    "version": "0.0.1-alpha202510212221",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "bin": {
