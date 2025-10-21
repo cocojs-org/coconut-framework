@@ -1,7 +1,7 @@
 import devApp from './dev-app';
 import buildApp from './build-app';
 import { build as buildLib } from './build-lib';
-import { createApp, createLib } from './create';
+
 // TODO: 添加测试用例验证模版的基本功能都是正确的？
 /**
  * 应用项目命令
@@ -11,10 +11,6 @@ import { createApp, createLib } from './create';
  */
 function execAppCmd(action: string) {
     switch (action) {
-        case 'create': {
-            createApp();
-            break;
-        }
         case 'build': {
             buildApp();
             break;
@@ -37,10 +33,6 @@ function execAppCmd(action: string) {
  */
 function execLibCmd(action: string) {
     switch (action) {
-        case 'create': {
-            createLib();
-            break;
-        }
         case 'build': {
             buildLib();
             break;

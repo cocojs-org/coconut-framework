@@ -10,6 +10,7 @@ import Metadata from './instantiate-one-metadata';
 import { type MetaMetadata } from './class-metadata';
 import Id from '../decorator/metadata/id';
 
+// TODO: 使用class封装，然后通过Application暴露接口
 // 元数据类id和元数据类的映射
 const idClassMap: Map<string, Metadata> = new Map();
 

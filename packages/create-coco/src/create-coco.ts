@@ -5,8 +5,6 @@ import prompts from 'prompts';
 import path from 'path';
 import fse from 'fs-extra';
 
-// TODO: 包改为create-coco，提供create-coco.js这个脚本，单独包含createApp和createLib的实现。coco负责dev和build
-
 async function create(type: 'app' | 'lib') {
     let userCancelled = false;
     const response = await prompts(
@@ -84,5 +82,24 @@ async function create(type: 'app' | 'lib') {
     await fse.outputFileSync(path.join(targetDir, 'package.json'), renderedContent);
 }
 
-export const createApp = () => create('app');
-export const createLib = () => create('lib');
+const createApp = () => create('app');
+const createLib = () => create('lib');
+
+function cli(command: string, type: string) {
+    switch (type) {
+        case 'app': {
+            createApp();
+            break;
+        }
+        case 'lib': {
+            createLib();
+            break;
+        }
+        default: {
+            console.warn(`create后面的参数只能是: app 或 lib，当前为: ${type}`);
+            break;
+        }
+    }
+}
+
+export { cli };

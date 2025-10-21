@@ -1,11 +1,12 @@
 {
-    "name": "@cocojs/cli",
+    "name": "create-coco",
     "description": "命令行工具（脚手架、开发、构建）。",
     "version": "0.0.1-alpha202510092123",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "bin": {
-        "coco": "bin/coco.js"
+        "coco": "bin/coco.js",
+        "create-coco": "bin/create-coco.js"
     },
     "files": [
         "bin",
