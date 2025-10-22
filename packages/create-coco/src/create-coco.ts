@@ -74,7 +74,7 @@ async function create(type: 'app' | 'lib') {
     // 生成package.json
     const packageJsonEjs = path.resolve(tempFolderPath, 'package.json.ejs');
     const cliPackageJson = jsonfile.readFileSync(path.resolve(__dirname, '..', 'package.json'));
-    // 目前coco-mvc和create-coco的版本号保持一致
+    // TODO:create-coco的版本号和当前包保持一致；create-coco的版本号先手动维护吧
     const version = cliPackageJson.version;
     const renderedContent = await ejs.renderFile(packageJsonEjs, {
         name: projectName,

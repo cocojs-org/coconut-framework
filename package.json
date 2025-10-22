@@ -12,8 +12,7 @@
         "test": "pnpm run build:test && pnpm run test:coconut && pnpm run test:react",
         "prettier": "prettier --write 'packages/**/*.*' 'package.json'",
         "prettier:check": "prettier --check 'packages/**/*.*'",
-        "_modifyPkgVersion": "node scripts/publish/modify-pkg-version.js",
-        "updateVersion": "pnpm run test && pnpm run _modifyPkgVersion",
+        "updateVersion": "pnpm run test && node scripts/publish/modify-pkg-version.js",
         "prepare": "husky install && ts-patch install -s"
     },
     "keywords": [],

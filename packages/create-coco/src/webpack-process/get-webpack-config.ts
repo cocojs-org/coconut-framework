@@ -26,7 +26,7 @@ const buildInConfig = {
                 test: /\.tsx?$/,
                 use: [
                     {
-                        loader: 'babel-loader',
+                        loader: require.resolve('babel-loader'),
                         options: {
                             presets: [require.resolve('@babel/preset-typescript')],
                             plugins: [
@@ -42,7 +42,7 @@ const buildInConfig = {
                         },
                     },
                     {
-                        loader: 'ts-loader',
+                        loader: require.resolve('ts-loader'),
                         options: {
                             context: process.cwd(),
                             transpileOnly: false,
