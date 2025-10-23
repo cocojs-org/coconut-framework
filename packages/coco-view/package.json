@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "coco-view",
-    "description": "视图组件相关。",
+    "description": "视图层装饰器包。",
     "types": "dist/index.d.ts",
     "version": "0.0.0",
     "scripts": {},

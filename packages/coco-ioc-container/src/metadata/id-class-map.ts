@@ -43,4 +43,4 @@ function clear() {
     idClassMap.clear();
 }
 
-export { buildMetaClassIdMap, getMetaClassById };
+export { buildMetaClassIdMap, getMetaClassById, clear };

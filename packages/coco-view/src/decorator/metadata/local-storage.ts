@@ -1,12 +1,11 @@
-import { Metadata, target, Target, id } from 'coco-ioc-container';
-import util from '../util';
+import { Metadata, target, Target, id, component } from 'coco-ioc-container';
 
 /**
  * @public
  */
 @id('LocalStorage')
 @target([Target.Type.Class])
-@util()
+@component()
 class LocalStorage extends Metadata {}
 
 export default LocalStorage;

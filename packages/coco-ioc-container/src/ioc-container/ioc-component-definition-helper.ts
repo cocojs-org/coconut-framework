@@ -17,6 +17,7 @@ interface ScopeAndParentComponentMetadata {
 const componentMetadataTree: Map<Class<Metadata>, ScopeAndParentComponentMetadata> = new Map();
 
 /**
+ * TODO: 不限制3层，可以无限层
  * 初始化组件装饰器对应的元数据类的集合
  * 遍历元数据类map，如果满足以下3种情况：
  * 1. @component对应的元数据类，即：Component

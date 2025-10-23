@@ -20,7 +20,7 @@ import {
 } from './class-metadata';
 import Metadata from './instantiate-one-metadata';
 import validate from './validate';
-import { buildMetaClassIdMap, getMetaClassById } from './id-class-map';
+import { buildMetaClassIdMap, getMetaClassById, clear as clearIdClassMap } from './id-class-map';
 
 // 使用装饰器参数生成对应的元数据实例
 function createMetadataByDecoratorParam(decoratorMap: Map<Class<any>, Params[]>) {
