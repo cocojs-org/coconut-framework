@@ -1,14 +1,5 @@
 import { isDescendantOf, uppercaseFirstLetter } from '../share/util';
 import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
-import {
-    buildComponentMetadataSet,
-    clear as clearComponentMetadataSet,
-    findComponentDecorator,
-    findComponentDecoratorScope,
-} from './ioc-component-definition-helper';
-import { getAllMetadata, listClassKindMetadata, listMethodByMetadataCls, listMethodKindMetadata } from '../metadata';
-import Scope, { SCOPE } from '../decorator/metadata/scope';
-import Component from '../decorator/metadata/component';
 
 /**
  * 所有被扫描的规范的组件
@@ -149,54 +140,4 @@ function clear() {
     clsDefinitionMap.clear();
 }
 
-function doBuildIocComponentDefinition() {
-    const bizMetadata = getAllMetadata()[1];
-    for (const beDecoratedCls of bizMetadata.keys()) {
-        if (bizMetadata.has(beDecoratedCls)) {
-            const componentMetadata = findComponentDecorator(beDecoratedCls);
-            if (componentMetadata) {
-                // 确定存在component类装饰器，再确定scope值
-                let scope: SCOPE;
-                const selfScopeMetadata = listClassKindMetadata(beDecoratedCls, Scope) as Scope[];
-                if (selfScopeMetadata.length > 0) {
-                    scope = selfScopeMetadata[0].value;
-                } else {
-                    scope = findComponentDecoratorScope(componentMetadata);
-                }
-                addDefinition(beDecoratedCls, scope === SCOPE.Singleton);
-            } else {
-                const methods = listMethodByMetadataCls(beDecoratedCls, Component);
-                for (const method of methods) {
-                    const componentMetas: Component[] = listMethodKindMetadata(
-                        beDecoratedCls,
-                        method,
-                        Component
-                    ) as Component[];
-                    const scopeMetas: Scope[] = listMethodKindMetadata(beDecoratedCls, method, Scope) as Scope[];
-                    addDefinition(
-                        componentMetas[0].value,
-                        !scopeMetas.length || scopeMetas[0].value === SCOPE.Singleton,
-                        {
-                            configurationCls: beDecoratedCls,
-                            method,
-                        }
-                    );
-                }
-            }
-        }
-    }
-}
-/**
- * 找到所有类组件，添加到iocComponentDefinition中，便于后续实例化
- * 遍历所有的业务类，如果有类装饰器，那么就是类组件
- * 遍历所有配置类的方法，如果有@component装饰器，那么也是类组件
- */
-function buildIocComponentDefinition() {
-    buildComponentMetadataSet();
-
-    doBuildIocComponentDefinition();
-
-    clearComponentMetadataSet();
-}
-
-export { type Id, clear, existDefinition, getInstantiateDefinition, getDefinition, buildIocComponentDefinition };
+export { type Id, clear, existDefinition, getInstantiateDefinition, getDefinition, addDefinition };

@@ -17,8 +17,13 @@ import {
     createPlaceholderDecoratorExp,
     createDecoratorExpFactory,
 } from './create-decorator-exp-factory';
+import { getDecoratorParam } from './decorator-exp-param';
+import { initDecoratorParamModule, clearDecoratorParamModule } from './workflow';
 
 export {
+    initDecoratorParamModule,
+    clearDecoratorParamModule,
+    getDecoratorParam,
     type Context,
     type Decorator,
     type Field,
