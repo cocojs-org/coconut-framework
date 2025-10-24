@@ -41,6 +41,7 @@ describe('ReactDOMOption', () => {
   afterEach(() => {
     cocoMvc.cleanCache();
     cocoMvc.unregisterMvcApi();
+    application.destructor();
     consoleErrorSpy.mockRestore();
   })
 

@@ -25,6 +25,7 @@ describe('ReactDOM unknown attribute', () => {
 
   afterEach(() => {
     cocoMvc.unregisterMvcApi();
+    application.destructor();
     jest.resetModules();
   })
 

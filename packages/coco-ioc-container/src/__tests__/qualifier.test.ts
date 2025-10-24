@@ -27,6 +27,7 @@ describe('@qualifier装饰器: 通过装饰器配置', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
         consoleErrorSpy.mockRestore();
     });
@@ -174,6 +175,7 @@ describe('@qualifier装饰器: 通过动态配置', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
     });
 

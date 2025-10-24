@@ -24,6 +24,7 @@ describe('viewDidMount', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
     });
 

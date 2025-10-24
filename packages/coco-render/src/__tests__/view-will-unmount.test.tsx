@@ -24,6 +24,7 @@ describe('viewWillUnmount', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
     });
 

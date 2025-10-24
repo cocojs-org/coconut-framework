@@ -21,10 +21,11 @@ describe('@layout装饰器', () => {
         cocoMvc.registerMvcApi(application, getMetaClassById);
     });
     afterEach(() => {
-        consoleErrorSpy.mockRestore();
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
+        consoleErrorSpy.mockRestore();
     });
 
     test('支持通过id获取Layout类', () => {

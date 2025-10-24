@@ -28,6 +28,7 @@ describe('ReactDOM', () => {
 
   afterEach(() => {
     cocoMvc.unregisterMvcApi();
+    application.destructor();
     jest.resetModules();
   })
 

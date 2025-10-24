@@ -11,7 +11,6 @@ export {
     listFieldKindMetadata,
     findClassKindMetadataRecursively,
     listBeDecoratedClsByClassKindMetadata,
-    clear,
 } from 'coco-ioc-container';
 export { TestWebRender, RenderMeta, render } from 'coco-render';
 export {

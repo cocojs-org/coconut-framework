@@ -63,6 +63,7 @@ describe('ReactDOMInput', () => {
     document.body.removeChild(container);
     cocoMvc.cleanCache();
     cocoMvc.unregisterMvcApi();
+    application.destructor();
     consoleErrorSpy.mockRestore();
   })
 

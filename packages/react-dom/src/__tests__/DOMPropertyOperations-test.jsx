@@ -33,7 +33,7 @@ describe('DOMPropertyOperations', () => {
   afterEach(() => {
     cocoMvc.unregisterMvcApi();
     jest.resetModules();
-
+    application.destructor();
     consoleErrorSpy.mockRestore();
   })
 

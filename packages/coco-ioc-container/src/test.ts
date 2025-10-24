@@ -109,15 +109,6 @@ import {
     listBeDecoratedClsByClassKindMetadata,
 } from './metadata/index.ts';
 import { addClassKindMetadata, addFieldKindMetadata } from './metadata/class-metadata.ts';
-import { clear as clearComponentFactory } from './ioc-container/component-factory';
-import { clear as clearComponentDefinition } from './ioc-container/ioc-component-definition';
-import { clear as clearPreventCircularDependency } from 'shared';
-
-function clear() {
-    clearComponentFactory();
-    clearComponentDefinition();
-    clearPreventCircularDependency();
-}
 
 export {
     checkClassMetadataAsExpected,
@@ -130,5 +121,4 @@ export {
     listFieldKindMetadata,
     findClassKindMetadataRecursively,
     listBeDecoratedClsByClassKindMetadata,
-    clear,
 };

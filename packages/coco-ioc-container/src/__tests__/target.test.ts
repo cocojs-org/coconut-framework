@@ -32,6 +32,7 @@ describe('@target装饰器', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
         consoleErrorSpy.mockRestore();
     });

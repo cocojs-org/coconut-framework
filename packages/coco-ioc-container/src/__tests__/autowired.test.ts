@@ -33,6 +33,7 @@ describe('autowired', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
         consoleErrorSpy.mockRestore();
     });

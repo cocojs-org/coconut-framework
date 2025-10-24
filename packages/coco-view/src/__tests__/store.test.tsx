@@ -43,6 +43,7 @@ describe('store', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
         consoleWarnSpy.mockRestore();
         consoleErrorSpy.mockRestore();

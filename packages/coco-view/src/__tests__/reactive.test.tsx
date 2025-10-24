@@ -29,6 +29,7 @@ describe('@reactive装饰器', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
         consoleWarnSpy.mockRestore();
         consoleErrorSpy.mockRestore();

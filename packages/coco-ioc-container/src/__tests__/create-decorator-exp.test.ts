@@ -23,6 +23,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
     });
 
@@ -366,6 +367,7 @@ describe('create-decorator-exp:createPlaceholderDecoratorExp', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
         consoleWarnSpy.mockRestore();
     });

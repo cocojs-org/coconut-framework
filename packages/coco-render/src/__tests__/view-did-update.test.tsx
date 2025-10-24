@@ -26,6 +26,7 @@ describe('viewDidUpdate', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
     });
 

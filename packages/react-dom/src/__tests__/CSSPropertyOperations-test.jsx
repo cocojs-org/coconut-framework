@@ -33,7 +33,7 @@ describe('CSSPropertyOperations', () => {
   afterEach(() => {
     cocoMvc.unregisterMvcApi();
     jest.resetModules();
-
+    application.destructor();
     consoleErrorSpy.mockRestore();
   })
 

@@ -27,6 +27,7 @@ describe('constructor-param', () => {
     afterEach(() => {
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
         consoleErrorSpy.mockRestore();
     });

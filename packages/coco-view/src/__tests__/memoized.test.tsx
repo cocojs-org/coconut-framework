@@ -29,9 +29,10 @@ describe('memoized', () => {
     });
 
     afterEach(() => {
-        consoleErrorSpy.mockRestore();
         cocoMvc.cleanCache();
         cocoMvc.unregisterMvcApi();
+        application.destructor();
+        consoleErrorSpy.mockRestore();
         jest.resetModules();
     });
 
