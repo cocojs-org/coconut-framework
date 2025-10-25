@@ -11,7 +11,7 @@ import {
     clearAllMetadata,
 } from './class-metadata';
 import validate from './validate';
-import { buildMetaClassIdMap, clear as clearIdClassMap } from './id-class-map';
+import IdClassMap from './id-class-map';
 import { printDiagnose, type Diagnose } from 'shared';
 
 // 使用装饰器参数生成对应的元数据实例
@@ -51,13 +51,14 @@ function initMetadataModule(decoratorMap: Map<Class<any>, Params[]>) {
     if (diagnoseList.length > 0) {
         diagnoseList.forEach(printDiagnose);
     }
-    buildMetaClassIdMap(metadataMap);
+    const idClassMap = new IdClassMap(metadataMap);
+    return idClassMap;
 }
 
 // 元数据相关数据清理
-function clearMetadataModule() {
+function clearMetadataModule(idClassMap: IdClassMap) {
     clearAllMetadata();
-    clearIdClassMap();
+    idClassMap.destructor();
 }
 
 export { initMetadataModule, clearMetadataModule };

@@ -5,7 +5,6 @@ describe('@effect装饰器', () => {
     let component;
     let Effect;
     let effect;
-    let getMetaClassById;
     let consoleErrorSpy;
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -16,9 +15,8 @@ describe('@effect装饰器', () => {
         Effect = cocoMvc.Effect;
         component = cocoMvc.component;
         effect = cocoMvc.effect;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
     afterEach(() => {
         cocoMvc.cleanCache();
@@ -30,7 +28,7 @@ describe('@effect装饰器', () => {
 
     test('支持通过id获取Effect类', () => {
         application.start();
-        const cls = getMetaClassById('Effect');
+        const cls = application.getMetaClassById('Effect');
         expect(cls).toBe(Effect);
     });
 

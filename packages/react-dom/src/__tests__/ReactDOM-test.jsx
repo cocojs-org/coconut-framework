@@ -16,14 +16,12 @@ describe('ReactDOM', () => {
   let Application
   let application
   let view
-  let getMetaClassById;
   beforeEach(async () => {
     cocoMvc = (await import('coco-mvc'));
     Application = cocoMvc.Application;
     view = cocoMvc.view
-    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerMvcApi(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application);
   })
 
   afterEach(() => {

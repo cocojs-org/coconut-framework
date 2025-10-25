@@ -4,8 +4,8 @@ const isTest = process.env.NODE_ENV === 'test';
 
 const packages = path.join(__dirname, '../../packages');
 // todo 和tsconfig.json.path放在一起维护；
-const mvc = path.join(packages, './coco-mvc/index.ts')
-const mvcTest = path.join(packages, './coco-mvc/test.ts')
+const mvc = path.join(packages, './coco-mvc/src/index.ts')
+const mvcTest = path.join(packages, './coco-mvc/src/test.ts')
 const render = path.join(packages, './coco-render/src/index.ts')
 const renderTest = path.join(packages, './coco-render/src/test.ts')
 const iocContainer = path.join(packages, './coco-ioc-container/src/index.ts')

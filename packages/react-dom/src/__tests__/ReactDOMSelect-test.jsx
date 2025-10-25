@@ -20,7 +20,6 @@ describe('ReactDOMSelect', () => {
   let ref;
   let container;
   let consoleErrorSpy;
-  let getMetaClassById;
   const noop = function() {};
 
   beforeEach(async () => {
@@ -35,9 +34,8 @@ describe('ReactDOMSelect', () => {
     reactive = cocoMvc.reactive;
     ref = cocoMvc.ref;
     jsx = cocoMvc.jsx;
-    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerMvcApi(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application);
 
     container = document.createElement('div');
     document.body.appendChild(container);

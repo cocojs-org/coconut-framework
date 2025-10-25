@@ -11,12 +11,12 @@ let warnedAutowiredSameStoreInOneComponentMultipleTimes;
  * 视图组件实例，如果其类自动注入了store，那么关联*视图组件实例*和*store实例*
  */
 function connectStore(ctor, instance) {
-  const { application, getMetaClassById } = getMvcApi();
+  const { application } = getMvcApi();
   // 找到所有的注入
-  const Autowired = getMetaClassById('Autowired');
+  const Autowired = application.getMetaClassById('Autowired');
   const autowiredFields = application.listFieldByMetadataCls(ctor, Autowired);
   const autowiredComponents = autowiredFields.map(field => instance[field]);
-  const Store = getMetaClassById('Store');
+  const Store = application.getMetaClassById('Store');
   // 过滤出所有注入的store
   // TODO: autowiredComponents有可能是undefined，需要处理
   const stores = autowiredComponents.filter(comp => application.findClassKindMetadataRecursively(comp.constructor, Store));

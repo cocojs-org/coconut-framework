@@ -5,7 +5,6 @@ describe('@api装饰器', () => {
     let Api;
     let api;
     let component;
-    let getMetaClassById;
     let consoleErrorSpy;
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -16,9 +15,8 @@ describe('@api装饰器', () => {
         Api = cocoMvc.Api;
         api = cocoMvc.api;
         component = cocoMvc.component;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
     afterEach(() => {
         cocoMvc.cleanCache();
@@ -30,7 +28,7 @@ describe('@api装饰器', () => {
 
     test('支持通过id获取Api类', () => {
         application.start();
-        const cls = getMetaClassById('Api');
+        const cls = application.getMetaClassById('Api');
         expect(cls).toBe(Api);
     });
 

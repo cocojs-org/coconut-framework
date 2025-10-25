@@ -25,7 +25,6 @@ describe('ReactDOMInput', () => {
   let consoleErrorSpy;
   let setUntrackedValue;
   let setUntrackedChecked;
-  let getMetaClassById;
 
   function dispatchEventOnNode(node, type) {
     node.dispatchEvent(new Event(type, {bubbles: true, cancelable: true}));
@@ -52,9 +51,8 @@ describe('ReactDOMInput', () => {
     reactive = cocoMvc.reactive;
     ref = cocoMvc.ref;
     jsx = cocoMvc.jsx;
-    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerMvcApi(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application);
 
     container = document.createElement('div');
     document.body.appendChild(container);

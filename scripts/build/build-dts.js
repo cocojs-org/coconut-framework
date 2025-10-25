@@ -97,7 +97,7 @@ const cocoMvcDtsProd = [
   {
     packageName: 'coco-mvc',
     tsconfigJson: 'tsconfig.json',
-    mainEntryPointFilePath: './dts-tmp/index.d.ts'
+    mainEntryPointFilePath: './dts-tmp/src/index.d.ts'
   }
 ]
 
@@ -145,7 +145,7 @@ const cocoMvcDtsTest = [
   {
     packageName: 'coco-mvc',
     tsconfigJson: 'tsconfig.test.json',
-    mainEntryPointFilePath: './dts-tmp/test.d.ts'
+    mainEntryPointFilePath: './dts-tmp/src/test.d.ts'
   }
 ]
 

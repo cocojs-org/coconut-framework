@@ -8,7 +8,6 @@ describe('decorator', () => {
     let reactive;
     let bind;
     let Bind;
-    let getMetaClassById;
     let component;
     let consoleErrorSpy;
 
@@ -23,9 +22,8 @@ describe('decorator', () => {
         Bind = cocoMvc.Bind;
         reactive = cocoMvc.reactive;
         component = cocoMvc.component;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
     afterEach(() => {
         cocoMvc.cleanCache();
@@ -37,7 +35,7 @@ describe('decorator', () => {
 
     test('支持通过id获取Bind类', () => {
         application.start();
-        const cls = getMetaClassById('Bind');
+        const cls = application.getMetaClassById('Bind');
         expect(cls).toBe(Bind);
     });
 

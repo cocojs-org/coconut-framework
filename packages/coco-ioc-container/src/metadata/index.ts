@@ -12,7 +12,6 @@ import {
     listMethodKindMetadata,
 } from './class-metadata';
 import Metadata from './instantiate-one-metadata';
-import { getMetaClassById } from './id-class-map';
 import { initMetadataModule, clearMetadataModule } from './workflow';
 
 export {
@@ -20,7 +19,6 @@ export {
     type BizMetadata,
     initMetadataModule,
     clearMetadataModule,
-    getMetaClassById,
     listClassKindMetadata,
     listFieldKindMetadata,
     listMethodKindMetadata,

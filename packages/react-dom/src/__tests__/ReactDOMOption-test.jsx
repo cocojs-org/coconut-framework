@@ -20,7 +20,6 @@ describe('ReactDOMOption', () => {
   let reactive;
   let ref;
   let consoleErrorSpy;
-  let getMetaClassById;
 
   beforeEach(async () => {
     jest.resetModules();
@@ -34,9 +33,8 @@ describe('ReactDOMOption', () => {
     reactive = cocoMvc.reactive;
     ref = cocoMvc.ref;
     jsx = cocoMvc.jsx;
-    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerMvcApi(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application);
   })
   afterEach(() => {
     cocoMvc.cleanCache();

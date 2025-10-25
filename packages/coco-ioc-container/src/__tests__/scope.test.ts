@@ -12,7 +12,6 @@ describe('@scope装饰器', () => {
     let SCOPE;
     let consoleErrorSpy;
     let createDecoratorExp;
-    let getMetaClassById;
 
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -28,9 +27,8 @@ describe('@scope装饰器', () => {
         webApplication = cocoMvc.webApplication;
         Application = cocoMvc.Application;
         createDecoratorExp = cocoMvc.createDecoratorExp;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
 
     afterEach(() => {
@@ -43,7 +41,7 @@ describe('@scope装饰器', () => {
 
     test('支持通过id获取Scope类', () => {
         application.start();
-        const cls = getMetaClassById('Scope');
+        const cls = application.getMetaClassById('Scope');
         expect(cls).toBe(Scope);
     });
 

@@ -9,7 +9,6 @@ describe('@id装饰器', () => {
     let target;
     let Target;
     let component;
-    let getMetaClassById;
     let consoleErrorSpy;
 
     beforeEach(async () => {
@@ -24,9 +23,8 @@ describe('@id装饰器', () => {
         target = cocoMvc.target;
         Target = cocoMvc.Target;
         component = cocoMvc.component;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
 
     afterEach(() => {
@@ -39,7 +37,7 @@ describe('@id装饰器', () => {
 
     test('getMetaClassById函数可以获取到元数据类', () => {
         application.start();
-        const cls = getMetaClassById('Id');
+        const cls = application.getMetaClassById('Id');
         expect(cls).toBe(Id);
     });
 
@@ -83,7 +81,7 @@ describe('@id装饰器', () => {
         class Log extends Metadata {}
 
         application.start();
-        const MetaCls = getMetaClassById('Log');
+        const MetaCls = application.getMetaClassById('Log');
         expect(MetaCls).toBe(Log);
     });
 
@@ -94,7 +92,7 @@ describe('@id装饰器', () => {
         class Log extends Metadata {}
 
         application.start();
-        const MetaCls = getMetaClassById('Haha');
+        const MetaCls = application.getMetaClassById('Haha');
         expect(MetaCls).toBe(Log);
     });
 });

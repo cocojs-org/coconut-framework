@@ -11,7 +11,6 @@ describe('router', () => {
     let router;
     let RouterMeta;
     let TestWebRender;
-    let getMetaClassById;
     let consoleErrorSpy;
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
@@ -23,7 +22,6 @@ describe('router', () => {
         page = cocoMvc.page;
         Application = cocoMvc.Application;
         TestWebRender = cocoMvc.TestWebRender;
-        getMetaClassById = cocoMvc.getMetaClassById;
         consoleErrorSpy = jest.spyOn(console, 'error');
         consoleErrorSpy.mockImplementation(() => {});
         application = new Application({
@@ -46,7 +44,7 @@ describe('router', () => {
 
     test('支持通过id获取Router类', () => {
         application.start();
-        const cls = getMetaClassById('Router');
+        const cls = application.getMetaClassById('Router');
         expect(cls).toBe(RouterMeta);
     });
 

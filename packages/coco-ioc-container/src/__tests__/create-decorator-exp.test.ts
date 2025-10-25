@@ -6,7 +6,6 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     let KindMethod;
     let Application;
     let application;
-    let getMetaClassById;
 
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
@@ -16,8 +15,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
         KindField = cocoMvc.KindField;
         KindMethod = cocoMvc.KindMethod;
         application = new Application();
-        getMetaClassById = cocoMvc.getMetaClassById;
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
 
     afterEach(() => {
@@ -344,7 +342,6 @@ describe('create-decorator-exp:createPlaceholderDecoratorExp', () => {
     let createPlaceholderDecoratorExp;
     let Application;
     let application;
-    let getMetaClassById;
     let target;
     let Target;
     let id;
@@ -359,8 +356,7 @@ describe('create-decorator-exp:createPlaceholderDecoratorExp', () => {
         id = cocoMvc.id;
         Application = cocoMvc.Application;
         application = new Application();
-        getMetaClassById = cocoMvc.getMetaClassById;
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
         consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     });
 

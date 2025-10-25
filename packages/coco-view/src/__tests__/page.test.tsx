@@ -9,7 +9,6 @@ describe('@page装饰器', () => {
     let Page;
     let layout;
     let reactive;
-    let getMetaClassById;
     let consoleErrorSpy;
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -22,9 +21,8 @@ describe('@page装饰器', () => {
         Page = cocoMvc.Page;
         layout = cocoMvc.layout;
         reactive = cocoMvc.reactive;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
     afterEach(() => {
         cocoMvc.cleanCache();
@@ -36,7 +34,7 @@ describe('@page装饰器', () => {
 
     test('支持通过id获取Page类', () => {
         application.start();
-        const cls = getMetaClassById('Page');
+        const cls = application.getMetaClassById('Page');
         expect(cls).toBe(Page);
     });
 

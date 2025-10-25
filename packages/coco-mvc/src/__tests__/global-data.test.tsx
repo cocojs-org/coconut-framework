@@ -7,7 +7,6 @@ describe('@globalData装饰器', () => {
     let globalData;
     let GlobalData;
     let autowired;
-    let getMetaClassById;
     let consoleErrorSpy;
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -20,9 +19,8 @@ describe('@globalData装饰器', () => {
         globalData = cocoMvc.globalData;
         GlobalData = cocoMvc.GlobalData;
         autowired = cocoMvc.autowired;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
     afterEach(() => {
         cocoMvc.cleanCache();
@@ -34,7 +32,7 @@ describe('@globalData装饰器', () => {
 
     test('支持通过id获取GlobalData类', () => {
         application.start();
-        const cls = getMetaClassById('GlobalData');
+        const cls = application.getMetaClassById('GlobalData');
         expect(cls).toBe(GlobalData);
     });
 

@@ -9,7 +9,6 @@ describe('view', () => {
     let reactive;
     let bind;
     let View;
-    let getMetaClassById;
     let consoleErrorSpy;
     beforeEach(async () => {
         jest.resetModules();
@@ -20,9 +19,8 @@ describe('view', () => {
         bind = cocoMvc.bind;
         reactive = cocoMvc.reactive;
         View = cocoMvc.View;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
         consoleErrorSpy = jest.spyOn(console, 'error');
         consoleErrorSpy.mockImplementation(() => {});
     });
@@ -36,7 +34,7 @@ describe('view', () => {
 
     test('支持通过id获取View类', () => {
         application.start();
-        const cls = getMetaClassById('View');
+        const cls = application.getMetaClassById('View');
         expect(cls).toBe(View);
     });
 

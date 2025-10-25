@@ -17,7 +17,6 @@ let application
 let jsx
 let reactive
 let view
-let getMetaClassById
 let consoleErrorSpy
 let consoleLogSpy
 
@@ -72,9 +71,8 @@ describe('ReactDOMComponent', () => {
     view = cocoMvc.view
     jsx = cocoMvc.jsx;
     reactive = cocoMvc.reactive;
-    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerMvcApi(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application);
     consoleErrorSpy = jest.spyOn(console, 'error');
     consoleErrorSpy.mockImplementation(() => {})
     consoleLogSpy = jest.spyOn(console, 'log');

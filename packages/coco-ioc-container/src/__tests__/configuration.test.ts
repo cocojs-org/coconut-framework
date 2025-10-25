@@ -7,7 +7,6 @@ describe('configuration装饰器', () => {
     let component;
     let scope;
     let SCOPE;
-    let getMetaClassById;
     let consoleErrorSpy;
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -19,9 +18,8 @@ describe('configuration装饰器', () => {
         configuration = cocoMvc.configuration;
         Configuration = cocoMvc.Configuration;
         Application = cocoMvc.Application;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
 
     afterEach(() => {
@@ -34,7 +32,7 @@ describe('configuration装饰器', () => {
 
     test('支持通过id获取Configuration类', () => {
         application.start();
-        const cls = getMetaClassById('Configuration');
+        const cls = application.getMetaClassById('Configuration');
         expect(cls).toBe(Configuration);
     });
 

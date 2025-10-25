@@ -10,7 +10,6 @@ describe('autowired', () => {
     let Component;
     let scope;
     let SCOPE;
-    let getMetaClassById;
     let consoleErrorSpy;
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -25,9 +24,8 @@ describe('autowired', () => {
         Component = cocoMvc.Component;
         webApplication = cocoMvc.webApplication;
         Application = cocoMvc.Application;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
 
     afterEach(() => {
@@ -40,7 +38,7 @@ describe('autowired', () => {
 
     test('支持通过id获取Autowired类', () => {
         application.start();
-        const cls = getMetaClassById('Autowired');
+        const cls = application.getMetaClassById('Autowired');
         expect(cls).toBe(Autowired);
     });
 

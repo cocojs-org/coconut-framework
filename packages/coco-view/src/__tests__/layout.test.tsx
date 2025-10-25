@@ -5,7 +5,6 @@ describe('@layout装饰器', () => {
     let component;
     let Layout;
     let layout;
-    let getMetaClassById;
     let consoleErrorSpy;
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -16,9 +15,8 @@ describe('@layout装饰器', () => {
         Layout = cocoMvc.Layout;
         layout = cocoMvc.layout;
         component = cocoMvc.component;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
     afterEach(() => {
         cocoMvc.cleanCache();
@@ -30,7 +28,7 @@ describe('@layout装饰器', () => {
 
     test('支持通过id获取Layout类', () => {
         application.start();
-        const cls = getMetaClassById('Layout');
+        const cls = application.getMetaClassById('Layout');
         expect(cls).toBe(Layout);
     });
 

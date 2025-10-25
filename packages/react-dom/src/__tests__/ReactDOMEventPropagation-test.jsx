@@ -19,7 +19,6 @@ describe('ReactDOMEventListener', () => {
   let reactive;
   let ref;
   let container;
-  let getMetaClassById;
 
   beforeEach(async () => {
     cocoMvc = (await import('coco-mvc'));
@@ -28,9 +27,8 @@ describe('ReactDOMEventListener', () => {
     reactive = cocoMvc.reactive;
     ref = cocoMvc.ref;
     jsx = cocoMvc.jsx;
-    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerMvcApi(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application);
   })
   afterEach(() => {
     cocoMvc.cleanCache();

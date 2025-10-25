@@ -6,7 +6,6 @@ describe('@render装饰器', () => {
     let render;
     let component;
     let RenderMeta;
-    let getMetaClassById;
     let consoleWarnSpy;
     let consoleErrorSpy;
     beforeEach(async () => {
@@ -16,9 +15,8 @@ describe('@render装饰器', () => {
         component = cocoMvc.component;
         RenderMeta = cocoMvc.RenderMeta;
         Application = cocoMvc.Application;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
         consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
         consoleErrorSpy = jest.spyOn(console, 'error');
         consoleErrorSpy.mockImplementation(() => {});
@@ -35,7 +33,7 @@ describe('@render装饰器', () => {
 
     test('支持通过id获取Render类', () => {
         application.start();
-        const cls = getMetaClassById('Render');
+        const cls = application.getMetaClassById('Render');
         expect(cls).toBe(RenderMeta);
     });
 

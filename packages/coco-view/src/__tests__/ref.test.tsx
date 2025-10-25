@@ -9,7 +9,6 @@ describe('ref', () => {
     let bind;
     let ref;
     let Ref;
-    let getMetaClassById;
     const mockFn = jest.fn();
     let consoleErrorSpy;
     beforeEach(async () => {
@@ -23,9 +22,8 @@ describe('ref', () => {
         component = cocoMvc.component;
         ref = cocoMvc.ref;
         Ref = cocoMvc.Ref;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
     afterEach(() => {
         cocoMvc.cleanCache();
@@ -37,7 +35,7 @@ describe('ref', () => {
 
     test('支持通过id获取Ref类', () => {
         application.start();
-        const cls = getMetaClassById('Ref');
+        const cls = application.getMetaClassById('Ref');
         expect(cls).toBe(Ref);
     });
 

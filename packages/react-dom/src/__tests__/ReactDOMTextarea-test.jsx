@@ -21,7 +21,6 @@ describe('ReactDOMTextarea', () => {
   let ref;
   let renderTextarea;
   let consoleErrorSpy;
-  let getMetaClassById;
 
   beforeEach(async () => {
     jest.resetModules();
@@ -34,9 +33,8 @@ describe('ReactDOMTextarea', () => {
     view = cocoMvc.view;
     reactive = cocoMvc.reactive;
     ref = cocoMvc.ref;
-    getMetaClassById = cocoMvc.getMetaClassById;
     application = new Application();
-    cocoMvc.registerMvcApi(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application);
 
     renderTextarea = function(component, container) {
       if (!container) {

@@ -8,7 +8,6 @@ let cocoMvc;
 let view;
 let reactive;
 let bind;
-let getMetaClassById;
 describe('viewDidMount', () => {
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
@@ -16,9 +15,8 @@ describe('viewDidMount', () => {
         reactive = cocoMvc.reactive;
         bind = cocoMvc.bind;
         Application = cocoMvc.Application;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
 
     afterEach(() => {

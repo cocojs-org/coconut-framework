@@ -61,9 +61,9 @@ function adoptClassInstance(workInProgress, instance) {
 }
 
 function constructClassInstance(workInProgress, ctor, props) {
-  const {application, getMetaClassById} = getMvcApi();
+  const {application} = getMvcApi();
   const instance = application.getViewComponent(ctor, props);
-  const Reactive = getMetaClassById('Reactive');
+  const Reactive = application.getMetaClassById('Reactive');
   const fields = application.listFieldByMetadataCls(ctor, Reactive);
   workInProgress.memoizedState = fields.reduce((prev, field) => {
     prev[field] = instance[field];
@@ -86,8 +86,8 @@ function mountClassInstance(
   initializeUpdateQueue(workInProgress)
 
   if (__DEV__) {
-    const { application, getMetaClassById } = getMvcApi();
-    const Reactive = getMetaClassById('Reactive');
+    const { application } = getMvcApi();
+    const Reactive = application.getMetaClassById('Reactive');
     const fields = application.listFieldByMetadataCls(ctor, Reactive);
     for (const field of fields) {
       if (instance[field] === newProps) {
@@ -122,8 +122,8 @@ function updateClassInstance(
   newState = workInProgress.memoizedState;
 
   updateProps(instance, newProps);
-  const { application, getMetaClassById } = getMvcApi();
-  const Reactive = getMetaClassById('Reactive');
+  const { application } = getMvcApi();
+  const Reactive = application.getMetaClassById('Reactive');
   const fields = application.listFieldByMetadataCls(ctor, Reactive);
   for (const field of fields) {
     instance[reactiveAssignField(field)] = newState[field]

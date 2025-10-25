@@ -5,7 +5,6 @@ describe('@value装饰器', () => {
     let component;
     let value;
     let Value;
-    let getMetaClassById;
     let consoleErrorSpy;
 
     beforeEach(async () => {
@@ -16,9 +15,8 @@ describe('@value装饰器', () => {
         component = cocoMvc.component;
         Application = cocoMvc.Application;
         Value = cocoMvc.Value;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
 
     afterEach(() => {
@@ -31,7 +29,7 @@ describe('@value装饰器', () => {
 
     test('支持通过id获取Value类', () => {
         application.start();
-        const cls = getMetaClassById('Value');
+        const cls = application.getMetaClassById('Value');
         expect(cls).toBe(Value);
     });
 

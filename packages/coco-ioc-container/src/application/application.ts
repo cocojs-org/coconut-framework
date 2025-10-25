@@ -5,16 +5,19 @@ import {
     findClassKindMetadataRecursively,
     listFieldByMetadataCls,
     clearMetadataModule,
+    type Metadata,
 } from '../metadata';
 import { getDecoratorParam, initDecoratorParamModule, clearDecoratorParamModule } from '../create-decorator-exp';
 import { initIocComponentDefinitionModule, clearIocComponentDefinitionModule } from '../ioc-container/workflow';
 import PropertiesConfig from '../properties/properties-config';
+import type IdClassMap from '../metadata/id-class-map';
 
 /**
  * 表示一个web应用实例
  * @public
  */
 class Application {
+    idClassMap: IdClassMap;
     propertiesConfig: PropertiesConfig;
 
     constructor(jsonConfig: Record<string, any> = {}) {
@@ -29,7 +32,7 @@ class Application {
         initDecoratorParamModule();
 
         // 用装饰器参数初始化元数据数据
-        initMetadataModule(getDecoratorParam());
+        this.idClassMap = initMetadataModule(getDecoratorParam());
 
         // 用元数据信息初始化ioc组件数据
         initIocComponentDefinitionModule();
@@ -40,7 +43,10 @@ class Application {
 
     public destructor() {
         clearIocComponentDefinitionModule();
-        clearMetadataModule();
+        if (this.idClassMap) {
+            // 可能因为启动过程中，还没有到创建元数据就报错了，所以这里判空一下
+            clearMetadataModule(this.idClassMap);
+        }
         clearDecoratorParamModule();
     }
 
@@ -77,6 +83,8 @@ class Application {
     public listFieldByMetadataCls = listFieldByMetadataCls;
     public findClassKindMetadataRecursively = findClassKindMetadataRecursively;
     public listBeDecoratedClsByClassKindMetadata = listBeDecoratedClsByClassKindMetadata;
+    public getMetaClassById: (id: string) => Metadata | undefined = (id: string) =>
+        this.idClassMap?.getMetaClassById(id);
 
     /**
      * 启动所有配置boot的组件

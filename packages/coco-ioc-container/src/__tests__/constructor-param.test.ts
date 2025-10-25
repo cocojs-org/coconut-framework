@@ -7,7 +7,6 @@ describe('constructor-param', () => {
     let SCOPE;
     let constructorParam;
     let ConstructorParam;
-    let getMetaClassById;
     let consoleErrorSpy;
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -19,9 +18,8 @@ describe('constructor-param', () => {
         SCOPE = cocoMvc.SCOPE;
         constructorParam = cocoMvc.constructorParam;
         ConstructorParam = cocoMvc.ConstructorParam;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
 
     afterEach(() => {
@@ -34,7 +32,7 @@ describe('constructor-param', () => {
 
     test('支持通过id获取ConstructorParam类', () => {
         application.start();
-        const cls = getMetaClassById('ConstructorParam');
+        const cls = application.getMetaClassById('ConstructorParam');
         expect(cls).toBe(ConstructorParam);
     });
 

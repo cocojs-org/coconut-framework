@@ -9,7 +9,6 @@ let memoized;
 let component;
 let Memoized;
 let bind;
-let getMetaClassById;
 let consoleErrorSpy;
 describe('memoized', () => {
     beforeEach(async () => {
@@ -23,9 +22,8 @@ describe('memoized', () => {
         Memoized = cocoMvc.Memoized;
         bind = cocoMvc.bind;
         Application = cocoMvc.Application;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
 
     afterEach(() => {
@@ -38,7 +36,7 @@ describe('memoized', () => {
 
     test('支持通过id获取Memoized类', () => {
         application.start();
-        const cls = getMetaClassById('Memoized');
+        const cls = application.getMetaClassById('Memoized');
         expect(cls).toBe(Memoized);
     });
 

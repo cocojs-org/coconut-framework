@@ -5,7 +5,6 @@ describe('@cookie装饰器', () => {
     let component;
     let Cookie;
     let cookie;
-    let getMetaClassById;
     let consoleErrorSpy;
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -16,9 +15,8 @@ describe('@cookie装饰器', () => {
         Cookie = cocoMvc.Cookie;
         cookie = cocoMvc.cookie;
         component = cocoMvc.component;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
     });
     afterEach(() => {
         cocoMvc.cleanCache();
@@ -30,7 +28,7 @@ describe('@cookie装饰器', () => {
 
     test('支持通过id获取Cookie类', () => {
         application.start();
-        const cls = getMetaClassById('Cookie');
+        const cls = application.getMetaClassById('Cookie');
         expect(cls).toBe(Cookie);
     });
 

@@ -7,7 +7,6 @@ describe('@reactive装饰器', () => {
     let Reactive;
     let reactive;
     let bind;
-    let getMetaClassById;
     let consoleWarnSpy;
     let consoleErrorSpy;
     beforeEach(async () => {
@@ -18,9 +17,8 @@ describe('@reactive装饰器', () => {
         reactive = cocoMvc.reactive;
         bind = cocoMvc.bind;
         Application = cocoMvc.Application;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
         consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
         consoleErrorSpy = jest.spyOn(console, 'error');
         consoleErrorSpy.mockImplementation(() => {});
@@ -37,7 +35,7 @@ describe('@reactive装饰器', () => {
 
     test('支持通过id获取Reactive类', () => {
         application.start();
-        const cls = getMetaClassById('Reactive');
+        const cls = application.getMetaClassById('Reactive');
         expect(cls).toBe(Reactive);
     });
 

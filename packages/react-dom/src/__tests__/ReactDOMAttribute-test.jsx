@@ -13,14 +13,12 @@ describe('ReactDOM unknown attribute', () => {
   let Application
   let application
   let view
-  let getMetaClassById;
   beforeEach(async () => {
     cocoMvc = (await import('coco-mvc'));
     Application = cocoMvc.Application;
-    getMetaClassById = cocoMvc.getMetaClassById;
     view = cocoMvc.view
     application = new Application();
-    cocoMvc.registerMvcApi(application, getMetaClassById);
+    cocoMvc.registerMvcApi(application);
   })
 
   afterEach(() => {

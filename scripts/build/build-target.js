@@ -5,8 +5,8 @@ const isTest = process.env.NODE_ENV === 'test';
 const { PACKAGE } = require("./rollup-alias");
 const packages = path.join(__dirname, '../../packages');
 const cocoMvc = path.join(packages, './coco-mvc');
-const cocoMvcInput = path.join(cocoMvc, './index.ts');
-const cocoMvcInputTest = path.join(cocoMvc, './test.ts');
+const cocoMvcInput = path.join(cocoMvc, './src/index.ts');
+const cocoMvcInputTest = path.join(cocoMvc, './src/test.ts');
 const cocoMvcOutput = path.join(cocoMvc, './dist/coco-mvc.cjs.js');
 
 const createCoco = path.join(packages, './create-coco');

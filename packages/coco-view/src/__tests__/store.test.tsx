@@ -19,7 +19,6 @@ describe('store', () => {
     let autowired;
     let memoized;
     let bind;
-    let getMetaClassById;
     let consoleWarnSpy;
     let consoleErrorSpy;
     beforeEach(async () => {
@@ -32,9 +31,8 @@ describe('store', () => {
         memoized = cocoMvc.memoized;
         bind = cocoMvc.bind;
         Application = cocoMvc.Application;
-        getMetaClassById = cocoMvc.getMetaClassById;
         application = new Application();
-        cocoMvc.registerMvcApi(application, getMetaClassById);
+        cocoMvc.registerMvcApi(application);
         consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
         consoleErrorSpy = jest.spyOn(console, 'error');
         consoleErrorSpy.mockImplementation(() => {});
@@ -51,7 +49,7 @@ describe('store', () => {
 
     test('支持通过id获取Store类', () => {
         application.start();
-        const cls = getMetaClassById('Store');
+        const cls = application.getMetaClassById('Store');
         expect(cls).toBe(Store);
     });
 
