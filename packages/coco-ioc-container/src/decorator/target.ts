@@ -20,5 +20,4 @@ export enum Type {
  */
 const target: DecoratorExpWithDecoratorSelf<Type[]> = createPlaceholderDecoratorExp();
 
-// TODO: @target有可能先装饰其他非Target吗？可以的话需要抛出异常
 export default target;

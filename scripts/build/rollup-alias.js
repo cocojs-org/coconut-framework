@@ -12,6 +12,7 @@ const iocContainer = path.join(packages, './coco-ioc-container/src/index.ts')
 const iocContainerTest = path.join(packages, './coco-ioc-container/src/test.ts')
 const view = path.join(packages, './coco-view/src/index.ts')
 const router = path.join(packages, './coco-router/src/index.ts')
+const routerTest = path.join(packages, './coco-router/src/test.ts')
 const shared = path.join(packages, './shared/src/index.ts')
 const react = path.join(packages, './react/index.js')
 const reactReconciler = path.join(packages, './react-reconciler/src/index.js')
@@ -40,7 +41,7 @@ const pathMap = {
   [PACKAGE.MVC_RENDER]: isTest ? renderTest : render,
   [PACKAGE.IOC_CONTAINER]: isTest ? iocContainerTest : iocContainer,
   [PACKAGE.VIEW]: view,
-  [PACKAGE.ROUTER]: router,
+  [PACKAGE.ROUTER]: isTest ? routerTest : router,
   [PACKAGE.SHARED]: shared,
   [PACKAGE.REACT]: react,
   [PACKAGE.REACT_RECONCILER]: reactReconciler,

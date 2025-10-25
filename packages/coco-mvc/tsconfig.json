@@ -15,8 +15,8 @@
             "react-dom": ["../react-dom"]
         }
     },
-    "include": ["src", "index.ts"],
-    "exclude": ["src/__tests__"],
+    "include": ["src"],
+    "exclude": ["src/__tests__", "src/test.ts"],
     "references": [
         { "path": "../coco-ioc-container" },
         { "path": "../coco-router" },

@@ -140,7 +140,7 @@ const cocoMvcDtsTest = [
   {
     packageName: 'coco-router',
     tsconfigJson: 'tsconfig.json',
-    mainEntryPointFilePath: './dts-tmp/index.d.ts'
+    mainEntryPointFilePath: './dts-tmp/test.d.ts'
   },
   {
     packageName: 'coco-mvc',
