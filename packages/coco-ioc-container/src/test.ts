@@ -1,6 +1,8 @@
 export * from './index.ts';
+import { ClassMetadata } from './metadata/index.ts';
 import Metadata, { instantiateMetadata } from './metadata/instantiate-one-metadata.ts';
 import { createDecoratorExpFactory } from './create-decorator-exp/index';
+import type Application from './application/application.ts';
 
 function isEqual(a: unknown, b: unknown) {
     if (typeof a === 'number' || typeof a === 'string' || typeof a === 'boolean' || typeof a === 'undefined') {
@@ -26,9 +28,9 @@ function isEqual(a: unknown, b: unknown) {
 /**
  * 获取被装饰器类的类元信息
  */
-function getClassMetadata(beDecoratedCls?: Class<any>) {
+function getClassMetadata(application: Application, beDecoratedCls?: Class<any>) {
     if (beDecoratedCls) {
-        const config = getMetadataByClass(beDecoratedCls);
+        const config = application.classMetadata.getMetadataByClass(beDecoratedCls);
         if (config) {
             return config.classMetadata;
         }
@@ -42,6 +44,7 @@ function getClassMetadata(beDecoratedCls?: Class<any>) {
  * expectedMetadataList: Clazz上应该具备的所有元信息
  */
 function checkClassMetadataAsExpected(
+    application: Application,
     Clazz: Class<any>,
     expectedMetadataList: {
         Metadata: Class<Metadata>;
@@ -51,7 +54,7 @@ function checkClassMetadataAsExpected(
     if (!Clazz || expectedMetadataList.length === 0) {
         return false;
     }
-    const classMetadataList = getClassMetadata(Clazz);
+    const classMetadataList = getClassMetadata(application, Clazz);
     // 长度不等，元信息肯定不一致
     if (classMetadataList.length !== expectedMetadataList.length) {
         return false;
@@ -78,47 +81,4 @@ function checkClassMetadataAsExpected(
     return allExpected.every(Boolean);
 }
 
-// 检查元数据的元数据是否正确
-function checkMetadataForMetadataAsExpected(
-    expectedList: {
-        metadataCls: Class<Metadata>;
-        metaList: {
-            Metadata: Class<Metadata>;
-            fieldValues?: Record<string, any>;
-        }[];
-    }[]
-) {
-    const [metadataForMetadata] = getAllMetadata();
-    if (expectedList.length !== metadataForMetadata.size) {
-        return false;
-    }
-    for (const metadata of expectedList) {
-        if (!checkClassMetadataAsExpected(metadata.metadataCls, metadata.metaList)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-import {
-    getMetadataByClass,
-    getAllMetadata,
-    listClassKindMetadata,
-    listFieldKindMetadata,
-    findClassKindMetadataRecursively,
-    listBeDecoratedClsByClassKindMetadata,
-} from './metadata/index.ts';
-import { addClassKindMetadata, addFieldKindMetadata } from './metadata/class-metadata.ts';
-
-export {
-    checkClassMetadataAsExpected,
-    createDecoratorExpFactory,
-    instantiateMetadata,
-    addClassKindMetadata,
-    addFieldKindMetadata,
-    getAllMetadata,
-    listClassKindMetadata,
-    listFieldKindMetadata,
-    findClassKindMetadataRecursively,
-    listBeDecoratedClsByClassKindMetadata,
-};
+export { ClassMetadata, checkClassMetadataAsExpected, createDecoratorExpFactory, instantiateMetadata };

@@ -1,16 +1,10 @@
 export * from './index';
 
 export {
+    ClassMetadata,
     checkClassMetadataAsExpected,
     createDecoratorExpFactory,
     instantiateMetadata,
-    addClassKindMetadata,
-    addFieldKindMetadata,
-    getAllMetadata,
-    listClassKindMetadata,
-    listFieldKindMetadata,
-    findClassKindMetadataRecursively,
-    listBeDecoratedClsByClassKindMetadata,
 } from 'coco-ioc-container';
 export { TestWebRender, RenderMeta, render } from 'coco-render';
 export {

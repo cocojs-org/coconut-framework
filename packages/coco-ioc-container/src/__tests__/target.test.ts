@@ -43,7 +43,7 @@ describe('@target装饰器', () => {
 
     test('Target的类元数据信息是正确的', () => {
         application.start();
-        const expected = cocoMvc.checkClassMetadataAsExpected(Target, [
+        const expected = cocoMvc.checkClassMetadataAsExpected(application, Target, [
             {
                 Metadata: Target,
                 fieldValues: { value: [Target.Type.Class] },

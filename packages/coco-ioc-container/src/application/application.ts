@@ -1,12 +1,5 @@
 import { getComponents, getViewComponent } from '../ioc-container/component-factory';
-import {
-    initMetadataModule,
-    listBeDecoratedClsByClassKindMetadata,
-    findClassKindMetadataRecursively,
-    listFieldByMetadataCls,
-    clearMetadataModule,
-    type Metadata,
-} from '../metadata';
+import { initMetadataModule, clearMetadataModule, type Metadata, type ClassMetadata } from '../metadata';
 import { getDecoratorParam, initDecoratorParamModule, clearDecoratorParamModule } from '../create-decorator-exp';
 import { initIocComponentDefinitionModule, clearIocComponentDefinitionModule } from '../ioc-container/workflow';
 import PropertiesConfig from '../properties/properties-config';
@@ -17,6 +10,7 @@ import type IdClassMap from '../metadata/id-class-map';
  * @public
  */
 class Application {
+    classMetadata: ClassMetadata;
     idClassMap: IdClassMap;
     propertiesConfig: PropertiesConfig;
 
@@ -32,10 +26,12 @@ class Application {
         initDecoratorParamModule();
 
         // 用装饰器参数初始化元数据数据
-        this.idClassMap = initMetadataModule(getDecoratorParam());
+        const { classMetadata, idClassMap } = initMetadataModule(getDecoratorParam());
+        this.classMetadata = classMetadata;
+        this.idClassMap = idClassMap;
 
         // 用元数据信息初始化ioc组件数据
-        initIocComponentDefinitionModule();
+        initIocComponentDefinitionModule(this.classMetadata);
 
         // 实例化配置启动项的组件
         this.bootComponent();
@@ -43,10 +39,7 @@ class Application {
 
     public destructor() {
         clearIocComponentDefinitionModule();
-        if (this.idClassMap) {
-            // 可能因为启动过程中，还没有到创建元数据就报错了，所以这里判空一下
-            clearMetadataModule(this.idClassMap);
-        }
+        clearMetadataModule(this.classMetadata, this.idClassMap);
         clearDecoratorParamModule();
     }
 
@@ -80,11 +73,18 @@ class Application {
         return getViewComponent(this, viewClass, props);
     }
 
-    public listFieldByMetadataCls = listFieldByMetadataCls;
-    public findClassKindMetadataRecursively = findClassKindMetadataRecursively;
-    public listBeDecoratedClsByClassKindMetadata = listBeDecoratedClsByClassKindMetadata;
-    public getMetaClassById: (id: string) => Metadata | undefined = (id: string) =>
-        this.idClassMap?.getMetaClassById(id);
+    public listFieldByMetadataCls(beDecoratedCls: Class<any>, MetadataCls: Class<any>) {
+        return this.classMetadata.listFieldByMetadataCls(beDecoratedCls, MetadataCls);
+    }
+    public findClassKindMetadataRecursively(beDecoratedCls: Class<any>, TargetCls: Class<any>, upward: number = 0) {
+        return this.classMetadata.findClassKindMetadataRecursively(beDecoratedCls, TargetCls, upward);
+    }
+    public listBeDecoratedClsByClassKindMetadata(MetadataCls: Class<any>) {
+        return this.classMetadata.listBeDecoratedClsByClassKindMetadata(MetadataCls);
+    }
+    public getMetaClassById(id: string) {
+        return this.idClassMap.getMetaClassById(id);
+    }
 
     /**
      * 启动所有配置boot的组件

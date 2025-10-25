@@ -1,5 +1,4 @@
 import { type IocComponentDefinition, getInstantiateDefinition, getDefinition } from './ioc-component-definition';
-import { getMetadataByClass, listClassKindMetadata, listFieldByMetadataCls, listFieldKindMetadata } from '../metadata';
 import type Application from '../application';
 import { getCreateDecoratorOption } from '../create-decorator-exp/create-decorator-options';
 import ConstructorParam from '../decorator/metadata/constructor-param';
@@ -24,7 +23,7 @@ function createComponent<T>(
         const configuration = new configurationCls();
         component = configuration[method]();
     }
-    const metadatas = getMetadataByClass(cls);
+    const metadatas = application.classMetadata.getMetadataByClass(cls);
     if (metadatas) {
         const { classMetadata, methodMetadata, fieldMetadata } = metadatas;
         for (const meta of classMetadata) {
@@ -109,7 +108,10 @@ function getComponents(application: Application, userOption: ConstructOption) {
         instantiatingStage.add(targetDefinition.cls);
 
         const constructorArgs = [];
-        const constructorParams = listClassKindMetadata(instantiateDefinition.cls, ConstructorParam);
+        const constructorParams = application.classMetadata.listClassKindMetadata(
+            instantiateDefinition.cls,
+            ConstructorParam
+        );
         if (constructorParams.length > 0) {
             // 因为元数据不能重复，所以只有一个
             const constructorParamsParams = (constructorParams[0] as ConstructorParam).value;
@@ -145,9 +147,9 @@ function getComponents(application: Application, userOption: ConstructOption) {
         assignningStage.add(targetDefinition.cls);
 
         // 3. 递归实例化field注入
-        const autowiredFields = listFieldByMetadataCls(instantiateDefinition.cls, Autowired);
+        const autowiredFields = application.classMetadata.listFieldByMetadataCls(instantiateDefinition.cls, Autowired);
         for (const field of autowiredFields) {
-            const autowiredMetadatas = listFieldKindMetadata(
+            const autowiredMetadatas = application.classMetadata.listFieldKindMetadata(
                 instantiateDefinition.cls,
                 field,
                 Autowired
@@ -163,7 +165,7 @@ function getComponents(application: Application, userOption: ConstructOption) {
                     printDiagnose(diagnose);
                     instance[field] = undefined;
                 } else {
-                    const qualifierMetadatas = listFieldKindMetadata(
+                    const qualifierMetadatas = application.classMetadata.listFieldKindMetadata(
                         instantiateDefinition.cls,
                         field,
                         Qualifier
@@ -229,9 +231,13 @@ function getViewComponent(application: Application, viewClass: Class<any>, props
     }
     // 视图组件目前简单的认为全是prototype，且不支持实例化子组件
     const instance = createComponent(application, targetDefinition, [props]);
-    const autowiredFields = listFieldByMetadataCls(targetDefinition.cls, Autowired);
+    const autowiredFields = application.classMetadata.listFieldByMetadataCls(targetDefinition.cls, Autowired);
     for (const field of autowiredFields) {
-        const autowiredMetadatas = listFieldKindMetadata(targetDefinition.cls, field, Autowired) as Autowired[];
+        const autowiredMetadatas = application.classMetadata.listFieldKindMetadata(
+            targetDefinition.cls,
+            field,
+            Autowired
+        ) as Autowired[];
         if (autowiredMetadatas.length > 0) {
             const autowiredCls = autowiredMetadatas[0].value;
             if (autowiredCls === undefined) {
@@ -243,7 +249,11 @@ function getViewComponent(application: Application, viewClass: Class<any>, props
                 printDiagnose(diagnose);
                 instance[field] = undefined;
             } else {
-                const qualifierMetadatas = listFieldKindMetadata(targetDefinition.cls, field, Qualifier) as Qualifier[];
+                const qualifierMetadatas = application.classMetadata.listFieldKindMetadata(
+                    targetDefinition.cls,
+                    field,
+                    Qualifier
+                ) as Qualifier[];
                 let qualifier: string;
                 if (qualifierMetadatas.length > 0) {
                     qualifier = qualifierMetadatas[0].value;

@@ -4,7 +4,7 @@
 import Metadata from '../metadata/instantiate-one-metadata';
 import Component from '../decorator/metadata/component';
 import Scope, { SCOPE } from '../decorator/metadata/scope';
-import { getAllMetadata } from '../metadata/index';
+import { BizMetadata, type ClassMetadata } from '../metadata/index';
 
 interface ScopeAndParentComponentMetadata {
     // 如果类组件上添加@scope装饰器，对应的scope实例
@@ -30,10 +30,10 @@ const componentMetadataTree: Map<Class<Metadata>, ScopeAndParentComponentMetadat
  * @view()
  * class Page {}
  */
-function buildComponentMetadataSet() {
+function buildComponentMetadataSet(classMetadataSet: ClassMetadata) {
     // 找到当前被装饰器上面的scope元数据
     function getScope(beDecoratedCls: Class<any>) {
-        const [metaMetadataMap] = getAllMetadata();
+        const [metaMetadataMap] = classMetadataSet.getAll();
         const classMetadata = metaMetadataMap.get(beDecoratedCls)?.classMetadata;
         if (classMetadata) {
             return classMetadata.find((i) => i.constructor === Scope) as Scope;
@@ -41,7 +41,7 @@ function buildComponentMetadataSet() {
         return undefined;
     }
 
-    const [metaMetadataMap] = getAllMetadata();
+    const [metaMetadataMap] = classMetadataSet.getAll();
     // 首先添加Component类
     componentMetadataTree.set(Component, {
         scope: getScope(Component),
@@ -111,8 +111,10 @@ function findComponentDecoratorScope(componentMetadata: Metadata): SCOPE {
  * 一个类的类装饰中是否包含组件装饰器
  * @param beDecoratedCls
  */
-function findComponentDecorator(beDecoratedCls: Class<any>): Metadata | null {
-    const [_, bizMetadataMap] = getAllMetadata();
+function findComponentDecorator(
+    beDecoratedCls: Class<any>,
+    bizMetadataMap: Map<Class<any>, BizMetadata>
+): Metadata | null {
     const bizMetadata = bizMetadataMap.get(beDecoratedCls);
     if (bizMetadata) {
         return bizMetadata.classMetadata.find((i) => componentMetadataTree.has(i.constructor as Class<Metadata>));

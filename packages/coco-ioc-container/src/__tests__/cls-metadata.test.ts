@@ -34,7 +34,7 @@ describe('decorator', () => {
         class Button {}
 
         application.start();
-        const asExpected = cocoMvc.checkClassMetadataAsExpected(Button, [
+        const asExpected = cocoMvc.checkClassMetadataAsExpected(application, Button, [
             {
                 Metadata: Component,
                 fieldValues: {},
