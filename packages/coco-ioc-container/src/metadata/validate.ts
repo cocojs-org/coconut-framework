@@ -184,6 +184,23 @@ function deleteMetadatas(metadatas: Metadata[], idxs: number[]) {
     idxs.forEach((idx) => metadatas.splice(idx, 1));
 }
 
+// 元数据类只能有 KindClass 类型的装饰器
+function validateMetaClassOnlyHasKindClassDecorator(
+    target: Class<Metadata>,
+    { classMetadata, fieldMetadata, methodMetadata }: MetaMetadata
+) {
+    if (fieldMetadata?.size > 0) {
+        const fields = Array.from(fieldMetadata.keys()).join(',');
+        fieldMetadata.clear();
+        return createDiagnose(DiagnoseCode.CO10022, target.name, fields);
+    }
+    if (methodMetadata?.size > 0) {
+        const methods = Array.from(methodMetadata.keys()).join(',');
+        methodMetadata.clear();
+        return createDiagnose(DiagnoseCode.CO10023, target.name, methods);
+    }
+}
+
 function validateHasTargetDecorator(target: Class<Metadata>, metadatas: Metadata[] = []) {
     const idx = metadatas.findIndex((metadata) => metadata instanceof Target);
     if (idx === -1) {
@@ -414,6 +431,14 @@ function validate(metadataList: [Map<Class<Metadata>, MetaMetadata>, Map<Class<M
         if (diagnose) {
             diagnoseList.push(diagnose);
             metaMetadataMap.delete(metadataClass);
+        }
+    }
+
+    // 元数据类只有 KindClass 类型的装饰器
+    for (const [metadataClass, value] of metaMetadataMap.entries()) {
+        const diagnose = validateMetaClassOnlyHasKindClassDecorator(metadataClass, value);
+        if (diagnose) {
+            diagnoseList.push(diagnose);
         }
     }
 

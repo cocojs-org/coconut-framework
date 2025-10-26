@@ -10,6 +10,8 @@ import { type Params } from '../create-decorator-exp/decorator-exp-param';
 // 元数据子类的元数据
 export interface MetaMetadata {
     classMetadata: Metadata[];
+    fieldMetadata: Map<Field, Metadata[]>; // 元数据类是没有字段装饰器的，但用户可能误加了，那么启动的时候保存起来，校验时去掉
+    methodMetadata: Map<Field, Metadata[]>; // 元数据类是没有方法装饰器的，但用户可能误加了，那么启动的时候保存起来，校验时去掉
 }
 
 // 非元数据子类（业务类）的元数据
@@ -66,28 +68,17 @@ class ClassMetadata {
     }
 
     private addToMap(cls: Class<any>) {
-        let config;
-        if (Object.getPrototypeOf(cls) === Metadata) {
-            config = this.metaMetadataMap.get(cls);
-            if (!config) {
-                config = { classMetadata: [] };
-                this.metaMetadataMap.set(cls, config);
-            }
-        } else {
-            config = this.bizMetadataMap.get(cls);
-            if (!config) {
-                config = {
-                    classMetadata: [],
-                    fieldMetadata: new Map(),
-                    methodMetadata: new Map(),
-                };
-                this.bizMetadataMap.set(cls, config);
-            }
+        const map = Object.getPrototypeOf(cls) === Metadata ? this.metaMetadataMap : this.bizMetadataMap;
+        let config = map.get(cls);
+        if (!config) {
+            config = {
+                classMetadata: [],
+                fieldMetadata: new Map(),
+                methodMetadata: new Map(),
+            };
+            map.set(cls, config);
         }
         return config;
-    }
-    private existSameMetadata(exited: Metadata[], metadataCls: Class<Metadata>): boolean {
-        return exited.some((i) => i instanceof metadataCls);
     }
 
     // 为一个类添加类类型的元数据
@@ -98,11 +89,6 @@ class ClassMetadata {
         }
         const classMetadata: Metadata[] = config.classMetadata;
         if (MetadataCls) {
-            if (__DEV__ && this.existSameMetadata(classMetadata, MetadataCls)) {
-                // TODO: 挪到validate中
-                // console.warn(`${cls}已经存在相同的注解【${MetadataCls}】，忽略`);
-                // return;
-            }
             const metadata = instantiateMetadata(MetadataCls, args);
             classMetadata.push(metadata);
         }
@@ -113,10 +99,6 @@ class ClassMetadata {
         if (!config) {
             config = this.addToMap(Cls);
         }
-        // if (Object.getPrototypeOf(Cls) === Metadata) {
-        //   // TODO: 挪到validate中
-        //   throw new Error('目前元数据的类只支持类装饰器');
-        // }
         const { fieldMetadata } = config;
         let fieldMetas = fieldMetadata.get(fieldName);
         if (!fieldMetas) {
@@ -138,10 +120,6 @@ class ClassMetadata {
         if (!config) {
             config = this.addToMap(Cls);
         }
-        // if (Object.getPrototypeOf(Cls) === Metadata) {
-        //   // TODO: 挪到validate中
-        //   throw new Error('目前元数据的类只支持类装饰器');
-        // }
         const { methodMetadata } = config;
         let methodMetas = methodMetadata.get(fieldName);
         if (!methodMetas) {

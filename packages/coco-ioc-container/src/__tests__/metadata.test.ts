@@ -134,18 +134,6 @@ describe('addFieldOrMethodMetadata', () => {
         jest.resetModules();
     });
 
-    test('给Metadata子类添加field元数据会报错', () => {
-        class MM extends Metadata {}
-        class B {}
-        let error = false;
-        try {
-            classMetadata.addFieldKindMetadata(MM, 'f', B, {});
-        } catch (err) {
-            error = true;
-        }
-        expect(error).toBeTruthy();
-    });
-
     test('为普通类添加field元数据', () => {
         class M {}
         class B {}
@@ -284,5 +272,89 @@ describe('listBeDecoratedClsByClassKindMetadata', () => {
         const m = classMetadata.listBeDecoratedClsByClassKindMetadata(M);
         expect(m.size).toBe(1);
         expect(m.has(T)).toBe(true);
+    });
+});
+
+describe('validate', () => {
+    let cocoMvc;
+    let ClassMetadata;
+    let classMetadata;
+    let Metadata;
+    let Target;
+    let target;
+    let component;
+    let reactive;
+    let bind;
+    let id;
+    let Application;
+    let application;
+    let consoleErrorSpy;
+    beforeEach(async () => {
+        cocoMvc = await import('coco-mvc');
+        ClassMetadata = cocoMvc.ClassMetadata;
+        classMetadata = new ClassMetadata(new Map());
+        Metadata = cocoMvc.Metadata;
+        Target = cocoMvc.Target;
+        component = cocoMvc.component;
+        reactive = cocoMvc.reactive;
+        bind = cocoMvc.bind;
+        id = cocoMvc.id;
+        target = cocoMvc.target;
+        Application = cocoMvc.Application;
+        application = new Application();
+        cocoMvc.registerMvcApi(application);
+        consoleErrorSpy = jest.spyOn(console, 'error');
+        consoleErrorSpy.mockImplementation(() => {});
+    });
+    afterEach(() => {
+        jest.resetModules();
+        consoleErrorSpy.mockRestore();
+        cocoMvc.cleanCache();
+        cocoMvc.unregisterMvcApi();
+        application.destructor();
+    });
+
+    test('元数据类如果添加了字段装饰器，会报错', () => {
+        @id('T1')
+        @target([Target.Type.Class])
+        @component()
+        class T1 extends Metadata {
+            @reactive()
+            name: string;
+
+            @reactive()
+            age: string;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10022：元数据类 %s 只能有 KindClass 类型的装饰器，字段 %s 上的装饰器是无效的，请删除。',
+            'T1',
+            'name,age'
+        );
+    });
+
+    test('元数据类如果添加了方法装饰器，会报错', () => {
+        @id('T1')
+        @target([Target.Type.Class])
+        @component()
+        class T1 extends Metadata {
+            @bind()
+            getAge() {
+                return '18';
+            }
+
+            @bind()
+            getName() {
+                return '张三';
+            }
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10023：元数据类 %s 只能有 KindClass 类型的装饰器，方法 %s 上的装饰器是无效的，请删除。',
+            'T1',
+            'getAge,getName'
+        );
     });
 });

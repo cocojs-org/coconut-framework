@@ -25,6 +25,8 @@ export enum DiagnoseCode {
     'CO10019' = 'CO10019', // 装饰器暂时不是支持装饰 setter getter accessor 类型。
     'CO10020' = 'CO10020', // [warn]占位的元数据类没有使用decorateSelf函数，但装饰器也没有被使用
     'CO10021' = 'CO10021', // 占位的元数据类没有使用decorateSelf函数
+    'CO10022' = 'CO10022', // 元数据类不能有字段装饰器
+    'CO10023' = 'CO10023', // 元数据类不能有方法装饰器
 }
 
 const DiagnoseCodeMsg = {
@@ -49,6 +51,8 @@ const DiagnoseCodeMsg = {
     [DiagnoseCode.CO10019]: `框架暂不支持为 %s 添加装饰器。`,
     [DiagnoseCode.CO10020]: `有一个占位装饰器没有使用decorateSelf关联具体的元数据类，如果不使用的话，直接删除这个装饰器。`,
     [DiagnoseCode.CO10021]: `%s 类存在一个占位装饰器，但是没有使用decorateSelf装饰器关联真正的元数据类。`,
+    [DiagnoseCode.CO10022]: `元数据类 %s 只能有 KindClass 类型的装饰器，字段 %s 上的装饰器是无效的，请删除。`,
+    [DiagnoseCode.CO10023]: `元数据类 %s 只能有 KindClass 类型的装饰器，方法 %s 上的装饰器是无效的，请删除。`,
 };
 
 export function createDiagnose(code: DiagnoseCode, ...args: any[]): Diagnose {
