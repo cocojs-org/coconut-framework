@@ -161,7 +161,7 @@ import { Type } from '../decorator/target';
 import Component from '../decorator/metadata/component';
 import Configuration from '../decorator/metadata/configuration';
 import { createDiagnose, type Diagnose, DiagnoseCode } from 'shared';
-import { type MetaMetadata, type BizMetadata } from './index';
+import { type MetaMetadata, type BizMetadata, type ComponentDecoratorMetadata } from './index';
 import { className2DecoratorName, metadataInstance2DecoratorName } from '../share/util';
 
 type Field = string;
@@ -187,18 +187,20 @@ function deleteMetadatas(metadatas: Metadata[], idxs: number[]) {
 // 元数据类只能有 KindClass 类型的装饰器
 function validateMetaClassOnlyHasKindClassDecorator(
     target: Class<Metadata>,
-    { classMetadata, fieldMetadata, methodMetadata }: MetaMetadata
+    { fieldMetadata, methodMetadata }: MetaMetadata
 ) {
+    const diagnoses: Diagnose[] = [];
     if (fieldMetadata?.size > 0) {
         const fields = Array.from(fieldMetadata.keys()).join(',');
         fieldMetadata.clear();
-        return createDiagnose(DiagnoseCode.CO10022, target.name, fields);
+        diagnoses.push(createDiagnose(DiagnoseCode.CO10022, target.name, fields));
     }
     if (methodMetadata?.size > 0) {
         const methods = Array.from(methodMetadata.keys()).join(',');
         methodMetadata.clear();
-        return createDiagnose(DiagnoseCode.CO10023, target.name, methods);
+        diagnoses.push(createDiagnose(DiagnoseCode.CO10023, target.name, methods));
     }
+    return diagnoses;
 }
 
 function validateHasTargetDecorator(target: Class<Metadata>, metadatas: Metadata[] = []) {
@@ -417,7 +419,10 @@ function validateMethodComponentMustInConfiguration(
     return diagnoseList;
 }
 
-function validate(metadataList: [Map<Class<Metadata>, MetaMetadata>, Map<Class<Metadata>, BizMetadata>]) {
+function validate(
+    metadataList: [Map<Class<Metadata>, MetaMetadata>, Map<Class<Metadata>, BizMetadata>],
+    componentDecoratorMetadata: ComponentDecoratorMetadata
+) {
     // 诊断信息
     const diagnoseList: Diagnose[] = [];
     const [metaMetadataMap, bizMetadataMap] = metadataList;
@@ -437,8 +442,8 @@ function validate(metadataList: [Map<Class<Metadata>, MetaMetadata>, Map<Class<M
     // 元数据类只有 KindClass 类型的装饰器
     for (const [metadataClass, value] of metaMetadataMap.entries()) {
         const diagnose = validateMetaClassOnlyHasKindClassDecorator(metadataClass, value);
-        if (diagnose) {
-            diagnoseList.push(diagnose);
+        if (diagnose.length) {
+            diagnoseList.push(...diagnose);
         }
     }
 
@@ -450,16 +455,10 @@ function validate(metadataList: [Map<Class<Metadata>, MetaMetadata>, Map<Class<M
         }
     }
 
-    // 元数据类校验不能包含大于1个component装饰器
-    for (const [metadataClass, metadataList] of metaMetadataMap.entries()) {
-        const diagnose = validateMoreThenOneComponentDecorator(
-            metadataClass,
-            metadataList.classMetadata,
-            metaMetadataMap
-        );
-        if (diagnose) {
-            diagnoseList.push(diagnose);
-        }
+    // 元数据类校验不能包含多余 1 个类装饰器
+    const diagnoses = componentDecoratorMetadata.validateMetadata(metaMetadataMap);
+    if (diagnoses.length) {
+        diagnoseList.push(...diagnoses);
     }
 
     // 元数据类的清理，如果这时候classMetadata长度为0了，那么从map中删除

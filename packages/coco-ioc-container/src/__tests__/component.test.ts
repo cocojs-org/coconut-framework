@@ -104,7 +104,7 @@ describe('@component装饰器', () => {
 
             application.start();
             expect(consoleErrorSpy).toHaveBeenCalledWith(
-                'CO10001：每个类最多只能添加一个component装饰器，但 %s 添加了：%s',
+                'CO10024：元数据类 %s 存在多个组件装饰器 %s，一个元数据类最多只能有一个组件装饰器。',
                 'ErrorButton',
                 '@component, @firstLevel'
             );
@@ -128,7 +128,7 @@ describe('@component装饰器', () => {
 
             application.start();
             expect(consoleErrorSpy).toHaveBeenCalledWith(
-                'CO10001：每个类最多只能添加一个component装饰器，但 %s 添加了：%s',
+                'CO10024：元数据类 %s 存在多个组件装饰器 %s，一个元数据类最多只能有一个组件装饰器。',
                 'ErrorButton',
                 '@component, @secondLevel'
             );
@@ -151,9 +151,9 @@ describe('@component装饰器', () => {
 
             application.start();
             expect(consoleErrorSpy).toHaveBeenCalledWith(
-                'CO10001：每个类最多只能添加一个component装饰器，但 %s 添加了：%s',
+                'CO10024：元数据类 %s 存在多个组件装饰器 %s，一个元数据类最多只能有一个组件装饰器。',
                 'ErrorButton',
-                '@firstLevel2, @firstLevel1'
+                '@firstLevel1, @firstLevel2'
             );
         });
 
@@ -180,7 +180,7 @@ describe('@component装饰器', () => {
 
             application.start();
             expect(consoleErrorSpy).toHaveBeenCalledWith(
-                'CO10001：每个类最多只能添加一个component装饰器，但 %s 添加了：%s',
+                'CO10024：元数据类 %s 存在多个组件装饰器 %s，一个元数据类最多只能有一个组件装饰器。',
                 'ErrorButton',
                 '@firstLevel2, @secondLevel1'
             );
@@ -207,9 +207,9 @@ describe('@component装饰器', () => {
 
             application.start();
             expect(consoleErrorSpy).toHaveBeenCalledWith(
-                'CO10001：每个类最多只能添加一个component装饰器，但 %s 添加了：%s',
+                'CO10024：元数据类 %s 存在多个组件装饰器 %s，一个元数据类最多只能有一个组件装饰器。',
                 'ErrorButton',
-                '@secondLevel2, @secondLevel1'
+                '@secondLevel1, @secondLevel2'
             );
         });
     });

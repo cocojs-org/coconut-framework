@@ -288,6 +288,7 @@ describe('validate', () => {
     let id;
     let Application;
     let application;
+    let createDecoratorExp;
     let consoleErrorSpy;
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
@@ -300,6 +301,7 @@ describe('validate', () => {
         bind = cocoMvc.bind;
         id = cocoMvc.id;
         target = cocoMvc.target;
+        createDecoratorExp = cocoMvc.createDecoratorExp;
         Application = cocoMvc.Application;
         application = new Application();
         cocoMvc.registerMvcApi(application);
@@ -355,6 +357,40 @@ describe('validate', () => {
             'CO10023：元数据类 %s 只能有 KindClass 类型的装饰器，方法 %s 上的装饰器是无效的，请删除。',
             'T1',
             'getAge,getName'
+        );
+    });
+
+    test('元数据类上添加 2 个相同的类装饰器，会提醒重复装饰器', () => {
+        @component()
+        @component()
+        @target([Target.Type.Class])
+        class T1 extends Metadata {}
+        const t1 = createDecoratorExp(T1);
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10003：在一个类上不能添加多次同一个装饰器，但%s上存在重复装饰器: %s',
+            'T1',
+            '@component'
+        );
+    });
+
+    test('元数据类如果添加了大于1个不同的类装饰器时，会报错', () => {
+        @component()
+        @target([Target.Type.Class])
+        class T1 extends Metadata {}
+        const t1 = createDecoratorExp(T1);
+
+        @t1()
+        @component()
+        @target([Target.Type.Class])
+        class Log extends Metadata {}
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10024：元数据类 %s 存在多个组件装饰器 %s，一个元数据类最多只能有一个组件装饰器。',
+            'Log',
+            '@component, @t1'
         );
     });
 });

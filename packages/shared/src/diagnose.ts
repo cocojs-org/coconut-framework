@@ -3,6 +3,7 @@ export interface Diagnose {
     args: any[];
 }
 
+// TODO: 错误码按照类型划分不同的段位
 export enum DiagnoseCode {
     'CO10001' = 'CO10001',
     'CO10002' = 'CO10002', // 元数据类必须要添加@target
@@ -27,6 +28,7 @@ export enum DiagnoseCode {
     'CO10021' = 'CO10021', // 占位的元数据类没有使用decorateSelf函数
     'CO10022' = 'CO10022', // 元数据类不能有字段装饰器
     'CO10023' = 'CO10023', // 元数据类不能有方法装饰器
+    'CO10024' = 'CO10024', // 元数据类存在多个组件装饰器
 }
 
 const DiagnoseCodeMsg = {
@@ -53,6 +55,7 @@ const DiagnoseCodeMsg = {
     [DiagnoseCode.CO10021]: `%s 类存在一个占位装饰器，但是没有使用decorateSelf装饰器关联真正的元数据类。`,
     [DiagnoseCode.CO10022]: `元数据类 %s 只能有 KindClass 类型的装饰器，字段 %s 上的装饰器是无效的，请删除。`,
     [DiagnoseCode.CO10023]: `元数据类 %s 只能有 KindClass 类型的装饰器，方法 %s 上的装饰器是无效的，请删除。`,
+    [DiagnoseCode.CO10024]: `元数据类 %s 存在多个组件装饰器 %s，一个元数据类最多只能有一个组件装饰器。`,
 };
 
 export function createDiagnose(code: DiagnoseCode, ...args: any[]): Diagnose {
