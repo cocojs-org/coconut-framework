@@ -107,7 +107,11 @@ importers:
                 specifier: 5.3.3
                 version: 5.3.3
 
-    packages/coco-ioc-container: {}
+    packages/coco-ioc-container:
+        devDependencies:
+            lodash:
+                specifier: ^4.17.21
+                version: 4.17.21
 
     packages/coco-mvc: {}
 

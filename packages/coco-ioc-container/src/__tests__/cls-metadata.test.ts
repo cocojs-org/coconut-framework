@@ -8,6 +8,7 @@ describe('decorator', () => {
     let scope;
     let Scope;
     let SCOPE;
+    let instantiateMetadata;
 
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
@@ -18,6 +19,7 @@ describe('decorator', () => {
         scope = cocoMvc.scope;
         Scope = cocoMvc.Scope;
         SCOPE = cocoMvc.SCOPE;
+        instantiateMetadata = cocoMvc.instantiateMetadata;
         application = new Application();
     });
 
@@ -35,14 +37,8 @@ describe('decorator', () => {
 
         application.start();
         const asExpected = cocoMvc.checkClassMetadataAsExpected(application, Button, [
-            {
-                Metadata: Component,
-                fieldValues: {},
-            },
-            {
-                Metadata: Scope,
-                fieldValues: { value: SCOPE.Singleton },
-            },
+            instantiateMetadata(Component),
+            instantiateMetadata(Scope, { value: SCOPE.Singleton }),
         ]);
         expect(asExpected).toBe(true);
     });

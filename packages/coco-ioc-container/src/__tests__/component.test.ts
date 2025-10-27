@@ -10,6 +10,7 @@ describe('@component装饰器', () => {
     let component;
     let Component;
     let createDecoratorExp;
+    let instantiateMetadata;
     let consoleErrorSpy;
     let Id;
 
@@ -25,6 +26,7 @@ describe('@component装饰器', () => {
         configuration = cocoMvc.configuration;
         webApplication = cocoMvc.webApplication;
         Application = cocoMvc.Application;
+        instantiateMetadata = cocoMvc.instantiateMetadata;
         createDecoratorExp = cocoMvc.createDecoratorExp;
         Id = cocoMvc.Id;
         application = new Application();
@@ -65,14 +67,8 @@ describe('@component装饰器', () => {
     test('Component的类元数据信息是正确的', () => {
         application.start();
         const expected = cocoMvc.checkClassMetadataAsExpected(application, Component, [
-            {
-                Metadata: Target,
-                fieldValues: { value: [Target.Type.Class, Target.Type.Method] },
-            },
-            {
-                Metadata: Id,
-                fieldValues: { value: 'Component' },
-            },
+            instantiateMetadata(Target, { value: [Target.Type.Class, Target.Type.Method] }),
+            instantiateMetadata(Id, { value: 'Component' }),
         ]);
         expect(expected).toEqual(true);
     });
