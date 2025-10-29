@@ -1,4 +1,4 @@
-import { type BizMetadata, type MetaMetadata, default as ClassMetadata } from './class-metadata';
+import { type BizMetadata, type MetaMetadata, default as MetadataRepository } from './metadata-repository';
 import ComponentMetadataClass from './component-metadata-class';
 import Metadata from './instantiate-one-metadata';
 import { initMetadataModule, clearMetadataModule } from './workflow';
@@ -8,7 +8,7 @@ export {
     type BizMetadata,
     initMetadataModule,
     clearMetadataModule,
-    ClassMetadata,
+    MetadataRepository,
     Metadata,
     ComponentMetadataClass,
 };

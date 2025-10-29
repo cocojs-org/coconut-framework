@@ -7,7 +7,7 @@
 
 import { createDiagnose, DiagnoseCode, printDiagnose, stringifyDiagnose } from 'shared';
 import Metadata from './instantiate-one-metadata';
-import { type MetaMetadata } from './class-metadata';
+import { type MetaMetadata } from './metadata-repository';
 import Id from '../decorator/metadata/id';
 
 class IdClassMap {

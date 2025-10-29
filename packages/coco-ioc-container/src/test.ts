@@ -1,5 +1,5 @@
 export * from './index.ts';
-import { ClassMetadata } from './metadata/index.ts';
+import { MetadataRepository } from './metadata/index.ts';
 import Metadata, { instantiateMetadata } from './metadata/instantiate-one-metadata.ts';
 import { createDecoratorExpFactory } from './create-decorator-exp/index';
 import type Application from './application/application.ts';
@@ -23,7 +23,7 @@ function checkClassMetadataAsExpected(
     }
     const classMetadataList = [];
     if (Clazz) {
-        const config = application.classMetadata.getMetadataByClass(Clazz);
+        const config = application.metadataRepository.getMetadataByClass(Clazz);
         if (config) {
             classMetadataList.push(...config.classMetadata);
         }
@@ -31,4 +31,4 @@ function checkClassMetadataAsExpected(
     return _.isEqual(classMetadataList, expectedMetadataList);
 }
 
-export { ClassMetadata, checkClassMetadataAsExpected, createDecoratorExpFactory, instantiateMetadata };
+export { MetadataRepository, checkClassMetadataAsExpected, createDecoratorExpFactory, instantiateMetadata };

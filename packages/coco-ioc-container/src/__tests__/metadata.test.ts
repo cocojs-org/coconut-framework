@@ -83,18 +83,18 @@ describe('metadata/create-metadata', () => {
 
 describe('addClassKindMetadata', () => {
     let cocoMvc;
-    let ClassMetadata;
-    let classMetadata;
+    let MetadataRepository;
+    let metadataRepository;
     let Metadata;
 
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
-        ClassMetadata = cocoMvc.ClassMetadata;
-        classMetadata = new ClassMetadata(new Map());
+        MetadataRepository = cocoMvc.MetadataRepository;
+        metadataRepository = new MetadataRepository(new Map());
         Metadata = cocoMvc.Metadata;
     });
     afterEach(() => {
-        classMetadata.destructor();
+        metadataRepository.destructor();
         cocoMvc.cleanCache();
         jest.resetModules();
     });
@@ -102,34 +102,34 @@ describe('addClassKindMetadata', () => {
     test('为Metadata子类添加元数据', () => {
         class MM extends Metadata {}
         class B {}
-        classMetadata.addClassKindMetadata(MM, B, {});
-        const [metadataSet, bizSet] = classMetadata.getAll();
+        metadataRepository.addClassKindMetadata(MM, B, {});
+        const [metadataSet, bizSet] = metadataRepository.getAll();
         expect(metadataSet.size).toStrictEqual(1);
     });
 
     test('为普通类添加元数据', () => {
         class M {}
         class B {}
-        classMetadata.addClassKindMetadata(M, B, {});
-        const [metadataSet, bizSet] = classMetadata.getAll();
+        metadataRepository.addClassKindMetadata(M, B, {});
+        const [metadataSet, bizSet] = metadataRepository.getAll();
         expect(bizSet.size).toStrictEqual(1);
     });
 });
 
 describe('addFieldOrMethodMetadata', () => {
     let cocoMvc;
-    let ClassMetadata;
-    let classMetadata;
+    let MetadataRepository;
+    let metadataRepository;
     let Metadata;
 
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
-        ClassMetadata = cocoMvc.ClassMetadata;
-        classMetadata = new ClassMetadata(new Map());
+        MetadataRepository = cocoMvc.MetadataRepository;
+        metadataRepository = new MetadataRepository(new Map());
         Metadata = cocoMvc.Metadata;
     });
     afterEach(() => {
-        classMetadata.destructor();
+        metadataRepository.destructor();
         cocoMvc.cleanCache();
         jest.resetModules();
     });
@@ -137,24 +137,24 @@ describe('addFieldOrMethodMetadata', () => {
     test('为普通类添加field元数据', () => {
         class M {}
         class B {}
-        classMetadata.addFieldKindMetadata(M, 'f', B, {});
-        const [metadataSet, bizSet] = classMetadata.getAll();
+        metadataRepository.addFieldKindMetadata(M, 'f', B, {});
+        const [metadataSet, bizSet] = metadataRepository.getAll();
         expect(bizSet.size).toStrictEqual(1);
     });
 });
 
 describe('listClassKindMetadata', () => {
     let cocoMvc;
-    let ClassMetadata;
-    let classMetadata;
+    let MetadataRepository;
+    let metadataRepository;
 
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
-        ClassMetadata = cocoMvc.ClassMetadata;
-        classMetadata = new ClassMetadata(new Map());
+        MetadataRepository = cocoMvc.MetadataRepository;
+        metadataRepository = new MetadataRepository(new Map());
     });
     afterEach(() => {
-        classMetadata.destructor();
+        metadataRepository.destructor();
         cocoMvc.cleanCache();
         jest.resetModules();
     });
@@ -162,11 +162,11 @@ describe('listClassKindMetadata', () => {
         class T {}
         class M {}
         class M1 {}
-        classMetadata.addClassKindMetadata(T, M, {});
-        classMetadata.addClassKindMetadata(T, M1, {});
-        const arr = classMetadata.listClassKindMetadata(T);
+        metadataRepository.addClassKindMetadata(T, M, {});
+        metadataRepository.addClassKindMetadata(T, M1, {});
+        const arr = metadataRepository.listClassKindMetadata(T);
         expect(arr.length).toStrictEqual(2);
-        const arr1 = classMetadata.listClassKindMetadata(T, M);
+        const arr1 = metadataRepository.listClassKindMetadata(T, M);
         expect(arr1.length).toStrictEqual(1);
         expect(arr1[0]).toBeInstanceOf(M);
     });
@@ -174,16 +174,16 @@ describe('listClassKindMetadata', () => {
 
 describe('listFieldKindMetadata', () => {
     let cocoMvc;
-    let ClassMetadata;
-    let classMetadata;
+    let MetadataRepository;
+    let metadataRepository;
 
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
-        ClassMetadata = cocoMvc.ClassMetadata;
-        classMetadata = new ClassMetadata(new Map());
+        MetadataRepository = cocoMvc.MetadataRepository;
+        metadataRepository = new MetadataRepository(new Map());
     });
     afterEach(() => {
-        classMetadata.destructor();
+        metadataRepository.destructor();
         cocoMvc.cleanCache();
         jest.resetModules();
     });
@@ -192,11 +192,11 @@ describe('listFieldKindMetadata', () => {
         class T {}
         class M {}
         class M1 {}
-        classMetadata.addFieldKindMetadata(T, 'a', M, {});
-        classMetadata.addFieldKindMetadata(T, 'a', M1, {});
-        const metadata = classMetadata.listFieldKindMetadata(T, 'a');
+        metadataRepository.addFieldKindMetadata(T, 'a', M, {});
+        metadataRepository.addFieldKindMetadata(T, 'a', M1, {});
+        const metadata = metadataRepository.listFieldKindMetadata(T, 'a');
         expect(metadata.length).toStrictEqual(2);
-        const metadata1 = classMetadata.listFieldKindMetadata(T, 'a', M);
+        const metadata1 = metadataRepository.listFieldKindMetadata(T, 'a', M);
         expect(metadata1.length).toStrictEqual(1);
         expect(metadata1[0]).toBeInstanceOf(M);
     });
@@ -204,20 +204,20 @@ describe('listFieldKindMetadata', () => {
 
 describe('findClassKindMetadataRecursively', () => {
     let cocoMvc;
-    let ClassMetadata;
-    let classMetadata;
+    let MetadataRepository;
+    let metadataRepository;
     let Metadata;
     let createDecoratorExp;
 
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
-        ClassMetadata = cocoMvc.ClassMetadata;
+        MetadataRepository = cocoMvc.MetadataRepository;
         Metadata = cocoMvc.Metadata;
         createDecoratorExp = cocoMvc.createDecoratorExp;
-        classMetadata = new ClassMetadata(new Map());
+        metadataRepository = new MetadataRepository(new Map());
     });
     afterEach(() => {
-        classMetadata.destructor();
+        metadataRepository.destructor();
         cocoMvc.cleanCache();
         jest.resetModules();
     });
@@ -225,8 +225,8 @@ describe('findClassKindMetadataRecursively', () => {
     test('可以找到直接注解对应的元数据', () => {
         class T {}
         class M {}
-        classMetadata.addClassKindMetadata(T, M, {});
-        const m = classMetadata.findClassKindMetadataRecursively(T, M);
+        metadataRepository.addClassKindMetadata(T, M, {});
+        const m = metadataRepository.findClassKindMetadataRecursively(T, M);
         expect(m).toBeInstanceOf(M);
     });
 
@@ -237,25 +237,25 @@ describe('findClassKindMetadataRecursively', () => {
 
         @p()
         class Child {}
-        classMetadata.addClassKindMetadata(T, Child, {});
-        classMetadata.addClassKindMetadata(Child, Parent, {});
-        let m = classMetadata.findClassKindMetadataRecursively(T, Parent);
+        metadataRepository.addClassKindMetadata(T, Child, {});
+        metadataRepository.addClassKindMetadata(Child, Parent, {});
+        let m = metadataRepository.findClassKindMetadataRecursively(T, Parent);
         expect(m).toBe(null);
-        m = classMetadata.findClassKindMetadataRecursively(T, Parent, 1);
+        m = metadataRepository.findClassKindMetadataRecursively(T, Parent, 1);
         expect(m).toBeInstanceOf(Parent);
     });
 });
 
 describe('listBeDecoratedClsByClassKindMetadata', () => {
     let cocoMvc;
-    let ClassMetadata;
-    let classMetadata;
+    let MetadataRepository;
+    let metadataRepository;
     let Metadata;
 
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
-        ClassMetadata = cocoMvc.ClassMetadata;
-        classMetadata = new ClassMetadata(new Map());
+        MetadataRepository = cocoMvc.MetadataRepository;
+        metadataRepository = new MetadataRepository(new Map());
         Metadata = cocoMvc.Metadata;
     });
     afterEach(() => {
@@ -267,9 +267,9 @@ describe('listBeDecoratedClsByClassKindMetadata', () => {
         class T {}
         class T1 extends Metadata {}
         class M {}
-        classMetadata.addClassKindMetadata(T, M, {});
-        classMetadata.addClassKindMetadata(T1, M, {});
-        const m = classMetadata.listBeDecoratedClsByClassKindMetadata(M);
+        metadataRepository.addClassKindMetadata(T, M, {});
+        metadataRepository.addClassKindMetadata(T1, M, {});
+        const m = metadataRepository.listBeDecoratedClsByClassKindMetadata(M);
         expect(m.size).toBe(1);
         expect(m.has(T)).toBe(true);
     });
@@ -277,8 +277,8 @@ describe('listBeDecoratedClsByClassKindMetadata', () => {
 
 describe('validate', () => {
     let cocoMvc;
-    let ClassMetadata;
-    let classMetadata;
+    let MetadataRepository;
+    let metadataRepository;
     let Metadata;
     let Target;
     let target;
@@ -293,8 +293,8 @@ describe('validate', () => {
     let consoleErrorSpy;
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
-        ClassMetadata = cocoMvc.ClassMetadata;
-        classMetadata = new ClassMetadata(new Map());
+        MetadataRepository = cocoMvc.MetadataRepository;
+        metadataRepository = new MetadataRepository(new Map());
         Metadata = cocoMvc.Metadata;
         Target = cocoMvc.Target;
         component = cocoMvc.component;

@@ -23,7 +23,7 @@ function createComponent<T>(
         const configuration = new configurationCls();
         component = configuration[method]();
     }
-    const metadatas = application.classMetadata.getMetadataByClass(cls);
+    const metadatas = application.metadataRepository.getMetadataByClass(cls);
     if (metadatas) {
         const { classMetadata, methodMetadata, fieldMetadata } = metadatas;
         for (const meta of classMetadata) {
@@ -108,7 +108,7 @@ function getComponents(application: Application, userOption: ConstructOption) {
         instantiatingStage.add(targetDefinition.cls);
 
         const constructorArgs = [];
-        const constructorParams = application.classMetadata.listClassKindMetadata(
+        const constructorParams = application.metadataRepository.listClassKindMetadata(
             instantiateDefinition.cls,
             ConstructorParam
         );
@@ -147,9 +147,12 @@ function getComponents(application: Application, userOption: ConstructOption) {
         assignningStage.add(targetDefinition.cls);
 
         // 3. 递归实例化field注入
-        const autowiredFields = application.classMetadata.listFieldByMetadataCls(instantiateDefinition.cls, Autowired);
+        const autowiredFields = application.metadataRepository.listFieldByMetadataCls(
+            instantiateDefinition.cls,
+            Autowired
+        );
         for (const field of autowiredFields) {
-            const autowiredMetadatas = application.classMetadata.listFieldKindMetadata(
+            const autowiredMetadatas = application.metadataRepository.listFieldKindMetadata(
                 instantiateDefinition.cls,
                 field,
                 Autowired
@@ -165,7 +168,7 @@ function getComponents(application: Application, userOption: ConstructOption) {
                     printDiagnose(diagnose);
                     instance[field] = undefined;
                 } else {
-                    const qualifierMetadatas = application.classMetadata.listFieldKindMetadata(
+                    const qualifierMetadatas = application.metadataRepository.listFieldKindMetadata(
                         instantiateDefinition.cls,
                         field,
                         Qualifier
@@ -231,9 +234,9 @@ function getViewComponent(application: Application, viewClass: Class<any>, props
     }
     // 视图组件目前简单的认为全是prototype，且不支持实例化子组件
     const instance = createComponent(application, targetDefinition, [props]);
-    const autowiredFields = application.classMetadata.listFieldByMetadataCls(targetDefinition.cls, Autowired);
+    const autowiredFields = application.metadataRepository.listFieldByMetadataCls(targetDefinition.cls, Autowired);
     for (const field of autowiredFields) {
-        const autowiredMetadatas = application.classMetadata.listFieldKindMetadata(
+        const autowiredMetadatas = application.metadataRepository.listFieldKindMetadata(
             targetDefinition.cls,
             field,
             Autowired
@@ -249,7 +252,7 @@ function getViewComponent(application: Application, viewClass: Class<any>, props
                 printDiagnose(diagnose);
                 instance[field] = undefined;
             } else {
-                const qualifierMetadatas = application.classMetadata.listFieldKindMetadata(
+                const qualifierMetadatas = application.metadataRepository.listFieldKindMetadata(
                     targetDefinition.cls,
                     field,
                     Qualifier

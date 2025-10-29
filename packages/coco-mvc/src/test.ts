@@ -1,7 +1,7 @@
 export * from './index';
 
 export {
-    ClassMetadata,
+    MetadataRepository,
     checkClassMetadataAsExpected,
     createDecoratorExpFactory,
     instantiateMetadata,

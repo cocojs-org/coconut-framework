@@ -4,7 +4,7 @@
 import Metadata from '../metadata/instantiate-one-metadata';
 import Component from '../decorator/metadata/component';
 import Scope, { SCOPE } from '../decorator/metadata/scope';
-import { BizMetadata, type ClassMetadata } from '../metadata/index';
+import { BizMetadata, type MetadataRepository } from '../metadata/index';
 
 interface ScopeAndParentComponentMetadata {
     // 如果类组件上添加@scope装饰器，对应的scope实例
@@ -30,10 +30,10 @@ const componentMetadataTree: Map<Class<Metadata>, ScopeAndParentComponentMetadat
  * @view()
  * class Page {}
  */
-function buildComponentMetadataSet(classMetadataSet: ClassMetadata) {
+function buildComponentMetadataSet(metadataRepository: MetadataRepository) {
     // 找到当前被装饰器上面的scope元数据
     function getScope(beDecoratedCls: Class<any>) {
-        const [metaMetadataMap] = classMetadataSet.getAll();
+        const [metaMetadataMap] = metadataRepository.getAll();
         const classMetadata = metaMetadataMap.get(beDecoratedCls)?.classMetadata;
         if (classMetadata) {
             return classMetadata.find((i) => i.constructor === Scope) as Scope;
@@ -41,7 +41,7 @@ function buildComponentMetadataSet(classMetadataSet: ClassMetadata) {
         return undefined;
     }
 
-    const [metaMetadataMap] = classMetadataSet.getAll();
+    const [metaMetadataMap] = metadataRepository.getAll();
     // 首先添加Component类
     componentMetadataTree.set(Component, {
         scope: getScope(Component),

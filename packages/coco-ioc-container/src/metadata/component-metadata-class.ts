@@ -19,7 +19,7 @@
  * class Hello extends Metadata {}  不是，因为@view和@component对应的元数据类都是组件元数据类，大于 1 个
  */
 import { Metadata } from '../index.ts';
-import type { MetaMetadata } from './class-metadata.ts';
+import type { MetaMetadata } from './metadata-repository.ts';
 import Component from '../decorator/metadata/component.ts';
 import { createDiagnose, type Diagnose, DiagnoseCode } from 'shared';
 import { className2DecoratorName } from '../share/util.ts';

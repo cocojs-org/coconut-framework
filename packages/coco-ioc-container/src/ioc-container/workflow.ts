@@ -7,21 +7,21 @@ import {
     findComponentDecorator,
     findComponentDecoratorScope,
 } from './ioc-component-definition-helper';
-import { type ClassMetadata } from '../metadata';
+import { type MetadataRepository } from '../metadata';
 import Scope, { SCOPE } from '../decorator/metadata/scope';
 import Component from '../decorator/metadata/component';
 import { addDefinition, clear as clearIocComponentDefinition } from './ioc-component-definition';
 import { clear as clearComponentFactory } from './component-factory';
 
-function doBuildIocComponentDefinition(classMetadata: ClassMetadata) {
-    const [_, bizMetadata] = classMetadata.getAll();
+function doBuildIocComponentDefinition(metadataRepository: MetadataRepository) {
+    const [_, bizMetadata] = metadataRepository.getAll();
     for (const beDecoratedCls of bizMetadata.keys()) {
         if (bizMetadata.has(beDecoratedCls)) {
             const componentMetadata = findComponentDecorator(beDecoratedCls, bizMetadata);
             if (componentMetadata) {
                 // 确定存在component类装饰器，再确定scope值
                 let scope: SCOPE;
-                const selfScopeMetadata = classMetadata.listClassKindMetadata(beDecoratedCls, Scope) as Scope[];
+                const selfScopeMetadata = metadataRepository.listClassKindMetadata(beDecoratedCls, Scope) as Scope[];
                 if (selfScopeMetadata.length > 0) {
                     scope = selfScopeMetadata[0].value;
                 } else {
@@ -29,14 +29,14 @@ function doBuildIocComponentDefinition(classMetadata: ClassMetadata) {
                 }
                 addDefinition(beDecoratedCls, scope === SCOPE.Singleton);
             } else {
-                const methods = classMetadata.listMethodByMetadataCls(beDecoratedCls, Component);
+                const methods = metadataRepository.listMethodByMetadataCls(beDecoratedCls, Component);
                 for (const method of methods) {
-                    const componentMetas: Component[] = classMetadata.listMethodKindMetadata(
+                    const componentMetas: Component[] = metadataRepository.listMethodKindMetadata(
                         beDecoratedCls,
                         method,
                         Component
                     ) as Component[];
-                    const scopeMetas: Scope[] = classMetadata.listMethodKindMetadata(
+                    const scopeMetas: Scope[] = metadataRepository.listMethodKindMetadata(
                         beDecoratedCls,
                         method,
                         Scope
@@ -60,10 +60,10 @@ function doBuildIocComponentDefinition(classMetadata: ClassMetadata) {
  * 遍历所有的业务类，如果有类装饰器，那么就是类组件
  * 遍历所有配置类的方法，如果有@component装饰器，那么也是类组件
  */
-function initIocComponentDefinitionModule(classMetadata: ClassMetadata) {
-    buildComponentMetadataSet(classMetadata);
+function initIocComponentDefinitionModule(metadataRepository: MetadataRepository) {
+    buildComponentMetadataSet(metadataRepository);
 
-    doBuildIocComponentDefinition(classMetadata);
+    doBuildIocComponentDefinition(metadataRepository);
 
     clearComponentMetadataSet();
 }

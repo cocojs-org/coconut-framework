@@ -1,5 +1,5 @@
 import { getComponents, getViewComponent } from '../ioc-container/component-factory';
-import { initMetadataModule, clearMetadataModule, type Metadata, type ClassMetadata } from '../metadata';
+import { initMetadataModule, clearMetadataModule, type Metadata, type MetadataRepository } from '../metadata';
 import { getDecoratorParam, initDecoratorParamModule, clearDecoratorParamModule } from '../create-decorator-exp';
 import { initIocComponentDefinitionModule, clearIocComponentDefinitionModule } from '../ioc-container/workflow';
 import PropertiesConfig from '../properties/properties-config';
@@ -12,7 +12,7 @@ import type ComponentMetadataClass from '../metadata/component-metadata-class.ts
  */
 class Application {
     componentMetadataClass: ComponentMetadataClass;
-    classMetadata: ClassMetadata;
+    metadataRepository: MetadataRepository;
     idClassMap: IdClassMap;
     propertiesConfig: PropertiesConfig;
 
@@ -28,13 +28,13 @@ class Application {
         initDecoratorParamModule();
 
         // 用装饰器参数初始化元数据数据
-        const { classMetadata, idClassMap, componentMetadataClass } = initMetadataModule(getDecoratorParam());
-        this.classMetadata = classMetadata;
+        const { metadataRepository, idClassMap, componentMetadataClass } = initMetadataModule(getDecoratorParam());
+        this.metadataRepository = metadataRepository;
         this.idClassMap = idClassMap;
         this.componentMetadataClass = componentMetadataClass;
 
         // 用元数据信息初始化ioc组件数据
-        initIocComponentDefinitionModule(this.classMetadata);
+        initIocComponentDefinitionModule(this.metadataRepository);
 
         // 实例化配置启动项的组件
         this.bootComponent();
@@ -42,7 +42,7 @@ class Application {
 
     public destructor() {
         clearIocComponentDefinitionModule();
-        clearMetadataModule(this.classMetadata, this.idClassMap);
+        clearMetadataModule(this.metadataRepository, this.idClassMap);
         clearDecoratorParamModule();
     }
 
@@ -77,13 +77,13 @@ class Application {
     }
 
     public listFieldByMetadataCls(beDecoratedCls: Class<any>, MetadataCls: Class<any>) {
-        return this.classMetadata.listFieldByMetadataCls(beDecoratedCls, MetadataCls);
+        return this.metadataRepository.listFieldByMetadataCls(beDecoratedCls, MetadataCls);
     }
     public findClassKindMetadataRecursively(beDecoratedCls: Class<any>, TargetCls: Class<any>, upward: number = 0) {
-        return this.classMetadata.findClassKindMetadataRecursively(beDecoratedCls, TargetCls, upward);
+        return this.metadataRepository.findClassKindMetadataRecursively(beDecoratedCls, TargetCls, upward);
     }
     public listBeDecoratedClsByClassKindMetadata(MetadataCls: Class<any>) {
-        return this.classMetadata.listBeDecoratedClsByClassKindMetadata(MetadataCls);
+        return this.metadataRepository.listBeDecoratedClsByClassKindMetadata(MetadataCls);
     }
     public getMetaClassById(id: string) {
         return this.idClassMap.getMetaClassById(id);

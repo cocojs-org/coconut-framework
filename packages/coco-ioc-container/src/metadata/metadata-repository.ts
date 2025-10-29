@@ -1,5 +1,5 @@
 /**
- * 类的元数据集合
+ * 元数据仓库（运行时所有元数据的数据）
  * 类又可以分成元数据类和业务类：元数据类都是Metadata的子类，业务类是普通的类（非Metadata的子类）
  * 元数据的实例通过装饰器一一对应的元数据类加上装饰器表达式的参数实例化得到，具体见create-metadata.ts
  */
@@ -21,7 +21,7 @@ export interface BizMetadata {
     methodMetadata: Map<Field, Metadata[]>;
 }
 
-class ClassMetadata {
+class MetadataRepository {
     private metaMetadataMap: Map<Class<Metadata>, MetaMetadata> = new Map();
     private bizMetadataMap: Map<Class<any>, BizMetadata> = new Map();
 
@@ -269,4 +269,4 @@ class ClassMetadata {
     }
 }
 
-export default ClassMetadata;
+export default MetadataRepository;
