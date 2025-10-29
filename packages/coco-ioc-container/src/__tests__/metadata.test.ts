@@ -172,7 +172,7 @@ describe('listClassKindMetadata', () => {
     });
 });
 
-describe('ioc-container/metadata', () => {
+describe('listFieldKindMetadata', () => {
     let cocoMvc;
     let ClassMetadata;
     let classMetadata;
@@ -289,6 +289,7 @@ describe('validate', () => {
     let Application;
     let application;
     let createDecoratorExp;
+    let createPlaceholderDecoratorExp;
     let consoleErrorSpy;
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
@@ -302,6 +303,7 @@ describe('validate', () => {
         id = cocoMvc.id;
         target = cocoMvc.target;
         createDecoratorExp = cocoMvc.createDecoratorExp;
+        createPlaceholderDecoratorExp = cocoMvc.createPlaceholderDecoratorExp;
         Application = cocoMvc.Application;
         application = new Application();
         cocoMvc.registerMvcApi(application);
@@ -375,7 +377,7 @@ describe('validate', () => {
         );
     });
 
-    test('元数据类如果添加了大于1个不同的类装饰器时，会报错', () => {
+    test('元数据类如果添加了大于1个不同的类装饰器时，元数据类就不是组件元数据类，对应的装饰器就不是组件装饰器', () => {
         @component()
         @target([Target.Type.Class])
         class T1 extends Metadata {}
@@ -385,6 +387,11 @@ describe('validate', () => {
         @component()
         @target([Target.Type.Class])
         class Log extends Metadata {}
+        const log = createDecoratorExp(Log);
+
+        @log()
+        @target([Target.Type.Class])
+        class NotComponent extends Metadata {}
 
         application.start();
         expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -392,5 +399,124 @@ describe('validate', () => {
             'Log',
             '@component, @t1'
         );
+        expect(application.componentMetadataClass.isComponentMetadata(Log)).toBe(false);
+        expect(application.componentMetadataClass.isComponentMetadata(NotComponent)).toBe(false);
+    });
+
+    test('元数据类如果添加了大于1个不同的类装饰器时，元数据类就不是组件元数据类，对应的装饰器就不是组件装饰器', () => {
+        const t1 = createPlaceholderDecoratorExp();
+        const log = createPlaceholderDecoratorExp();
+
+        @component()
+        @target([Target.Type.Class])
+        @t1.decorateSelf()
+        class T1 extends Metadata {}
+
+        @t1()
+        @component()
+        @target([Target.Type.Class])
+        @log.decorateSelf()
+        class Log extends Metadata {}
+
+        @log()
+        @target([Target.Type.Class])
+        class NotComponent extends Metadata {}
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10024：元数据类 %s 存在多个组件装饰器 %s，一个元数据类最多只能有一个组件装饰器。',
+            'Log',
+            '@component, @t1'
+        );
+        expect(application.componentMetadataClass.isComponentMetadata(Log)).toBe(false);
+        expect(application.componentMetadataClass.isComponentMetadata(NotComponent)).toBe(false);
+    });
+
+    test('元数据类如果添加了大于 1 个组件装饰器，但是刚好只有一个组件装饰器是合法的，则元数据类是组件元数据类，对应的装饰器还是组件装饰器', () => {
+        @component()
+        @target([Target.Type.Class])
+        class T1 extends Metadata {}
+        const t1 = createDecoratorExp(T1);
+
+        @t1()
+        @component()
+        @target([Target.Type.Class])
+        class Log extends Metadata {}
+        const log = createDecoratorExp(Log);
+
+        // 虽然IsComponent有 2 个类装饰器，但是@log不是合法的，所以IsComponent是组件元数据类
+        @log()
+        @component()
+        @target([Target.Type.Class])
+        class OneComponent extends Metadata {}
+        const oneComponent = createDecoratorExp(OneComponent);
+
+        @oneComponent()
+        @target([Target.Type.Class])
+        class IsComponent extends Metadata {}
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10024：元数据类 %s 存在多个组件装饰器 %s，一个元数据类最多只能有一个组件装饰器。',
+            'Log',
+            '@component, @t1'
+        );
+        expect(application.componentMetadataClass.isComponentMetadata(OneComponent)).toBe(true);
+        expect(application.componentMetadataClass.isComponentMetadata(IsComponent)).toBe(true);
+    });
+
+    test('元数据类如果添加了大于 1 个组件装饰器，但是刚好只有一个组件装饰器是合法的，则元数据类是组件元数据类，对应的装饰器还是组件装饰器', () => {
+        const t1 = createPlaceholderDecoratorExp();
+        const log = createPlaceholderDecoratorExp();
+        const oneComponent = createPlaceholderDecoratorExp();
+        @component()
+        @target([Target.Type.Class])
+        @t1.decorateSelf()
+        class T1 extends Metadata {}
+
+        @t1()
+        @component()
+        @target([Target.Type.Class])
+        @log.decorateSelf()
+        class Log extends Metadata {}
+
+        // 虽然IsComponent有 2 个类装饰器，但是@log不是合法的，所以IsComponent是组件元数据类
+        @log()
+        @component()
+        @target([Target.Type.Class])
+        @oneComponent.decorateSelf()
+        class OneComponent extends Metadata {}
+
+        @oneComponent()
+        @target([Target.Type.Class])
+        class IsComponent extends Metadata {}
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10024：元数据类 %s 存在多个组件装饰器 %s，一个元数据类最多只能有一个组件装饰器。',
+            'Log',
+            '@component, @t1'
+        );
+        expect(application.componentMetadataClass.isComponentMetadata(OneComponent)).toBe(true);
+        expect(application.componentMetadataClass.isComponentMetadata(IsComponent)).toBe(true);
+    });
+
+    test('2个组件装饰器出现了循环依赖，那么路径上的所有组件装饰器都不是组件元数据类', () => {
+        const t1 = createPlaceholderDecoratorExp();
+        const t2 = createPlaceholderDecoratorExp();
+        @component()
+        @t1.decorateSelf()
+        @t2()
+        @target([Target.Type.Class])
+        class T1 extends Metadata {}
+
+        @t1()
+        @t2.decorateSelf()
+        @target([Target.Type.Class])
+        class T2 extends Metadata {}
+
+        application.start();
+        expect(application.componentMetadataClass.isComponentMetadata(T1)).toBe(false);
+        expect(application.componentMetadataClass.isComponentMetadata(T2)).toBe(false);
     });
 });

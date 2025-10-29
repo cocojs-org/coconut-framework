@@ -6,7 +6,7 @@ import ClassMetadata from './class-metadata';
 import validate from './validate';
 import IdClassMap from './id-class-map';
 import { printDiagnose, type Diagnose } from 'shared';
-import ComponentDecoratorMetadata from './component-decorator-metadata';
+import ComponentMetadataClass from './component-metadata-class';
 
 /**
  * 元数据相关数据的初始化
@@ -14,15 +14,15 @@ import ComponentDecoratorMetadata from './component-decorator-metadata';
  */
 function initMetadataModule(decoratorMap: Map<Class<any>, Params[]>) {
     const classMetadata = new ClassMetadata(decoratorMap);
-    const componentDecoratorMetadata = new ComponentDecoratorMetadata();
+    const componentMetadataClass = new ComponentMetadataClass();
     // TODO: 校验全部放在core里面做到，然后业务上获取的时候先过滤掉非法的元数据，只从合法的元数据中查找
     const [metadataMap, bizMap] = classMetadata.getAll();
-    const diagnoseList: Diagnose[] = validate([metadataMap, bizMap], componentDecoratorMetadata);
+    const diagnoseList: Diagnose[] = validate([metadataMap, bizMap], componentMetadataClass);
     if (diagnoseList.length > 0) {
         diagnoseList.forEach(printDiagnose);
     }
     const idClassMap = new IdClassMap(metadataMap);
-    return { classMetadata, idClassMap, componentDecoratorMetadata };
+    return { classMetadata, idClassMap, componentMetadataClass };
 }
 
 // 元数据相关数据清理

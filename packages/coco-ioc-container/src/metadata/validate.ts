@@ -161,7 +161,7 @@ import { Type } from '../decorator/target';
 import Component from '../decorator/metadata/component';
 import Configuration from '../decorator/metadata/configuration';
 import { createDiagnose, type Diagnose, DiagnoseCode } from 'shared';
-import { type MetaMetadata, type BizMetadata, type ComponentDecoratorMetadata } from './index';
+import { type MetaMetadata, type BizMetadata, type ComponentMetadataClass } from './index';
 import { className2DecoratorName, metadataInstance2DecoratorName } from '../share/util';
 
 type Field = string;
@@ -421,7 +421,7 @@ function validateMethodComponentMustInConfiguration(
 
 function validate(
     metadataList: [Map<Class<Metadata>, MetaMetadata>, Map<Class<Metadata>, BizMetadata>],
-    componentDecoratorMetadata: ComponentDecoratorMetadata
+    componentMetadataClass: ComponentMetadataClass
 ) {
     // 诊断信息
     const diagnoseList: Diagnose[] = [];
@@ -456,7 +456,7 @@ function validate(
     }
 
     // 元数据类校验不能包含多余 1 个类装饰器
-    const diagnoses = componentDecoratorMetadata.validateMetadata(metaMetadataMap);
+    const diagnoses = componentMetadataClass.validateMetadata(metaMetadataMap);
     if (diagnoses.length) {
         diagnoseList.push(...diagnoses);
     }

@@ -1,5 +1,5 @@
 import { type BizMetadata, type MetaMetadata, default as ClassMetadata } from './class-metadata';
-import ComponentDecoratorMetadata from './component-decorator-metadata';
+import ComponentMetadataClass from './component-metadata-class';
 import Metadata from './instantiate-one-metadata';
 import { initMetadataModule, clearMetadataModule } from './workflow';
 
@@ -10,5 +10,5 @@ export {
     clearMetadataModule,
     ClassMetadata,
     Metadata,
-    ComponentDecoratorMetadata,
+    ComponentMetadataClass,
 };

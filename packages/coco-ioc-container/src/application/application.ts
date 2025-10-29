@@ -4,12 +4,14 @@ import { getDecoratorParam, initDecoratorParamModule, clearDecoratorParamModule 
 import { initIocComponentDefinitionModule, clearIocComponentDefinitionModule } from '../ioc-container/workflow';
 import PropertiesConfig from '../properties/properties-config';
 import type IdClassMap from '../metadata/id-class-map';
+import type ComponentMetadataClass from '../metadata/component-metadata-class.ts';
 
 /**
  * 表示一个web应用实例
  * @public
  */
 class Application {
+    componentMetadataClass: ComponentMetadataClass;
     classMetadata: ClassMetadata;
     idClassMap: IdClassMap;
     propertiesConfig: PropertiesConfig;
@@ -26,9 +28,10 @@ class Application {
         initDecoratorParamModule();
 
         // 用装饰器参数初始化元数据数据
-        const { classMetadata, idClassMap } = initMetadataModule(getDecoratorParam());
+        const { classMetadata, idClassMap, componentMetadataClass } = initMetadataModule(getDecoratorParam());
         this.classMetadata = classMetadata;
         this.idClassMap = idClassMap;
+        this.componentMetadataClass = componentMetadataClass;
 
         // 用元数据信息初始化ioc组件数据
         initIocComponentDefinitionModule(this.classMetadata);
