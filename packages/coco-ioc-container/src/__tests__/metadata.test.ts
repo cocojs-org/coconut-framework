@@ -519,4 +519,30 @@ describe('validate', () => {
         expect(application.componentMetadataClass.isComponentMetadata(T1)).toBe(false);
         expect(application.componentMetadataClass.isComponentMetadata(T2)).toBe(false);
     });
+
+    test('3个组件装饰器出现了循环依赖，那么路径上的所有组件装饰器都不是组件元数据类', () => {
+        const t1 = createPlaceholderDecoratorExp();
+        const t2 = createPlaceholderDecoratorExp();
+        const t3 = createPlaceholderDecoratorExp();
+        @component()
+        @t1.decorateSelf()
+        @t3()
+        @target([Target.Type.Class])
+        class T1 extends Metadata {}
+
+        @t1()
+        @t2.decorateSelf()
+        @target([Target.Type.Class])
+        class T2 extends Metadata {}
+
+        @t2()
+        @t3.decorateSelf()
+        @target([Target.Type.Class])
+        class T3 extends Metadata {}
+
+        application.start();
+        expect(application.componentMetadataClass.isComponentMetadata(T1)).toBe(false);
+        expect(application.componentMetadataClass.isComponentMetadata(T2)).toBe(false);
+        expect(application.componentMetadataClass.isComponentMetadata(T3)).toBe(false);
+    });
 });

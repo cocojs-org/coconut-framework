@@ -3,10 +3,10 @@ import { Metadata, component, SCOPE, scope, target, Target, id } from 'coco-ioc-
 /**
  * @public
  */
-@id('Effect')
+@id('Flow')
 @target([Target.Type.Class])
 @component()
 @scope(SCOPE.Prototype)
-class Effect extends Metadata {}
+class Flow extends Metadata {}
 
-export default Effect;
+export default Flow;

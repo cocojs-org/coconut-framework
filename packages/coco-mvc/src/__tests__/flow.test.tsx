@@ -1,10 +1,10 @@
-describe('@effect装饰器', () => {
+describe('@flow装饰器', () => {
     let cocoMvc;
     let Application;
     let application;
     let component;
-    let Effect;
-    let effect;
+    let Flow;
+    let flow;
     let consoleErrorSpy;
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -12,9 +12,9 @@ describe('@effect装饰器', () => {
         jest.resetModules();
         cocoMvc = await import('coco-mvc');
         Application = cocoMvc.Application;
-        Effect = cocoMvc.Effect;
+        Flow = cocoMvc.Flow;
         component = cocoMvc.component;
-        effect = cocoMvc.effect;
+        flow = cocoMvc.flow;
         application = new Application();
         cocoMvc.registerMvcApi(application);
     });
@@ -28,14 +28,14 @@ describe('@effect装饰器', () => {
 
     test('支持通过id获取Effect类', () => {
         application.start();
-        const cls = application.getMetaClassById('Effect');
-        expect(cls).toBe(Effect);
+        const cls = application.getMetaClassById('Flow');
+        expect(cls).toBe(Flow);
     });
 
-    test('@effect装饰器不能装饰在字段上', () => {
+    test('@flow装饰器不能装饰在字段上', () => {
         @component()
         class Button {
-            @effect('field')
+            @flow('field')
             field: string;
         }
 
@@ -44,15 +44,15 @@ describe('@effect装饰器', () => {
             'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
             'Button',
             'field',
-            '@effect',
+            '@flow',
             'class'
         );
     });
 
-    test('@effect装饰器不能装饰在method上', () => {
+    test('@flow装饰器不能装饰在method上', () => {
         @component()
         class Button {
-            @effect('field')
+            @flow('field')
             getName() {}
         }
 
@@ -61,7 +61,7 @@ describe('@effect装饰器', () => {
             'CO10006：%s 类 %s 方法上method装饰器 %s 只能用于装饰%s',
             'Button',
             'getName',
-            '@effect',
+            '@flow',
             'class'
         );
     });
