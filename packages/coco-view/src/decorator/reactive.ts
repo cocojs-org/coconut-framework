@@ -1,7 +1,7 @@
 import { createDecoratorExp, type Application, type Decorator } from 'coco-ioc-container';
 import Reactive from './metadata/reactive';
-import Publisher from '../memoized/publisher';
-import Subscriber from '../memoized/subscriber';
+import Publisher from '../reactive/publisher';
+import Subscriber from '../reactive/subscriber';
 import { reactiveAssignField } from 'shared';
 
 export default createDecoratorExp(Reactive, {

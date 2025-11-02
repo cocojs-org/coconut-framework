@@ -1,8 +1,8 @@
 import { createDecoratorExp, type Decorator, type Application } from 'coco-ioc-container';
 import Store from './metadata/store';
-import StorePublisher from '../memoized/store-publisher';
-import Publisher from '../memoized/publisher';
-import Subscriber from '../memoized/subscriber';
+import StorePublisher from '../reactive/store-publisher';
+import Publisher from '../reactive/publisher';
+import Subscriber from '../reactive/subscriber';
 
 export default createDecoratorExp(Store, {
     componentPostConstruct: function (metadata: Store, application: Application) {
