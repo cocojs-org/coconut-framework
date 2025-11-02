@@ -1,17 +1,14 @@
 {
-    "name": "create-coco",
-    "description": "命令行工具（脚手架、开发、构建）。",
-    "version": "0.0.1-alpha202510222136",
+    "name": "@cocojs/cli",
+    "description": "命令行工具，支持开发和构建功能",
+    "version": "0.0.1-alpha202511021502",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "bin": {
-        "coco": "bin/coco.js",
-        "create-coco": "bin/create-coco.js"
+        "coco": "bin/coco.js"
     },
     "files": [
         "bin",
-        "template-app",
-        "template-lib",
         "runtime-config",
         "dist"
     ],
@@ -36,11 +33,9 @@
         "@rollup/plugin-typescript": "^12.1.2",
         "babel-loader": "^10.0.0",
         "chokidar": "^4.0.3",
-        "ejs": "^3.1.10",
         "fs-extra": "^11.2.0",
         "glob": "9.3.5",
         "html-webpack-plugin": "^5.6.3",
-        "prompts": "^2.4.2",
         "rollup": "^4.36.0",
         "terser-webpack-plugin": "^5.3.14",
         "ts-loader": "^9.5.2",

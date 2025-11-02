@@ -12,8 +12,6 @@ const cocoMvcOutput = path.join(cocoMvc, './dist/coco-mvc.cjs.js');
 const createCoco = path.join(packages, './create-coco');
 const cliSrc = path.join(createCoco, './src/index.ts');
 const cliDist = path.join(createCoco, '/dist/index.js');
-const createCocoSrc = path.join(createCoco, './src/create-coco.ts');
-const createCocoDist = path.join(createCoco, '/dist/create-coco.js');
 const cliBuildDotCocoProcess = path.join(createCoco, './src/build-dot-coco-process/index.ts');
 const cliBuildCotCocoDist = path.join(createCoco, '/dist/build-dot-coco-process/index.js');
 const cliWebpackProcess = path.join(createCoco, './src/webpack-process/index.ts');
@@ -40,13 +38,6 @@ module.exports.rollupTargets = [
       PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS,
       PACKAGE.REACT_SHARED,
     ],
-  },
-  {
-    input: createCocoSrc,
-    output: {
-      file: createCocoDist,
-      format: 'cjs'
-    }
   },
   {
     input: cliSrc,
