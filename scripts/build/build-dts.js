@@ -151,7 +151,7 @@ const cocoMvcDtsTest = [
 
 const cliDts = [
   {
-    packageName: 'create-coco',
+    packageName: 'coco-cli',
     tsconfigJson: 'tsconfig.json',
     mainEntryPointFilePath: './dts-tmp/index.d.ts'
   }
