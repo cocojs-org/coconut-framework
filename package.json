@@ -59,5 +59,6 @@
     },
     "lint-staged": {
         "**/*": "prettier --write --ignore-unknown"
-    }
+    },
+    "packageManager": "pnpm@10.20.0"
 }
