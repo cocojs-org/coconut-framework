@@ -26,7 +26,6 @@ class WebpackBuilder {
         });
     }
 
-    // TODO: dev命令应该是不定的重新重写文件，导致服务器一直重新打包。
     public async startServer() {
         const { devServer, ...config } = await getWebpackConfig('dev');
         const compiler = Webpack(config);
