@@ -6,6 +6,7 @@ import Subscriber from '../reactive/subscriber';
 
 export default createDecoratorExp(Store, {
     componentPostConstruct: function (metadata: Store, application: Application) {
+        // 和使用store的组件保持订阅关系
         const storePublisher = new StorePublisher();
         Object.defineProperty(this, 'storePublisher', {
             value: storePublisher,
@@ -14,12 +15,12 @@ export default createDecoratorExp(Store, {
             configurable: true,
         });
 
-        // 用于和@memoized保持订阅关系
-        const publisher = new Publisher();
         const _values: Record<any, any> = {};
         for (const field of Object.keys(this)) {
+            // 和@memoized保持订阅关系
+            const publisher = new Publisher();
             _values[field] = this[field];
-            // TODO: 和@memoized保持订阅关系，那么应该和@reactive采用一样的实现逻辑
+            // TODO: 目前有store props reactive 基本上都使用了类似的逻辑处理响应式，能不能抽象出一个函数
             Object.defineProperty(this, field, {
                 configurable: false,
                 enumerable: true,

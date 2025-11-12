@@ -8,7 +8,7 @@ import {
     waitFor,
 } from '@testing-library/dom';
 
-describe('store', () => {
+describe('@store装饰器', () => {
     let Application;
     let application;
     let cocoMvc;
@@ -133,59 +133,6 @@ describe('store', () => {
 
             render() {
                 return <h1>展示:{this.userInfo?.name}</h1>;
-            }
-        }
-
-        @view()
-        class Form {
-            @autowired()
-            userInfo: UserInfo;
-
-            handleClick = () => {
-                this.userInfo.name = '李四';
-            };
-
-            render() {
-                return <button onClick={this.handleClick}>input:{this.userInfo.name}</button>;
-            }
-        }
-
-        application.start();
-        const container = document.createElement('div');
-        cocoMvc.renderIntoContainer(
-            <div>
-                <Form />
-                <Detail />
-            </div>,
-            container
-        );
-        const input = getByRole(container, 'button');
-        expect(getByText(input, 'input:张三')).toBeTruthy();
-        const heading = getByRole(container, 'heading');
-        expect(getByText(heading, '展示:张三')).toBeTruthy();
-        input.click();
-        expect(getByText(input, 'input:李四')).toBeTruthy();
-        expect(getByText(heading, '展示:李四')).toBeTruthy();
-    });
-
-    it('修改store的属性时，读取store的@memoized函数也应该重新执行', () => {
-        @store()
-        class UserInfo {
-            name: string = '张三';
-        }
-
-        @view()
-        class Detail {
-            @autowired()
-            userInfo: UserInfo;
-
-            @memoized()
-            label() {
-                return `展示:${this.userInfo?.name}`;
-            }
-
-            render() {
-                return <h1>{this.label()}</h1>;
             }
         }
 

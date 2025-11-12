@@ -18,10 +18,9 @@ function connectStore(ctor, instance) {
     const autowiredComponents = autowiredFields.map((field) => instance[field]);
     const Store = application.getMetaClassById('Store');
     // 过滤出所有注入的store
-    // TODO: autowiredComponents有可能是undefined，需要处理
-    const stores = autowiredComponents.filter((comp) =>
-        application.findClassKindMetadataRecursively(comp.constructor, Store)
-    );
+    const stores = autowiredComponents
+        .filter(Boolean)
+        .filter((comp) => application.findClassKindMetadataRecursively(comp.constructor, Store));
     // store去重
     const uniqueStores = stores.filter((s, idx) => {
         const index = stores.indexOf(s);
