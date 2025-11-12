@@ -18,9 +18,10 @@ class Subscriber {
 
     subscribe = (publisher: Publisher) => {
         if (this.publishers.indexOf(publisher) === -1) {
-            // 可能存在一个memoized函数中多次访问reactive变量的情况的
             publisher.addListener(this);
             this.publishers.push(publisher);
+        } else {
+            // 可能存在一个memoized函数中多次访问reactive变量的情况的
         }
     };
 

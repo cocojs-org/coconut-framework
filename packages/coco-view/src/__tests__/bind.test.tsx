@@ -1,6 +1,6 @@
 import { getByLabelText, getByRole, getByText, queryByTestId, waitFor } from '@testing-library/dom';
 
-describe('decorator', () => {
+describe('@bind装饰器', () => {
     let cocoMvc;
     let Application;
     let application;

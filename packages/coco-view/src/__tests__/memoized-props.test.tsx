@@ -37,15 +37,12 @@ describe('@memoized和props的联动功能', () => {
         consoleErrorSpy.mockRestore();
     });
 
-    test('如果prop变化，memoized会重新计算', () => {
+    test('memoized依赖props的number类型属性，当props不变时，memoized不会重新计算', () => {
         const memoizedFn = jest.fn();
 
         @view()
-        class Child {
-            props: {
-                count: number;
-                updateCount: () => {};
-            };
+        class Button {
+            props: { count: number };
 
             @memoized()
             score() {
@@ -53,47 +50,94 @@ describe('@memoized和props的联动功能', () => {
                 return `${this.props.count}`;
             }
 
+            @reactive()
             name = '张三';
+
+            @bind()
+            onClickName() {
+                this.name = '李四';
+            }
 
             render() {
                 return (
                     <div>
-                        <button onClick={this.props.updateCount}>click to update count</button>
+                        <button>click to update count</button>
+                        <button onClick={this.onClickName}>click to update name</button>
                         {this.name}:{this.score()}
                     </div>
                 );
             }
         }
 
+        application.start();
+        const container = document.createElement('div');
+        // 渲染2次，因为count没有变化，所以memoized只渲染了一次
+        cocoMvc.renderIntoContainer(<Button count={1} />, container);
+        cocoMvc.renderIntoContainer(<Button count={1} />, container);
+        expect(memoizedFn).toHaveBeenCalledTimes(1);
+        const buttons = queryAllByRole(container, 'button');
+        expect(buttons.length).toBe(2);
+        expect(getByText(container, '张三:1')).toBeTruthy();
+        cocoMvc.renderIntoContainer(<Button count={2} />, container);
+        // 修改props.count，所以memoizedFn重新计算
+        expect(memoizedFn).toHaveBeenCalledTimes(2);
+        expect(getByText(container, '张三:2')).toBeTruthy();
+        buttons[1].click();
+        // 没有修改props.count，所以memoizedFn使用缓存
+        expect(memoizedFn).toHaveBeenCalledTimes(2);
+        expect(getByText(container, '李四:2')).toBeTruthy();
+    });
+
+    test('memoized依赖props的对象属性，当对象引用不变时，memoized不会重新计算', () => {
+        const memoizedFn = jest.fn();
+
+        const user1 = { count: 1 };
+        const user2 = { count: 2 };
+
         @view()
-        class Parent {
+        class Button {
+            props: { user: { count: number } };
+
+            @memoized()
+            score() {
+                memoizedFn();
+                return `${this.props.user.count}`;
+            }
+
             @reactive()
-            count = 1;
+            name = '张三';
 
             @bind()
-            updateCount() {
-                this.count++;
+            onClickName() {
+                this.name = '李四';
             }
 
             render() {
-                return <Child count={this.count} updateCount={this.updateCount} />;
+                return (
+                    <div>
+                        <button onClick={this.onClickName}>click to update name</button>
+                        {this.name}:{this.score()}
+                    </div>
+                );
             }
         }
 
         application.start();
         const container = document.createElement('div');
-        cocoMvc.renderIntoContainer(<Parent />, container);
-        const buttons = queryAllByRole(container, 'button');
-        expect(buttons.length).toBe(1);
-        expect(buttons[0]).toBeTruthy();
-        expect(getByText(container, '张三:1')).toBeTruthy();
+        // 渲染2次，但prop的引用的对象一直是user1
+        cocoMvc.renderIntoContainer(<Button user={user1} />, container);
+        cocoMvc.renderIntoContainer(<Button user={user1} />, container);
         expect(memoizedFn).toHaveBeenCalledTimes(1);
-        buttons[0].click();
-        expect(getByText(container, '张三:2')).toBeTruthy();
+        const buttons = queryAllByRole(container, 'button');
+        expect(getByText(container, '张三:1')).toBeTruthy();
+        cocoMvc.renderIntoContainer(<Button user={user2} />, container);
+        // 修改props.user，所以memoizedFn重新计算
         expect(memoizedFn).toHaveBeenCalledTimes(2);
+        expect(getByText(container, '张三:2')).toBeTruthy();
         buttons[0].click();
-        expect(getByText(container, '张三:3')).toBeTruthy();
-        expect(memoizedFn).toHaveBeenCalledTimes(3);
+        // 没有修改props.user，所以memoizedFn使用缓存
+        expect(memoizedFn).toHaveBeenCalledTimes(2);
+        expect(getByText(container, '李四:2')).toBeTruthy();
     });
 
     test('修改自身状态但memoized没有引用时，memoized不会重新计算', () => {
