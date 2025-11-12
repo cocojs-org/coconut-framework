@@ -14,7 +14,6 @@ function initProps(instance, newProps) {
         }
         const publisher = new Publisher();
         _values[field] = newProps[field];
-        // TODO: 和@memoized保持订阅关系，那么应该和@reactive采用一样的实现逻辑
         Object.defineProperty(instance.props, field, {
             configurable: false,
             enumerable: true,
@@ -42,7 +41,4 @@ function updateProps(instance, newProps) {
     }
 }
 
-export {
-    initProps,
-    updateProps,
-}
+export { initProps, updateProps };
