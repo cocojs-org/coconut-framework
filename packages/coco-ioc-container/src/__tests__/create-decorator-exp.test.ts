@@ -227,12 +227,16 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
 describe('create-decorator-exp:createDecoratorExp', () => {
     let cocoMvc;
     let Metadata;
+    let Application;
+    let application;
     let createDecoratorExp;
     let createPlaceholderDecoratorExp;
 
     beforeEach(async () => {
         cocoMvc = await import('coco-mvc');
         Metadata = cocoMvc.Metadata;
+        Application = cocoMvc.Application;
+        application = new Application();
         createDecoratorExp = cocoMvc.createDecoratorExp;
         createPlaceholderDecoratorExp = cocoMvc.createPlaceholderDecoratorExp;
     });
@@ -334,6 +338,23 @@ describe('create-decorator-exp:createDecoratorExp', () => {
         }
         expect(shouldThrowError).toBe(true);
     });
+
+    test('支持classDecoratorModifyPrototype修改被装饰器类的原型链', () => {
+        class M extends Metadata {
+            static classDecoratorModifyPrototype(prototype: any) {
+                if (prototype) {
+                    prototype.modified = true;
+                }
+            }
+        }
+        const m = createDecoratorExp(M);
+        @m()
+        class Btn {}
+
+        application.start();
+        expect(M.prototype.modified).toBe(undefined);
+        expect(Btn.prototype.modified).toBe(true);
+    });
 });
 
 describe('create-decorator-exp:createPlaceholderDecoratorExp', () => {
@@ -423,5 +444,23 @@ describe('create-decorator-exp:createPlaceholderDecoratorExp', () => {
         expect(consoleWarnSpy).toHaveBeenCalledWith(
             'CO10020：有一个占位装饰器没有使用decorateSelf关联具体的元数据类，如果不使用的话，直接删除这个装饰器。'
         );
+    });
+
+    test('支持classDecoratorModifyPrototype修改原型链', () => {
+        const d = createPlaceholderDecoratorExp();
+        @d.decorateSelf()
+        class M extends Metadata {
+            static classDecoratorModifyPrototype(prototype: any) {
+                if (prototype) {
+                    prototype.modified = true;
+                }
+            }
+        }
+
+        @d()
+        class Btn {}
+
+        expect(M.prototype.modified).toBe(undefined);
+        expect(Btn.prototype.modified).toBe(true);
     });
 });
