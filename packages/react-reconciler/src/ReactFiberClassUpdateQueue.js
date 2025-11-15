@@ -237,6 +237,7 @@ export function commitUpdateQueue(
   // Commit the effects
   const effects = finishedQueue.effects;
   finishedQueue.effects = null;
+  // TODO: 如果这样写会报错，搜索 202511151444
   if (effects !== null) {
     for (let i = 0; i < effects.length; i++) {
       const effect = effects[i];

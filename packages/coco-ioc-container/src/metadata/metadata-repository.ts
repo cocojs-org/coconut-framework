@@ -195,6 +195,7 @@ class MetadataRepository {
 
     /**
      * 在类的所有类类型的元数据中递归查找某个元数据类实例，找到就直接返回
+     * TODO: 因为现在组件装饰器的层数没有限制了，那么upward这个参数是否还有必要存在
      */
     findClassKindMetadataRecursively(beDecoratedCls: Class<any>, TargetCls: Class<any>, upward: number = 0) {
         if (upward < 0) {

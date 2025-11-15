@@ -1,39 +1,35 @@
 import { createDecoratorExp, type Application, type Decorator } from 'coco-ioc-container';
 import Reactive from './metadata/reactive';
-import Publisher from '../reactive/publisher';
-import Subscriber from '../reactive/subscriber';
 import { reactiveAssignField } from 'shared';
+import { defineReactive } from '../reactive/define-reactive.ts';
 
 export default createDecoratorExp(Reactive, {
     componentPostConstruct(metadata: Reactive, application: Application, name: string) {
-        let _value: any = this[name];
-        const publisher = new Publisher(name);
-        Object.defineProperty(this, name, {
-            configurable: false,
-            enumerable: true,
-            get: function () {
-                if (Subscriber.Executing) {
-                    Subscriber.Executing.subscribe(publisher);
-                }
-                return _value;
-            },
-            set(v: any): boolean {
-                if (_value === v || (v !== v && _value !== _value)) {
+        const Store: Class<any> = application.getMetaClassById('Store');
+        const isStoreComponent = application.findClassKindMetadataRecursively(this.constructor, Store);
+        let value: any = this[name];
+        let setter;
+        const getter = () => value;
+        if (isStoreComponent) {
+            // store 组件目前是直接赋值，然后走forceUpdate逻辑的
+            setter = (object: any, key: string, newValue: any) => {
+                value = newValue;
+                object['storePublisher']?.broadcast();
+            };
+        } else {
+            // 不是store组件目前可以都认为是视图组件，视图组件是走批量更新逻辑的
+            setter = (object: any, field: string, newValue: any) =>
+                object.updater.enqueueSetState(object, field, newValue);
+            Object.defineProperty(this, reactiveAssignField(name), {
+                configurable: false,
+                enumerable: false,
+                set(v: any): boolean {
+                    value = v;
                     return true;
-                }
-                publisher.notify();
-                this.updater.enqueueSetState(this, name, v);
-                return true;
-            },
-        });
+                },
+            });
+        }
 
-        Object.defineProperty(this, reactiveAssignField(name), {
-            configurable: false,
-            enumerable: false,
-            set(v: any): boolean {
-                _value = v;
-                return true;
-            },
-        });
+        defineReactive(this, name, getter, setter);
     },
 }) as () => Decorator<ClassFieldDecoratorContext | ClassDecoratorContext>;

@@ -11,7 +11,7 @@ import { type MetaMetadata } from './metadata-repository';
 import Id from '../decorator/metadata/id';
 
 class IdClassMap {
-    private idClassMap: Map<string, Metadata> = new Map();
+    private idClassMap: Map<string, Class<Metadata>> = new Map();
 
     /**
      * * 保存元数据类本身，方便运行是通过id获取元数据类

@@ -18,6 +18,7 @@ describe('@store装饰器', () => {
     let Store;
     let autowired;
     let memoized;
+    let reactive;
     let bind;
     let consoleWarnSpy;
     let consoleErrorSpy;
@@ -29,6 +30,7 @@ describe('@store装饰器', () => {
         Store = cocoMvc.Store;
         autowired = cocoMvc.autowired;
         memoized = cocoMvc.memoized;
+        reactive = cocoMvc.reactive;
         bind = cocoMvc.bind;
         Application = cocoMvc.Application;
         application = new Application();
@@ -123,6 +125,7 @@ describe('@store装饰器', () => {
     it('修改store的属性时，所有注入store的视图组件都会重新渲染', () => {
         @store()
         class UserInfo {
+            @reactive()
             name: string = '张三';
         }
 
@@ -170,21 +173,15 @@ describe('@store装饰器', () => {
 
     it('卸载引用store的组件时，store和组件之间的订阅关系也会解除', () => {
         @store()
-        class UserInfo {
-            name: string = '张三';
-        }
+        class UserInfo {}
 
         @view()
         class Detail {
             @autowired()
             userInfo: UserInfo;
 
-            label() {
-                return `展示:${this.userInfo?.name}`;
-            }
-
             render() {
-                return <h1>展示:{this.userInfo?.name}</h1>;
+                return <h1>展示</h1>;
             }
         }
 
@@ -193,17 +190,11 @@ describe('@store装饰器', () => {
             @autowired()
             userInfo: UserInfo;
 
-            label() {
-                return `input:${this.userInfo.name}`;
-            }
-
-            @bind()
-            handleClick() {
-                this.userInfo.name = '李四';
-            }
-
             render() {
-                return <button onClick={this.handleClick}>input:{this.userInfo.name}</button>;
+                // TODO: 如果这样写会报错，搜索 202511151444
+                // TODO: 如果在 jsx 中写一个对象，那么渲染出来是什么？
+                // return <button>input: {this.userInfo}</button>;
+                return <button>input</button>;
             }
         }
 

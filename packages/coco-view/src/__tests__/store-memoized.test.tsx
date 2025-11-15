@@ -54,6 +54,7 @@ describe('@store和@memoized联动功能', () => {
 
         @store()
         class UserInfo {
+            @reactive()
             name: string = '张三';
         }
 
@@ -130,7 +131,9 @@ describe('@store和@memoized联动功能', () => {
 
         @store()
         class UserInfo {
+            @reactive()
             name: string = '张三';
+            @reactive()
             showColon: boolean = true;
         }
 

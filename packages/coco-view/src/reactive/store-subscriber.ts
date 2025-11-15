@@ -18,7 +18,7 @@ class StoreSubscriber {
         this.runner = runner;
     }
 
-    connect = (publisher: StorePublisher) => {
+    connect(publisher: StorePublisher) {
         if (!(publisher instanceof StorePublisher)) {
             return;
         }
@@ -30,18 +30,18 @@ class StoreSubscriber {
         }
         this.publishers.push(publisher);
         publisher.addListener(this);
-    };
+    }
 
-    disconnectAll = () => {
+    disconnectAll() {
         this.publishers.forEach((publisher) => {
             publisher.removeListener(this);
         });
         this.publishers = [];
-    };
+    }
 
-    exec = () => {
+    exec() {
         this.runner.exec();
-    };
+    }
 }
 
 export default StoreSubscriber;
