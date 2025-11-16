@@ -404,6 +404,8 @@ function ChildReconciler(shouldTrackSideEffects) {
           newChild
         )
       }
+
+      throwOnInvalidObjectType(returnFiber, newChild);
     }
 
     if (

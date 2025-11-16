@@ -49,13 +49,13 @@ describe('@store装饰器', () => {
         consoleErrorSpy.mockRestore();
     });
 
-    test('支持通过id获取Store类', () => {
+    it('支持通过id获取Store类', () => {
         application.start();
         const cls = application.getMetaClassById('Store');
         expect(cls).toBe(Store);
     });
 
-    test('@store装饰器不能装饰在字段上', () => {
+    it('@store装饰器不能装饰在字段上', () => {
         @component()
         class Button {
             @store('field')
@@ -72,7 +72,7 @@ describe('@store装饰器', () => {
         );
     });
 
-    test('@store装饰器不能装饰在method上', () => {
+    it('@store装饰器不能装饰在method上', () => {
         @component()
         class Button {
             @store('field')
@@ -191,9 +191,6 @@ describe('@store装饰器', () => {
             userInfo: UserInfo;
 
             render() {
-                // TODO: 如果这样写会报错，搜索 202511151444
-                // TODO: 如果在 jsx 中写一个对象，那么渲染出来是什么？
-                // return <button>input: {this.userInfo}</button>;
                 return <button>input</button>;
             }
         }
@@ -222,9 +219,7 @@ describe('@store装饰器', () => {
 
     it('一个组件多次注入同一个store，会有warn提醒', () => {
         @store()
-        class UserInfo {
-            name: string = '张三';
-        }
+        class UserInfo {}
 
         @view()
         class Detail {
@@ -235,7 +230,7 @@ describe('@store装饰器', () => {
             userInfo1: UserInfo;
 
             render() {
-                return <h1>展示:{this.userInfo?.name}</h1>;
+                return <h1>展示</h1>;
             }
         }
 
