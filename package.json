@@ -28,7 +28,7 @@
         "@babel/plugin-transform-react-jsx": "^7.23.4",
         "@babel/preset-env": "^7.25.3",
         "@babel/preset-typescript": "^7.24.7",
-        "@cocojs/type-extractor": "^0.0.16",
+        "@cocojs/type-extractor": "workspace:*",
         "@microsoft/api-extractor": "^7.52.7",
         "@rollup/plugin-alias": "^5.1.0",
         "@rollup/plugin-babel": "^6.0.4",
