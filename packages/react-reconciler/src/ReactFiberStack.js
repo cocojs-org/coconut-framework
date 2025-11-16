@@ -12,28 +12,24 @@ const valueStack = [];
 let index = -1;
 
 function createStack(defaultValue) {
-  return {
-    current: defaultValue
-  }
+    return {
+        current: defaultValue,
+    };
 }
 
 function pop(cursor) {
-  if (index < 0) {
-    return;
-  }
-  cursor.current = valueStack[index];
-  valueStack[index] = null;
-  index--;
+    if (index < 0) {
+        return;
+    }
+    cursor.current = valueStack[index];
+    valueStack[index] = null;
+    index--;
 }
 
 function push(cursor, value) {
-  index++;
-  valueStack[index] = cursor.current;
-  cursor.current = value;
+    index++;
+    valueStack[index] = cursor.current;
+    cursor.current = value;
 }
 
-export {
-  createStack,
-  pop,
-  push
-}
+export { createStack, pop, push };

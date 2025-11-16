@@ -1,23 +1,18 @@
-import {createHostRootFiber} from "./ReactFiber";
-import {initializeUpdateQueue} from "./ReactFiberClassUpdateQueue";
+import { createHostRootFiber } from './ReactFiber';
+import { initializeUpdateQueue } from './ReactFiberClassUpdateQueue';
 
-export function FiberRootNode(
-  containerInfo,
-) {
-  this.containerInfo = containerInfo;
-  this.current = null;
+export function FiberRootNode(containerInfo) {
+    this.containerInfo = containerInfo;
+    this.current = null;
 }
 
-export function createFiberRoot(
-  containerInfo
-) {
-  const root = new FiberRootNode(containerInfo)
-  const uninitializedFiber = createHostRootFiber()
-  root.current = uninitializedFiber;
-  uninitializedFiber.stateNode = root;
+export function createFiberRoot(containerInfo) {
+    const root = new FiberRootNode(containerInfo);
+    const uninitializedFiber = createHostRootFiber();
+    root.current = uninitializedFiber;
+    uninitializedFiber.stateNode = root;
 
-  initializeUpdateQueue(uninitializedFiber);
+    initializeUpdateQueue(uninitializedFiber);
 
-  return root;
+    return root;
 }
-

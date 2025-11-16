@@ -9,22 +9,22 @@
 // those special-case tags.
 
 const omittedCloseTags = {
-  area: true,
-  base: true,
-  br: true,
-  col: true,
-  embed: true,
-  hr: true,
-  img: true,
-  input: true,
-  keygen: true,
-  link: true,
-  meta: true,
-  param: true,
-  source: true,
-  track: true,
-  wbr: true,
-  // NOTE: menuitem's close tag should be omitted, but that causes problems.
+    area: true,
+    base: true,
+    br: true,
+    col: true,
+    embed: true,
+    hr: true,
+    img: true,
+    input: true,
+    keygen: true,
+    link: true,
+    meta: true,
+    param: true,
+    source: true,
+    track: true,
+    wbr: true,
+    // NOTE: menuitem's close tag should be omitted, but that causes problems.
 };
 
 export default omittedCloseTags;

@@ -11,8 +11,8 @@ import omittedCloseTags from './omittedCloseTags';
 // `omittedCloseTags` except that `menuitem` should still have its closing tag.
 
 const voidElementTags = {
-  menuitem: true,
-  ...omittedCloseTags,
+    menuitem: true,
+    ...omittedCloseTags,
 };
 
 export default voidElementTags;

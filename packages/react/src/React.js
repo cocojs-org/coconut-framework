@@ -10,8 +10,8 @@ import ReactNoopUpdateQueue from './ReactNoopUpdateQueue';
  * }}
  */
 const Children = {
-  map,
-  forEach,
+    map,
+    forEach,
 };
 
 export { Children, jsx, jsxs, ReactNoopUpdateQueue };

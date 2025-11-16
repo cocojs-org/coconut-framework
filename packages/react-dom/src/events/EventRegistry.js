@@ -13,31 +13,24 @@ export const possibleRegistrationNames = __DEV__ ? {} : null;
 
 export const allNativeEvents = new Set();
 
-export function registerTwoPhaseEvent(
-  registrationName,
-  dependencies,
-) {
-  registerDirectEvent(registrationName, dependencies);
-  // registerDirectEvent(registrationName + 'Capture', dependencies);
+export function registerTwoPhaseEvent(registrationName, dependencies) {
+    registerDirectEvent(registrationName, dependencies);
+    // registerDirectEvent(registrationName + 'Capture', dependencies);
 }
 
-export function registerDirectEvent(
-  registrationName,
-  dependencies,
-) {
+export function registerDirectEvent(registrationName, dependencies) {
+    registrationNameDependencies[registrationName] = dependencies;
 
-  registrationNameDependencies[registrationName] = dependencies;
+    if (__DEV__) {
+        const lowerCasedName = registrationName.toLowerCase();
+        possibleRegistrationNames[lowerCasedName] = registrationName;
 
-  if (__DEV__) {
-    const lowerCasedName = registrationName.toLowerCase();
-    possibleRegistrationNames[lowerCasedName] = registrationName;
-
-    if (registrationName === 'onDoubleClick') {
-      possibleRegistrationNames.ondblclick = registrationName;
+        if (registrationName === 'onDoubleClick') {
+            possibleRegistrationNames.ondblclick = registrationName;
+        }
     }
-  }
 
-  for (let i = 0; i < dependencies.length; i++) {
-    allNativeEvents.add(dependencies[i]);
-  }
+    for (let i = 0; i < dependencies.length; i++) {
+        allNativeEvents.add(dependencies[i]);
+    }
 }

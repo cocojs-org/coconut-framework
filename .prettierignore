@@ -6,10 +6,3 @@ coverage
 .DS_Store
 docs
 /pnpm-lock.yaml
-packages/react
-packages/react-dom
-packages/react-reconciler/*
-!packages/react-reconciler/src
-packages/react-reconciler/src/*
-!packages/react-reconciler/src/coco-mvc
-packages/react-shared

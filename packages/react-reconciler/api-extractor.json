@@ -1,22 +1,18 @@
 {
-  "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
-  "mainEntryPointFilePath": "./dts-tmp/src/index.d.ts",
-  "dtsRollup": {
-    "enabled": true,
-    "untrimmedFilePath": "./dist/index.d.ts"
-  },
-  "apiReport": {
-    "enabled": false
-  },
-  "docModel": {
-    "enabled": false
-  },
-  "compiler": {
-    "tsconfigFilePath": "./tsconfig.json"
-  },
-  "bundledPackages": [
-    "coco-ioc-container",
-    "react",
-    "react-dom"
-  ]
+    "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+    "mainEntryPointFilePath": "./dts-tmp/src/index.d.ts",
+    "dtsRollup": {
+        "enabled": true,
+        "untrimmedFilePath": "./dist/index.d.ts"
+    },
+    "apiReport": {
+        "enabled": false
+    },
+    "docModel": {
+        "enabled": false
+    },
+    "compiler": {
+        "tsconfigFilePath": "./tsconfig.json"
+    },
+    "bundledPackages": ["coco-ioc-container", "react", "react-dom"]
 }

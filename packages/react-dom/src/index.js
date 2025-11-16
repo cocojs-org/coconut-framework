@@ -1,12 +1,3 @@
+export { render, unmountComponentAtNode, findDOMNode, registerMvcApi, unregisterMvcApi } from './client/ReactDom';
 
-export {
-  render,
-  unmountComponentAtNode,
-  findDOMNode,
-  registerMvcApi,
-  unregisterMvcApi,
-} from './client/ReactDom'
-
-export {
-  cleanCache,
-} from './shared/DOMProperty'
+export { cleanCache } from './shared/DOMProperty';

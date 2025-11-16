@@ -1,17 +1,15 @@
 {
-  "compilerOptions": {
-    "composite": true,
-    "allowJs": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "dts-tmp",
-    "paths": {
-      "shared": ["../shared"]
-    }
-  },
-  "include": ["src"],
-  "exclude": ["node_modules", "src/__tests__"],
-  "references": [
-    { "path": "../shared" },
-  ]
+    "compilerOptions": {
+        "composite": true,
+        "allowJs": true,
+        "declaration": true,
+        "emitDeclarationOnly": true,
+        "outDir": "dts-tmp",
+        "paths": {
+            "shared": ["../shared"]
+        }
+    },
+    "include": ["src"],
+    "exclude": ["node_modules", "src/__tests__"],
+    "references": [{ "path": "../shared" }]
 }
