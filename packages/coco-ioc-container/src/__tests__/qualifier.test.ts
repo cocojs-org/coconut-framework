@@ -13,7 +13,7 @@ describe('@qualifier装饰器: 通过装饰器配置', () => {
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
         consoleErrorSpy.mockImplementation(() => {});
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         view = cocoMvc.view;
         autowired = cocoMvc.autowired;
         qualifier = cocoMvc.qualifier;
@@ -160,7 +160,7 @@ describe('@qualifier装饰器: 通过动态配置', () => {
     let component;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         view = cocoMvc.view;
         autowired = cocoMvc.autowired;
         qualifier = cocoMvc.qualifier;

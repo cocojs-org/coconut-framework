@@ -9,7 +9,7 @@ describe('@route装饰器', () => {
     let TestWebRender;
     let consoleErrorSpy;
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         component = cocoMvc.component;
         RouteMeta = cocoMvc.RouteMeta;
         route = cocoMvc.route;

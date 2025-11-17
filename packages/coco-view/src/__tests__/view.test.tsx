@@ -12,7 +12,7 @@ describe('view', () => {
     let consoleErrorSpy;
     beforeEach(async () => {
         jest.resetModules();
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         Application = cocoMvc.Application;
         component = cocoMvc.component;
         view = cocoMvc.view;

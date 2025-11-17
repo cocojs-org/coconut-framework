@@ -13,7 +13,7 @@ describe('@memoized和props的联动功能', () => {
     let consoleWarnSpy;
     let consoleErrorSpy;
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         view = cocoMvc.view;
         component = cocoMvc.component;
         Reactive = cocoMvc.Reactive;

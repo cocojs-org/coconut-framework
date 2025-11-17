@@ -35,7 +35,7 @@ const buildInConfig = {
                                     require.resolve('@babel/plugin-transform-react-jsx'),
                                     {
                                         runtime: 'automatic',
-                                        importSource: 'coco-mvc',
+                                        importSource: '@cocojs/mvc',
                                     },
                                 ],
                             ],

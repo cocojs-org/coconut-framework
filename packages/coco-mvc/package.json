@@ -1,18 +1,19 @@
 {
-    "name": "coco-mvc",
-    "version": "0.0.1-alpha202511172004",
-    "main": "dist/coco-mvc.cjs.js",
+    "name": "@cocojs/mvc",
+    "version": "0.0.1-alpha202511172034",
+    "description": "由装饰器驱动，快速构建可扩展的 Web 应用。",
+    "main": "dist/index.cjs.js",
     "types": "dist/index.d.ts",
     "scripts": {},
     "exports": {
         ".": {
-            "import": "./dist/coco-mvc.cjs.js",
-            "require": "./dist/coco-mvc.cjs.js",
+            "import": "./dist/index.cjs.js",
+            "require": "./dist/index.cjs.js",
             "types": "./dist/index.d.ts"
         },
         "./jsx-runtime": {
-            "import": "./dist/coco-mvc.cjs.js",
-            "require": "./dist/coco-mvc.cjs.js",
+            "import": "./dist/index.cjs.js",
+            "require": "./dist/index.cjs.js",
             "types": "./dist/index.d.ts"
         }
     },

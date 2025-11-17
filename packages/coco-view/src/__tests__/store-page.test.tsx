@@ -24,7 +24,7 @@ describe('@store和@page联动功能', () => {
     let consoleWarnSpy;
     let consoleErrorSpy;
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         component = cocoMvc.component;
         view = cocoMvc.view;
         page = cocoMvc.page;

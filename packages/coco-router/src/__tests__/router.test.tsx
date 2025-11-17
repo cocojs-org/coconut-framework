@@ -13,7 +13,7 @@ describe('router', () => {
     let TestWebRender;
     let consoleErrorSpy;
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         component = cocoMvc.component;
         Router = cocoMvc.Router;
         router = cocoMvc.router;

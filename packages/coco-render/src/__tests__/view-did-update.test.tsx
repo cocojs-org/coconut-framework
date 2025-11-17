@@ -12,7 +12,7 @@ describe('viewDidUpdate', () => {
     let bind;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         view = cocoMvc.view;
         reactive = cocoMvc.reactive;
         bind = cocoMvc.bind;

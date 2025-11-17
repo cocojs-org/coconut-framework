@@ -27,7 +27,7 @@ function appendExport(importStatements: string[]) {
     const pre = ``;
 
     const append = `
-import { Application } from "coco-mvc";
+import { Application } from "@cocojs/mvc";
 import applicationJson from "./application.json";
 export { Application };
 

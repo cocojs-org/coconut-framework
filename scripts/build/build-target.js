@@ -7,7 +7,7 @@ const packages = path.join(__dirname, '../../packages');
 const cocoMvc = path.join(packages, './coco-mvc');
 const cocoMvcInput = path.join(cocoMvc, './src/index.ts');
 const cocoMvcInputTest = path.join(cocoMvc, './src/test.ts');
-const cocoMvcOutput = path.join(cocoMvc, './dist/coco-mvc.cjs.js');
+const cocoMvcOutput = path.join(cocoMvc, './dist/index.cjs.js');
 
 const cocoCli = path.join(packages, './coco-cli');
 const cliSrc = path.join(cocoCli, './src/index.ts');
@@ -25,7 +25,6 @@ module.exports.rollupTargets = [
       format: 'cjs',
     },
     alias: [
-      PACKAGE.MVC,
       PACKAGE.MVC_RENDER,
       PACKAGE.VIEW,
       PACKAGE.ROUTER,

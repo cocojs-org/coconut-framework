@@ -13,7 +13,7 @@ describe('@webApplication装饰器', () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
         consoleErrorSpy.mockImplementation(() => {});
         jest.resetModules();
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         Application = cocoMvc.Application;
         view = cocoMvc.view;
         component = cocoMvc.component;

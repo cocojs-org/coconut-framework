@@ -23,7 +23,7 @@ describe('@store和@memoized联动功能', () => {
     let consoleWarnSpy;
     let consoleErrorSpy;
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         component = cocoMvc.component;
         view = cocoMvc.view;
         store = cocoMvc.store;

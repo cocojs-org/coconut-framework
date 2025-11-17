@@ -66,7 +66,7 @@ function getLifeCycleState(instance) {
 
 describe('ReactDOMComponent', () => {
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         Application = cocoMvc.Application;
         view = cocoMvc.view;
         jsx = cocoMvc.jsx;

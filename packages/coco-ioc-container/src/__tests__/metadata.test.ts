@@ -3,7 +3,7 @@ describe('metadata/create-metadata', () => {
     let instantiateMetadata;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         instantiateMetadata = cocoMvc.instantiateMetadata;
     });
     afterEach(() => {
@@ -88,7 +88,7 @@ describe('addClassKindMetadata', () => {
     let Metadata;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         MetadataRepository = cocoMvc.MetadataRepository;
         metadataRepository = new MetadataRepository(new Map());
         Metadata = cocoMvc.Metadata;
@@ -123,7 +123,7 @@ describe('addFieldOrMethodMetadata', () => {
     let Metadata;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         MetadataRepository = cocoMvc.MetadataRepository;
         metadataRepository = new MetadataRepository(new Map());
         Metadata = cocoMvc.Metadata;
@@ -149,7 +149,7 @@ describe('listClassKindMetadata', () => {
     let metadataRepository;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         MetadataRepository = cocoMvc.MetadataRepository;
         metadataRepository = new MetadataRepository(new Map());
     });
@@ -178,7 +178,7 @@ describe('listFieldKindMetadata', () => {
     let metadataRepository;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         MetadataRepository = cocoMvc.MetadataRepository;
         metadataRepository = new MetadataRepository(new Map());
     });
@@ -210,7 +210,7 @@ describe('findClassKindMetadataRecursively', () => {
     let createDecoratorExp;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         MetadataRepository = cocoMvc.MetadataRepository;
         Metadata = cocoMvc.Metadata;
         createDecoratorExp = cocoMvc.createDecoratorExp;
@@ -253,7 +253,7 @@ describe('listBeDecoratedClsByClassKindMetadata', () => {
     let Metadata;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         MetadataRepository = cocoMvc.MetadataRepository;
         metadataRepository = new MetadataRepository(new Map());
         Metadata = cocoMvc.Metadata;
@@ -292,7 +292,7 @@ describe('validate', () => {
     let createPlaceholderDecoratorExp;
     let consoleErrorSpy;
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         MetadataRepository = cocoMvc.MetadataRepository;
         metadataRepository = new MetadataRepository(new Map());
         Metadata = cocoMvc.Metadata;

@@ -12,7 +12,7 @@ let bind;
 let consoleErrorSpy;
 describe('@memoized装饰器', () => {
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         consoleErrorSpy = jest.spyOn(console, 'error');
         consoleErrorSpy.mockImplementation(() => {});
         view = cocoMvc.view;

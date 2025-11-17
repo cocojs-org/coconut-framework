@@ -8,7 +8,7 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
     let application;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         Application = cocoMvc.Application;
         createDecoratorExpFactory = cocoMvc.createDecoratorExpFactory;
         KindClass = cocoMvc.KindClass;
@@ -233,7 +233,7 @@ describe('create-decorator-exp:createDecoratorExp', () => {
     let createPlaceholderDecoratorExp;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         Metadata = cocoMvc.Metadata;
         Application = cocoMvc.Application;
         application = new Application();
@@ -369,7 +369,7 @@ describe('create-decorator-exp:createPlaceholderDecoratorExp', () => {
     let consoleWarnSpy;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         Metadata = cocoMvc.Metadata;
         createPlaceholderDecoratorExp = cocoMvc.createPlaceholderDecoratorExp;
         target = cocoMvc.target;

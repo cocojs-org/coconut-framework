@@ -27,7 +27,7 @@ describe('ReactDOMTextarea', () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
         consoleErrorSpy.mockImplementation(() => {});
 
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         Application = cocoMvc.Application;
         view = cocoMvc.view;
         reactive = cocoMvc.reactive;

@@ -34,7 +34,7 @@ export const build = async () => {
                         }),
                         {
                             runtime: 'automatic',
-                            importSource: 'coco-mvc',
+                            importSource: '@cocojs/mvc',
                         },
                     ],
                 ],

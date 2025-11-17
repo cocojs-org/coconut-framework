@@ -20,7 +20,7 @@ describe('ReactDOMEventListener', () => {
     let container;
 
     beforeEach(async () => {
-        cocoMvc = await import('coco-mvc');
+        cocoMvc = await import('@cocojs/mvc');
         Application = cocoMvc.Application;
         view = cocoMvc.view;
         reactive = cocoMvc.reactive;
