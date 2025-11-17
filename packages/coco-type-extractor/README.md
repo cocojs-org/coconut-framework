@@ -4,6 +4,6 @@ type-extractor是基于[ts-patch](https://github.com/nonara/ts-patch)的Program 
 
 ✨ **已实现的装饰器**
 
--   @comstructorParams()：提取被装饰器类的构造函数的类型
+-   @constructorParams()：提取被装饰器类的构造函数的类型
 -   @autowired(): 提取被装饰器field的类型
 -   @component(): 提取被装饰器方法的返回值的类型
