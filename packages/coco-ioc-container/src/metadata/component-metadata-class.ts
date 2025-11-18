@@ -1,7 +1,7 @@
 /**
  * 组件元数据类
  * 装饰器表达式在运行时都会一一实例化成元数据实例，元数据实例是由元数据类实例化得到
- * 组件元数据类是特殊的元数据类，装饰了组件元数据类的装饰器对应的类都是 ioc 组件了
+ * 组件元数据类是一种特殊的元数据类，装饰了组件元数据类对应装饰器的类都是 ioc 组件了
  * 组件元数据类有如下条件：
  * 1. Component自身就是
  * 2. 有且仅有一个组件元数据类对应的装饰器的元数据类也是，以此类推
@@ -26,6 +26,10 @@ import { className2DecoratorName } from '../share/util.ts';
 
 class ComponentMetadataClass {
     isComponent = new Map<Class<Metadata>, boolean>();
+
+    destructor() {
+        this.isComponent.clear();
+    }
 
     isComponentMetadata(MetadataClass: Class<Metadata>): boolean {
         return this.isComponent.has(MetadataClass) ? this.isComponent.get(MetadataClass) : false;

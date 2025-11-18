@@ -2,30 +2,33 @@
  * ioc容器以及组件工作流
  */
 import {
-    buildComponentMetadataSet,
-    clear as clearComponentMetadataSet,
-    findComponentDecorator,
-    findComponentDecoratorScope,
+    clear as helperClear,
+    findComponentMetadata,
+    getComponentDecoratorScope,
 } from './ioc-component-definition-helper';
-import { type MetadataRepository } from '../metadata';
+import { type ComponentMetadataClass, type MetadataRepository } from '../metadata';
 import Scope, { SCOPE } from '../decorator/metadata/scope';
 import Component from '../decorator/metadata/component';
 import { addDefinition, clear as clearIocComponentDefinition } from './ioc-component-definition';
 import { clear as clearComponentFactory } from './component-factory';
 
-function doBuildIocComponentDefinition(metadataRepository: MetadataRepository) {
-    const [_, bizMetadata] = metadataRepository.getAll();
-    for (const beDecoratedCls of bizMetadata.keys()) {
+function doBuildIocComponentDefinition(
+    metadataRepository: MetadataRepository,
+    componentMetadataClass: ComponentMetadataClass
+) {
+    const [metaMetadata, bizMetadata] = metadataRepository.getAll();
+    for (const [beDecoratedCls, bizMeta] of bizMetadata.entries()) {
         if (bizMetadata.has(beDecoratedCls)) {
-            const componentMetadata = findComponentDecorator(beDecoratedCls, bizMetadata);
+            const componentMetadata = findComponentMetadata(bizMeta, componentMetadataClass);
             if (componentMetadata) {
-                // 确定存在component类装饰器，再确定scope值
                 let scope: SCOPE;
                 const selfScopeMetadata = metadataRepository.listClassKindMetadata(beDecoratedCls, Scope) as Scope[];
                 if (selfScopeMetadata.length > 0) {
+                    // 优先取被装饰器类上的@scope装饰器
                     scope = selfScopeMetadata[0].value;
                 } else {
-                    scope = findComponentDecoratorScope(componentMetadata);
+                    // 取组件装饰器的@scope装饰器
+                    scope = getComponentDecoratorScope(componentMetadata, metaMetadata, componentMetadataClass);
                 }
                 addDefinition(beDecoratedCls, scope === SCOPE.Singleton);
             } else {
@@ -60,12 +63,13 @@ function doBuildIocComponentDefinition(metadataRepository: MetadataRepository) {
  * 遍历所有的业务类，如果有类装饰器，那么就是类组件
  * 遍历所有配置类的方法，如果有@component装饰器，那么也是类组件
  */
-function initIocComponentDefinitionModule(metadataRepository: MetadataRepository) {
-    buildComponentMetadataSet(metadataRepository);
+function initIocComponentDefinitionModule(
+    metadataRepository: MetadataRepository,
+    componentMetadataClass: ComponentMetadataClass
+) {
+    doBuildIocComponentDefinition(metadataRepository, componentMetadataClass);
 
-    doBuildIocComponentDefinition(metadataRepository);
-
-    clearComponentMetadataSet();
+    helperClear();
 }
 
 function clearIocComponentDefinitionModule() {

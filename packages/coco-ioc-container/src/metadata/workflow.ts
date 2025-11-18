@@ -26,12 +26,19 @@ function initMetadataModule(decoratorMap: Map<Class<any>, Params[]>) {
 }
 
 // 元数据相关数据清理
-function clearMetadataModule(metadataRepository: MetadataRepository, idClassMap: IdClassMap) {
+function clearMetadataModule(
+    metadataRepository: MetadataRepository,
+    idClassMap: IdClassMap,
+    componentMetadataClass: ComponentMetadataClass
+) {
     if (metadataRepository) {
         metadataRepository.destructor();
     }
     if (idClassMap) {
         idClassMap.destructor();
+    }
+    if (componentMetadataClass) {
+        componentMetadataClass.destructor();
     }
 }
 

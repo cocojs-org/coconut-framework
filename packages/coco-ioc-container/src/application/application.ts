@@ -34,7 +34,7 @@ class Application {
         this.componentMetadataClass = componentMetadataClass;
 
         // 用元数据信息初始化ioc组件数据
-        initIocComponentDefinitionModule(this.metadataRepository);
+        initIocComponentDefinitionModule(this.metadataRepository, this.componentMetadataClass);
 
         // 实例化配置启动项的组件
         this.bootComponent();
@@ -42,7 +42,7 @@ class Application {
 
     public destructor() {
         clearIocComponentDefinitionModule();
-        clearMetadataModule(this.metadataRepository, this.idClassMap);
+        clearMetadataModule(this.metadataRepository, this.idClassMap, this.componentMetadataClass);
         clearDecoratorParamModule();
     }
 
