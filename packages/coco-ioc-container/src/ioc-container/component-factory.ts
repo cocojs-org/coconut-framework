@@ -1,4 +1,4 @@
-import { type IocComponentDefinition, getInstantiateDefinition, getDefinition } from './ioc-component-definition';
+import { type IocComponentDefinition } from './ioc-component-definition';
 import type Application from '../application';
 import { getCreateDecoratorOption } from '../create-decorator-exp/create-decorator-options';
 import ConstructorParam from '../decorator/metadata/constructor-param';
@@ -74,7 +74,7 @@ function getComponents(application: Application, userOption: ConstructOption) {
         const { classOrId } = opt;
 
         // 要实例化的类定义
-        const targetDefinition = getDefinition(classOrId);
+        const targetDefinition = application.iocComponent.getDefinition(classOrId);
         if (!targetDefinition) {
             const diagnose = createDiagnose(
                 DiagnoseCode.CO10011,
@@ -88,7 +88,7 @@ function getComponents(application: Application, userOption: ConstructOption) {
             qualifier = application.propertiesConfig.getValue(`${targetDefinition.id}.qualifier`);
         }
         // 真正实例化的类定义
-        const instantiateDefinition = getInstantiateDefinition(classOrId, qualifier);
+        const instantiateDefinition = application.iocComponent.getInstantiateDefinition(classOrId, qualifier);
 
         if (instantiateDefinition.isSingleton) {
             if (singletonInstances.has(instantiateDefinition.cls)) {
@@ -224,7 +224,7 @@ function getComponents(application: Application, userOption: ConstructOption) {
 }
 
 function getViewComponent(application: Application, viewClass: Class<any>, props: any[]) {
-    const targetDefinition = getDefinition(viewClass);
+    const targetDefinition = application.iocComponent.getDefinition(viewClass);
     if (!targetDefinition) {
         const diagnose = createDiagnose(
             DiagnoseCode.CO10011,

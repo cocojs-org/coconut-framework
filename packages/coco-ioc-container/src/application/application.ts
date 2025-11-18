@@ -5,6 +5,7 @@ import { initIocComponentDefinitionModule, clearIocComponentDefinitionModule } f
 import PropertiesConfig from '../properties/properties-config';
 import type IdClassMap from '../metadata/id-class-map';
 import type ComponentMetadataClass from '../metadata/component-metadata-class.ts';
+import type IocComponent from '../ioc-container/ioc-component-definition.ts';
 
 /**
  * 表示一个web应用实例
@@ -15,6 +16,7 @@ class Application {
     metadataRepository: MetadataRepository;
     idClassMap: IdClassMap;
     propertiesConfig: PropertiesConfig;
+    iocComponent: IocComponent;
 
     constructor(jsonConfig: Record<string, any> = {}) {
         this.propertiesConfig = new PropertiesConfig(jsonConfig);
@@ -34,14 +36,14 @@ class Application {
         this.componentMetadataClass = componentMetadataClass;
 
         // 用元数据信息初始化ioc组件数据
-        initIocComponentDefinitionModule(this.metadataRepository, this.componentMetadataClass);
+        this.iocComponent = initIocComponentDefinitionModule(this.metadataRepository, this.componentMetadataClass);
 
         // 实例化配置启动项的组件
         this.bootComponent();
     }
 
     public destructor() {
-        clearIocComponentDefinitionModule();
+        clearIocComponentDefinitionModule(this.iocComponent);
         clearMetadataModule(this.metadataRepository, this.idClassMap, this.componentMetadataClass);
         clearDecoratorParamModule();
     }

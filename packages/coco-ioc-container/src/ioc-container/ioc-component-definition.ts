@@ -14,7 +14,7 @@ export interface IocComponentDefinition<T> {
 
     cls: Class<T>;
 
-    // 是否是单例模式，否则每次实例化都会创建一个新的实例
+    // 是否是单例模式，不是的话每次实例化都会创建一个新的实例
     isSingleton: boolean;
 
     // 实例化方式
@@ -25,119 +25,121 @@ export interface IocComponentDefinition<T> {
         method: string; // 方法名
     };
 }
+export type Id = string;
 
-function newIocComponentDefinition<T>(
-    id: string,
-    cls: Class<T>,
-    isSingleton: boolean,
-    instantiateType: 'new' | 'method'
-): IocComponentDefinition<T> {
-    return { id, cls, isSingleton, instantiateType };
-}
+class IocComponent {
+    idDefinitionMap: Map<Id, IocComponentDefinition<any>> = new Map();
+    clsDefinitionMap: Map<Class<any>, IocComponentDefinition<any>> = new Map();
 
-type Id = string;
-const idDefinitionMap: Map<Id, IocComponentDefinition<any>> = new Map();
-const clsDefinitionMap: Map<Class<any>, IocComponentDefinition<any>> = new Map();
+    newIocComponentDefinition<T>(
+        id: string,
+        cls: Class<T>,
+        isSingleton: boolean,
+        instantiateType: 'new' | 'method'
+    ): IocComponentDefinition<T> {
+        return { id, cls, isSingleton, instantiateType };
+    }
 
-function addDefinition(
-    cls: Class<any>,
-    isSingleton: boolean,
-    methodInstantiateOpts?: { configurationCls: Class<any>; method: string }
-) {
-    const existClsDef = clsDefinitionMap.get(cls);
-    if (existClsDef) {
-        throw new Error(`存在同名的组件: [${existClsDef.cls.name}] - [${cls.name}]`);
+    addDefinition(
+        cls: Class<any>,
+        isSingleton: boolean,
+        methodInstantiateOpts?: { configurationCls: Class<any>; method: string }
+    ) {
+        const existClsDef = this.clsDefinitionMap.get(cls);
+        if (existClsDef) {
+            throw new Error(`存在同名的组件: [${existClsDef.cls.name}] - [${cls.name}]`);
+        }
+        const id = uppercaseFirstLetter(cls.name);
+        if (typeof id !== 'string' || !id.trim()) {
+            throw new Error(`生成组件id失败: [${cls.name}]`);
+        }
+        const existIdDef = this.idDefinitionMap.get(id);
+        if (existIdDef) {
+            throw new Error(`存在id的组件: [${existIdDef.cls.name}] - [${cls.name}]`);
+        }
+        const componentDefinition = this.newIocComponentDefinition(
+            id,
+            cls,
+            isSingleton,
+            methodInstantiateOpts ? 'method' : 'new'
+        );
+        if (methodInstantiateOpts) {
+            componentDefinition.methodInstantiateOpts = methodInstantiateOpts;
+        }
+        this.idDefinitionMap.set(id, componentDefinition);
+        this.clsDefinitionMap.set(cls, componentDefinition);
     }
-    const id = uppercaseFirstLetter(cls.name);
-    if (typeof id !== 'string' || !id.trim()) {
-        throw new Error(`生成组件id失败: [${cls.name}]`);
-    }
-    const existIdDef = idDefinitionMap.get(id);
-    if (existIdDef) {
-        throw new Error(`存在id的组件: [${existIdDef.cls.name}] - [${cls.name}]`);
-    }
-    const componentDefinition = newIocComponentDefinition(
-        id,
-        cls,
-        isSingleton,
-        methodInstantiateOpts ? 'method' : 'new'
-    );
-    if (methodInstantiateOpts) {
-        componentDefinition.methodInstantiateOpts = methodInstantiateOpts;
-    }
-    idDefinitionMap.set(id, componentDefinition);
-    clsDefinitionMap.set(cls, componentDefinition);
-}
 
-/**
- * 获取真正会实例化的类定义
- * @param ClsOrId 想要实例化的类或类id
- * @param qualifier 如果存在多个后端类，需要通过qualifier指定具体的类id
- * @returns 真正会实例化的类定义
- */
-function getInstantiateDefinition(ClsOrId: Class<any> | Id, qualifier?: string) {
-    const definition = getDefinition(ClsOrId);
-    if (!definition) {
-        const diagnose = createDiagnose(DiagnoseCode.CO10011, typeof ClsOrId === 'string' ? ClsOrId : ClsOrId.name);
-        throw new Error(stringifyDiagnose(diagnose));
-    }
-    const descendantList: Class<any>[] = Array.from(clsDefinitionMap.keys()).filter((i) =>
-        isDescendantOf(i, definition.cls)
-    );
-    if (descendantList.length === 0) {
-        // 没有子组件直接返回本身
-        return definition;
-    } else if (descendantList.length === 1) {
-        // 有一个子组件
-        return clsDefinitionMap.get(descendantList[0]);
-    } else {
-        // 多个子组件
-        if (qualifier) {
-            for (const child of descendantList) {
-                const def = clsDefinitionMap.get(child);
-                if (def.id === qualifier) {
-                    return def;
+    /**
+     * 获取真正会实例化的类定义
+     * @param ClsOrId 想要实例化的类或类id
+     * @param qualifier 如果存在多个后端类，需要通过qualifier指定具体的类id
+     * @returns 真正会实例化的类定义
+     */
+    getInstantiateDefinition(ClsOrId: Class<any> | Id, qualifier?: string) {
+        const definition = this.getDefinition(ClsOrId);
+        if (!definition) {
+            const diagnose = createDiagnose(DiagnoseCode.CO10011, typeof ClsOrId === 'string' ? ClsOrId : ClsOrId.name);
+            throw new Error(stringifyDiagnose(diagnose));
+        }
+        const descendantList: Class<any>[] = Array.from(this.clsDefinitionMap.keys()).filter((i) =>
+            isDescendantOf(i, definition.cls)
+        );
+        if (descendantList.length === 0) {
+            // 没有子组件直接返回本身
+            return definition;
+        } else if (descendantList.length === 1) {
+            // 有一个子组件
+            return this.clsDefinitionMap.get(descendantList[0]);
+        } else {
+            // 多个子组件
+            if (qualifier) {
+                for (const child of descendantList) {
+                    const def = this.clsDefinitionMap.get(child);
+                    if (def.id === qualifier) {
+                        return def;
+                    }
                 }
             }
+            if (qualifier) {
+                const diagnose = createDiagnose(
+                    DiagnoseCode.CO10010,
+                    definition.id,
+                    descendantList.map((i) => i.name),
+                    qualifier
+                );
+                throw new Error(stringifyDiagnose(diagnose));
+            } else {
+                const diagnose = createDiagnose(
+                    DiagnoseCode.CO10009,
+                    definition.id,
+                    descendantList.map((i) => i.name)
+                );
+                throw new Error(stringifyDiagnose(diagnose));
+            }
         }
-        if (qualifier) {
-            const diagnose = createDiagnose(
-                DiagnoseCode.CO10010,
-                definition.id,
-                descendantList.map((i) => i.name),
-                qualifier
-            );
-            throw new Error(stringifyDiagnose(diagnose));
+    }
+
+    getDefinition(ClsOrId: Class<any> | Id) {
+        if (typeof ClsOrId === 'string') {
+            return this.idDefinitionMap.get(ClsOrId);
         } else {
-            const diagnose = createDiagnose(
-                DiagnoseCode.CO10009,
-                definition.id,
-                descendantList.map((i) => i.name)
-            );
-            throw new Error(stringifyDiagnose(diagnose));
+            return this.clsDefinitionMap.get(ClsOrId);
         }
     }
-}
 
-function getDefinition(ClsOrId: Class<any> | Id) {
-    if (typeof ClsOrId === 'string') {
-        return idDefinitionMap.get(ClsOrId);
-    } else {
-        return clsDefinitionMap.get(ClsOrId);
+    existDefinition(ClsOrId: Class<any> | Id) {
+        if (typeof ClsOrId === 'string') {
+            return this.idDefinitionMap.has(ClsOrId);
+        } else {
+            return this.clsDefinitionMap.has(ClsOrId);
+        }
+    }
+
+    destructor() {
+        this.idDefinitionMap.clear();
+        this.clsDefinitionMap.clear();
     }
 }
 
-function existDefinition(ClsOrId: Class<any> | Id) {
-    if (typeof ClsOrId === 'string') {
-        return idDefinitionMap.has(ClsOrId);
-    } else {
-        return clsDefinitionMap.has(ClsOrId);
-    }
-}
-
-function clear() {
-    idDefinitionMap.clear();
-    clsDefinitionMap.clear();
-}
-
-export { type Id, clear, existDefinition, getInstantiateDefinition, getDefinition, addDefinition };
+export default IocComponent;
