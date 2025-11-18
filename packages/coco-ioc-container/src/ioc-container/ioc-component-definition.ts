@@ -8,7 +8,7 @@ import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
  * 2. 第三方添加@component类装饰的组件
  * 3. 项目中通过@component方法装饰注册的组件
  */
-export interface IocComponentDefinition<T> {
+export interface IocComDef<T> {
     // 组件id，每个组件的id是唯一的
     id: string;
 
@@ -27,16 +27,16 @@ export interface IocComponentDefinition<T> {
 }
 export type Id = string;
 
-class IocComponent {
-    idDefinitionMap: Map<Id, IocComponentDefinition<any>> = new Map();
-    clsDefinitionMap: Map<Class<any>, IocComponentDefinition<any>> = new Map();
+class IocComponentDefinition {
+    idDefinitionMap: Map<Id, IocComDef<any>> = new Map();
+    clsDefinitionMap: Map<Class<any>, IocComDef<any>> = new Map();
 
     newIocComponentDefinition<T>(
         id: string,
         cls: Class<T>,
         isSingleton: boolean,
         instantiateType: 'new' | 'method'
-    ): IocComponentDefinition<T> {
+    ): IocComDef<T> {
         return { id, cls, isSingleton, instantiateType };
     }
 
@@ -142,4 +142,4 @@ class IocComponent {
     }
 }
 
-export default IocComponent;
+export default IocComponentDefinition;

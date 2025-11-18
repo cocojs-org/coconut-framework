@@ -1,4 +1,4 @@
-import { type IocComponentDefinition } from './ioc-component-definition';
+import { type IocComDef } from './ioc-component-definition';
 import type Application from '../application';
 import { getCreateDecoratorOption } from '../create-decorator-exp/create-decorator-options';
 import ConstructorParam from '../decorator/metadata/constructor-param';
@@ -9,11 +9,7 @@ import Qualifier from '../decorator/metadata/qualifier';
 // 单例构造函数和单例的映射关系
 const singletonInstances: Map<Class<any>, any> = new Map();
 
-function createComponent<T>(
-    application: Application,
-    definition: IocComponentDefinition<T>,
-    constructorArgs: any[]
-): T {
+function createComponent<T>(application: Application, definition: IocComDef<T>, constructorArgs: any[]): T {
     const { cls, instantiateType } = definition;
     let component;
     if (instantiateType === 'new') {
@@ -74,7 +70,7 @@ function getComponents(application: Application, userOption: ConstructOption) {
         const { classOrId } = opt;
 
         // 要实例化的类定义
-        const targetDefinition = application.iocComponent.getDefinition(classOrId);
+        const targetDefinition = application.iocComponentDefinition.getDefinition(classOrId);
         if (!targetDefinition) {
             const diagnose = createDiagnose(
                 DiagnoseCode.CO10011,
@@ -88,7 +84,7 @@ function getComponents(application: Application, userOption: ConstructOption) {
             qualifier = application.propertiesConfig.getValue(`${targetDefinition.id}.qualifier`);
         }
         // 真正实例化的类定义
-        const instantiateDefinition = application.iocComponent.getInstantiateDefinition(classOrId, qualifier);
+        const instantiateDefinition = application.iocComponentDefinition.getInstantiateDefinition(classOrId, qualifier);
 
         if (instantiateDefinition.isSingleton) {
             if (singletonInstances.has(instantiateDefinition.cls)) {
@@ -224,7 +220,7 @@ function getComponents(application: Application, userOption: ConstructOption) {
 }
 
 function getViewComponent(application: Application, viewClass: Class<any>, props: any[]) {
-    const targetDefinition = application.iocComponent.getDefinition(viewClass);
+    const targetDefinition = application.iocComponentDefinition.getDefinition(viewClass);
     if (!targetDefinition) {
         const diagnose = createDiagnose(
             DiagnoseCode.CO10011,

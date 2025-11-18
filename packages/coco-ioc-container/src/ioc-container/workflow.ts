@@ -9,13 +9,13 @@ import {
 import { type ComponentMetadataClass, type MetadataRepository } from '../metadata';
 import Scope, { SCOPE } from '../decorator/metadata/scope';
 import Component from '../decorator/metadata/component';
-import IocComponent from './ioc-component-definition';
+import IocComponentDefinition from './ioc-component-definition';
 import { clear as clearComponentFactory } from './component-factory';
 
 function doBuildIocComponentDefinition(
     metadataRepository: MetadataRepository,
     componentMetadataClass: ComponentMetadataClass,
-    iocComponent: IocComponent
+    iocComponentDefinition: IocComponentDefinition
 ) {
     const [metaMetadata, bizMetadata] = metadataRepository.getAll();
     for (const [beDecoratedCls, bizMeta] of bizMetadata.entries()) {
@@ -31,7 +31,7 @@ function doBuildIocComponentDefinition(
                     // 取组件装饰器的@scope装饰器
                     scope = getComponentDecoratorScope(componentMetadata, metaMetadata, componentMetadataClass);
                 }
-                iocComponent.addDefinition(beDecoratedCls, scope === SCOPE.Singleton);
+                iocComponentDefinition.addDefinition(beDecoratedCls, scope === SCOPE.Singleton);
             } else {
                 const methods = metadataRepository.listMethodByMetadataCls(beDecoratedCls, Component);
                 for (const method of methods) {
@@ -45,7 +45,7 @@ function doBuildIocComponentDefinition(
                         method,
                         Scope
                     ) as Scope[];
-                    iocComponent.addDefinition(
+                    iocComponentDefinition.addDefinition(
                         componentMetas[0].value,
                         !scopeMetas.length || scopeMetas[0].value === SCOPE.Singleton,
                         {
@@ -68,20 +68,20 @@ function initIocComponentDefinitionModule(
     metadataRepository: MetadataRepository,
     componentMetadataClass: ComponentMetadataClass
 ) {
-    const iocComponent = new IocComponent();
+    const iocComponentDefinition = new IocComponentDefinition();
 
-    doBuildIocComponentDefinition(metadataRepository, componentMetadataClass, iocComponent);
+    doBuildIocComponentDefinition(metadataRepository, componentMetadataClass, iocComponentDefinition);
     helperClear();
 
-    return iocComponent;
+    return iocComponentDefinition;
 }
 
-function clearIocComponentDefinitionModule(iocComponent: IocComponent) {
+function clearIocComponentDefinitionModule(iocComponentDefinition: IocComponentDefinition) {
     clearComponentFactory();
     if (__TEST__) {
-        iocComponent?.destructor();
+        iocComponentDefinition?.destructor();
     } else {
-        iocComponent.destructor();
+        iocComponentDefinition.destructor();
     }
 }
 
