@@ -10,7 +10,7 @@ import { type ComponentMetadataClass, type MetadataRepository } from '../metadat
 import Scope, { SCOPE } from '../decorator/metadata/scope';
 import Component from '../decorator/metadata/component';
 import IocComponentDefinition from './ioc-component-definition';
-import { clear as clearComponentFactory } from './component-factory';
+import IocComponentFactory from './ioc-component-factory.ts';
 
 function doBuildIocComponentDefinition(
     metadataRepository: MetadataRepository,
@@ -64,7 +64,7 @@ function doBuildIocComponentDefinition(
  * 遍历所有的业务类，如果有类装饰器，那么就是类组件
  * 遍历所有配置类的方法，如果有@component装饰器，那么也是类组件
  */
-function initIocComponentDefinitionModule(
+function initIocComponentModule(
     metadataRepository: MetadataRepository,
     componentMetadataClass: ComponentMetadataClass
 ) {
@@ -73,16 +73,23 @@ function initIocComponentDefinitionModule(
     doBuildIocComponentDefinition(metadataRepository, componentMetadataClass, iocComponentDefinition);
     helperClear();
 
-    return iocComponentDefinition;
+    return {
+        iocComponentDefinition,
+        iocComponentFactory: new IocComponentFactory(),
+    };
 }
 
-function clearIocComponentDefinitionModule(iocComponentDefinition: IocComponentDefinition) {
-    clearComponentFactory();
+function destructorIocComponentModule(
+    iocComponentDefinition: IocComponentDefinition,
+    iocComponentFactory: IocComponentFactory
+) {
     if (__TEST__) {
+        iocComponentFactory?.destructor();
         iocComponentDefinition?.destructor();
     } else {
+        iocComponentFactory.destructor();
         iocComponentDefinition.destructor();
     }
 }
 
-export { initIocComponentDefinitionModule, clearIocComponentDefinitionModule };
+export { initIocComponentModule, destructorIocComponentModule };

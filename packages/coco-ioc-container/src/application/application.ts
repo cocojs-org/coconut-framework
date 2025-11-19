@@ -1,7 +1,7 @@
-import { getComponents, getViewComponent } from '../ioc-container/component-factory';
+import IocComponentFactory from '../ioc-container/ioc-component-factory';
 import { initMetadataModule, clearMetadataModule, type Metadata, type MetadataRepository } from '../metadata';
 import { getDecoratorParam, initDecoratorParamModule, clearDecoratorParamModule } from '../create-decorator-exp';
-import { initIocComponentDefinitionModule, clearIocComponentDefinitionModule } from '../ioc-container/workflow';
+import { initIocComponentModule, destructorIocComponentModule } from '../ioc-container/workflow';
 import PropertiesConfig from '../properties/properties-config';
 import type IdClassMap from '../metadata/id-class-map';
 import type ComponentMetadataClass from '../metadata/component-metadata-class.ts';
@@ -17,6 +17,7 @@ class Application {
     idClassMap: IdClassMap;
     propertiesConfig: PropertiesConfig;
     iocComponentDefinition: IocComponentDefinition;
+    iocComponentFactory: IocComponentFactory;
 
     constructor(jsonConfig: Record<string, any> = {}) {
         this.propertiesConfig = new PropertiesConfig(jsonConfig);
@@ -36,17 +37,19 @@ class Application {
         this.componentMetadataClass = componentMetadataClass;
 
         // 用元数据信息初始化ioc组件数据
-        this.iocComponentDefinition = initIocComponentDefinitionModule(
+        const { iocComponentFactory, iocComponentDefinition } = initIocComponentModule(
             this.metadataRepository,
             this.componentMetadataClass
         );
+        this.iocComponentDefinition = iocComponentDefinition;
+        this.iocComponentFactory = iocComponentFactory;
 
         // 实例化配置启动项的组件
         this.bootComponent();
     }
 
     public destructor() {
-        clearIocComponentDefinitionModule(this.iocComponentDefinition);
+        destructorIocComponentModule(this.iocComponentDefinition, this.iocComponentFactory);
         clearMetadataModule(this.metadataRepository, this.idClassMap, this.componentMetadataClass);
         clearDecoratorParamModule();
     }
@@ -64,7 +67,7 @@ class Application {
             // TODO:
             return null;
         } else {
-            return getComponents(this, {
+            return this.iocComponentFactory.getComponents(this, {
                 classOrId: ClsOrId,
                 qualifier: option?.qualifier,
             });
@@ -78,7 +81,7 @@ class Application {
      * @returns
      */
     public getViewComponent<T>(viewClass: Class<T>, props?: any[]) {
-        return getViewComponent(this, viewClass, props);
+        return this.iocComponentFactory.getViewComponent(this, viewClass, props);
     }
 
     public listFieldByMetadataCls(beDecoratedCls: Class<any>, MetadataCls: Class<any>) {
@@ -106,7 +109,7 @@ class Application {
 
         // TODO: 支持多个组件初始化
         const bootComponent = bootComponents[0];
-        getComponents(this, { classOrId: bootComponent });
+        this.iocComponentFactory.getComponents(this, { classOrId: bootComponent });
     }
 }
 

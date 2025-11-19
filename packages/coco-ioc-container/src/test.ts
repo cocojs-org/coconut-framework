@@ -1,7 +1,7 @@
 export * from './index.ts';
 import { MetadataRepository } from './metadata/index.ts';
 import Metadata, { instantiateMetadata } from './metadata/instantiate-one-metadata.ts';
-import { createDecoratorExpFactory } from './create-decorator-exp/index';
+import { createDecoratorExpFactory } from './create-decorator-exp';
 import type Application from './application/application.ts';
 import _ from 'lodash';
 
