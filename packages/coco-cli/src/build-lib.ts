@@ -6,7 +6,7 @@ import babel from '@rollup/plugin-babel';
 
 export const build = async () => {
     const result = await rollup({
-        input: path.join(process.cwd(), './src/lib.ts'),
+        input: path.join(process.cwd(), './src/index.ts'),
         plugins: [
             typescript({
                 compilerOptions: {
@@ -42,7 +42,7 @@ export const build = async () => {
         ],
     });
     await result.write({
-        file: path.join(process.cwd(), './dist/bundle.esm.js'),
+        file: path.join(process.cwd(), './dist/index.esm.js'),
         format: 'es',
     });
 };
