@@ -7,7 +7,7 @@ interface IGetter {
 interface ISetter {
     (object: Record<any, any>, field: string, newValue: any): void;
 }
-// TODO: props也使用此函数进行响应式
+
 function defineReactive(object: Record<any, any>, field: string, getter: IGetter, setter?: ISetter) {
     const publisher = new Publisher();
     Object.defineProperty(object, field, {

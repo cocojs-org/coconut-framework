@@ -1,37 +1,24 @@
 /**
  * 视图组件的props
  */
-import { Publisher, Subscriber } from 'coco-view';
+import { defineReactive } from 'coco-view';
 
 const NoReactiveProps = ['children'];
 
 function initProps(instance, newProps) {
+    // TODO: 添加 props 相关测试用例
     instance.props = newProps;
     const _values = {};
     for (const field of Object.keys(newProps)) {
         if (NoReactiveProps.indexOf(field) !== -1) {
             continue;
         }
-        const publisher = new Publisher();
         _values[field] = newProps[field];
-        Object.defineProperty(instance.props, field, {
-            configurable: false,
-            enumerable: true,
-            get: function () {
-                if (Subscriber.Executing) {
-                    Subscriber.Executing.subscribe(publisher);
-                }
-                return _values[field];
-            },
-            set(v) {
-                if (_values[field] === v || (v !== v && _values[field] !== _values[field])) {
-                    return true;
-                }
-                _values[field] = v;
-                publisher.notify();
-                return true;
-            },
-        });
+        const getter = () => _values[field];
+        const setter = (object, key, newValue) => {
+            _values[field] = newValue;
+        };
+        defineReactive(instance.props, field, getter, setter);
     }
 }
 
