@@ -15,5 +15,5 @@
         "react-shared": "0.0.0",
         "shared": "0.0.0"
     },
-    "changesets": ["warm-nights-stay"]
+    "changesets": ["tasty-llamas-jump", "warm-nights-stay"]
 }
