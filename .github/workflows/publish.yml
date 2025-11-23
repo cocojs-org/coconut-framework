@@ -71,18 +71,19 @@ jobs:
         run: |
           echo "=== Configuring npm authentication ==="
           if [ -n "$NODE_AUTH_TOKEN" ]; then
-            # 使用 npm config 设置认证（更可靠的方式）
+            # 使用 npm config 设置基本配置
             npm config set registry https://registry.npmjs.org/
             npm config set @cocojs:registry https://registry.npmjs.org/
             npm config set //registry.npmjs.org/:_authToken "${NODE_AUTH_TOKEN}"
-            npm config set //registry.npmjs.org/:always-auth true
-            echo "✅ Configured npm authentication via npm config"
+            
+            # always-auth 需要直接写入 .npmrc 文件
+            echo "//registry.npmjs.org/:always-auth=true" >> ~/.npmrc
+            
+            echo "✅ Configured npm authentication"
             echo ""
             echo "=== Verifying npm configuration ==="
             npm config get registry
             npm config get @cocojs:registry
-            npm config get //registry.npmjs.org/:_authToken | sed 's/.*/***HIDDEN***/'
-            npm config get //registry.npmjs.org/:always-auth
             echo ""
             echo "=== Checking .npmrc file ==="
             if [ -f ~/.npmrc ]; then
