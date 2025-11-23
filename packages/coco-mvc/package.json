@@ -25,6 +25,7 @@
     ],
     "author": "",
     "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
         "access": "public"
     },
     "homepage": "https://github.com/cocojs-org/coconut-framework",
