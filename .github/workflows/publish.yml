@@ -33,6 +33,9 @@ jobs:
           cache: 'pnpm'
           registry-url: 'https://registry.npmjs.org'  # 👈 必须
           scope: '@cocojs'                            # 👈 必须（匹配你的包名）
+          always-auth: true                           # 👈 必须：对于作用域包，需要始终认证
+          # setup-node@v4 会自动使用 OIDC 获取 npm token（需要 npm 账户配置 OIDC 信任关系）
+          # 确保 npm 账户已配置 OIDC：https://docs.npmjs.com/using-github-actions-with-npm
 
       - name: Install dependencies
         run: pnpm install
