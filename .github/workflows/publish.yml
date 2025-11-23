@@ -71,14 +71,24 @@ jobs:
         run: |
           echo "=== Configuring npm authentication ==="
           if [ -n "$NODE_AUTH_TOKEN" ]; then
-            # 确保 .npmrc 文件存在并配置正确
-            echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
-            echo "@cocojs:registry=https://registry.npmjs.org/" >> ~/.npmrc
-            echo "//registry.npmjs.org/:always-auth=true" >> ~/.npmrc
-            echo "✅ Created ~/.npmrc with authentication"
+            # 使用 npm config 设置认证（更可靠的方式）
+            npm config set registry https://registry.npmjs.org/
+            npm config set @cocojs:registry https://registry.npmjs.org/
+            npm config set //registry.npmjs.org/:_authToken "${NODE_AUTH_TOKEN}"
+            npm config set //registry.npmjs.org/:always-auth true
+            echo "✅ Configured npm authentication via npm config"
             echo ""
-            echo "=== Verifying .npmrc configuration ==="
-            cat ~/.npmrc | sed 's/:_authToken=.*/:_authToken=***HIDDEN***/'
+            echo "=== Verifying npm configuration ==="
+            npm config get registry
+            npm config get @cocojs:registry
+            npm config get //registry.npmjs.org/:_authToken | sed 's/.*/***HIDDEN***/'
+            npm config get //registry.npmjs.org/:always-auth
+            echo ""
+            echo "=== Checking .npmrc file ==="
+            if [ -f ~/.npmrc ]; then
+              echo "~/.npmrc content:"
+              cat ~/.npmrc | sed 's/:_authToken=.*/:_authToken=***HIDDEN***/'
+            fi
           else
             echo "❌ NODE_AUTH_TOKEN is not set"
             exit 1
@@ -99,27 +109,44 @@ jobs:
       - name: Verify npm authentication and permissions
         run: |
           echo "=== Checking npm authentication ==="
-          # 先测试一次，获取详细错误信息
+          echo "Testing with npm whoami..."
+          
+          # 检查 npm 配置
+          echo "npm registry: $(npm config get registry)"
+          echo "npm @cocojs:registry: $(npm config get @cocojs:registry)"
+          echo ""
+          
+          # 尝试使用不同的方式测试认证
+          echo "Method 1: npm whoami"
+          npm whoami 2>&1 || true
+          echo ""
+          
+          echo "Method 2: npm whoami with explicit registry"
           npm whoami --registry=https://registry.npmjs.org/ 2>&1 || true
           echo ""
           
-          # 再次尝试，这次如果失败就退出
-          if npm whoami --registry=https://registry.npmjs.org/; then
+          echo "Method 3: Using NODE_AUTH_TOKEN environment variable"
+          NODE_AUTH_TOKEN="${NODE_AUTH_TOKEN}" npm whoami 2>&1 || true
+          echo ""
+          
+          # 最终验证
+          if npm whoami --registry=https://registry.npmjs.org/ 2>/dev/null; then
             echo "✅ Authenticated successfully via OIDC"
+            npm whoami --registry=https://registry.npmjs.org/
           else
             echo "❌ OIDC authentication failed"
             echo ""
-            echo "⚠️  Possible issues:"
-            echo "   1. Token may be invalid or expired"
-            echo "   2. npm Trusted Publishers configuration may not match exactly"
-            echo "   3. Account may not have publish permissions for @cocojs scope"
+            echo "⚠️  Token is valid (curl test passed) but npm client cannot use it"
+            echo "    This may indicate:"
+            echo "    1. npm client configuration issue"
+            echo "    2. Token format incompatibility"
+            echo "    3. npm version compatibility issue"
             echo ""
-            echo "Please verify:"
-            echo "   - npm package settings: https://www.npmjs.com/package/@cocojs/mvc/settings"
-            echo "   - Trusted Publishers: owner=cocojs-org, repo=coconut-framework, workflow=publish.yml"
-            echo "   - Account permissions for @cocojs scope"
+            echo "Current npm version:"
+            npm --version
             echo ""
-            echo "Reference: https://docs.npmjs.com/using-github-actions-with-npm"
+            echo "Please check npm package settings:"
+            echo "   https://www.npmjs.com/package/@cocojs/mvc/settings"
             exit 1
           fi
           echo ""
