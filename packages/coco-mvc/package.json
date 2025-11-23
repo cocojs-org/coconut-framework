@@ -24,6 +24,9 @@
         "cocojs"
     ],
     "author": "",
+    "publishConfig": {
+        "access": "public"
+    },
     "homepage": "https://github.com/cocojs-org/coconut-framework",
     "repository": {
         "type": "git",
