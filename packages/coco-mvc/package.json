@@ -25,5 +25,9 @@
     ],
     "author": "",
     "homepage": "https://github.com/cocojs-org/coconut-framework",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cocojs-org/coconut-framework.git"
+    },
     "license": "MIT"
 }

@@ -6,8 +6,9 @@ on:
       - main
 
 permissions:
-  contents: write    # 允许 push、创建 tag、创建 release
-  pull-requests: write  # 允许创建/更新 PR（用于 "Version Packages" PR）
+  id-token: write        # 👈 必须：用于 OIDC 获取 npm 临时 token
+  contents: write        # 允许 push、创建 tag、创建 release
+  pull-requests: write   # 允许创建/更新 PR（用于 "Version Packages" PR）
 
 env:
   CI: true
@@ -30,6 +31,8 @@ jobs:
         with:
           node-version: 20
           cache: 'pnpm'
+          registry-url: 'https://registry.npmjs.org'  # 👈 必须
+          scope: '@cocojs'                            # 👈 必须（匹配你的包名）
 
       - name: Install dependencies
         run: pnpm install
@@ -43,4 +46,3 @@ jobs:
           onlyPublishWithReleaseLabel: false
         env:
           GITHUB_TOKEN: ${{ secrets.COCONUT_FRAMEWORK_CREATE_PR }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
