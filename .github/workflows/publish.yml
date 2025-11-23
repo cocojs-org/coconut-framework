@@ -51,19 +51,37 @@ jobs:
           npm config get registry
           npm config get @cocojs:registry
           echo ""
+          echo "=== Checking for NODE_AUTH_TOKEN ==="
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            echo "✅ NODE_AUTH_TOKEN is set (length: ${#NODE_AUTH_TOKEN})"
+            echo "Token prefix: ${NODE_AUTH_TOKEN:0:10}..."
+          else
+            echo "⚠️  NODE_AUTH_TOKEN is not set - OIDC may not be working"
+          fi
+          echo ""
           echo "=== Checking .npmrc file ==="
           if [ -f ~/.npmrc ]; then
             echo "~/.npmrc exists:"
             cat ~/.npmrc | sed 's/:_authToken=.*/:_authToken=***HIDDEN***/' || true
           else
-            echo "⚠️  ~/.npmrc file not found"
+            echo "⚠️  ~/.npmrc file not found - will create it explicitly"
           fi
-          echo ""
-          echo "=== Checking for NODE_AUTH_TOKEN ==="
+
+      - name: Configure npm authentication
+        run: |
+          echo "=== Configuring npm authentication ==="
           if [ -n "$NODE_AUTH_TOKEN" ]; then
-            echo "✅ NODE_AUTH_TOKEN is set (length: ${#NODE_AUTH_TOKEN})"
+            # 确保 .npmrc 文件存在并配置正确
+            echo "//registry.npmjs.org/:_authToken=${NODE_AUTH_TOKEN}" > ~/.npmrc
+            echo "@cocojs:registry=https://registry.npmjs.org/" >> ~/.npmrc
+            echo "//registry.npmjs.org/:always-auth=true" >> ~/.npmrc
+            echo "✅ Created ~/.npmrc with authentication"
+            echo ""
+            echo "=== Verifying .npmrc configuration ==="
+            cat ~/.npmrc | sed 's/:_authToken=.*/:_authToken=***HIDDEN***/'
           else
-            echo "⚠️  NODE_AUTH_TOKEN is not set - OIDC may not be working"
+            echo "❌ NODE_AUTH_TOKEN is not set"
+            exit 1
           fi
 
       - name: Verify npm authentication and permissions
