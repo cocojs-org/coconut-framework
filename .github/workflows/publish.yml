@@ -40,6 +40,22 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Verify npm authentication and permissions
+        run: |
+          echo "=== Checking npm authentication ==="
+          npm whoami --registry=https://registry.npmjs.org/ || (echo "❌ Not authenticated" && exit 1)
+          echo "✅ Authenticated successfully"
+          echo ""
+          echo "=== Checking @cocojs scope access ==="
+          npm access ls-packages @cocojs 2>&1 || echo "⚠️  Cannot list packages - this may indicate permission issues"
+          echo ""
+          echo "=== Checking npm registry configuration ==="
+          npm config get registry
+          npm config get @cocojs:registry
+          echo ""
+          echo "=== Verifying package.json publishConfig ==="
+          cat packages/coco-mvc/package.json | grep -A 3 "publishConfig" || echo "⚠️  publishConfig not found in coco-mvc"
+
       - name: Create and publish versions
         uses: changesets/action@v1
         with:
