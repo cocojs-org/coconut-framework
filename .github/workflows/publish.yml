@@ -84,26 +84,42 @@ jobs:
             exit 1
           fi
 
+      - name: Test npm token validity
+        run: |
+          echo "=== Testing npm token validity ==="
+          # 测试 token 是否有效
+          if curl -s -H "Authorization: Bearer ${NODE_AUTH_TOKEN}" https://registry.npmjs.org/-/whoami > /tmp/npm-whoami.json 2>&1; then
+            echo "✅ Token is valid, response:"
+            cat /tmp/npm-whoami.json
+          else
+            echo "❌ Token validation failed, response:"
+            cat /tmp/npm-whoami.json || true
+          fi
+
       - name: Verify npm authentication and permissions
         run: |
           echo "=== Checking npm authentication ==="
+          # 先测试一次，获取详细错误信息
+          npm whoami --registry=https://registry.npmjs.org/ 2>&1 || true
+          echo ""
+          
+          # 再次尝试，这次如果失败就退出
           if npm whoami --registry=https://registry.npmjs.org/; then
             echo "✅ Authenticated successfully via OIDC"
           else
             echo "❌ OIDC authentication failed"
             echo ""
-            echo "⚠️  Troubleshooting steps:"
-            echo "   1. Verify OIDC is configured in npm package settings:"
-            echo "      - Go to https://www.npmjs.com/package/@cocojs/mvc/settings"
-            echo "      - Check 'Trusted Publishers' section"
-            echo "      - Ensure GitHub owner: cocojs-org"
-            echo "      - Ensure repository: coconut-framework"
-            echo "      - Ensure workflow file: publish.yml"
+            echo "⚠️  Possible issues:"
+            echo "   1. Token may be invalid or expired"
+            echo "   2. npm Trusted Publishers configuration may not match exactly"
+            echo "   3. Account may not have publish permissions for @cocojs scope"
             echo ""
-            echo "   2. Verify you have publish access to @cocojs scope"
-            echo "   3. Check npm account permissions"
+            echo "Please verify:"
+            echo "   - npm package settings: https://www.npmjs.com/package/@cocojs/mvc/settings"
+            echo "   - Trusted Publishers: owner=cocojs-org, repo=coconut-framework, workflow=publish.yml"
+            echo "   - Account permissions for @cocojs scope"
             echo ""
-            echo "   Reference: https://docs.npmjs.com/using-github-actions-with-npm"
+            echo "Reference: https://docs.npmjs.com/using-github-actions-with-npm"
             exit 1
           fi
           echo ""
