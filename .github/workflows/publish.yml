@@ -1,43 +1,39 @@
-name: Publish
+name: Changesets
 
 on:
   push:
-    tags:
-      - 'v0.0.1-alpha*'
+    branches:
+      - main
+
+env:
+  CI: true
 
 jobs:
-  publish:
+  version:
+    timeout-minutes: 15
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18.16.0'
-
-      - name: Install pnpm
-        run: npm install -g pnpm@8.6.2
+          node-version: 20
+          cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build
-        run: pnpm build
-
-      - name: Add Npm Token
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" >> ./.npmrc
-
-      - name: Publish coco-mvc
-        working-directory: packages/coco-mvc
-        run: pnpm publish --access public --no-git-checks
+      - name: Create and publish versions
+        uses: changesets/action@v1
+        with:
+          commit: "chore: update versions"
+          title: "chore: update versions"
+          publish: pnpm ci:publish
         env:
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Publish @cocojs/cli
-        working-directory: packages/coco-cli
-        run: pnpm publish --access public --no-git-checks
-        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
