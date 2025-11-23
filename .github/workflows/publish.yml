@@ -43,15 +43,18 @@ jobs:
       - name: Verify npm authentication and permissions
         run: |
           echo "=== Checking npm authentication ==="
-          npm whoami --registry=https://registry.npmjs.org/ || (echo "❌ Not authenticated" && exit 1)
-          echo "✅ Authenticated successfully"
+          if npm whoami --registry=https://registry.npmjs.org/; then
+            echo "✅ Authenticated successfully via OIDC"
+          else
+            echo "❌ OIDC authentication failed"
+            echo ""
+            echo "⚠️  Please configure OIDC in your npm account:"
+            echo "   https://docs.npmjs.com/using-github-actions-with-npm"
+            exit 1
+          fi
           echo ""
           echo "=== Checking @cocojs scope access ==="
-          npm access ls-packages @cocojs 2>&1 || echo "⚠️  Cannot list packages - this may indicate permission issues"
-          echo ""
-          echo "=== Checking npm registry configuration ==="
-          npm config get registry
-          npm config get @cocojs:registry
+          npm access ls-packages @cocojs 2>&1 || echo "⚠️  Cannot list packages - check permissions"
           echo ""
           echo "=== Verifying package.json publishConfig ==="
           cat packages/coco-mvc/package.json | grep -A 3 "publishConfig" || echo "⚠️  publishConfig not found in coco-mvc"
