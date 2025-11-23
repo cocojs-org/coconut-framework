@@ -40,6 +40,32 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Debug OIDC and npm configuration
+        run: |
+          echo "=== GitHub Actions Environment ==="
+          echo "GITHUB_REPOSITORY: ${{ github.repository }}"
+          echo "GITHUB_REF: ${{ github.ref }}"
+          echo "GITHUB_WORKFLOW: ${{ github.workflow }}"
+          echo ""
+          echo "=== Checking npm registry configuration ==="
+          npm config get registry
+          npm config get @cocojs:registry
+          echo ""
+          echo "=== Checking .npmrc file ==="
+          if [ -f ~/.npmrc ]; then
+            echo "~/.npmrc exists:"
+            cat ~/.npmrc | sed 's/:_authToken=.*/:_authToken=***HIDDEN***/' || true
+          else
+            echo "⚠️  ~/.npmrc file not found"
+          fi
+          echo ""
+          echo "=== Checking for NODE_AUTH_TOKEN ==="
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            echo "✅ NODE_AUTH_TOKEN is set (length: ${#NODE_AUTH_TOKEN})"
+          else
+            echo "⚠️  NODE_AUTH_TOKEN is not set - OIDC may not be working"
+          fi
+
       - name: Verify npm authentication and permissions
         run: |
           echo "=== Checking npm authentication ==="
@@ -48,8 +74,18 @@ jobs:
           else
             echo "❌ OIDC authentication failed"
             echo ""
-            echo "⚠️  Please configure OIDC in your npm account:"
-            echo "   https://docs.npmjs.com/using-github-actions-with-npm"
+            echo "⚠️  Troubleshooting steps:"
+            echo "   1. Verify OIDC is configured in npm package settings:"
+            echo "      - Go to https://www.npmjs.com/package/@cocojs/mvc/settings"
+            echo "      - Check 'Trusted Publishers' section"
+            echo "      - Ensure GitHub owner: cocojs-org"
+            echo "      - Ensure repository: coconut-framework"
+            echo "      - Ensure workflow file: publish.yml"
+            echo ""
+            echo "   2. Verify you have publish access to @cocojs scope"
+            echo "   3. Check npm account permissions"
+            echo ""
+            echo "   Reference: https://docs.npmjs.com/using-github-actions-with-npm"
             exit 1
           fi
           echo ""
