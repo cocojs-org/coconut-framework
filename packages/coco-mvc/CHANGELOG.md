@@ -1,5 +1,11 @@
 # @cocojs/mvc
 
+## 0.0.1-alpha.1
+
+### Patch Changes
+
+-   1a3cb2c: 测试发版
+
 ## 0.0.1-alpha.0
 
 ### Patch Changes
