@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  contents: write    # 允许 push、创建 tag、创建 release
+  pull-requests: write  # 允许创建/更新 PR（用于 "Version Packages" PR）
+
 env:
   CI: true
 
@@ -15,6 +19,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -34,6 +40,7 @@ jobs:
           commit: "chore: update versions"
           title: "chore: update versions"
           publish: pnpm ci:publish
+          onlyPublishWithReleaseLabel: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
