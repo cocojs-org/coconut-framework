@@ -1,9 +1,4 @@
-import {
-  createDecoratorExp,
-  type Decorator,
-} from '../ioc-container/create-decorator-exp.ts';
-import Configuration from '../metadata/configuration.ts';
+import { createDecoratorExp, type Decorator } from '../create-decorator-exp';
+import Configuration from './metadata/configuration';
 
-export default createDecoratorExp(
-  Configuration
-) as () => Decorator<ClassDecoratorContext>;
+export default createDecoratorExp(Configuration) as () => Decorator<ClassDecoratorContext>;

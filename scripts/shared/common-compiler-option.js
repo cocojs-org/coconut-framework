@@ -8,7 +8,7 @@ const typescriptOptions = {
   jsx: 'preserve',
   plugins: [
     {
-      transform: '@cocojs/typescript-transformer',
+      transform: '@cocojs/type-extractor',
       transformProgram: true,
     },
   ],

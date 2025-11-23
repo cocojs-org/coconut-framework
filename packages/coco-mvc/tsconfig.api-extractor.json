@@ -1,12 +1,14 @@
 {
-  "extends": ["./tsconfig.json"],
-  "compilerOptions": {
-    "paths": {
-      "coco-ioc-container": ["../coco-ioc-container/dist-dts/index.d.ts"],
-      "coco-router": ["../coco-router/dist-dts/index.d.ts"],
-      "coco-reactive": ["../coco-reactive/dist-dts/index.d.ts"],
-      "coco-render": ["../coco-render/dist-dts/index.d.ts"],
-      "shared": ["../shared"]
+    "extends": ["./tsconfig.json"],
+    "compilerOptions": {
+        "paths": {
+            "coco-ioc-container": ["../coco-ioc-container/dist"],
+            "coco-render": ["../coco-render/dist"],
+            "coco-router": ["../coco-router/dist"],
+            "coco-view": ["../coco-view/dist"],
+            "shared": ["../shared/dist"],
+            "react": ["../react/dist"],
+            "react-dom": ["../react-dom/dist"]
+        }
     }
-  }
 }

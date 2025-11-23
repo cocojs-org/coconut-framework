@@ -1,31 +1,29 @@
 {
-  "name": "coco-mvc",
-  "version": "0.0.1-alpha202505171646",
-  "description": "使用@装饰器构建web应用。",
-  "main": "dist/coco-mvc.cjs.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "api-extractor": "api-extractor run --local"
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/coco-mvc.cjs.js",
-      "require": "./dist/coco-mvc.cjs.js",
-      "types": "./dist/index.d.ts"
+    "name": "@cocojs/mvc",
+    "version": "0.0.1-alpha202511172037",
+    "description": "由装饰器驱动，快速构建可扩展的 Web 应用。",
+    "main": "dist/index.cjs.js",
+    "types": "dist/index.d.ts",
+    "scripts": {},
+    "exports": {
+        ".": {
+            "import": "./dist/index.cjs.js",
+            "require": "./dist/index.cjs.js",
+            "types": "./dist/index.d.ts"
+        },
+        "./jsx-runtime": {
+            "import": "./dist/index.cjs.js",
+            "require": "./dist/index.cjs.js",
+            "types": "./dist/index.d.ts"
+        }
     },
-    "./jsx-runtime": {
-      "import": "./dist/jsx.cjs.js",
-      "require": "./dist/jsx.cjs.js"
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "keywords": [
-    "mvc",
-    "decorator"
-  ],
-  "author": "jiangchenguang",
-  "homepage": "https://github.com/coco-core/coconut-framework",
-  "license": "MIT"
+    "files": [
+        "dist"
+    ],
+    "keywords": [
+        "cocojs"
+    ],
+    "author": "",
+    "homepage": "https://github.com/cocojs-org/coconut-framework",
+    "license": "MIT"
 }

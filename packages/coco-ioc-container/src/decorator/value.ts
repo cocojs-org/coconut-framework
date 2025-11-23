@@ -1,22 +1,13 @@
-import {
-  createDecoratorExp,
-  type Decorator,
-} from '../ioc-container/create-decorator-exp.ts';
-import type ApplicationContext from '../ioc-container/application-context.ts';
-import Value from '../metadata/value.ts';
+import { createDecoratorExp, type Decorator } from '../create-decorator-exp';
+import Value from './metadata/value';
+import type Application from '../application';
 
-function postConstruct(
-  metadata: Value,
-  appCtx: ApplicationContext,
-  name: string
-) {
-  const path = metadata.value;
-  if (typeof path !== 'string' || !path.trim()) {
-    return;
-  }
-  this[name] = appCtx.propertiesConfig.getValue(path);
-}
-
-export default createDecoratorExp(Value, { postConstruct }) as (
-  path: string
-) => Decorator<ClassFieldDecoratorContext>;
+export default createDecoratorExp(Value, {
+    componentPostConstruct: function (metadata: Value, application: Application, field?: string) {
+        const path = metadata.value;
+        if (typeof path !== 'string' || !path.trim()) {
+            return;
+        }
+        this[field] = application.propertiesConfig.getValue(path);
+    },
+}) as (path: string) => Decorator<ClassFieldDecoratorContext>;

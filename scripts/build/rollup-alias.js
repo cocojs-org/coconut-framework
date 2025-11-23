@@ -1,49 +1,54 @@
 const path = require("node:path");
+const process = require('node:process');
+const isTest = process.env.NODE_ENV === 'test';
 
 const packages = path.join(__dirname, '../../packages');
-// todo 和tsconfig.json.path放在一起维护
+// todo 和tsconfig.json.path放在一起维护；
 const mvc = path.join(packages, './coco-mvc/src/index.ts')
+const mvcTest = path.join(packages, './coco-mvc/src/test.ts')
 const render = path.join(packages, './coco-render/src/index.ts')
-const mvcMetadata = path.join(packages, './coco-mvc/src/metadata/index.ts')
-const reconciler = path.join(packages, './coconut-reconciler/src/index.js')
-const web = path.join(packages, './coconut-web/src/index.js')
+const renderTest = path.join(packages, './coco-render/src/test.ts')
 const iocContainer = path.join(packages, './coco-ioc-container/src/index.ts')
-const iocContainerTestHelper = path.join(packages, './coco-ioc-container/src/__tests__/index.ts')
-const reactive = path.join(packages, './coco-reactive/src/index.ts')
-const reactiveMetadata = path.join(packages, './coco-reactive/src/metadata/index.ts')
+const iocContainerTest = path.join(packages, './coco-ioc-container/src/test.ts')
+const view = path.join(packages, './coco-view/src/index.ts')
 const router = path.join(packages, './coco-router/src/index.ts')
-// todo 支持@
+const routerTest = path.join(packages, './coco-router/src/test.ts')
 const shared = path.join(packages, './shared/src/index.ts')
-const ReactFiberHostConfig = path.join(packages, './coconut-web/src/client/ReactDomHostConfig.js')
+const react = path.join(packages, './react/index.js')
+const reactReconciler = path.join(packages, './react-reconciler/src/index.js')
+const reactReconcilerReactWorkTags = path.join(packages, './react-reconciler/src/ReactWorkTags.js')
+const reactDOM = path.join(packages, './react-dom/src/index.js')
+const reactDOMFiberHostConfig = path.join(packages, './react-dom/src/client/ReactDomHostConfig.js')
+const reactShared = path.join(packages, './react-shared/src/index.js')
 
 const PACKAGE = {
   MVC: 'coco-mvc',
   MVC_RENDER: 'coco-render',
-  MVC_METADATA: 'coco-mvc/metadata',
-  RECONCILER: 'coconut-reconciler',
-  WEB: 'coconut-web',
   IOC_CONTAINER: 'coco-ioc-container',
-  IOC_CONTAINER_TEST_HELPER: 'coco-ioc-container-test-helper',
-  REACTIVE: 'coco-reactive',
-  REACTIVE_METADATA: 'coco-reactive-metadata',
+  VIEW: 'coco-view',
   ROUTER: 'coco-router',
-  HOST_CONFIG: 'ReactFiberHostConfig',
   SHARED: 'shared',
+  REACT: 'react',
+  REACT_RECONCILER: 'react-reconciler',
+  REACT_RECONCILER_REACT_WORK_TAGS: 'react-reconciler-ReactWorkTags',
+  REACT_DOM: 'react-dom',
+  REACT_DOM_HOST_CONFIG: 'react-dom-ReactFiberHostConfig',
+  REACT_SHARED: 'react-shared',
 };
 
 const pathMap = {
-  [PACKAGE.MVC]: mvc,
-  [PACKAGE.MVC_RENDER]: render,
-  [PACKAGE.MVC_METADATA]: mvcMetadata,
-  [PACKAGE.RECONCILER]: reconciler,
-  [PACKAGE.WEB]: web,
-  [PACKAGE.IOC_CONTAINER]: iocContainer,
-  [PACKAGE.IOC_CONTAINER_TEST_HELPER]: iocContainerTestHelper,
-  [PACKAGE.REACTIVE]: reactive,
-  [PACKAGE.REACTIVE_METADATA]: reactiveMetadata,
-  [PACKAGE.ROUTER]: router,
-  [PACKAGE.HOST_CONFIG]: ReactFiberHostConfig,
-  [PACKAGE.SHARED]: shared
+  [PACKAGE.MVC]: isTest ? mvcTest : mvc,
+  [PACKAGE.MVC_RENDER]: isTest ? renderTest : render,
+  [PACKAGE.IOC_CONTAINER]: isTest ? iocContainerTest : iocContainer,
+  [PACKAGE.VIEW]: view,
+  [PACKAGE.ROUTER]: isTest ? routerTest : router,
+  [PACKAGE.SHARED]: shared,
+  [PACKAGE.REACT]: react,
+  [PACKAGE.REACT_RECONCILER]: reactReconciler,
+  [PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS]: reactReconcilerReactWorkTags,
+  [PACKAGE.REACT_DOM]: reactDOM,
+  [PACKAGE.REACT_DOM_HOST_CONFIG]: reactDOMFiberHostConfig,
+  [PACKAGE.REACT_SHARED]: reactShared,
 }
 
 function genEntries(config) {

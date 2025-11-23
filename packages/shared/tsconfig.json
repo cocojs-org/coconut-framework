@@ -1,13 +1,10 @@
 {
-  "compilerOptions": {
-    "lib": ["dom", "es2015"],
-    "composite": true,
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "outDir": "dist",
-    "rootDir": "src",
-    "moduleResolution": "node",
-    "typeRoots": ["../../types"]
-  },
-  "include": ["src"]
+    "extends": ["../../tsconfig.json"],
+    "compilerOptions": {
+        "composite": true,
+        "declaration": true,
+        "rootDir": "src",
+        "outDir": "dts-tmp"
+    },
+    "include": ["src"]
 }

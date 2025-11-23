@@ -1,142 +1,145 @@
-import {
-  type Field,
-  KindClass,
-  KindField,
-  KindMethod,
-} from './decorator-context.ts';
-import { listClassMetadata, listFieldMetadata } from './metadata.ts';
-import type ApplicationContext from './application-context.ts';
-import type Metadata from '../metadata/abstract/metadata.ts';
+import { isDescendantOf, uppercaseFirstLetter } from '../share/util';
+import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
 
 /**
- * @public
- * @param metadata - 元数据实例对象
- * @param appCtx - 全局的applicationContext对象
+ * 所有被扫描的规范的组件
+ * 包括：
+ * 1. 项目中添加@component类装饰的组件
+ * 2. 第三方添加@component类装饰的组件
+ * 3. 项目中通过@component方法装饰注册的组件
  */
-export type ClassPostConstructFn = (
-  metadata: Metadata,
-  appCtx: ApplicationContext
-) => void;
-/**
- * @public
- * @param metadata - 元数据实例对象
- * @param appCtx - 全局的applicationContext对象
- * @param field - 被装饰的字段名
- */
-export type FieldPostConstructFn = (
-  metadata: Metadata,
-  appCtx: ApplicationContext,
-  field: Field
-) => void;
-/**
- * @public
- */
-export type MethodPostConstructFn = (
-  metadata: Metadata,
-  appCtx: ApplicationContext,
-  field: Field
-) => void;
-/**
- * @public
- */
-export type PostConstructFn =
-  | ClassPostConstructFn
-  | FieldPostConstructFn
-  | MethodPostConstructFn;
+export interface IocComDef<T> {
+    // 组件id，每个组件的id是唯一的
+    id: string;
 
-export interface ClassPostConstruct {
-  kind: typeof KindClass;
-  metadataCls: Class<any>;
-  fn: ClassPostConstructFn;
+    cls: Class<T>;
+
+    // 是否是单例模式，不是的话每次实例化都会创建一个新的实例
+    isSingleton: boolean;
+
+    // 实例化方式
+    instantiateType: 'new' | 'method';
+    // 当实例化方式为method时对应的选项
+    methodInstantiateOpts?: {
+        configurationCls: Class<any>; // 配置类
+        method: string; // 方法名
+    };
 }
+export type Id = string;
 
-export interface FieldPostConstruct {
-  kind: typeof KindField;
-  metadataCls: Class<any>;
-  fn: FieldPostConstructFn;
-  field: Field;
-}
+class IocComponentDefinition {
+    idDefinitionMap: Map<Id, IocComDef<any>> = new Map();
+    clsDefinitionMap: Map<Class<any>, IocComDef<any>> = new Map();
 
-export interface MethodPostConstruct {
-  kind: typeof KindMethod;
-  metadataCls: Class<any>;
-  fn: MethodPostConstructFn;
-  field: Field;
-}
-
-export type PostConstruct =
-  | ClassPostConstruct
-  | FieldPostConstruct
-  | MethodPostConstruct;
-
-export default class IocComponentDefinition<T> {
-  id: string;
-
-  cls: Class<T>;
-
-  /**
-   * 自定义初始化方法
-   * new表达式后立刻执行
-   */
-  postConstruct?: PostConstruct[];
-}
-
-export function genClassPostConstruct(
-  metadataCls: Class<any>,
-  fn: ClassPostConstructFn
-): ClassPostConstruct {
-  return { kind: KindClass, metadataCls, fn };
-}
-
-export function genFieldPostConstruct(
-  metadataCls: Class<any>,
-  fn: FieldPostConstructFn,
-  field: Field
-): FieldPostConstruct {
-  return { kind: KindField, metadataCls, fn, field };
-}
-
-export function genMethodPostConstruct(
-  metadataCls: Class<any>,
-  fn: MethodPostConstructFn,
-  field: Field
-): MethodPostConstruct {
-  return { kind: KindMethod, metadataCls, fn, field };
-}
-
-export function createComponent(
-  appCtx: ApplicationContext,
-  componentDefinition: IocComponentDefinition<any>,
-  ...parameters: any[]
-) {
-  const cls = componentDefinition.cls;
-  const component = new cls(...parameters);
-  for (const pc of componentDefinition.postConstruct) {
-    switch (pc.kind) {
-      case KindClass: {
-        const metadata = listClassMetadata(cls, pc.metadataCls);
-        if (metadata.length === 1) {
-          pc.fn.call(component, metadata[0], appCtx);
-        } else {
-          if (__TEST__) {
-            console.error('元数据应该只有一个', cls, pc.metadataCls);
-          }
-        }
-        break;
-      }
-      case KindField:
-      case KindMethod: {
-        const metadata = listFieldMetadata(cls, pc.field, pc.metadataCls);
-        if (metadata.length === 1) {
-          pc.fn.call(component, metadata[0], appCtx, pc.field);
-        } else {
-          if (__TEST__) {
-            console.error('元数据应该只有一个', cls, pc.metadataCls, pc.field);
-          }
-        }
-        break;
-      }
+    newIocComponentDefinition<T>(
+        id: string,
+        cls: Class<T>,
+        isSingleton: boolean,
+        instantiateType: 'new' | 'method'
+    ): IocComDef<T> {
+        return { id, cls, isSingleton, instantiateType };
     }
-  }
-  return component;
+
+    addDefinition(
+        cls: Class<any>,
+        isSingleton: boolean,
+        methodInstantiateOpts?: { configurationCls: Class<any>; method: string }
+    ) {
+        const existClsDef = this.clsDefinitionMap.get(cls);
+        if (existClsDef) {
+            throw new Error(`存在同名的组件: [${existClsDef.cls.name}] - [${cls.name}]`);
+        }
+        const id = uppercaseFirstLetter(cls.name);
+        if (typeof id !== 'string' || !id.trim()) {
+            throw new Error(`生成组件id失败: [${cls.name}]`);
+        }
+        const existIdDef = this.idDefinitionMap.get(id);
+        if (existIdDef) {
+            throw new Error(`存在id的组件: [${existIdDef.cls.name}] - [${cls.name}]`);
+        }
+        const componentDefinition = this.newIocComponentDefinition(
+            id,
+            cls,
+            isSingleton,
+            methodInstantiateOpts ? 'method' : 'new'
+        );
+        if (methodInstantiateOpts) {
+            componentDefinition.methodInstantiateOpts = methodInstantiateOpts;
+        }
+        this.idDefinitionMap.set(id, componentDefinition);
+        this.clsDefinitionMap.set(cls, componentDefinition);
+    }
+
+    /**
+     * 获取真正会实例化的类定义
+     * @param ClsOrId 想要实例化的类或类id
+     * @param qualifier 如果存在多个后端类，需要通过qualifier指定具体的类id
+     * @returns 真正会实例化的类定义
+     */
+    getInstantiateDefinition(ClsOrId: Class<any> | Id, qualifier?: string) {
+        const definition = this.getDefinition(ClsOrId);
+        if (!definition) {
+            const diagnose = createDiagnose(DiagnoseCode.CO10011, typeof ClsOrId === 'string' ? ClsOrId : ClsOrId.name);
+            throw new Error(stringifyDiagnose(diagnose));
+        }
+        const descendantList: Class<any>[] = Array.from(this.clsDefinitionMap.keys()).filter((i) =>
+            isDescendantOf(i, definition.cls)
+        );
+        if (descendantList.length === 0) {
+            // 没有子组件直接返回本身
+            return definition;
+        } else if (descendantList.length === 1) {
+            // 有一个子组件
+            return this.clsDefinitionMap.get(descendantList[0]);
+        } else {
+            // 多个子组件
+            if (qualifier) {
+                for (const child of descendantList) {
+                    const def = this.clsDefinitionMap.get(child);
+                    if (def.id === qualifier) {
+                        return def;
+                    }
+                }
+            }
+            if (qualifier) {
+                const diagnose = createDiagnose(
+                    DiagnoseCode.CO10010,
+                    definition.id,
+                    descendantList.map((i) => i.name),
+                    qualifier
+                );
+                throw new Error(stringifyDiagnose(diagnose));
+            } else {
+                const diagnose = createDiagnose(
+                    DiagnoseCode.CO10009,
+                    definition.id,
+                    descendantList.map((i) => i.name)
+                );
+                throw new Error(stringifyDiagnose(diagnose));
+            }
+        }
+    }
+
+    getDefinition(ClsOrId: Class<any> | Id) {
+        if (typeof ClsOrId === 'string') {
+            return this.idDefinitionMap.get(ClsOrId);
+        } else {
+            return this.clsDefinitionMap.get(ClsOrId);
+        }
+    }
+
+    existDefinition(ClsOrId: Class<any> | Id) {
+        if (typeof ClsOrId === 'string') {
+            return this.idDefinitionMap.has(ClsOrId);
+        } else {
+            return this.clsDefinitionMap.has(ClsOrId);
+        }
+    }
+
+    destructor() {
+        this.idDefinitionMap.clear();
+        this.clsDefinitionMap.clear();
+    }
 }
+
+export default IocComponentDefinition;

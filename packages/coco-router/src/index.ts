@@ -1,6 +1,8 @@
-export { default as Route } from './metadata/route.ts';
-export { default as route } from './decorator/route.ts';
-export { default as Router } from './router/router.ts';
-export { default as HistoryRouter } from './router/history-router.ts';
-import { default as RouteComponentMapper } from './router/route-component-mapper.ts';
+export { default as RouterMeta } from './decorator/metadata/router';
+export { default as RouteMeta } from './decorator/metadata/route';
+export { default as route } from './decorator/route';
+export { default as Router } from './router/router';
+export { default as HistoryRouter } from './router/history-router';
+export { default as Route } from './router/route';
+import { default as RouteComponentMapper } from './router/route-component-mapper';
 export { type RouteComponentMapper };

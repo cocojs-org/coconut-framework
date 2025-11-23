@@ -1,24 +1,29 @@
 {
-  "extends": ["../../tsconfig.json"],
-  "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "dist-dts",
-    "composite": true,
-    "declaration": true,
-    "paths": {
-      "coco-ioc-container": ["../coco-ioc-container/src"],
-      "coco-router": ["../coco-router/src"],
-      "coco-reactive": ["../coco-reactive/src"],
-      "coco-render": ["../coco-render/src"],
-      "shared": ["../shared"]
-    }
-  },
-  "include": ["src"],
-  "references": [
-    { "path": "../coco-ioc-container" },
-    { "path": "../coco-router" },
-    { "path": "../coco-reactive" },
-    { "path": "../coco-render" },
-    { "path": "../shared" }
-  ]
+    "extends": ["../../tsconfig.json"],
+    "compilerOptions": {
+        "rootDir": ".",
+        "outDir": "dts-tmp",
+        "composite": true,
+        "declaration": true,
+        "paths": {
+            "coco-ioc-container": ["../coco-ioc-container"],
+            "coco-router": ["../coco-router"],
+            "coco-view": ["../coco-view"],
+            "coco-render": ["../coco-render"],
+            "shared": ["../shared"],
+            "react": ["../react"],
+            "react-dom": ["../react-dom"]
+        }
+    },
+    "include": ["src"],
+    "exclude": ["src/__tests__", "src/test.ts"],
+    "references": [
+        { "path": "../coco-ioc-container" },
+        { "path": "../coco-router" },
+        { "path": "../coco-view" },
+        { "path": "../coco-render" },
+        { "path": "../shared" },
+        { "path": "../react" },
+        { "path": "../react-dom" }
+    ]
 }

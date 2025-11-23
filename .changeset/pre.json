@@ -1,0 +1,19 @@
+{
+    "mode": "pre",
+    "tag": "alpha",
+    "initialVersions": {
+        "@cocojs/cli": "0.0.1-alpha202511202111",
+        "coco-ioc-container": "0.0.0",
+        "@cocojs/mvc": "0.0.1-alpha202511172037",
+        "coco-render": "0.0.0",
+        "coco-router": "0.0.0",
+        "@cocojs/type-extractor": "0.0.16",
+        "coco-view": "0.0.0",
+        "react": "0.0.0",
+        "react-dom": "0.0.0",
+        "react-reconciler": "0.0.0",
+        "react-shared": "0.0.0",
+        "shared": "0.0.0"
+    },
+    "changesets": []
+}

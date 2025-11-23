@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": ["dom", "esnext"],
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "allowSyntheticDefaultImports": true,
+        "jsx": "preserve",
+        "resolveJsonModule": true,
+        "plugins": [
+            {
+                "transform": "@cocojs/type-extractor",
+                "transformProgram": true
+            }
+        ]
+    }
+}

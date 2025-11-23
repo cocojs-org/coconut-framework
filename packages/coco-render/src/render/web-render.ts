@@ -1,28 +1,30 @@
 // @ts-ignore todo fix it
-import { render as renderApp } from 'coconut-web';
-import { init } from 'coco-ioc-container';
-import render from '../decorator/render.ts';
-import { jsx } from '../jsx-runtime';
-import Render from '../component/render.ts';
+import { render as renderApp, registerMvcApi } from 'react-dom';
+import { type Application } from 'coco-ioc-container';
+import render from '../decorator/render';
+import { jsx } from 'react';
+import Render from '../component/render';
 
 /**
  * @public
  */
 @render()
 class WebRender extends Render {
-  container: HTMLElement;
+    container: HTMLElement;
 
-  @init()
-  init() {
-    this.container = document.getElementById('root');
-    if (!this.container) {
-      console.error('未找到根节点');
+    init(application: Application) {
+        registerMvcApi(application);
+        this.container = document.getElementById('root');
+        if (!this.container) {
+            console.error('未找到根节点');
+        }
     }
-  }
 
-  public render(component: any) {
-    return renderApp(jsx(component, undefined), this.container);
-  }
+    public render(component: any) {
+        return renderApp(jsx(component, undefined), this.container);
+    }
+
+    // todo unregisterMvcApi
 }
 
 export default WebRender;

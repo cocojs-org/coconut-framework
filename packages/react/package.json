@@ -1,0 +1,11 @@
+{
+    "private": true,
+    "name": "react",
+    "description": "和react仓库下react包保持同步",
+    "version": "0.0.0",
+    "types": "dist/index.d.ts",
+    "scripts": {},
+    "keywords": [],
+    "author": "",
+    "license": "MIT"
+}

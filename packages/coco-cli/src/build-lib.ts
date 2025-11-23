@@ -1,19 +1,48 @@
 import path from 'node:path';
-import fs from 'node:fs';
-import rollup from 'rollup';
-import { execSync, spawn } from 'child_process';
+import { rollup } from 'rollup';
 import process from 'node:process';
-import { resolveCli } from './util/resolve';
+import typescript from '@rollup/plugin-typescript';
+import babel from '@rollup/plugin-babel';
 
 export const build = async () => {
-  const rollup = resolveCli('rollup');
-  const configPath = path.resolve(
-    __dirname,
-    '../build-config/lib/rollup.config.js'
-  );
-  const args = ['--config', configPath];
-  return spawn(rollup, args, {
-    cwd: process.cwd(),
-    stdio: 'inherit',
-  });
+    const result = await rollup({
+        input: path.join(process.cwd(), './src/index.ts'),
+        plugins: [
+            typescript({
+                compilerOptions: {
+                    target: 'ESNext',
+                    lib: ['dom', 'esnext'],
+                    declaration: true,
+                    declarationDir: './dist/types',
+                    jsx: 'preserve',
+                    resolveJsonModule: true,
+                    plugins: [
+                        {
+                            transform: '@cocojs/type-extractor',
+                            transformProgram: true,
+                        },
+                    ],
+                },
+            }),
+            babel({
+                extensions: ['.js', '.jsx', '.ts', '.tsx'],
+                plugins: [
+                    [require.resolve('@babel/plugin-proposal-decorators'), { version: '2023-11' }],
+                    [
+                        require.resolve('@babel/plugin-transform-react-jsx', {
+                            paths: [path.resolve(__dirname, '..', '../node_modules')],
+                        }),
+                        {
+                            runtime: 'automatic',
+                            importSource: '@cocojs/mvc',
+                        },
+                    ],
+                ],
+            }),
+        ],
+    });
+    await result.write({
+        file: path.join(process.cwd(), './dist/index.esm.js'),
+        format: 'es',
+    });
 };
