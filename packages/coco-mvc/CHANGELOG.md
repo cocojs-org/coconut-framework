@@ -1,5 +1,11 @@
 # @cocojs/mvc
 
+## 0.0.1-alpha.2
+
+### Patch Changes
+
+-   a59a27f: test oidc publish
+
 ## 0.0.1-alpha.1
 
 ### Patch Changes
