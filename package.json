@@ -14,7 +14,7 @@
         "prettier": "prettier --write 'packages/**/*.*' 'package.json'",
         "prettier:check": "prettier --check 'packages/**/*.*'",
         "updateVersion": "pnpm run test && node scripts/publish/modify-pkg-version.js",
-        "prepare": "npx husky-init && ts-patch install -s && husky install",
+        "prepare": "pnpm exec husky init && ts-patch install -s",
         "ci:publish": "pnpm publish --no-git-checks"
     },
     "keywords": [],
