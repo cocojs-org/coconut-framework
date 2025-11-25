@@ -15,7 +15,7 @@
         "prettier:check": "prettier --check 'packages/**/*.*'",
         "updateVersion": "pnpm run test && node scripts/publish/modify-pkg-version.js",
         "prepare": "husky install && ts-patch install -s",
-        "ci:publish": "changeset publish"
+        "ci:publish": "pnpm publish --no-git-checks"
     },
     "keywords": [],
     "author": "jiangchenguang",

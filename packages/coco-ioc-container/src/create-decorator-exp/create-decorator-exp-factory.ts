@@ -8,7 +8,6 @@ import {
     KindSetter,
     KindAccessor,
 } from './decorator-context';
-export type { Decorator };
 import { isSubClassOf, once } from '../share/util';
 import { addDecoratorParams, IAddDecoratorParams } from './decorator-exp-param';
 import {
@@ -207,6 +206,7 @@ function createPlaceholderDecoratorExp<T>(option?: CreateDecoratorExpOption): De
 }
 
 export {
+    type Decorator,
     type DecoratorExp,
     type DecoratorExpWithDecoratorSelf,
     createDecoratorExp,
