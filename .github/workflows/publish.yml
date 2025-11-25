@@ -37,6 +37,20 @@ jobs:
           scope: '@cocojs'
           always-auth: true                           # 确保它被设置
 
+      - name: Debug NODE_AUTH_TOKEN injection
+        run: |
+          echo "Checking NODE_AUTH_TOKEN..."
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "❌ NODE_AUTH_TOKEN is NOT SET by setup-node."
+            echo "   This means OIDC token acquisition failed or was skipped."
+            exit 1
+          else
+            echo "✅ NODE_AUTH_TOKEN is SET (Length: ${#NODE_AUTH_TOKEN})."
+          fi
+          echo ""
+          echo "Checking .npmrc content again:"
+          cat ~/.npmrc | sed 's/:_authToken=.*/:_authToken=***HIDDEN***/' || true
+
       - name: Install dependencies
         run: pnpm install
 
