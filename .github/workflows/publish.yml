@@ -1,4 +1,4 @@
-name: Changesets (OIDC)
+name: Changesets (OIDC + PreRelease)
 
 on:
   push:
@@ -6,9 +6,9 @@ on:
       - main
 
 permissions:
-  contents: write      # 用于创建标签/提交版本变更
-  pull-requests: write # 用于创建版本 PR
-  id-token: write      # OIDC 认证必需（核心权限）
+  contents: write
+  pull-requests: write
+  id-token: write # OIDC 必需权限
 
 env:
   CI: true
@@ -23,41 +23,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }} # 基础 checkout 权限
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
-          use-node-version: true # 自动复用后续 node 版本
+          use-node-version: true
 
       - name: Setup Node.js + OIDC 认证
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-          registry-url: ${{ env.NPM_REGISTRY }} # 绑定 npm 官方源
-          scope: ${{ env.SCOPE }}              # 关联你的包作用域
-          always-auth: true                    # 强制启用认证（OIDC 必需）
-          # 🔥 关键：OIDC 无需手动传 token，setup-node 会自动获取临时令牌注入 NODE_AUTH_TOKEN
-
-      - name: 🔍 Debug 认证环境（可选，用于验证）
-        run: |
-          echo "NODE_AUTH_TOKEN 存在性: ${{ env.NODE_AUTH_TOKEN != '' }}"
-          echo "pnpm 配置的仓库地址: $(pnpm config get registry)"
-          echo "作用域配置: $(pnpm config get @cocojs:registry)"
+          registry-url: ${{ env.NPM_REGISTRY }}
+          scope: ${{ env.SCOPE }}
+          always-auth: true
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile # 锁定依赖版本，提升稳定性
+        run: pnpm install --frozen-lockfile
 
-      - name: Create and publish versions (OIDC 版)
+      - name: Create and publish pre-release versions (OIDC)
         uses: changesets/action@v1
         with:
-          commit: "chore: update versions [OIDC]"
-          title: "chore: update versions (OIDC)"
-          publish: pnpm ci:publish # 确保项目 package.json 中有该脚本（见下方说明）
-          onlyPublishWithReleaseLabel: false
+          commit: "chore: update pre-release versions [OIDC]"
+          title: "chore: update pre-release versions (OIDC)"
+          publish: pnpm ci:publish # 确保脚本存在（如：pnpm publish --tag alpha）
         env:
-          # 🔑 OIDC 核心：setup-node 自动注入的临时令牌，pnpm 会自动读取
-          NODE_AUTH_TOKEN: ${{ steps.setup-node.outputs.token }}
-          # GitHub 操作权限令牌（用于创建 PR/标签）
+          NODE_AUTH_TOKEN: ${{ steps.setup-node.outputs.token }} # OIDC 临时令牌
           GITHUB_TOKEN: ${{ secrets.COCONUT_FRAMEWORK_CREATE_PR }}
