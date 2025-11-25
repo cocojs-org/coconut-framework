@@ -47,7 +47,6 @@ jobs:
         with:
           commit: "chore: update pre-release versions [OIDC]"
           title: "chore: update pre-release versions (OIDC)"
-          publish: pnpm ci:publish # 确保脚本存在（如：pnpm publish --tag alpha）
+          publish: NODE_AUTH_TOKEN=${{ steps.setup-node.outputs.token }} pnpm ci:publish # 确保脚本存在（如：pnpm publish --tag alpha）
         env:
-          NODE_AUTH_TOKEN: ${{ steps.setup-node.outputs.token }} # OIDC 临时令牌
           GITHUB_TOKEN: ${{ secrets.COCONUT_FRAMEWORK_CREATE_PR }}
