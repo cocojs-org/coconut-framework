@@ -6,7 +6,6 @@ on:
       - main
 
 permissions:
-  id-token: write      # OIDC Token
   contents: write      # Push tags/releases
   pull-requests: write # Version PR
 
@@ -36,42 +35,10 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
           scope: '@cocojs'
           always-auth: true                           # 确保它被设置
-
-      - name: Debug NODE_AUTH_TOKEN injection
-        run: |
-          echo "Checking NODE_AUTH_TOKEN..."
-          if [ -z "$NODE_AUTH_TOKEN" ]; then
-            echo "❌ NODE_AUTH_TOKEN is NOT SET by setup-node."
-            echo "   This means OIDC token acquisition failed or was skipped."
-            exit 1
-          else
-            echo "✅ NODE_AUTH_TOKEN is SET (Length: ${#NODE_AUTH_TOKEN})."
-          fi
-          echo ""
-          echo "Checking .npmrc content again:"
-          cat ~/.npmrc | sed 's/:_authToken=.*/:_authToken=***HIDDEN***/' || true
+          token: ${{secrets.NPM_PUBLISHER_TOKEN}}
 
       - name: Install dependencies
         run: pnpm install
-
-      # ----------------------------------------------------
-      # 💡 调试步骤（建议保留，但不要手动修改配置）
-      # ----------------------------------------------------
-      - name: Verify OIDC and npm configuration
-        run: |
-          echo "=== Checking .npmrc file ==="
-          cat ~/.npmrc | sed 's/:_authToken=.*/:_authToken=***HIDDEN***/' || true
-          
-          echo ""
-          echo "=== Testing npm token validity ==="
-          # 使用 npm whoami 检查是否成功登录
-          if npm whoami --registry=https://registry.npmjs.org/ 2>/dev/null; then
-            echo "✅ Authenticated successfully as: $(npm whoami --registry=https://registry.npmjs.org/)"
-          else
-            echo "❌ OIDC authentication failed. Please check your npm OIDC trust relationship."
-            exit 1
-          fi
-      # ----------------------------------------------------
 
       - name: Create and publish versions
         uses: changesets/action@v1
@@ -84,3 +51,4 @@ jobs:
           # OIDC Token 会自动通过 $NODE_AUTH_TOKEN 注入，这里只需要 GITHUB_TOKEN
           # 用于创建和更新 PR/Commit/Tag
           GITHUB_TOKEN: ${{ secrets.COCONUT_FRAMEWORK_CREATE_PR }}
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISHER_TOKEN }}
