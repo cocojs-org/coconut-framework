@@ -37,6 +37,12 @@ jobs:
           always-auth: true                           # 确保它被设置
           token: ${{secrets.NPM_PUBLISHER_TOKEN}}
 
+      - name: 🔍 Debug .npmrc content
+        run: |
+          echo "::group::.npmrc file content (sensitive values are masked by GitHub)"
+          cat .npmrc
+          echo "::endgroup::"
+
       - name: Install dependencies
         run: pnpm install
 
