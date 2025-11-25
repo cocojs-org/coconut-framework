@@ -37,6 +37,14 @@ jobs:
           always-auth: true                           # 确保它被设置
           token: ${{secrets.NPM_PUBLISHER_TOKEN}}
 
+      - name: Setup .npmrc for pnpm
+        run: |
+          echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > .npmrc
+          echo "@cocojs:registry=https://registry.npmjs.org/" >> .npmrc
+          echo "always-auth=true" >> .npmrc
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_PUBLISHER_TOKEN }}
+
       - name: 🔍 Debug .npmrc content
         run: |
           echo "::group::.npmrc file content (sensitive values are masked by GitHub)"
