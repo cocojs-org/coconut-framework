@@ -1,4 +1,4 @@
-name: Changesets
+name: Changesets (OIDC)
 
 on:
   push:
@@ -6,11 +6,14 @@ on:
       - main
 
 permissions:
-  contents: write      # Push tags/releases
-  pull-requests: write # Version PR
+  contents: write      # 用于创建标签/提交版本变更
+  pull-requests: write # 用于创建版本 PR
+  id-token: write      # OIDC 认证必需（核心权限）
 
 env:
   CI: true
+  NPM_REGISTRY: https://registry.npmjs.org
+  SCOPE: '@cocojs'
 
 jobs:
   version:
@@ -20,49 +23,41 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # 使用 GITHUB_TOKEN for basic checkout
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }} # 基础 checkout 权限
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
+        with:
+          use-node-version: true # 自动复用后续 node 版本
 
-      # ⬇️ 仅依靠 actions/setup-node 自动配置 OIDC 认证 ⬇️
-      - name: Setup node.js and OIDC Auth
+      - name: Setup Node.js + OIDC 认证
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'pnpm'
-          registry-url: 'https://registry.npmjs.org'
-          scope: '@cocojs'
-          always-auth: true                           # 确保它被设置
-          token: ${{secrets.NPM_PUBLISHER_TOKEN}}
+          registry-url: ${{ env.NPM_REGISTRY }} # 绑定 npm 官方源
+          scope: ${{ env.SCOPE }}              # 关联你的包作用域
+          always-auth: true                    # 强制启用认证（OIDC 必需）
+          # 🔥 关键：OIDC 无需手动传 token，setup-node 会自动获取临时令牌注入 NODE_AUTH_TOKEN
 
-      - name: Setup .npmrc for pnpm
+      - name: 🔍 Debug 认证环境（可选，用于验证）
         run: |
-          echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > .npmrc
-          echo "@cocojs:registry=https://registry.npmjs.org/" >> .npmrc
-          echo "always-auth=true" >> .npmrc
-        env:
-          NPM_TOKEN: ${{ secrets.NPM_PUBLISHER_TOKEN }}
-
-      - name: 🔍 Debug .npmrc content
-        run: |
-          echo "::group::.npmrc file content (sensitive values are masked by GitHub)"
-          cat .npmrc
-          echo "::endgroup::"
+          echo "NODE_AUTH_TOKEN 存在性: ${{ env.NODE_AUTH_TOKEN != '' }}"
+          echo "pnpm 配置的仓库地址: $(pnpm config get registry)"
+          echo "作用域配置: $(pnpm config get @cocojs:registry)"
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile # 锁定依赖版本，提升稳定性
 
-      - name: Create and publish versions
+      - name: Create and publish versions (OIDC 版)
         uses: changesets/action@v1
         with:
-          commit: "chore: update versions"
-          title: "chore: update versions"
-          publish: pnpm ci:publish # 确保 ci:publish 脚本是存在的，或者直接使用 pnpm publish
+          commit: "chore: update versions [OIDC]"
+          title: "chore: update versions (OIDC)"
+          publish: pnpm ci:publish # 确保项目 package.json 中有该脚本（见下方说明）
           onlyPublishWithReleaseLabel: false
         env:
-          # OIDC Token 会自动通过 $NODE_AUTH_TOKEN 注入，这里只需要 GITHUB_TOKEN
-          # 用于创建和更新 PR/Commit/Tag
+          # 🔑 OIDC 核心：setup-node 自动注入的临时令牌，pnpm 会自动读取
+          NODE_AUTH_TOKEN: ${{ steps.setup-node.outputs.token }}
+          # GitHub 操作权限令牌（用于创建 PR/标签）
           GITHUB_TOKEN: ${{ secrets.COCONUT_FRAMEWORK_CREATE_PR }}
-          NPM_TOKEN: ${{ secrets.NPM_PUBLISHER_TOKEN }}
