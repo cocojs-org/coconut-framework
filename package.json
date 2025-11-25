@@ -1,5 +1,7 @@
 {
     "private": true,
+    "version": "0.0.0",
+    "name": "coconut-framework",
     "scripts": {
         "build-type-extractor": "pnpm --filter @cocojs/type-extractor build",
         "build-lib": "node ./scripts/build/index.js",
