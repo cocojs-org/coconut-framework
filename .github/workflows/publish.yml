@@ -39,10 +39,6 @@ jobs:
           scope: ${{ env.SCOPE }}
           always-auth: true
 
-      # 这一步是关键：配置 .npmrc 开启 provenance
-      - name: Enable NPM Provenance
-        run: echo "provenance=true" >> .npmrc
-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
