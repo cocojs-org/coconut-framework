@@ -39,6 +39,10 @@ jobs:
           scope: ${{ env.SCOPE }}
           always-auth: true
 
+      # 这一步是关键：配置 .npmrc 开启 provenance
+      - name: Enable NPM Provenance
+        run: echo "provenance=true" >> .npmrc
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -47,6 +51,6 @@ jobs:
         with:
           commit: "chore: update pre-release versions [OIDC]"
           title: "chore: update pre-release versions (OIDC)"
-          publish: NODE_AUTH_TOKEN=${{ steps.setup-node.outputs.token }} pnpm ci:publish # 确保脚本存在（如：pnpm publish --tag alpha）
+          publish: pnpm ci:publish
         env:
           GITHUB_TOKEN: ${{ secrets.COCONUT_FRAMEWORK_CREATE_PR }}
