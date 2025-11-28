@@ -207,41 +207,60 @@ describe('findClassKindMetadataRecursively', () => {
     let MetadataRepository;
     let metadataRepository;
     let Metadata;
+    let target;
+    let Target;
     let createDecoratorExp;
+    let Application;
+    let application;
 
     beforeEach(async () => {
         cocoMvc = await import('@cocojs/mvc');
         MetadataRepository = cocoMvc.MetadataRepository;
         Metadata = cocoMvc.Metadata;
+        target = cocoMvc.target;
+        Target = cocoMvc.Target;
         createDecoratorExp = cocoMvc.createDecoratorExp;
-        metadataRepository = new MetadataRepository(new Map());
+        Application = cocoMvc.Application;
+        application = new Application();
+        cocoMvc.registerMvcApi(application);
     });
     afterEach(() => {
-        metadataRepository.destructor();
         cocoMvc.cleanCache();
+        cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
     });
 
     test('可以找到直接注解对应的元数据', () => {
+        @target([Target.Type.Class])
+        class M extends Metadata {}
+        const m = createDecoratorExp(M);
+
+        @m()
         class T {}
-        class M {}
-        metadataRepository.addClassKindMetadata(T, M, {});
-        const m = metadataRepository.findClassKindMetadataRecursively(T, M);
-        expect(m).toBeInstanceOf(M);
+
+        application.start();
+        const r = application.findClassKindMetadataRecursively(T, M, 0);
+        expect(r).toBeInstanceOf(M);
     });
 
     test('可以找到直接注解对应的元数据的注解的元数据', () => {
-        class T {}
+        @target([Target.Type.Class])
         class Parent extends Metadata {}
         const p = createDecoratorExp(Parent);
 
         @p()
-        class Child {}
-        metadataRepository.addClassKindMetadata(T, Child, {});
-        metadataRepository.addClassKindMetadata(Child, Parent, {});
-        let m = metadataRepository.findClassKindMetadataRecursively(T, Parent);
+        @target([Target.Type.Class])
+        class Child extends Metadata {}
+        const child = createDecoratorExp(Child);
+
+        @child()
+        class T {}
+
+        application.start();
+        let m = application.findClassKindMetadataRecursively(T, Parent, 0);
         expect(m).toBe(null);
-        m = metadataRepository.findClassKindMetadataRecursively(T, Parent, 1);
+        m = application.findClassKindMetadataRecursively(T, Parent);
         expect(m).toBeInstanceOf(Parent);
     });
 });

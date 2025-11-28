@@ -87,8 +87,8 @@ class Application {
     public listFieldByMetadataCls(beDecoratedCls: Class<any>, MetadataCls: Class<any>) {
         return this.metadataRepository.listFieldByMetadataCls(beDecoratedCls, MetadataCls);
     }
-    public findClassKindMetadataRecursively(beDecoratedCls: Class<any>, TargetCls: Class<any>, upward: number = 0) {
-        return this.metadataRepository.findClassKindMetadataRecursively(beDecoratedCls, TargetCls, upward);
+    public findClassKindMetadataRecursively(beDecoratedCls: Class<any>, TargetCls: Class<any>, levels: number = Infinity) {
+        return this.metadataRepository.findClassKindMetadataRecursively(beDecoratedCls, TargetCls, levels);
     }
     public listBeDecoratedClsByClassKindMetadata(MetadataCls: Class<any>) {
         return this.metadataRepository.listBeDecoratedClsByClassKindMetadata(MetadataCls);

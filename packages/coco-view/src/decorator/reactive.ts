@@ -6,7 +6,7 @@ import { defineReactive } from '../reactive/define-reactive.ts';
 export default createDecoratorExp(Reactive, {
     componentPostConstruct(metadata: Reactive, application: Application, name: string) {
         const Store: Class<any> = application.getMetaClassById('Store');
-        const isStoreComponent = application.findClassKindMetadataRecursively(this.constructor, Store);
+        const isStoreComponent = application.findClassKindMetadataRecursively(this.constructor, Store, 0);
         let value: any = this[name];
         let setter;
         const getter = () => value;
