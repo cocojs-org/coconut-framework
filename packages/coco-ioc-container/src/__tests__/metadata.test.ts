@@ -303,6 +303,7 @@ describe('validate', () => {
     let target;
     let component;
     let reactive;
+    let view;
     let bind;
     let id;
     let Application;
@@ -317,6 +318,7 @@ describe('validate', () => {
         Metadata = cocoMvc.Metadata;
         Target = cocoMvc.Target;
         component = cocoMvc.component;
+        view = cocoMvc.view;
         reactive = cocoMvc.reactive;
         bind = cocoMvc.bind;
         id = cocoMvc.id;
@@ -381,7 +383,7 @@ describe('validate', () => {
         );
     });
 
-    test('元数据类上添加 2 个相同的类装饰器，会提醒重复装饰器', () => {
+    test('元数据类上不能添加 2 个相同的class装饰器', () => {
         @component()
         @component()
         @target([Target.Type.Class])
@@ -393,6 +395,55 @@ describe('validate', () => {
             'CO10003：在一个类上不能添加多次同一个装饰器，但%s上存在重复装饰器: %s',
             'T1',
             '@component'
+        );
+    });
+
+    test('业务类上不能添加 2 个相同的class装饰器', () => {
+        @id('Btn1')
+        @id('Btn2')
+        class Btn {
+            count: number;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10003：在一个类上不能添加多次同一个装饰器，但%s上存在重复装饰器: %s',
+            'Btn',
+            '@id'
+        );
+    });
+
+    test('业务类上不能添加 2 个相同的field装饰器', () => {
+        @view()
+        class Btn {
+            @reactive()
+            @reactive()
+            count: number;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10026：在一个字段上不能添加多次同一个装饰器，但 %s 上 %s 字段存在重复装饰器: %s',
+            'Btn',
+            'count',
+            '@reactive'
+        );
+    });
+
+    test('业务类上不能添加 2 个相同的method装饰器', () => {
+        @view()
+        class Btn {
+            @bind()
+            @bind()
+            handleClick() {};
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10027：在一个方法上不能添加多次同一个装饰器，但 %s 上 %s 字段存在重复装饰器: %s',
+            'Btn',
+            'handleClick',
+            '@bind'
         );
     });
 

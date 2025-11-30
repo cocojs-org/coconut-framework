@@ -106,12 +106,6 @@ class MetadataRepository {
             fieldMetas = [];
             fieldMetadata.set(fieldName, fieldMetas);
         }
-        // if (fieldMetas.find((i) => i instanceof MetadataCls)) {
-        //   if (__TEST__) {
-        //     // TODO: 挪到validate中
-        //     throw new Error('相同的Field装饰器装饰了2次!');
-        //   }
-        // }
         const metadata = instantiateMetadata(MetadataCls, args);
         fieldMetas.push(metadata);
     }
@@ -127,12 +121,6 @@ class MetadataRepository {
             methodMetas = [];
             methodMetadata.set(fieldName, methodMetas);
         }
-        // if (methodMetas.find((i) => i instanceof MetadataCls)) {
-        //   if (__TEST__) {
-        //     // TODO: 挪到validate中
-        //     throw new Error('相同的Field装饰器装饰了2次!');
-        //   }
-        // }
         const metadata = instantiateMetadata(MetadataCls, args);
         methodMetas.push(metadata);
     }
