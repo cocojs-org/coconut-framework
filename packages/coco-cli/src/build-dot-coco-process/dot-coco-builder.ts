@@ -5,7 +5,6 @@
  */
 import genIndexTsx from './gen-index-tsx';
 import mergeProperties from './merge-properties';
-import { validateConstructor } from './validate-constructor';
 import Project from '../util/project';
 import path from 'node:path';
 import chokidar from 'chokidar';
@@ -42,7 +41,6 @@ class DotCocoBuilder {
      */
     public build = () => {
         this.ensureEmptyDotCocoFolder(this.project);
-        validateConstructor(this.project);
         mergeProperties(this.project, this.cmd);
         genIndexTsx(this.project, this.iocComponents);
     };

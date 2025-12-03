@@ -17,46 +17,62 @@ const cliBuildCotCocoDist = path.join(cocoCli, '/dist/build-dot-coco-process/ind
 const cliWebpackProcess = path.join(cocoCli, './src/webpack-process/index.ts');
 const cliWebpackDist = path.join(cocoCli, '/dist/webpack-process/index.js');
 
+const rollupPluginAssignClassSsid = path.join(packages, './coco-rollup-plugin-assign-class-ssid');
+const rollupPluginAssignClassSsidInput = path.join(rollupPluginAssignClassSsid, './src/index.ts');
+const rollupPluginAssignClassSsidOutput = path.join(rollupPluginAssignClassSsid, './dist/index.cjs.js');
+
 module.exports.rollupTargets = [
-  {
-    input: isTest ? cocoMvcInputTest : cocoMvcInput,
-    output: {
-      file: cocoMvcOutput,
-      format: 'cjs',
+    {
+        input: rollupPluginAssignClassSsidInput,
+        output: {
+            file: rollupPluginAssignClassSsidOutput,
+            format: 'cjs',
+        },
+        alias: [],
+        ignoreRollupPlugin: true
     },
-    alias: [
-      PACKAGE.MVC_RENDER,
-      PACKAGE.VIEW,
-      PACKAGE.ROUTER,
-      PACKAGE.IOC_CONTAINER,
-      PACKAGE.SHARED,
-      PACKAGE.REACT,
-      PACKAGE.REACT_DOM,
-      PACKAGE.REACT_DOM_HOST_CONFIG,
-      PACKAGE.REACT_RECONCILER,
-      PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS,
-      PACKAGE.REACT_SHARED,
-    ],
-  },
-  {
-    input: cliSrc,
-    output: {
-      file: cliDist,
-      format: 'cjs'
+    {
+        input: isTest ? cocoMvcInputTest : cocoMvcInput,
+        output: {
+            file: cocoMvcOutput,
+            format: 'cjs',
+        },
+        alias: [
+            PACKAGE.MVC_RENDER,
+            PACKAGE.VIEW,
+            PACKAGE.ROUTER,
+            PACKAGE.IOC_CONTAINER,
+            PACKAGE.SHARED,
+            PACKAGE.REACT,
+            PACKAGE.REACT_DOM,
+            PACKAGE.REACT_DOM_HOST_CONFIG,
+            PACKAGE.REACT_RECONCILER,
+            PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS,
+            PACKAGE.REACT_SHARED,
+        ],
+    },
+    {
+        input: cliSrc,
+        output: {
+            file: cliDist,
+            format: 'cjs'
+        },
+        ignoreRollupPlugin: true
+    },
+    {
+        input: cliBuildDotCocoProcess,
+        output: {
+            file: cliBuildCotCocoDist,
+            format: 'cjs'
+        },
+        ignoreRollupPlugin: true
+    },
+    {
+        input: cliWebpackProcess,
+        output: {
+            file: cliWebpackDist,
+            format: 'cjs'
+        },
+        ignoreRollupPlugin: true
     }
-  },
-  {
-    input: cliBuildDotCocoProcess,
-    output: {
-      file: cliBuildCotCocoDist,
-      format: 'cjs'
-    },
-  },
-  {
-    input: cliWebpackProcess,
-    output: {
-      file: cliWebpackDist,
-      format: 'cjs'
-    },
-  }
 ];

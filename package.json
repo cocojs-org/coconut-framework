@@ -12,7 +12,8 @@
         "build:test": "pnpm run build-type-extractor && pnpm run build-lib:test && pnpm run build-dts:test",
         "test:coconut": "jest -c ./scripts/jest/jest.coconut.config.js",
         "test:react": "jest -c ./scripts/jest/jest.react.config.js",
-        "test": "pnpm run build:test && pnpm run test:coconut && pnpm run test:react",
+        "test:rollup-plugin-assign-class-ssid": "jest -c ./scripts/jest/jest.rollup-plugin-assign-class-ssid.config.js",
+        "test": "pnpm run build:test && pnpm run test:rollup-plugin-assign-class-ssid && pnpm run test:coconut && pnpm run test:react",
         "prettier": "prettier --write 'packages/**/*.*' 'package.json'",
         "prettier:check": "prettier --check 'packages/**/*.*'",
         "updateVersion": "pnpm run test && node scripts/publish/modify-pkg-version.js",
@@ -25,7 +26,6 @@
     "devDependencies": {
         "@babel/cli": "^7.26.4",
         "@babel/core": "^7.24.3",
-        "@babel/parser": "^7.26.7",
         "@babel/plugin-proposal-decorators": "^7.24.1",
         "@babel/plugin-syntax-decorators": "^7.25.9",
         "@babel/plugin-transform-class-properties": "^7.25.9",

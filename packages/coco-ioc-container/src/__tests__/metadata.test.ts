@@ -59,15 +59,14 @@ describe('metadata/create-metadata', () => {
         expect(m['name']).toBe('李四');
     });
 
-    test('元数据类型定义了field，但没有默认值，非纯对象都会复制给value', () => {
+    test('元数据类型定义了field，但没有默认值，非纯对象都会复制给name', () => {
         class M {
             name: string;
         }
         const m = instantiateMetadata(M, '李四');
         expect(m).toBeInstanceOf(M);
-        const m1 = new M();
-        expect(m['name']).toBe(undefined);
-        expect(m['value']).toBe('李四');
+        expect(m['name']).toBe('李四');
+        expect(m['value']).toBe(undefined);
     });
 
     test('非纯对象都赋到元数据类型有默认值的field上', () => {
@@ -76,8 +75,8 @@ describe('metadata/create-metadata', () => {
         }
         const m = instantiateMetadata(M, '张三');
         expect(m).toBeInstanceOf(M);
-        const m1 = new M();
         expect(m['v']).toBe('张三');
+        expect(m['value']).toBe(undefined);
     });
 });
 
@@ -399,8 +398,12 @@ describe('validate', () => {
     });
 
     test('业务类上不能添加 2 个相同的class装饰器', () => {
-        @id('Btn1')
-        @id('Btn2')
+        @target([Target.Type.Class])
+        class T extends Metadata {}
+        const t = createDecoratorExp(T);
+
+        @t()
+        @t()
         class Btn {
             count: number;
         }
@@ -409,15 +412,19 @@ describe('validate', () => {
         expect(consoleErrorSpy).toHaveBeenCalledWith(
             'CO10003：在一个类上不能添加多次同一个装饰器，但%s上存在重复装饰器: %s',
             'Btn',
-            '@id'
+            '@t'
         );
     });
 
     test('业务类上不能添加 2 个相同的field装饰器', () => {
+        @target([Target.Type.Field])
+        class T extends Metadata {}
+        const t = createDecoratorExp(T);
+
         @view()
         class Btn {
-            @reactive()
-            @reactive()
+            @t()
+            @t()
             count: number;
         }
 
@@ -426,15 +433,19 @@ describe('validate', () => {
             'CO10026：在一个字段上不能添加多次同一个装饰器，但 %s 上 %s 字段存在重复装饰器: %s',
             'Btn',
             'count',
-            '@reactive'
+            '@t'
         );
     });
 
     test('业务类上不能添加 2 个相同的method装饰器', () => {
+        @target([Target.Type.Method])
+        class T extends Metadata {}
+        const t = createDecoratorExp(T);
+
         @view()
         class Btn {
-            @bind()
-            @bind()
+            @t()
+            @t()
             handleClick() {};
         }
 
@@ -443,7 +454,7 @@ describe('validate', () => {
             'CO10027：在一个方法上不能添加多次同一个装饰器，但 %s 上 %s 字段存在重复装饰器: %s',
             'Btn',
             'handleClick',
-            '@bind'
+            '@t'
         );
     });
 
