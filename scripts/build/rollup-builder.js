@@ -26,7 +26,8 @@ function genRollupConfig (inputConfig) {
             typescript({
                 compilerOptions: {
                     ...typescriptOptions
-                }}),
+                }
+            }),
             babel({
                 extensions: ['.js', '.ts', '.tsx'],
                 ...babelOptions,

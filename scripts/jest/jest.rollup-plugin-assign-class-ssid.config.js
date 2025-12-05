@@ -5,8 +5,8 @@ module.exports = {
     cache: false,
     maxConcurrency: 1,
     testEnvironment: 'jsdom',
-    testMatch: ['**/packages/coco-rollup-plugin-assign-class-ssid/**/*.test.js'],
-    moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+    testMatch: ['<rootDir>/packages/coco-rollup-plugin-assign-class-ssid/**/*.test.js'],
+    moduleFileExtensions: ['js', 'jsx'],
     moduleNameMapper: {
         '@cocojs/rollup-plugin-assign-class-ssid': '<rootDir>/packages/coco-rollup-plugin-assign-class-ssid/dist/index.cjs.js',
     },

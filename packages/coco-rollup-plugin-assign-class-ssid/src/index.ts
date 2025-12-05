@@ -63,10 +63,7 @@ export default function addStaticIdPlugin(): Plugin {
         transform(code: string, id: string) {
             // 1. 过滤：只处理 TypeScript 文件
             if (!/\.(ts|tsx)$/.test(id)) {
-                // 在测试环境下，不校验文件格式
-                if (!__TEST__) {
-                    return null;
-                }
+                return null;
             }
             const s = new MagicString(code);
 
