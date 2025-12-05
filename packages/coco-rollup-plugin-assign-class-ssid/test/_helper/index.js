@@ -1,7 +1,17 @@
+const fs = require('fs');
 const path = require('path');
 const rollup = require('rollup');
 const assignClassIdPlugin = require('@cocojs/rollup-plugin-assign-class-ssid');
 const typescript = require('@rollup/plugin-typescript');
+
+async function writeCode(sourceCode) {
+    const targetFilePath = path.resolve(__dirname, '..', 'input.ts');
+    if (!fs.existsSync(targetFilePath)) {
+        fs.mkdirSync(path.dirname(targetFilePath), { recursive: true });
+    }
+
+    fs.writeFileSync(targetFilePath, sourceCode, 'utf8');
+}
 
 async function bundle(input) {
     const builder = await rollup.rollup({
@@ -31,15 +41,16 @@ async function bundle(input) {
 
 /**
  * 执行一次测试用例
- * @param inputFile rollup的 input 值，但只需要文件名，在函数内补全路径
+ * @param sourceCode 源码
  * @param assertFn  对打包结果断言函数，入参就是输出的字符串
  * @returns {Promise<void>}
  */
 async function runTest(
-    inputFile,
+    sourceCode,
     assertFn,
 ) {
-    const input = path.join(__dirname, '..', inputFile);
+    await writeCode(sourceCode);
+    const input = path.join(__dirname, '..', 'input.ts');
     const { code, builder } = await bundle(input);
     assertFn(code);
     await builder.close();
