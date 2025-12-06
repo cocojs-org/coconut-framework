@@ -10,7 +10,15 @@ async function writeCode(sourceCode) {
         fs.mkdirSync(path.dirname(targetFilePath), { recursive: true });
     }
 
-    fs.writeFileSync(targetFilePath, sourceCode, 'utf8');
+    const content = `
+/**
+ * ===不要提交此文件===
+ * ===不要提交此文件===
+ * ===不要提交此文件===
+ */
+${sourceCode}
+    `
+    fs.writeFileSync(targetFilePath, content, 'utf8');
 }
 
 async function bundle(input) {
@@ -24,7 +32,7 @@ async function bundle(input) {
                     target: "ESNext",
                     module: "ESNext",
                     jsx: "preserve",
-                    allowImportingTsExtensions: false
+                    allowImportingTsExtensions: false,
                 },
                 include: ["packages/coco-rollup-plugin-assign-class-ssid/**/*"],
             }),
@@ -47,7 +55,7 @@ async function bundle(input) {
  */
 async function runTest(
     sourceCode,
-    assertFn,
+    assertFn = () => {},
 ) {
     await writeCode(sourceCode);
     const input = path.join(__dirname, '..', 'input.ts');
