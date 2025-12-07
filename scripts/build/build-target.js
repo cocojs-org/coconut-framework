@@ -20,12 +20,24 @@ const cliWebpackDist = path.join(cocoCli, '/dist/webpack-process/index.js');
 const rollupPluginAssignClassSsid = path.join(packages, './coco-rollup-plugin-assign-class-ssid');
 const rollupPluginAssignClassSsidInput = path.join(rollupPluginAssignClassSsid, './src/index.ts');
 const rollupPluginAssignClassSsidOutput = path.join(rollupPluginAssignClassSsid, './dist/index.cjs.js');
+const webpackLoaderAssignClassSsid = path.join(packages, './coco-webpack-loader-assign-class-ssid');
+const webpackLoaderAssignClassSsidInput = path.join(webpackLoaderAssignClassSsid, './src/index.ts');
+const webpackLoaderAssignClassSsidOutput = path.join(webpackLoaderAssignClassSsid, './dist/index.cjs.js');
 
 module.exports.rollupTargets = [
     {
         input: rollupPluginAssignClassSsidInput,
         output: {
             file: rollupPluginAssignClassSsidOutput,
+            format: 'cjs',
+        },
+        alias: [],
+        ignoreRollupPlugin: true
+    },
+    {
+        input: webpackLoaderAssignClassSsidInput,
+        output: {
+            file: webpackLoaderAssignClassSsidOutput,
             format: 'cjs',
         },
         alias: [],

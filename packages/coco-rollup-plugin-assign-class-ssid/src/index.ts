@@ -108,7 +108,7 @@ export default function addStaticIdPlugin(): Plugin {
                                         `想要为类${className}自定义"${ssidKeyName}"，值不能是空字符串`
                                     );
                                 }
-                                 return true;
+                                return true;
                             }
                             return false;
                         }
