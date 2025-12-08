@@ -1,8 +1,8 @@
 {
-    "name": "@cocojs/rollup-plugin-assign-class-ssid",
-    "version": "0.0.0",
-    "description": "A rollup plugin to auto assign $$id property for class (value is className)",
-    "main": "dist/index.js",
+    "private": true,
+    "name": "coco-assign-class-ssid",
+    "description": "A Babel-Parser–powered transformer that automatically adds a static $$id property to decorated class.",
+    "main": "dist/index.cjs.js",
     "types": "dist/index.d.ts",
     "files": [
         "dist"
@@ -18,10 +18,11 @@
     },
     "homepage": "https://github.com/cocojs-org/coconut-framework",
     "devDependencies": {
+        "@babel/parser": "^7.28.5",
+        "@babel/types": "^7.28.5",
         "@types/jest": "^29.5.14",
-        "@types/node": "^20.0.0",
         "jest": "^29.7.0",
-        "rollup": "^4.53.3",
+        "magic-string": "^0.30.21",
         "typescript": "5.3.3"
     },
     "peerDependencies": {

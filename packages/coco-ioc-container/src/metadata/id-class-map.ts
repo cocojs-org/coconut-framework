@@ -8,7 +8,6 @@
 import { createDiagnose, DiagnoseCode, printDiagnose, stringifyDiagnose } from 'shared';
 import Metadata from './instantiate-one-metadata';
 import { type MetaMetadata } from './metadata-repository';
-import Id from '../decorator/metadata/id';
 
 class IdClassMap {
     private idClassMap: Map<string, Class<Metadata>> = new Map();
@@ -18,10 +17,9 @@ class IdClassMap {
      * * @param metaMetadataMap 元数据类映射map，key是元数据类，value是元数据类的元数据列表
      */
     constructor(metaMetadataMap: Map<Class<Metadata>, MetaMetadata>) {
-        for (const [cls, metadataList] of metaMetadataMap.entries()) {
-            const idMetadata = metadataList.classMetadata.find((m) => m.constructor === Id) as Id | undefined;
-            const id = idMetadata ? idMetadata.value : cls.name; // 如果用户没有显式设置id，则使用类名作为id
-            if (typeof id !== 'string' || !id) {
+        for (const cls of metaMetadataMap.keys()) {
+            const id = cls.$$id;
+            if (typeof id !== 'string' || !id.trim()) {
                 throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10016, cls.name)));
             }
             if (this.idClassMap.has(id)) {

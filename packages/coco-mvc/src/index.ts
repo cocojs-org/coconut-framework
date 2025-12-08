@@ -11,8 +11,6 @@ export {
     configuration,
     ConstructorParam,
     constructorParam,
-    Id,
-    id,
     Target,
     target,
     type Type,

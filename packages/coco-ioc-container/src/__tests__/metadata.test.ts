@@ -304,7 +304,6 @@ describe('validate', () => {
     let reactive;
     let view;
     let bind;
-    let id;
     let Application;
     let application;
     let createDecoratorExp;
@@ -320,7 +319,6 @@ describe('validate', () => {
         view = cocoMvc.view;
         reactive = cocoMvc.reactive;
         bind = cocoMvc.bind;
-        id = cocoMvc.id;
         target = cocoMvc.target;
         createDecoratorExp = cocoMvc.createDecoratorExp;
         createPlaceholderDecoratorExp = cocoMvc.createPlaceholderDecoratorExp;
@@ -339,7 +337,6 @@ describe('validate', () => {
     });
 
     test('元数据类如果添加了字段装饰器，会报错', () => {
-        @id('T1')
         @target([Target.Type.Class])
         @component()
         class T1 extends Metadata {
@@ -359,7 +356,6 @@ describe('validate', () => {
     });
 
     test('元数据类如果添加了方法装饰器，会报错', () => {
-        @id('T1')
         @target([Target.Type.Class])
         @component()
         class T1 extends Metadata {

@@ -1,6 +1,5 @@
-import { component, Metadata, Target, target, id } from 'coco-ioc-container';
+import { component, Metadata, Target, target } from 'coco-ioc-container';
 
-@id('Router')
 @target([Target.Type.Class])
 @component()
 class Router extends Metadata {}

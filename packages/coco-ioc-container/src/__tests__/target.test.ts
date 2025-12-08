@@ -8,7 +8,6 @@ describe('@target装饰器', () => {
     let component;
     let createDecoratorExp;
     let Component;
-    let Id;
     let instantiateMetadata;
     let consoleErrorSpy;
 
@@ -22,7 +21,6 @@ describe('@target装饰器', () => {
         Metadata = cocoMvc.Metadata;
         Target = cocoMvc.Target;
         Component = cocoMvc.Component;
-        Id = cocoMvc.Id;
         Application = cocoMvc.Application;
         instantiateMetadata = cocoMvc.instantiateMetadata;
         application = new Application();
@@ -47,7 +45,6 @@ describe('@target装饰器', () => {
         application.start();
         const expected = cocoMvc.checkClassMetadataAsExpected(application, Target, [
             instantiateMetadata(Target, { value: [Target.Type.Class] }),
-            instantiateMetadata(Id, { value: 'Target' }),
         ]);
         expect(expected).toEqual(true);
     });

@@ -17,6 +17,9 @@ importers:
       '@babel/core':
         specifier: ^7.24.3
         version: 7.28.5
+      '@babel/parser':
+        specifier: ^7.28.5
+        version: 7.28.5
       '@babel/plugin-proposal-decorators':
         specifier: ^7.24.1
         version: 7.28.0(@babel/core@7.28.5)
@@ -89,6 +92,9 @@ importers:
       lint-staged:
         specifier: ^15.2.10
         version: 15.5.2
+      magic-string:
+        specifier: ^0.30.21
+        version: 0.30.21
       memfs:
         specifier: ^4.51.1
         version: 4.51.1
@@ -117,6 +123,27 @@ importers:
         specifier: ^5.102.1
         version: 5.102.1(webpack-cli@6.0.1)
 
+  packages/coco-assign-class-ssid-transformer:
+    devDependencies:
+      '@babel/parser':
+        specifier: ^7.28.5
+        version: 7.28.5
+      '@babel/types':
+        specifier: ^7.28.5
+        version: 7.28.5
+      '@types/jest':
+        specifier: ^29.5.14
+        version: 29.5.14
+      jest:
+        specifier: ^29.7.0
+        version: 29.7.0(@types/node@20.0.0)
+      magic-string:
+        specifier: ^0.30.21
+        version: 0.30.21
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
+
   packages/coco-cli:
     dependencies:
       '@babel/core':
@@ -142,7 +169,7 @@ importers:
         version: 6.1.0(@babel/core@7.28.5)(@types/babel__core@7.20.5)(rollup@4.52.5)
       '@rollup/plugin-typescript':
         specifier: ^12.1.2
-        version: 12.3.0(rollup@4.52.5)(tslib@2.8.1)(typescript@5.3.3)
+        version: 12.3.0(rollup@4.52.5)(tslib@2.8.1)(typescript@5.8.2)
       babel-loader:
         specifier: ^10.0.0
         version: 10.0.0(@babel/core@7.28.5)(webpack@5.102.1)
@@ -163,7 +190,7 @@ importers:
         version: 5.3.14(webpack@5.102.1)
       ts-loader:
         specifier: ^9.5.2
-        version: 9.5.4(typescript@5.3.3)(webpack@5.102.1)
+        version: 9.5.4(typescript@5.8.2)(webpack@5.102.1)
       webpack:
         specifier: ^5.98.0
         version: 5.102.1(webpack-cli@6.0.1)
@@ -193,12 +220,6 @@ importers:
 
   packages/coco-rollup-plugin-assign-class-ssid:
     devDependencies:
-      '@babel/parser':
-        specifier: ^7.28.5
-        version: 7.28.5
-      '@babel/types':
-        specifier: ^7.28.5
-        version: 7.28.5
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
@@ -208,9 +229,6 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.0.0)
-      magic-string:
-        specifier: ^0.30.21
-        version: 0.30.21
       rollup:
         specifier: ^4.53.3
         version: 4.53.3
@@ -242,12 +260,6 @@ importers:
 
   packages/coco-webpack-loader-assign-class-ssid:
     devDependencies:
-      '@babel/parser':
-        specifier: ^7.28.5
-        version: 7.28.5
-      '@babel/types':
-        specifier: ^7.28.5
-        version: 7.28.5
       '@types/jest':
         specifier: ^29.5.14
         version: 29.5.14
@@ -257,12 +269,6 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.0.0)
-      magic-string:
-        specifier: ^0.30.21
-        version: 0.30.21
-      rollup:
-        specifier: ^4.53.3
-        version: 4.53.3
       typescript:
         specifier: 5.3.3
         version: 5.3.3
@@ -5474,11 +5480,11 @@ snapshots:
       rollup: 4.52.5
       tslib: 2.8.1
 
-  '@rollup/plugin-typescript@12.3.0(rollup@4.52.5)(tslib@2.8.1)(typescript@5.3.3)':
+  '@rollup/plugin-typescript@12.3.0(rollup@4.52.5)(tslib@2.8.1)(typescript@5.8.2)':
     dependencies:
       '@rollup/pluginutils': 5.3.0(rollup@4.52.5)
       resolve: 1.22.11
-      typescript: 5.3.3
+      typescript: 5.8.2
     optionalDependencies:
       rollup: 4.52.5
       tslib: 2.8.1
@@ -8449,14 +8455,14 @@ snapshots:
       babel-jest: 29.7.0(@babel/core@7.28.5)
       jest-util: 29.7.0
 
-  ts-loader@9.5.4(typescript@5.3.3)(webpack@5.102.1):
+  ts-loader@9.5.4(typescript@5.8.2)(webpack@5.102.1):
     dependencies:
       chalk: 4.1.2
       enhanced-resolve: 5.18.3
       micromatch: 4.0.8
       semver: 7.7.3
       source-map: 0.7.6
-      typescript: 5.3.3
+      typescript: 5.8.2
       webpack: 5.102.1(webpack-cli@6.0.1)
 
   ts-patch@3.1.2:

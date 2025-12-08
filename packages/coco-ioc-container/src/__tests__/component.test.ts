@@ -12,7 +12,6 @@ describe('@component装饰器', () => {
     let createDecoratorExp;
     let instantiateMetadata;
     let consoleErrorSpy;
-    let Id;
 
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -28,7 +27,6 @@ describe('@component装饰器', () => {
         Application = cocoMvc.Application;
         instantiateMetadata = cocoMvc.instantiateMetadata;
         createDecoratorExp = cocoMvc.createDecoratorExp;
-        Id = cocoMvc.Id;
         application = new Application();
         cocoMvc.registerMvcApi(application);
     });
@@ -68,7 +66,6 @@ describe('@component装饰器', () => {
         application.start();
         const expected = cocoMvc.checkClassMetadataAsExpected(application, Component, [
             instantiateMetadata(Target, { value: [Target.Type.Class, Target.Type.Method] }),
-            instantiateMetadata(Id, { value: 'Component' }),
         ]);
         expect(expected).toEqual(true);
     });

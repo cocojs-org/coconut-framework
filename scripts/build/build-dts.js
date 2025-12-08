@@ -157,6 +157,14 @@ const cliDts = [
     }
 ]
 
+const assignClassSsidTransformer = [
+    {
+        packageName: 'coco-assign-class-ssid-transformer',
+        tsconfigJson: 'tsconfig.json',
+        mainEntryPointFilePath: './dts-tmp/src/index.d.ts'
+    }
+]
+
 const rollupPluginAssignClassSsid = [
     {
         packageName: 'coco-rollup-plugin-assign-class-ssid',
@@ -170,13 +178,14 @@ function doBuild(t) {
     runApiExtractor(t.packageName, t.mainEntryPointFilePath);
 }
 function build() {
-    // if (isTest) {
-    //     cocoMvcDtsTest.forEach(doBuild)
-    // } else {
-    //     cocoMvcDtsProd.forEach(doBuild)
-    // }
-    // cliDts.forEach(doBuild)
+    assignClassSsidTransformer.forEach(doBuild)
     rollupPluginAssignClassSsid.forEach(doBuild)
+    if (isTest) {
+        cocoMvcDtsTest.forEach(doBuild)
+    } else {
+        cocoMvcDtsProd.forEach(doBuild)
+    }
+    cliDts.forEach(doBuild)
 }
 
 build();

@@ -17,6 +17,9 @@ const cliBuildCotCocoDist = path.join(cocoCli, '/dist/build-dot-coco-process/ind
 const cliWebpackProcess = path.join(cocoCli, './src/webpack-process/index.ts');
 const cliWebpackDist = path.join(cocoCli, '/dist/webpack-process/index.js');
 
+const cocoAssignClassSsidTransformer = path.join(packages, './coco-assign-class-ssid-transformer');
+const cocoAssignClassSsidTransformerInput = path.join(cocoAssignClassSsidTransformer, './src/index.ts');
+const cocoAssignClassSsidTransformerOutput = path.join(cocoAssignClassSsidTransformer, './dist/index.cjs.js');
 const rollupPluginAssignClassSsid = path.join(packages, './coco-rollup-plugin-assign-class-ssid');
 const rollupPluginAssignClassSsidInput = path.join(rollupPluginAssignClassSsid, './src/index.ts');
 const rollupPluginAssignClassSsidOutput = path.join(rollupPluginAssignClassSsid, './dist/index.cjs.js');
@@ -26,12 +29,22 @@ const webpackLoaderAssignClassSsidOutput = path.join(webpackLoaderAssignClassSsi
 
 module.exports.rollupTargets = [
     {
+        input: cocoAssignClassSsidTransformerInput,
+        output: {
+            file: cocoAssignClassSsidTransformerOutput,
+            format: 'cjs',
+        },
+        ignoreRollupPlugin: true
+    },
+    {
         input: rollupPluginAssignClassSsidInput,
         output: {
             file: rollupPluginAssignClassSsidOutput,
             format: 'cjs',
         },
-        alias: [],
+        alias: [
+            PACKAGE.ASSIGN_CLASS_SSID_TRANSFORMER,
+        ],
         ignoreRollupPlugin: true
     },
     {
@@ -40,7 +53,9 @@ module.exports.rollupTargets = [
             file: webpackLoaderAssignClassSsidOutput,
             format: 'cjs',
         },
-        alias: [],
+        alias: [
+            PACKAGE.ASSIGN_CLASS_SSID_TRANSFORMER,
+        ],
         ignoreRollupPlugin: true
     },
     {
@@ -61,6 +76,7 @@ module.exports.rollupTargets = [
             PACKAGE.REACT_RECONCILER,
             PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS,
             PACKAGE.REACT_SHARED,
+            PACKAGE.ASSIGN_CLASS_SSID_TRANSFORMER,
         ],
     },
     {
