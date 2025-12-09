@@ -1,6 +1,8 @@
 export { default as Metadata } from './metadata/instantiate-one-metadata';
 export { default as Autowired } from './decorator/metadata/autowired';
 export { default as autowired } from './decorator/autowired';
+export { default as cocoid } from './decorator/cocoid';
+export { default as Cocoid } from './decorator/metadata/cocoid';
 export { default as Component } from './decorator/metadata/component';
 export { default as component } from './decorator/component';
 export { default as Configuration } from './decorator/metadata/configuration';

@@ -2,6 +2,8 @@ export {
     Metadata,
     Autowired,
     autowired,
+    cocoid,
+    Cocoid,
     Component,
     component,
     Scope,

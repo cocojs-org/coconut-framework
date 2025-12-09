@@ -5,6 +5,7 @@ describe('configuration装饰器', () => {
     let Configuration;
     let cocoMvc;
     let component;
+    let cocoid;
     let scope;
     let SCOPE;
     let consoleErrorSpy;
@@ -13,6 +14,7 @@ describe('configuration装饰器', () => {
         consoleErrorSpy.mockImplementation(() => {});
         cocoMvc = await import('@cocojs/mvc');
         component = cocoMvc.component;
+        cocoid = cocoMvc.cocoid;
         scope = cocoMvc.scope;
         SCOPE = cocoMvc.SCOPE;
         configuration = cocoMvc.configuration;
@@ -70,6 +72,7 @@ describe('configuration装饰器', () => {
 
         @configuration()
         class WebAppConfiguration {
+            @cocoid('Theme')
             @component()
             theme(): Theme {
                 return new Theme();
@@ -87,6 +90,7 @@ describe('configuration装饰器', () => {
 
         @configuration()
         class WebAppConfiguration {
+            @cocoid('Button')
             @scope(SCOPE.Prototype)
             @component()
             button(): Button {

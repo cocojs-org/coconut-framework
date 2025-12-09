@@ -11,7 +11,7 @@ import type {
 } from '@babel/types';
 
 type ClassVisitor = (node: ClassDeclaration | ClassExpression) => void;
-const ssidKeyName = '$$id';
+const ssidKeyName = '$$cocoId';
 
 enum SCENE {
     Jest,
@@ -62,7 +62,7 @@ function createTransformer(warn: (msg: string) => void, error: (msg: string) => 
 
     function transformer(code: string, id: string) {
         // 1. 过滤：只处理 TypeScript 文件
-        if (!/\.(ts|tsx)$/.test(id)) {
+        if (!/\.(ts|tsx)$/.test(id) && !/\.(jsx)$/.test(id)) {
             return null;
         }
         const s = new MagicString(code);

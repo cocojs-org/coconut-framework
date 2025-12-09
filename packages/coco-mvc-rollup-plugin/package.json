@@ -1,7 +1,7 @@
 {
-    "name": "@cocojs/webpack-loader-assign-class-ssid",
+    "name": "@cocojs/rollup-plugin-mvc",
     "version": "0.0.0",
-    "description": "A webpack loader to auto assign $$id property for class (value is className)",
+    "description": "A rollup plugin for @cocojs/mvc",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "files": [
@@ -21,6 +21,7 @@
         "@types/jest": "^29.5.14",
         "@types/node": "^20.0.0",
         "jest": "^29.7.0",
+        "rollup": "^4.53.3",
         "typescript": "5.3.3"
     },
     "peerDependencies": {

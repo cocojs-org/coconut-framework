@@ -1,5 +1,5 @@
 import { Plugin, PluginContext } from 'rollup';
-import { createTransformer } from 'assign-class-ssid-transformer';
+import { createTransformer } from 'assign-class-cocoid-transformer';
 
 // 定义 Class Visitor 的类型
 export default function addStaticIdPlugin(): Plugin {

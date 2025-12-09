@@ -20,7 +20,7 @@ const reactReconcilerReactWorkTags = path.join(packages, './react-reconciler/src
 const reactDOM = path.join(packages, './react-dom/src/index.js')
 const reactDOMFiberHostConfig = path.join(packages, './react-dom/src/client/ReactDomHostConfig.js')
 const reactShared = path.join(packages, './react-shared/src/index.js')
-const assignClassSsidTransformer = path.join(packages, './coco-assign-class-ssid-transformer/src/index.ts');
+const assignClassCocoidTransformer = path.join(packages, './coco-assign-class-cocoid-transformer/src/index.ts');
 
 const PACKAGE = {
     MVC: 'coco-mvc',
@@ -35,7 +35,7 @@ const PACKAGE = {
     REACT_DOM: 'react-dom',
     REACT_DOM_HOST_CONFIG: 'react-dom-ReactFiberHostConfig',
     REACT_SHARED: 'react-shared',
-    ASSIGN_CLASS_SSID_TRANSFORMER: 'assign-class-ssid-transformer'
+    ASSIGN_CLASS_SSID_TRANSFORMER: 'assign-class-cocoid-transformer'
 };
 
 const pathMap = {
@@ -51,7 +51,7 @@ const pathMap = {
     [PACKAGE.REACT_DOM]: reactDOM,
     [PACKAGE.REACT_DOM_HOST_CONFIG]: reactDOMFiberHostConfig,
     [PACKAGE.REACT_SHARED]: reactShared,
-    [PACKAGE.ASSIGN_CLASS_SSID_TRANSFORMER]: assignClassSsidTransformer,
+    [PACKAGE.ASSIGN_CLASS_SSID_TRANSFORMER]: assignClassCocoidTransformer,
 }
 
 function genEntries(config) {

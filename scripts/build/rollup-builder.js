@@ -11,7 +11,7 @@ function genRollupConfig (inputConfig) {
 
     let rollupPluginAssignClassSsid;
     if (!ignoreRollupPlugin) {
-        rollupPluginAssignClassSsid = require('../../packages/coco-rollup-plugin-assign-class-ssid/dist/index.cjs')
+        rollupPluginAssignClassSsid = require('../../packages/coco-mvc-rollup-plugin/dist/index.cjs')
     }
 
     return {

@@ -159,7 +159,7 @@ const cliDts = [
 
 const assignClassSsidTransformer = [
     {
-        packageName: 'coco-assign-class-ssid-transformer',
+        packageName: 'coco-assign-class-cocoid-transformer',
         tsconfigJson: 'tsconfig.json',
         mainEntryPointFilePath: './dts-tmp/src/index.d.ts'
     }
@@ -167,7 +167,7 @@ const assignClassSsidTransformer = [
 
 const rollupPluginAssignClassSsid = [
     {
-        packageName: 'coco-rollup-plugin-assign-class-ssid',
+        packageName: 'coco-mvc-rollup-plugin',
         tsconfigJson: 'tsconfig.json',
         mainEntryPointFilePath: './dts-tmp/index.d.ts'
     }

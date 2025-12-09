@@ -8,12 +8,7 @@ module.exports = {
     testMatch: ['**/packages/react-dom/**/*-test.jsx'],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
     transform: {
-        '\\.[jt]sx?$': [
-            'babel-jest',
-            {
-                configFile: path.join(__dirname, './babel.config.js'),
-            },
-        ],
+        '\\.[jt]sx?$': '<rootDir>/scripts/jest/react-transform.js',
     },
     moduleNameMapper: {
         '@cocojs/mvc': '<rootDir>/packages/coco-mvc/dist/index.cjs.js',

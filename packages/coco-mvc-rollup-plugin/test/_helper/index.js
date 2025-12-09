@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const rollup = require('rollup');
-const assignClassIdPlugin = require('@cocojs/rollup-plugin-assign-class-ssid');
+const rollupPluginMvc = require('@cocojs/rollup-plugin-mvc');
 const typescript = require('@rollup/plugin-typescript');
 
 async function writeCode(sourceCode) {
@@ -25,7 +25,7 @@ async function bundle(input) {
     const builder = await rollup.rollup({
         input: input,
         plugins: [
-            assignClassIdPlugin(),
+            rollupPluginMvc(),
             typescript({
                 tslib: require.resolve('tslib'),
                 compilerOptions: {
@@ -34,7 +34,7 @@ async function bundle(input) {
                     jsx: "preserve",
                     allowImportingTsExtensions: false,
                 },
-                include: ["packages/coco-rollup-plugin-assign-class-ssid/**/*"],
+                include: ["packages/coco-mvc-rollup-plugin/**/*"],
             }),
         ],
     });

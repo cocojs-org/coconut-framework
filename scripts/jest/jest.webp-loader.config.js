@@ -5,10 +5,9 @@ module.exports = {
     cache: false,
     maxConcurrency: 1,
     testEnvironment: 'jsdom',
-    testMatch: ['<rootDir>/packages/coco-rollup-plugin-assign-class-ssid/**/*.test.js'],
-    moduleFileExtensions: ['js', 'jsx'],
+    testMatch: ['<rootDir>/packages/coco-mvc-webpack-loader/**/*.test.js'],
     moduleNameMapper: {
-        '@cocojs/rollup-plugin-assign-class-ssid': '<rootDir>/packages/coco-rollup-plugin-assign-class-ssid/dist/index.cjs.js',
+        '@cocojs/webpack-loader-mvc': '<rootDir>/packages/coco-mvc-webpack-loader/dist/index.cjs.js',
     },
     globals: {
         __DEV__: true,

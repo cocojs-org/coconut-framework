@@ -17,15 +17,15 @@ const cliBuildCotCocoDist = path.join(cocoCli, '/dist/build-dot-coco-process/ind
 const cliWebpackProcess = path.join(cocoCli, './src/webpack-process/index.ts');
 const cliWebpackDist = path.join(cocoCli, '/dist/webpack-process/index.js');
 
-const cocoAssignClassSsidTransformer = path.join(packages, './coco-assign-class-ssid-transformer');
+const cocoAssignClassSsidTransformer = path.join(packages, './coco-assign-class-cocoid-transformer');
 const cocoAssignClassSsidTransformerInput = path.join(cocoAssignClassSsidTransformer, './src/index.ts');
 const cocoAssignClassSsidTransformerOutput = path.join(cocoAssignClassSsidTransformer, './dist/index.cjs.js');
-const rollupPluginAssignClassSsid = path.join(packages, './coco-rollup-plugin-assign-class-ssid');
-const rollupPluginAssignClassSsidInput = path.join(rollupPluginAssignClassSsid, './src/index.ts');
-const rollupPluginAssignClassSsidOutput = path.join(rollupPluginAssignClassSsid, './dist/index.cjs.js');
-const webpackLoaderAssignClassSsid = path.join(packages, './coco-webpack-loader-assign-class-ssid');
-const webpackLoaderAssignClassSsidInput = path.join(webpackLoaderAssignClassSsid, './src/index.ts');
-const webpackLoaderAssignClassSsidOutput = path.join(webpackLoaderAssignClassSsid, './dist/index.cjs.js');
+const cocoMvcRollupPlugin = path.join(packages, './coco-mvc-rollup-plugin');
+const cocoMvcRollupPluginInput = path.join(cocoMvcRollupPlugin, './src/index.ts');
+const cocoMvcRollupPluginOutput = path.join(cocoMvcRollupPlugin, './dist/index.cjs.js');
+const cocoMvcWebpackLoader = path.join(packages, './coco-mvc-webpack-loader');
+const cocoMvcWebpackLoaderInput = path.join(cocoMvcWebpackLoader, './src/index.ts');
+const cocoMvcWebpackLoaderOutput = path.join(cocoMvcWebpackLoader, './dist/index.cjs.js');
 
 module.exports.rollupTargets = [
     {
@@ -37,9 +37,9 @@ module.exports.rollupTargets = [
         ignoreRollupPlugin: true
     },
     {
-        input: rollupPluginAssignClassSsidInput,
+        input: cocoMvcRollupPluginInput,
         output: {
-            file: rollupPluginAssignClassSsidOutput,
+            file: cocoMvcRollupPluginOutput,
             format: 'cjs',
         },
         alias: [
@@ -48,9 +48,9 @@ module.exports.rollupTargets = [
         ignoreRollupPlugin: true
     },
     {
-        input: webpackLoaderAssignClassSsidInput,
+        input: cocoMvcWebpackLoaderInput,
         output: {
-            file: webpackLoaderAssignClassSsidOutput,
+            file: cocoMvcWebpackLoaderOutput,
             format: 'cjs',
         },
         alias: [

@@ -1,4 +1,4 @@
-import { createTransformer } from 'assign-class-ssid-transformer';
+import { createTransformer } from 'assign-class-cocoid-transformer';
 
 function addStaticIdLoader(source: any) {
     const filename = this.resourcePath;

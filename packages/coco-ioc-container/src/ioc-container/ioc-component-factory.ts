@@ -83,7 +83,7 @@ class IocComponentFactory {
             let qualifier = opt.qualifier;
             if (!qualifier) {
                 // 如果没有指定，尝试从配置中获取
-                qualifier = application.propertiesConfig.getValue(`${targetDefinition.id}.qualifier`);
+                qualifier = application.propertiesConfig.getValue(`${targetDefinition.cocoid}.qualifier`);
             }
             // 真正实例化的类定义
             const instantiateDefinition = application.iocComponentDefinition.getInstantiateDefinition(
