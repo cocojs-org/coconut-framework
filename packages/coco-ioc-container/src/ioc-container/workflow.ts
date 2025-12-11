@@ -12,7 +12,6 @@ import Cocoid from '../decorator/metadata/cocoid';
 import Component from '../decorator/metadata/component';
 import IocComponentDefinition from './ioc-component-definition';
 import IocComponentFactory from './ioc-component-factory';
-import { isForInitializer } from 'typescript';
 
 function doBuildIocComponentDefinition(
     metadataRepository: MetadataRepository,
@@ -42,12 +41,13 @@ function doBuildIocComponentDefinition(
                         method,
                         Component
                     ) as Component[];
+                    // TODO: @component()装饰器的参数能否在 ioc 组件中定义了，没有定义都是有问题的
                     const scopeMetas: Scope[] = metadataRepository.listMethodKindMetadata(
                         beDecoratedCls,
                         method,
                         Scope
                     ) as Scope[];
-                    // TODO: 添加校验是否有@cocoid装饰器
+                    // TODO: 添加校验是否有@cocoid装饰器；
                     const cocoidMetas: Cocoid[] = metadataRepository.listMethodKindMetadata(
                         beDecoratedCls,
                         method,

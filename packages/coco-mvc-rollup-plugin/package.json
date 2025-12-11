@@ -2,7 +2,7 @@
     "name": "@cocojs/rollup-plugin-mvc",
     "version": "0.0.0",
     "description": "A rollup plugin for @cocojs/mvc",
-    "main": "dist/index.js",
+    "main": "dist/index.cjs.js",
     "types": "dist/index.d.ts",
     "files": [
         "dist"

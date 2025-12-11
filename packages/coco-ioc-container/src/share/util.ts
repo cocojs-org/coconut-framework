@@ -97,8 +97,22 @@ export function once(fn?: () => void): (THIS: any) => void {
     return onceFn;
 }
 
-// 判断入参是否是类，因为class会转成function，所以不通过toString判断
+// 是否是普通类，因为class会转成function，所以不通过toString判断
 export function isClass(v: any) {
-    // TODO: 是否要添加类名首字母必须大写的校验
     return typeof v === 'function' && v.prototype && v.prototype.constructor === v;
+}
+
+/**
+ * 在coco/mvc中是否是一个合法的类
+ * @param v
+ */
+export function isCocoClass(v: any) {
+    return (
+        typeof v === 'function' &&
+        v.prototype &&
+        v.prototype.constructor === v &&
+        // 必须有$$cocoId属性
+        typeof v.$$cocoId === 'string' &&
+        v.$$cocoId.trim()
+    );
 }

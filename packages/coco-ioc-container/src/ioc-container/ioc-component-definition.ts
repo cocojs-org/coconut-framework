@@ -46,16 +46,16 @@ class IocComponentDefinition {
         isSingleton: boolean,
         methodInstantiateOpts?: { configurationCls: Class<any>; method: string }
     ) {
-        const existClsDef = this.clsDefinitionMap.get(cls);
-        if (existClsDef) {
-            throw new Error(`存在同名的组件: [${existClsDef.cls.name}] - [${cls.name}]`);
-        }
         if (typeof cocoid !== 'string' || !cocoid.trim()) {
             throw new Error(`生成组件id失败: [${cls.name}]`);
         }
         const existIdDef = this.idDefinitionMap.get(cocoid);
         if (existIdDef) {
             throw new Error(`存在cocoid的组件: [${existIdDef.cls.name}] - [${cls.name}]`);
+        }
+        const existClsDef = this.clsDefinitionMap.get(cls);
+        if (existClsDef) {
+            throw new Error(`存在同名的组件: [${existClsDef.cls.name}] - [${cls.name}]`);
         }
         const componentDefinition = this.newIocComponentDefinition(
             cocoid,
