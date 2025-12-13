@@ -7,16 +7,18 @@
     "files": [
         "dist"
     ],
-    "scripts": {
-        "jest": "jest"
+    "publishConfig": {
+        "registry": "https://registry.npmjs.org/",
+        "access": "public"
     },
     "keywords": [],
-    "author": "",
-    "license": "MIT",
     "bugs": {
         "url": "https://github.com/cocojs-org/coconut-framework/issues"
     },
     "homepage": "https://github.com/cocojs-org/coconut-framework",
+    "scripts": {
+        "jest": "jest"
+    },
     "devDependencies": {
         "@types/jest": "^29.5.14",
         "@types/node": "^20.0.0",
@@ -25,5 +27,7 @@
     },
     "peerDependencies": {
         "typescript": "5.3.3"
-    }
+    },
+    "author": "",
+    "license": "MIT"
 }
