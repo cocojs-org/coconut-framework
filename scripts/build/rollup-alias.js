@@ -20,45 +20,48 @@ const reactReconcilerReactWorkTags = path.join(packages, './react-reconciler/src
 const reactDOM = path.join(packages, './react-dom/src/index.js')
 const reactDOMFiberHostConfig = path.join(packages, './react-dom/src/client/ReactDomHostConfig.js')
 const reactShared = path.join(packages, './react-shared/src/index.js')
+const assignClassCocoidTransformer = path.join(packages, './coco-assign-class-cocoid-transformer/src/index.ts');
 
 const PACKAGE = {
-  MVC: 'coco-mvc',
-  MVC_RENDER: 'coco-render',
-  IOC_CONTAINER: 'coco-ioc-container',
-  VIEW: 'coco-view',
-  ROUTER: 'coco-router',
-  SHARED: 'shared',
-  REACT: 'react',
-  REACT_RECONCILER: 'react-reconciler',
-  REACT_RECONCILER_REACT_WORK_TAGS: 'react-reconciler-ReactWorkTags',
-  REACT_DOM: 'react-dom',
-  REACT_DOM_HOST_CONFIG: 'react-dom-ReactFiberHostConfig',
-  REACT_SHARED: 'react-shared',
+    MVC: 'coco-mvc',
+    MVC_RENDER: 'coco-render',
+    IOC_CONTAINER: 'coco-ioc-container',
+    VIEW: 'coco-view',
+    ROUTER: 'coco-router',
+    SHARED: 'shared',
+    REACT: 'react',
+    REACT_RECONCILER: 'react-reconciler',
+    REACT_RECONCILER_REACT_WORK_TAGS: 'react-reconciler-ReactWorkTags',
+    REACT_DOM: 'react-dom',
+    REACT_DOM_HOST_CONFIG: 'react-dom-ReactFiberHostConfig',
+    REACT_SHARED: 'react-shared',
+    ASSIGN_CLASS_SSID_TRANSFORMER: 'assign-class-cocoid-transformer'
 };
 
 const pathMap = {
-  [PACKAGE.MVC]: isTest ? mvcTest : mvc,
-  [PACKAGE.MVC_RENDER]: isTest ? renderTest : render,
-  [PACKAGE.IOC_CONTAINER]: isTest ? iocContainerTest : iocContainer,
-  [PACKAGE.VIEW]: view,
-  [PACKAGE.ROUTER]: isTest ? routerTest : router,
-  [PACKAGE.SHARED]: shared,
-  [PACKAGE.REACT]: react,
-  [PACKAGE.REACT_RECONCILER]: reactReconciler,
-  [PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS]: reactReconcilerReactWorkTags,
-  [PACKAGE.REACT_DOM]: reactDOM,
-  [PACKAGE.REACT_DOM_HOST_CONFIG]: reactDOMFiberHostConfig,
-  [PACKAGE.REACT_SHARED]: reactShared,
+    [PACKAGE.MVC]: isTest ? mvcTest : mvc,
+    [PACKAGE.MVC_RENDER]: isTest ? renderTest : render,
+    [PACKAGE.IOC_CONTAINER]: isTest ? iocContainerTest : iocContainer,
+    [PACKAGE.VIEW]: view,
+    [PACKAGE.ROUTER]: isTest ? routerTest : router,
+    [PACKAGE.SHARED]: shared,
+    [PACKAGE.REACT]: react,
+    [PACKAGE.REACT_RECONCILER]: reactReconciler,
+    [PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS]: reactReconcilerReactWorkTags,
+    [PACKAGE.REACT_DOM]: reactDOM,
+    [PACKAGE.REACT_DOM_HOST_CONFIG]: reactDOMFiberHostConfig,
+    [PACKAGE.REACT_SHARED]: reactShared,
+    [PACKAGE.ASSIGN_CLASS_SSID_TRANSFORMER]: assignClassCocoidTransformer,
 }
 
 function genEntries(config) {
-  return (config || []).map(name => ({
-    find: name,
-    replacement: pathMap[name],
-  }))
+    return (config || []).map(name => ({
+        find: name,
+        replacement: pathMap[name],
+    }))
 }
 
 module.exports = {
-  PACKAGE,
-  genEntries
+    PACKAGE,
+    genEntries
 };

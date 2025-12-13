@@ -29,6 +29,9 @@ export enum DiagnoseCode {
     'CO10022' = 'CO10022', // 元数据类不能有字段装饰器
     'CO10023' = 'CO10023', // 元数据类不能有方法装饰器
     'CO10024' = 'CO10024', // 元数据类存在多个组件装饰器
+    'CO10025' = 'CO10025', // findClassKindMetadataRecursively参数错误，入参不是元数据类
+    'CO10026' = 'CO10026', // 不能添加多个相同的 field 装饰器
+    'CO10027' = 'CO10027', // 不能添加多个相同的 method 装饰器
 }
 
 const DiagnoseCodeMsg = {
@@ -56,6 +59,9 @@ const DiagnoseCodeMsg = {
     [DiagnoseCode.CO10022]: `元数据类 %s 只能有 KindClass 类型的装饰器，字段 %s 上的装饰器是无效的，请删除。`,
     [DiagnoseCode.CO10023]: `元数据类 %s 只能有 KindClass 类型的装饰器，方法 %s 上的装饰器是无效的，请删除。`,
     [DiagnoseCode.CO10024]: `元数据类 %s 存在多个组件装饰器 %s，一个元数据类最多只能有一个组件装饰器。`,
+    [DiagnoseCode.CO10025]: `findClassKindMetadataRecursively的第二个参数 %s 必须是元数据类。`,
+    [DiagnoseCode.CO10026]: '在一个字段上不能添加多次同一个装饰器，但 %s 上 %s 字段存在重复装饰器: %s',
+    [DiagnoseCode.CO10027]: '在一个方法上不能添加多次同一个装饰器，但 %s 上 %s 字段存在重复装饰器: %s',
 };
 
 export function createDiagnose(code: DiagnoseCode, ...args: any[]): Diagnose {

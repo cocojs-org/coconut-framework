@@ -1,10 +1,9 @@
-import { Metadata, component, Component, SCOPE, scope, target, Target, id } from 'coco-ioc-container';
+import { Metadata, component, Component, SCOPE, scope, target, Target } from 'coco-ioc-container';
 import { ReactNoopUpdateQueue } from 'react';
 
 /**
  * @public
  */
-@id('View')
 @target([Target.Type.Class])
 @scope(SCOPE.Prototype)
 @component()

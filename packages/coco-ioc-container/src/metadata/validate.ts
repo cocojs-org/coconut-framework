@@ -223,7 +223,7 @@ function validateNoNeedTargetDecorator(target: Class<Metadata>, metadatas: Metad
     }
 }
 
-function validateDuplicatedDecorator(target: Class<Metadata>, metadatas: Metadata[] = []) {
+function validateDuplicatedDecorator(beDecoratedClass: Class<Metadata>, metadatas: Metadata[] = [], fieldName: string = '', methodName: string = '') {
     const map = new Map<Function, number[]>();
     for (let idx = 0; idx < metadatas.length; idx++) {
         const metadata = metadatas[idx];
@@ -239,9 +239,19 @@ function validateDuplicatedDecorator(target: Class<Metadata>, metadatas: Metadat
     const toDelIdxs = [];
     for (const [MetadataClass, dupIdxs] of map.entries()) {
         if (dupIdxs.length > 1) {
-            diagnoseList.push(
-                createDiagnose(DiagnoseCode.CO10003, target.name, className2DecoratorName(MetadataClass.name))
-            );
+            if (fieldName) {
+                diagnoseList.push(
+                    createDiagnose(DiagnoseCode.CO10026, beDecoratedClass.name, fieldName, className2DecoratorName(MetadataClass.name))
+                );
+            } else if (methodName) {
+                diagnoseList.push(
+                    createDiagnose(DiagnoseCode.CO10027, beDecoratedClass.name, methodName, className2DecoratorName(MetadataClass.name))
+                );
+            } else {
+                diagnoseList.push(
+                    createDiagnose(DiagnoseCode.CO10003, beDecoratedClass.name, className2DecoratorName(MetadataClass.name))
+                );
+            }
             toDelIdxs.push(...dupIdxs);
         }
     }
@@ -469,19 +479,24 @@ function validate(
     }
 
     // 业务类校验是否包含重复装饰器
-    // for (const [metadataClass, metadataList] of bizMetadataMap.entries()) {
-    //     const diagnose = validateDuplicatedDecorator(metadataClass, metadataList.classMetadata);
-    //     if (diagnose.length) {
-    //         let invalidMetadata: Diagnose[]
-    //         if (diagnoseMap.has(metadataClass)) {
-    //             invalidMetadata = diagnoseMap.get(metadataClass)!;
-    //         } else {
-    //             invalidMetadata = []
-    //             diagnoseMap.set(metadataClass, invalidMetadata);
-    //         }
-    //         invalidMetadata.push(...diagnose);
-    //     }
-    // }
+    for (const [metadataClass, metadataList] of bizMetadataMap.entries()) {
+        const diagnose = validateDuplicatedDecorator(metadataClass, metadataList.classMetadata);
+        if (diagnose.length) {
+            diagnoseList.push(...diagnose);
+        }
+        for (const [field, metadatas] of metadataList.fieldMetadata.entries()) {
+            const diagnose = validateDuplicatedDecorator(metadataClass, metadatas, field);
+            if (diagnose.length) {
+                diagnoseList.push(...diagnose);
+            }
+        }
+        for (const [method, metadatas] of metadataList.methodMetadata.entries()) {
+            const diagnose = validateDuplicatedDecorator(metadataClass, metadatas, '', method);
+            if (diagnose.length) {
+                diagnoseList.push(...diagnose);
+            }
+        }
+    }
 
     // 业务类不需要添加@target装饰器
     for (const [metadataClass, metadataList] of bizMetadataMap.entries()) {

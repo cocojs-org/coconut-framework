@@ -64,7 +64,7 @@ function createDecoratorExpFactory(fn: IAddDecoratorParams) {
         > = new Map();
 
         function decorateSelf(userParam: UserParam) {
-            return function (beDecoratedCls, context: C) {
+            return function (beDecoratedCls: any, context: C) {
                 switch (context.kind) {
                     case KindClass: {
                         if (isPlaceholderExp) {
@@ -153,7 +153,7 @@ function createDecoratorExpFactory(fn: IAddDecoratorParams) {
                     default:
                         throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10019, context.kind)));
                 }
-                const initializerOnce = once(function initializer() {
+                const execOnce = once(function initializer() {
                     switch (context.kind) {
                         case KindField:
                         case KindMethod:
@@ -167,7 +167,7 @@ function createDecoratorExpFactory(fn: IAddDecoratorParams) {
                     }
                 });
                 context.addInitializer(function () {
-                    initializerOnce(this);
+                    execOnce(this);
                 });
                 return undefined;
             };

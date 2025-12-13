@@ -4,7 +4,7 @@
 import { type Params } from '../create-decorator-exp/decorator-exp-param';
 import MetadataRepository from './metadata-repository';
 import validate from './validate';
-import IdClassMap from './id-class-map';
+import CocoidClassMap from './cocoid-class-map';
 import { printDiagnose, type Diagnose } from 'shared';
 import ComponentMetadataClass from './component-metadata-class';
 
@@ -21,21 +21,21 @@ function initMetadataModule(decoratorMap: Map<Class<any>, Params[]>) {
     if (diagnoseList.length > 0) {
         diagnoseList.forEach(printDiagnose);
     }
-    const idClassMap = new IdClassMap(metadataMap);
-    return { metadataRepository, idClassMap, componentMetadataClass };
+    const cocoidClassMap = new CocoidClassMap(metadataMap);
+    return { metadataRepository, cocoidClassMap, componentMetadataClass };
 }
 
 // 元数据相关数据清理
 function clearMetadataModule(
     metadataRepository: MetadataRepository,
-    idClassMap: IdClassMap,
+    cocoidClassMap: CocoidClassMap,
     componentMetadataClass: ComponentMetadataClass
 ) {
     if (metadataRepository) {
         metadataRepository.destructor();
     }
-    if (idClassMap) {
-        idClassMap.destructor();
+    if (cocoidClassMap) {
+        cocoidClassMap.destructor();
     }
     if (componentMetadataClass) {
         componentMetadataClass.destructor();

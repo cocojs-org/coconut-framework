@@ -6,6 +6,7 @@
 import Metadata, { instantiateMetadata } from './instantiate-one-metadata';
 import { KindClass, KindField, KindMethod, type Field } from '../create-decorator-exp';
 import { type Params } from '../create-decorator-exp/decorator-exp-param';
+import { createDiagnose, DiagnoseCode, printDiagnose, stringifyDiagnose } from 'shared';
 
 // 元数据子类的元数据
 export interface MetaMetadata {
@@ -105,12 +106,6 @@ class MetadataRepository {
             fieldMetas = [];
             fieldMetadata.set(fieldName, fieldMetas);
         }
-        // if (fieldMetas.find((i) => i instanceof MetadataCls)) {
-        //   if (__TEST__) {
-        //     // TODO: 挪到validate中
-        //     throw new Error('相同的Field装饰器装饰了2次!');
-        //   }
-        // }
         const metadata = instantiateMetadata(MetadataCls, args);
         fieldMetas.push(metadata);
     }
@@ -126,12 +121,6 @@ class MetadataRepository {
             methodMetas = [];
             methodMetadata.set(fieldName, methodMetas);
         }
-        // if (methodMetas.find((i) => i instanceof MetadataCls)) {
-        //   if (__TEST__) {
-        //     // TODO: 挪到validate中
-        //     throw new Error('相同的Field装饰器装饰了2次!');
-        //   }
-        // }
         const metadata = instantiateMetadata(MetadataCls, args);
         methodMetas.push(metadata);
     }
@@ -194,23 +183,28 @@ class MetadataRepository {
     }
 
     /**
-     * 在类的所有类类型的元数据中递归查找某个元数据类实例，找到就直接返回
-     * TODO: 因为现在组件装饰器的层数没有限制了，那么upward这个参数是否还有必要存在
+     * listClassKindMetadata的递归版本，在类装饰器的元数据类递归，但只返回一个
+     * @param beDecoratedCls 被查找的类
+     * @param TargetCls 想要匹配的元数据类定义
+     * @param levels 递归层数，默认无限制，就是查找所有的装饰器的元数据类，也可以使用数字指定，0表示只查当前装饰器，1表示再查当前装饰器的元数据的装饰器，依次类推
      */
-    findClassKindMetadataRecursively(beDecoratedCls: Class<any>, TargetCls: Class<any>, upward: number = 0) {
-        if (upward < 0) {
+    findClassKindMetadataRecursively(beDecoratedCls: Class<any>, TargetCls: Class<any>, levels: number = Infinity) {
+        if (!TargetCls || !this.metaMetadataMap.has(TargetCls)) {
+            throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10025, TargetCls?.name ? TargetCls.name : TargetCls)));
+        }
+        if (levels < 0) {
             return null;
         }
         const classMetadataList = this.listClassKindMetadata(beDecoratedCls);
         if (!classMetadataList) {
             return null;
         }
-        const instance = classMetadataList.find((i) => i instanceof TargetCls);
+        const instance = classMetadataList.find((i) => i.constructor === TargetCls);
         if (instance) {
             return instance;
         }
         for (const metadata of classMetadataList) {
-            const find = this.findClassKindMetadataRecursively(<Class<any>>metadata.constructor, TargetCls, upward - 1);
+            const find = this.findClassKindMetadataRecursively(<Class<any>>metadata.constructor, TargetCls, levels - 1);
             if (find) {
                 return find;
             }

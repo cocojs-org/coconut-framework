@@ -8,45 +8,43 @@
 import { createDiagnose, DiagnoseCode, printDiagnose, stringifyDiagnose } from 'shared';
 import Metadata from './instantiate-one-metadata';
 import { type MetaMetadata } from './metadata-repository';
-import Id from '../decorator/metadata/id';
 
-class IdClassMap {
-    private idClassMap: Map<string, Class<Metadata>> = new Map();
+class CocoidClassMap {
+    private cocoidClassMap: Map<string, Class<Metadata>> = new Map();
 
     /**
      * * 保存元数据类本身，方便运行是通过id获取元数据类
      * * @param metaMetadataMap 元数据类映射map，key是元数据类，value是元数据类的元数据列表
      */
     constructor(metaMetadataMap: Map<Class<Metadata>, MetaMetadata>) {
-        for (const [cls, metadataList] of metaMetadataMap.entries()) {
-            const idMetadata = metadataList.classMetadata.find((m) => m.constructor === Id) as Id | undefined;
-            const id = idMetadata ? idMetadata.value : cls.name; // 如果用户没有显式设置id，则使用类名作为id
-            if (typeof id !== 'string' || !id) {
+        for (const cls of metaMetadataMap.keys()) {
+            const cocoId = cls.$$cocoId;
+            if (typeof cocoId !== 'string' || !cocoId.trim()) {
                 throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10016, cls.name)));
             }
-            if (this.idClassMap.has(id)) {
-                throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10017, cls, this.idClassMap.get(id))));
+            if (this.cocoidClassMap.has(cocoId)) {
+                throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10017, cls, this.cocoidClassMap.get(cocoId))));
             }
-            this.idClassMap.set(id, cls);
+            this.cocoidClassMap.set(cocoId, cls);
         }
     }
 
     /**
-     * * 根据id获取元数据类
-     * * @param id 元数据类id
+     * * 根据cocoId获取元数据类
+     * * @param cocoId 元数据类id
      * * @returns 元数据类
      */
-    getMetaClassById(id: string) {
-        if (typeof id !== 'string' || !id.trim() || !this.idClassMap.has(id)) {
+    getMetaClassById(cocoId: string) {
+        if (typeof cocoId !== 'string' || !cocoId.trim() || !this.cocoidClassMap.has(cocoId)) {
             return null;
         } else {
-            return this.idClassMap.get(id);
+            return this.cocoidClassMap.get(cocoId);
         }
     }
 
     destructor() {
-        this.idClassMap.clear();
+        this.cocoidClassMap.clear();
     }
 }
 
-export default IdClassMap;
+export default CocoidClassMap;

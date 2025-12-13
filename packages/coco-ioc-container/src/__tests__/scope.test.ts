@@ -7,6 +7,7 @@ describe('@scope装饰器', () => {
     let target;
     let Target;
     let component;
+    let cocoid;
     let scope;
     let Scope;
     let SCOPE;
@@ -19,6 +20,7 @@ describe('@scope装饰器', () => {
         cocoMvc = await import('@cocojs/mvc');
         target = cocoMvc.target;
         component = cocoMvc.component;
+        cocoid = cocoMvc.cocoid;
         scope = cocoMvc.scope;
         Scope = cocoMvc.Scope;
         SCOPE = cocoMvc.SCOPE;
@@ -132,6 +134,7 @@ describe('@scope装饰器', () => {
 
             @webApplication()
             class Application {
+                @cocoid('Theme')
                 @component()
                 theme(): Theme {
                     return new Theme();
@@ -150,6 +153,7 @@ describe('@scope装饰器', () => {
 
             @webApplication()
             class Application {
+                @cocoid('Theme')
                 @scope(SCOPE.Singleton)
                 @component()
                 theme(): Theme {
@@ -169,6 +173,7 @@ describe('@scope装饰器', () => {
 
             @webApplication()
             class Application {
+                @cocoid('Button')
                 @scope(SCOPE.Prototype)
                 @component()
                 button(): Button {

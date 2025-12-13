@@ -59,15 +59,14 @@ describe('metadata/create-metadata', () => {
         expect(m['name']).toBe('李四');
     });
 
-    test('元数据类型定义了field，但没有默认值，非纯对象都会复制给value', () => {
+    test('元数据类型定义了field，但没有默认值，非纯对象都会复制给name', () => {
         class M {
             name: string;
         }
         const m = instantiateMetadata(M, '李四');
         expect(m).toBeInstanceOf(M);
-        const m1 = new M();
-        expect(m['name']).toBe(undefined);
-        expect(m['value']).toBe('李四');
+        expect(m['name']).toBe('李四');
+        expect(m['value']).toBe(undefined);
     });
 
     test('非纯对象都赋到元数据类型有默认值的field上', () => {
@@ -76,8 +75,8 @@ describe('metadata/create-metadata', () => {
         }
         const m = instantiateMetadata(M, '张三');
         expect(m).toBeInstanceOf(M);
-        const m1 = new M();
         expect(m['v']).toBe('张三');
+        expect(m['value']).toBe(undefined);
     });
 });
 
@@ -207,41 +206,60 @@ describe('findClassKindMetadataRecursively', () => {
     let MetadataRepository;
     let metadataRepository;
     let Metadata;
+    let target;
+    let Target;
     let createDecoratorExp;
+    let Application;
+    let application;
 
     beforeEach(async () => {
         cocoMvc = await import('@cocojs/mvc');
         MetadataRepository = cocoMvc.MetadataRepository;
         Metadata = cocoMvc.Metadata;
+        target = cocoMvc.target;
+        Target = cocoMvc.Target;
         createDecoratorExp = cocoMvc.createDecoratorExp;
-        metadataRepository = new MetadataRepository(new Map());
+        Application = cocoMvc.Application;
+        application = new Application();
+        cocoMvc.registerMvcApi(application);
     });
     afterEach(() => {
-        metadataRepository.destructor();
         cocoMvc.cleanCache();
+        cocoMvc.unregisterMvcApi();
+        application.destructor();
         jest.resetModules();
     });
 
     test('可以找到直接注解对应的元数据', () => {
+        @target([Target.Type.Class])
+        class M extends Metadata {}
+        const m = createDecoratorExp(M);
+
+        @m()
         class T {}
-        class M {}
-        metadataRepository.addClassKindMetadata(T, M, {});
-        const m = metadataRepository.findClassKindMetadataRecursively(T, M);
-        expect(m).toBeInstanceOf(M);
+
+        application.start();
+        const r = application.findClassKindMetadataRecursively(T, M, 0);
+        expect(r).toBeInstanceOf(M);
     });
 
     test('可以找到直接注解对应的元数据的注解的元数据', () => {
-        class T {}
+        @target([Target.Type.Class])
         class Parent extends Metadata {}
         const p = createDecoratorExp(Parent);
 
         @p()
-        class Child {}
-        metadataRepository.addClassKindMetadata(T, Child, {});
-        metadataRepository.addClassKindMetadata(Child, Parent, {});
-        let m = metadataRepository.findClassKindMetadataRecursively(T, Parent);
+        @target([Target.Type.Class])
+        class Child extends Metadata {}
+        const child = createDecoratorExp(Child);
+
+        @child()
+        class T {}
+
+        application.start();
+        let m = application.findClassKindMetadataRecursively(T, Parent, 0);
         expect(m).toBe(null);
-        m = metadataRepository.findClassKindMetadataRecursively(T, Parent, 1);
+        m = application.findClassKindMetadataRecursively(T, Parent);
         expect(m).toBeInstanceOf(Parent);
     });
 });
@@ -284,8 +302,8 @@ describe('validate', () => {
     let target;
     let component;
     let reactive;
+    let view;
     let bind;
-    let id;
     let Application;
     let application;
     let createDecoratorExp;
@@ -298,9 +316,9 @@ describe('validate', () => {
         Metadata = cocoMvc.Metadata;
         Target = cocoMvc.Target;
         component = cocoMvc.component;
+        view = cocoMvc.view;
         reactive = cocoMvc.reactive;
         bind = cocoMvc.bind;
-        id = cocoMvc.id;
         target = cocoMvc.target;
         createDecoratorExp = cocoMvc.createDecoratorExp;
         createPlaceholderDecoratorExp = cocoMvc.createPlaceholderDecoratorExp;
@@ -319,7 +337,6 @@ describe('validate', () => {
     });
 
     test('元数据类如果添加了字段装饰器，会报错', () => {
-        @id('T1')
         @target([Target.Type.Class])
         @component()
         class T1 extends Metadata {
@@ -339,7 +356,6 @@ describe('validate', () => {
     });
 
     test('元数据类如果添加了方法装饰器，会报错', () => {
-        @id('T1')
         @target([Target.Type.Class])
         @component()
         class T1 extends Metadata {
@@ -362,7 +378,7 @@ describe('validate', () => {
         );
     });
 
-    test('元数据类上添加 2 个相同的类装饰器，会提醒重复装饰器', () => {
+    test('元数据类上不能添加 2 个相同的class装饰器', () => {
         @component()
         @component()
         @target([Target.Type.Class])
@@ -374,6 +390,67 @@ describe('validate', () => {
             'CO10003：在一个类上不能添加多次同一个装饰器，但%s上存在重复装饰器: %s',
             'T1',
             '@component'
+        );
+    });
+
+    test('业务类上不能添加 2 个相同的class装饰器', () => {
+        @target([Target.Type.Class])
+        class T extends Metadata {}
+        const t = createDecoratorExp(T);
+
+        @t()
+        @t()
+        class Btn {
+            count: number;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10003：在一个类上不能添加多次同一个装饰器，但%s上存在重复装饰器: %s',
+            'Btn',
+            '@t'
+        );
+    });
+
+    test('业务类上不能添加 2 个相同的field装饰器', () => {
+        @target([Target.Type.Field])
+        class T extends Metadata {}
+        const t = createDecoratorExp(T);
+
+        @view()
+        class Btn {
+            @t()
+            @t()
+            count: number;
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10026：在一个字段上不能添加多次同一个装饰器，但 %s 上 %s 字段存在重复装饰器: %s',
+            'Btn',
+            'count',
+            '@t'
+        );
+    });
+
+    test('业务类上不能添加 2 个相同的method装饰器', () => {
+        @target([Target.Type.Method])
+        class T extends Metadata {}
+        const t = createDecoratorExp(T);
+
+        @view()
+        class Btn {
+            @t()
+            @t()
+            handleClick() {};
+        }
+
+        application.start();
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10027：在一个方法上不能添加多次同一个装饰器，但 %s 上 %s 字段存在重复装饰器: %s',
+            'Btn',
+            'handleClick',
+            '@t'
         );
     });
 

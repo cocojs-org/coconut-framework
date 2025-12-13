@@ -1,5 +1,4 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import TerserPlugin from 'terser-webpack-plugin';
 import path from 'node:path';
 import fs from 'node:fs';
 import { merge } from 'webpack-merge';
@@ -67,16 +66,6 @@ const buildInConfig = {
         filename: 'main.js',
         path: path.join(process.cwd(), 'dist'),
         clean: true,
-    },
-    optimization: {
-        minimize: true,
-        minimizer: [
-            new TerserPlugin({
-                terserOptions: {
-                    keep_classnames: true,
-                },
-            }),
-        ],
     },
     devServer: {
         static: {

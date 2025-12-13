@@ -3,7 +3,7 @@ import { initMetadataModule, clearMetadataModule, type Metadata, type MetadataRe
 import { getDecoratorParam, initDecoratorParamModule, clearDecoratorParamModule } from '../create-decorator-exp';
 import { initIocComponentModule, destructorIocComponentModule } from '../ioc-container/workflow';
 import PropertiesConfig from '../properties/properties-config';
-import type IdClassMap from '../metadata/id-class-map';
+import type CocoidClassMap from '../metadata/cocoid-class-map';
 import type ComponentMetadataClass from '../metadata/component-metadata-class.ts';
 import type IocComponentDefinition from '../ioc-container/ioc-component-definition.ts';
 
@@ -14,7 +14,7 @@ import type IocComponentDefinition from '../ioc-container/ioc-component-definiti
 class Application {
     componentMetadataClass: ComponentMetadataClass;
     metadataRepository: MetadataRepository;
-    idClassMap: IdClassMap;
+    cocoidClassMap: CocoidClassMap;
     propertiesConfig: PropertiesConfig;
     iocComponentDefinition: IocComponentDefinition;
     iocComponentFactory: IocComponentFactory;
@@ -31,9 +31,9 @@ class Application {
         initDecoratorParamModule();
 
         // 用装饰器参数初始化元数据数据
-        const { metadataRepository, idClassMap, componentMetadataClass } = initMetadataModule(getDecoratorParam());
+        const { metadataRepository, cocoidClassMap, componentMetadataClass } = initMetadataModule(getDecoratorParam());
         this.metadataRepository = metadataRepository;
-        this.idClassMap = idClassMap;
+        this.cocoidClassMap = cocoidClassMap;
         this.componentMetadataClass = componentMetadataClass;
 
         // 用元数据信息初始化ioc组件数据
@@ -50,7 +50,7 @@ class Application {
 
     public destructor() {
         destructorIocComponentModule(this.iocComponentDefinition, this.iocComponentFactory);
-        clearMetadataModule(this.metadataRepository, this.idClassMap, this.componentMetadataClass);
+        clearMetadataModule(this.metadataRepository, this.cocoidClassMap, this.componentMetadataClass);
         clearDecoratorParamModule();
     }
 
@@ -62,16 +62,11 @@ class Application {
     public getComponent<T>(cls: Class<T>, option?: { qualifier?: string }): T;
     // 根据组件id返回组件实例
     public getComponent<T>(id: string, option?: { qualifier?: string }): T;
-    public getComponent<T>(ClsOrId: Class<T> | string, option?: { qualifier?: string }) {
-        if (typeof ClsOrId === 'string') {
-            // TODO:
-            return null;
-        } else {
-            return this.iocComponentFactory.getComponents(this, {
-                classOrId: ClsOrId,
-                qualifier: option?.qualifier,
-            });
-        }
+    public getComponent<T>(ClsOrCocoid: Class<T> | string, option?: { qualifier?: string }) {
+        return this.iocComponentFactory.getComponents(this, {
+            classOrId: ClsOrCocoid,
+            qualifier: option?.qualifier,
+        });
     }
 
     /**
@@ -87,14 +82,14 @@ class Application {
     public listFieldByMetadataCls(beDecoratedCls: Class<any>, MetadataCls: Class<any>) {
         return this.metadataRepository.listFieldByMetadataCls(beDecoratedCls, MetadataCls);
     }
-    public findClassKindMetadataRecursively(beDecoratedCls: Class<any>, TargetCls: Class<any>, upward: number = 0) {
-        return this.metadataRepository.findClassKindMetadataRecursively(beDecoratedCls, TargetCls, upward);
+    public findClassKindMetadataRecursively(beDecoratedCls: Class<any>, TargetCls: Class<any>, levels: number = Infinity) {
+        return this.metadataRepository.findClassKindMetadataRecursively(beDecoratedCls, TargetCls, levels);
     }
     public listBeDecoratedClsByClassKindMetadata(MetadataCls: Class<any>) {
         return this.metadataRepository.listBeDecoratedClsByClassKindMetadata(MetadataCls);
     }
     public getMetaClassById(id: string) {
-        return this.idClassMap.getMetaClassById(id);
+        return this.cocoidClassMap.getMetaClassById(id);
     }
 
     /**

@@ -8,9 +8,10 @@ import {
 } from './ioc-component-definition-helper';
 import { type ComponentMetadataClass, type MetadataRepository } from '../metadata';
 import Scope, { SCOPE } from '../decorator/metadata/scope';
+import Cocoid from '../decorator/metadata/cocoid';
 import Component from '../decorator/metadata/component';
 import IocComponentDefinition from './ioc-component-definition';
-import IocComponentFactory from './ioc-component-factory.ts';
+import IocComponentFactory from './ioc-component-factory';
 
 function doBuildIocComponentDefinition(
     metadataRepository: MetadataRepository,
@@ -31,7 +32,7 @@ function doBuildIocComponentDefinition(
                     // 取组件装饰器的@scope装饰器
                     scope = getComponentDecoratorScope(componentMetadata, metaMetadata, componentMetadataClass);
                 }
-                iocComponentDefinition.addDefinition(beDecoratedCls, scope === SCOPE.Singleton);
+                iocComponentDefinition.addDefinition(beDecoratedCls, beDecoratedCls.$$cocoId, scope === SCOPE.Singleton);
             } else {
                 const methods = metadataRepository.listMethodByMetadataCls(beDecoratedCls, Component);
                 for (const method of methods) {
@@ -40,13 +41,21 @@ function doBuildIocComponentDefinition(
                         method,
                         Component
                     ) as Component[];
+                    // TODO: @component()装饰器的参数能否在 ioc 组件中定义了，没有定义都是有问题的
                     const scopeMetas: Scope[] = metadataRepository.listMethodKindMetadata(
                         beDecoratedCls,
                         method,
                         Scope
                     ) as Scope[];
+                    // TODO: 添加校验是否有@cocoid装饰器；
+                    const cocoidMetas: Cocoid[] = metadataRepository.listMethodKindMetadata(
+                        beDecoratedCls,
+                        method,
+                        Cocoid
+                    ) as Cocoid[];
                     iocComponentDefinition.addDefinition(
                         componentMetas[0].value,
+                        cocoidMetas[0].value,
                         !scopeMetas.length || scopeMetas[0].value === SCOPE.Singleton,
                         {
                             configurationCls: beDecoratedCls,

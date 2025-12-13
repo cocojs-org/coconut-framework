@@ -1,9 +1,8 @@
-import { Metadata, target, Target, id } from 'coco-ioc-container';
+import { Metadata, target, Target } from 'coco-ioc-container';
 
 /**
  * @public
  */
-@id('Memoized')
 @target([Target.Type.Method])
 class Memoized extends Metadata {}
 

@@ -1,14 +1,14 @@
 export { default as Metadata } from './metadata/instantiate-one-metadata';
 export { default as Autowired } from './decorator/metadata/autowired';
 export { default as autowired } from './decorator/autowired';
+export { default as cocoid } from './decorator/cocoid';
+export { default as Cocoid } from './decorator/metadata/cocoid';
 export { default as Component } from './decorator/metadata/component';
 export { default as component } from './decorator/component';
 export { default as Configuration } from './decorator/metadata/configuration';
 export { default as configuration } from './decorator/configuration';
 export { default as ConstructorParam } from './decorator/metadata/constructor-param';
 export { default as constructorParam } from './decorator/constructor-param';
-export { default as Id } from './decorator/metadata/id';
-export { default as id } from './decorator/id';
 export { default as Target } from './decorator/metadata/target';
 export { default as target, type Type } from './decorator/target';
 export { default as Scope, SCOPE } from './decorator/metadata/scope';

@@ -3,12 +3,14 @@ declare const __DEV__: boolean;
 declare const __TEST__: boolean;
 
 declare interface Class<T> {
-  new (...args: any): T;
-  toString(): string;
+    new (...args: any): T;
+    toString(): string;
+    $$cocoId?: string;
 }
 
 declare interface MetadataClass<T> {
-  new (...args: any): T;
-  toString(): string;
-  classDecoratorModifyPrototype?(prototype: any): void;
+    new (...args: any): T;
+    toString(): string;
+    $$cocoId?: string;
+    classDecoratorModifyPrototype?(prototype: any): void;
 }

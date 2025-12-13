@@ -20,7 +20,7 @@ function connectStore(ctor, instance) {
     // 过滤出所有注入的store
     const stores = autowiredComponents
         .filter(Boolean)
-        .filter((comp) => application.findClassKindMetadataRecursively(comp.constructor, Store));
+        .filter((comp) => application.findClassKindMetadataRecursively(comp.constructor, Store, 0));
     // store去重
     const uniqueStores = stores.filter((s, idx) => {
         const index = stores.indexOf(s);

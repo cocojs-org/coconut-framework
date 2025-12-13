@@ -7,47 +7,54 @@ const genEntries = require('./rollup-alias').genEntries;
 const { typescriptOptions, babelOptions } = require('../shared/common-compiler-option')
 
 function genRollupConfig (inputConfig) {
-  const { input, alias, external } = inputConfig
+    const { input, alias, external, ignoreRollupPlugin } = inputConfig
 
-  return {
-    input,
-    external,
-    plugins: [
-      replace({
-        __DEV__: process.env.NODE_ENV === 'test',
-        __TEST__: process.env.NODE_ENV === 'test',
-      }),
-      typescript({
-        compilerOptions: {
-          ...typescriptOptions
-      }}),
-      babel({
-        extensions: ['.js', '.ts', '.tsx'],
-        ...babelOptions,
-      }),
-      aliasPlugin({
-        entries: genEntries(alias)
-      }),
-    ],
-    onLog(level, log, handler) {
-      if (log.code === 'CIRCULAR_DEPENDENCY') {
-        throw new Error(log);
-      }
+    let rollupPluginAssignClassSsid;
+    if (!ignoreRollupPlugin) {
+        rollupPluginAssignClassSsid = require('../../packages/coco-mvc-rollup-plugin/dist/index.cjs')
     }
-  }
+
+    return {
+        input,
+        external,
+        plugins: [
+            replace({
+                __DEV__: process.env.NODE_ENV === 'test',
+                __TEST__: process.env.NODE_ENV === 'test',
+            }),
+            rollupPluginAssignClassSsid && rollupPluginAssignClassSsid(),
+            typescript({
+                compilerOptions: {
+                    ...typescriptOptions
+                }
+            }),
+            babel({
+                extensions: ['.js', '.ts', '.tsx'],
+                ...babelOptions,
+            }),
+            aliasPlugin({
+                entries: genEntries(alias)
+            }),
+        ],
+        onLog(level, log, handler) {
+            if (log.code === 'CIRCULAR_DEPENDENCY') {
+                throw new Error(log);
+            }
+        }
+    }
 }
 
 async function build(targets) {
-  try {
-    for (const { output, ...rest } of targets) {
-      const rollupConfig = genRollupConfig(rest);
-      const result = await rollup.rollup(rollupConfig)
-      await result.write(output)
+    try {
+        for (const { output, ...rest } of targets) {
+            const rollupConfig = genRollupConfig(rest);
+            const result = await rollup.rollup(rollupConfig)
+            await result.write(output)
+        }
+    } catch (e) {
+        console.error('rollup rollup error', e);
+        throw e;
     }
-  } catch (e) {
-    console.error('rollup rollup error', e);
-    throw e;
-  }
 }
 
 module.exports.build = build;

@@ -365,7 +365,6 @@ describe('create-decorator-exp:createPlaceholderDecoratorExp', () => {
     let application;
     let target;
     let Target;
-    let id;
     let consoleWarnSpy;
 
     beforeEach(async () => {
@@ -374,7 +373,6 @@ describe('create-decorator-exp:createPlaceholderDecoratorExp', () => {
         createPlaceholderDecoratorExp = cocoMvc.createPlaceholderDecoratorExp;
         target = cocoMvc.target;
         Target = cocoMvc.Target;
-        id = cocoMvc.id;
         Application = cocoMvc.Application;
         application = new Application();
         cocoMvc.registerMvcApi(application);
@@ -408,13 +406,11 @@ describe('create-decorator-exp:createPlaceholderDecoratorExp', () => {
         const d1 = createPlaceholderDecoratorExp();
         const d2 = createPlaceholderDecoratorExp();
 
-        @id('M')
         @d1.decorateSelf()
         @d2()
         @target([Target.Type.Class])
         class M extends Metadata {}
 
-        @id('M2')
         @d2.decorateSelf()
         @d1()
         @target([Target.Type.Class])

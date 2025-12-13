@@ -12,7 +12,7 @@
             "coco-render": ["../coco-render"],
             "shared": ["../shared"],
             "react": ["../react"],
-            "react-dom": ["../react-dom"]
+            "react-dom": ["../react-dom"],
         }
     },
     "include": ["src"],
@@ -24,6 +24,6 @@
         { "path": "../coco-render" },
         { "path": "../shared" },
         { "path": "../react" },
-        { "path": "../react-dom" }
+        { "path": "../react-dom" },
     ]
 }

@@ -1,0 +1,24 @@
+{
+    "extends": ["../../tsconfig.json"],
+    "compilerOptions": {
+        "composite": true,
+        "module": "CommonJS",
+        "moduleResolution": "Node",
+        "declaration": true,
+        "allowImportingTsExtensions": false,
+        "outDir": "./dts-tmp",
+        "rootDir": "./src",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "paths": {
+            "assign-class-cocoid-transformer": ["../coco-assign-class-cocoid-transformer"],
+        }
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist", "**/*.test.ts"]
+}

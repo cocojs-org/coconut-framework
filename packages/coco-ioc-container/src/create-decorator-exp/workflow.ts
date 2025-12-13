@@ -11,6 +11,7 @@ import {
     replacePlaceholderMetaClassParams2RealMetadataClassParams,
     clear as clearDecoratorParam,
 } from './decorator-exp-param';
+import { isCocoClass } from '../share/util.ts';
 
 function initDecoratorParamModule() {
     // 收集field和method装饰器参数
@@ -30,6 +31,13 @@ function initDecoratorParamModule() {
     mergePlaceholderClass2RealMetadataClassRelation();
     // 收集到的所有的装饰器参数，占位的元数据类替换成真实的元数据类
     replacePlaceholderMetaClassParams2RealMetadataClassParams(getPlaceholderClassMap2RealMetadataClass());
+
+    // 所有的被装饰类都要符合一定的要求
+    for (const beDecoratedClass of getDecoratorParam().keys()) {
+        if (!isCocoClass(beDecoratedClass)) {
+            throw new Error('所有被装饰器的对象必须都是类或者类字段或类方法，且必须存在静态$$cocoId字段。')
+        }
+    }
 }
 
 function clearDecoratorParamModule() {

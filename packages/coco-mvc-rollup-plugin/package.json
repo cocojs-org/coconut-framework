@@ -1,0 +1,30 @@
+{
+    "name": "@cocojs/rollup-plugin-mvc",
+    "version": "0.0.0",
+    "description": "A rollup plugin for @cocojs/mvc",
+    "main": "dist/index.cjs.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "jest": "jest"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/cocojs-org/coconut-framework/issues"
+    },
+    "homepage": "https://github.com/cocojs-org/coconut-framework",
+    "devDependencies": {
+        "@types/jest": "^29.5.14",
+        "@types/node": "^20.0.0",
+        "jest": "^29.7.0",
+        "rollup": "^4.53.3",
+        "typescript": "5.3.3"
+    },
+    "peerDependencies": {
+        "typescript": "5.3.3"
+    }
+}

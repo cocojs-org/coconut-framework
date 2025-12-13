@@ -17,46 +17,90 @@ const cliBuildCotCocoDist = path.join(cocoCli, '/dist/build-dot-coco-process/ind
 const cliWebpackProcess = path.join(cocoCli, './src/webpack-process/index.ts');
 const cliWebpackDist = path.join(cocoCli, '/dist/webpack-process/index.js');
 
+const cocoAssignClassSsidTransformer = path.join(packages, './coco-assign-class-cocoid-transformer');
+const cocoAssignClassSsidTransformerInput = path.join(cocoAssignClassSsidTransformer, './src/index.ts');
+const cocoAssignClassSsidTransformerOutput = path.join(cocoAssignClassSsidTransformer, './dist/index.cjs.js');
+const cocoMvcRollupPlugin = path.join(packages, './coco-mvc-rollup-plugin');
+const cocoMvcRollupPluginInput = path.join(cocoMvcRollupPlugin, './src/index.ts');
+const cocoMvcRollupPluginOutput = path.join(cocoMvcRollupPlugin, './dist/index.cjs.js');
+const cocoMvcWebpackLoader = path.join(packages, './coco-mvc-webpack-loader');
+const cocoMvcWebpackLoaderInput = path.join(cocoMvcWebpackLoader, './src/index.ts');
+const cocoMvcWebpackLoaderOutput = path.join(cocoMvcWebpackLoader, './dist/index.cjs.js');
+
 module.exports.rollupTargets = [
-  {
-    input: isTest ? cocoMvcInputTest : cocoMvcInput,
-    output: {
-      file: cocoMvcOutput,
-      format: 'cjs',
+    {
+        input: cocoAssignClassSsidTransformerInput,
+        output: {
+            file: cocoAssignClassSsidTransformerOutput,
+            format: 'cjs',
+        },
+        ignoreRollupPlugin: true
     },
-    alias: [
-      PACKAGE.MVC_RENDER,
-      PACKAGE.VIEW,
-      PACKAGE.ROUTER,
-      PACKAGE.IOC_CONTAINER,
-      PACKAGE.SHARED,
-      PACKAGE.REACT,
-      PACKAGE.REACT_DOM,
-      PACKAGE.REACT_DOM_HOST_CONFIG,
-      PACKAGE.REACT_RECONCILER,
-      PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS,
-      PACKAGE.REACT_SHARED,
-    ],
-  },
-  {
-    input: cliSrc,
-    output: {
-      file: cliDist,
-      format: 'cjs'
+    {
+        input: cocoMvcRollupPluginInput,
+        output: {
+            file: cocoMvcRollupPluginOutput,
+            format: 'cjs',
+        },
+        alias: [
+            PACKAGE.ASSIGN_CLASS_SSID_TRANSFORMER,
+        ],
+        ignoreRollupPlugin: true
+    },
+    {
+        input: cocoMvcWebpackLoaderInput,
+        output: {
+            file: cocoMvcWebpackLoaderOutput,
+            format: 'cjs',
+        },
+        alias: [
+            PACKAGE.ASSIGN_CLASS_SSID_TRANSFORMER,
+        ],
+        ignoreRollupPlugin: true
+    },
+    {
+        input: isTest ? cocoMvcInputTest : cocoMvcInput,
+        output: {
+            file: cocoMvcOutput,
+            format: 'cjs',
+        },
+        alias: [
+            PACKAGE.MVC_RENDER,
+            PACKAGE.VIEW,
+            PACKAGE.ROUTER,
+            PACKAGE.IOC_CONTAINER,
+            PACKAGE.SHARED,
+            PACKAGE.REACT,
+            PACKAGE.REACT_DOM,
+            PACKAGE.REACT_DOM_HOST_CONFIG,
+            PACKAGE.REACT_RECONCILER,
+            PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS,
+            PACKAGE.REACT_SHARED,
+            PACKAGE.ASSIGN_CLASS_SSID_TRANSFORMER,
+        ],
+    },
+    {
+        input: cliSrc,
+        output: {
+            file: cliDist,
+            format: 'cjs'
+        },
+        ignoreRollupPlugin: true
+    },
+    {
+        input: cliBuildDotCocoProcess,
+        output: {
+            file: cliBuildCotCocoDist,
+            format: 'cjs'
+        },
+        ignoreRollupPlugin: true
+    },
+    {
+        input: cliWebpackProcess,
+        output: {
+            file: cliWebpackDist,
+            format: 'cjs'
+        },
+        ignoreRollupPlugin: true
     }
-  },
-  {
-    input: cliBuildDotCocoProcess,
-    output: {
-      file: cliBuildCotCocoDist,
-      format: 'cjs'
-    },
-  },
-  {
-    input: cliWebpackProcess,
-    output: {
-      file: cliWebpackDist,
-      format: 'cjs'
-    },
-  }
 ];

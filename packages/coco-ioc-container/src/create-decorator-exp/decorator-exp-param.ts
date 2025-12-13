@@ -9,13 +9,11 @@ import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
 export type Params = {
     metadataKind: Kind;
     metadataClass: Class<any>;
-    // 如果是使用createPlaceholderDecoratorExp创建的装饰器表达式，那么placeholderMetadataClass就是占位的元数据类
-    placeholderMetadataClass?: Class<any>;
     metadataParam: any;
     /**
      * 如果metadataKind是'class'，field是undefined
-     * 如果metadataKind是'method'\'field'，field就是对应的prop名字
-     * todo 测试是否支持Symbol类型
+     * 如果metadataKind是'method'\'field'，field就是对应的函数名或字段名
+     * TODO: 测试是否支持Symbol类型
      */
     field?: Field;
 };
@@ -42,7 +40,6 @@ export function addDecoratorParams(isPlaceholderMetaClass: boolean, beDecoratedC
         return;
     }
 
-    // TODO: 装饰器不应该允许重复添加，但是又需要允许添加类装饰器，field装饰器这样的场景
     if (!decoratorParamMap.has(beDecoratedCls)) {
         decoratorParamMap.set(beDecoratedCls, []);
     }
@@ -76,7 +73,6 @@ export function replacePlaceholderMetaClassParams2RealMetadataClassParams({
             for (const p of paramsList) {
                 if (p.metadataClass === placeholderMetaClass) {
                     p.metadataClass = realMetadataClass;
-                    p.placeholderMetadataClass = placeholderMetaClass;
                 }
             }
         }
