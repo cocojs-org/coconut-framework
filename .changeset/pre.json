@@ -13,9 +13,12 @@
     "react-dom": "0.0.0",
     "react-reconciler": "0.0.0",
     "react-shared": "0.0.0",
-    "shared": "0.0.0"
+    "shared": "0.0.0",
+    "@cocojs/rollup-plugin-mvc": "0.0.0",
+    "@cocojs/webpack-loader-mvc": "0.0.0"
   },
   "changesets": [
+    "fiery-coats-love",
     "full-yaks-create",
     "tasty-llamas-jump",
     "warm-nights-stay"
