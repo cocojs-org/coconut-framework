@@ -1,6 +1,6 @@
 {
     "name": "@cocojs/mvc",
-    "version": "0.0.1-alpha.2",
+    "version": "0.0.1-alpha.3",
     "description": "由装饰器驱动，快速构建可扩展的 Web 应用。",
     "main": "dist/index.cjs.js",
     "types": "dist/index.d.ts",

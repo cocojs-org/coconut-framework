@@ -1,5 +1,11 @@
 # @cocojs/mvc
 
+## 0.0.1-alpha.3
+
+### Patch Changes
+
+-   5f2cf40: 组件添加$$cocoid属性
+
 ## 0.0.1-alpha.2
 
 ### Patch Changes
