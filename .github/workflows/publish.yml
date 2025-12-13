@@ -31,7 +31,6 @@ jobs:
           node-version: 20
           registry-url: ${{ env.NPM_REGISTRY }}
           scope: ${{ env.SCOPE }}
-          always-auth: true
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
