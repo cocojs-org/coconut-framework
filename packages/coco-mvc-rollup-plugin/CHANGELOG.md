@@ -1,5 +1,11 @@
 # @cocojs/rollup-plugin-mvc
 
+## 0.0.1-alpha.2
+
+### Patch Changes
+
+-   8717a01: 测试发布
+
 ## 0.0.1-alpha.1
 
 ### Patch Changes
