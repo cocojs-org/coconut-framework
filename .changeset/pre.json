@@ -18,6 +18,7 @@
     "@cocojs/webpack-loader-mvc": "0.0.0"
   },
   "changesets": [
+    "cuddly-ducks-shine",
     "dull-otters-eat",
     "eight-pears-type",
     "fiery-coats-love",
@@ -27,6 +28,7 @@
     "petite-spies-arrive",
     "tasty-llamas-jump",
     "thin-baths-thank",
-    "warm-nights-stay"
+    "warm-nights-stay",
+    "wet-bananas-join"
   ]
 }
