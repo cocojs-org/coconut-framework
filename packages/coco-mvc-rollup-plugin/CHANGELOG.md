@@ -1,5 +1,11 @@
 # @cocojs/rollup-plugin-mvc
 
+## 0.0.1-alpha.3
+
+### Patch Changes
+
+-   5afe099: 添加magic-string依赖
+
 ## 0.0.1-alpha.2
 
 ### Patch Changes
