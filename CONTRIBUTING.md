@@ -45,3 +45,11 @@
 - @cocojs/type-extractor
 - @cocojs/babel-plugin
 - @cocojs/webpack-loader
+
+步骤如下：
+1. 在根目录下执行`changeset`，然后按照命令行的提醒选择要发布的包，目前除了`@cocojs/type-extractor`之外都处于`alpha`阶段。
+2. 在自己的 fork 仓库中提交 pr 请求到中心仓库 master 分支。
+3. action 会自动运行，然后创建一个新版本的 pr 请求。
+4. 管理员合并 pr 后，会自动发布新的版本。
+特别注意：
+1. 如果是第一版使用oidc发布有点问题，所以可以在本地发布，版本号类似`0.0.1-alpha202512141`即可。后续使用action发布会正常升级到`0.0.1-alpha.0`
