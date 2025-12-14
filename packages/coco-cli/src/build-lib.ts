@@ -3,11 +3,13 @@ import { rollup } from 'rollup';
 import process from 'node:process';
 import typescript from '@rollup/plugin-typescript';
 import babel from '@rollup/plugin-babel';
+import cocojs from '@cocojs/rollup-plugin-mvc';
 
 export const build = async () => {
     const result = await rollup({
         input: path.join(process.cwd(), './src/index.ts'),
         plugins: [
+            cocojs(),
             typescript({
                 compilerOptions: {
                     target: 'ESNext',
