@@ -1,6 +1,6 @@
 {
     "name": "@cocojs/webpack-loader-mvc",
-    "version": "0.0.1-alpha202512141",
+    "version": "0.0.1-alpha.0",
     "description": "A webpack loader for @cocojs/mvc",
     "main": "dist/index.cjs.js",
     "types": "dist/index.d.ts",
