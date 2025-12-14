@@ -35,6 +35,7 @@
         "@babel/preset-typescript": "^7.26.0",
         "@cocojs/rollup-plugin-mvc": "workspace:*",
         "@cocojs/type-extractor": "workspace:*",
+        "@cocojs/webpack-loader-mvc": "workspace:*",
         "@rollup/plugin-babel": "^6.0.4",
         "@rollup/plugin-typescript": "^12.1.2",
         "babel-loader": "^10.0.0",
