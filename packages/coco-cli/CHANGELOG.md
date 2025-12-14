@@ -1,5 +1,11 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.2
+
+### Patch Changes
+
+-   2851ded: 支持@cocojs/webpack-loader-mvc
+
 ## 0.0.1-alpha.1
 
 ### Patch Changes
