@@ -1,5 +1,11 @@
 # @cocojs/webpack-loader-mvc
 
+## 0.0.1-alpha.1
+
+### Patch Changes
+
+-   5afe099: 添加magic-string依赖
+
 ## 0.0.1-alpha.0
 
 ### Patch Changes
