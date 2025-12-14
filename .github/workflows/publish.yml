@@ -51,4 +51,5 @@ jobs:
           title: "chore: update pre-release versions (OIDC)"
           publish: pnpm ci:publish
         env:
-          GITHUB_TOKEN: ${{ secrets.COCONUT_FRAMEWORK_CREATE_PR }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.COCONUT_FRAMEWORK_CREATE_PR }}
