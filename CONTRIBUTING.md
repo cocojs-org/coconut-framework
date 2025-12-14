@@ -4,9 +4,12 @@
 
 代码仓库基于pnpm的 monorepo 结构，不同功能拆分出不同子包。
 
+-   `coco-assign-class-cocoid-transformer`: 基于`babel-parser`的 transformer，为有装饰器的类添加静态$$cocoid属性。
 -   `coco-cli`: 命令行，基于webpack的应用开发、构建工具，以及基于 rollup 的组件库构建工具。
 -   `coco-ioc-container`: ioc容器，核心，在标准 es 装饰器规范之上封装了一套基于类和元数据的运行时框架。
 -   `coco-mvc`: 框架入口，所有的运行时装饰器和组件都在这里导出。
+-   `coco-mvc-rollup-plugin`: 打包工具库时需要的rollup插件。
+-   `coco-mvc-webpack-loader`: 打包应用时需要的webpack loader。
 -   `coco-render`: 渲染组件。
 -   `coco-router`: 客户端路由组件。
 -   `coco-type-extractro`: 基于`ts-pacther`的transformer，提供提取类型参数的功能。
@@ -36,3 +39,9 @@
 -   `@cocojs/cli`和`@cocojs/mvc`2个包的版本号遵循主版本号一致，次版本号、修订号不一致的规则，这样可以保证一定的灵活性，但又不会过于混乱。
 
 ## 发布
+仓库有以下包需要发布：
+- @cocojs/cli
+- @cocojs/mvc
+- @cocojs/type-extractor
+- @cocojs/babel-plugin
+- @cocojs/webpack-loader

@@ -52,4 +52,3 @@ jobs:
           publish: pnpm ci:publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.COCONUT_FRAMEWORK_CREATE_PR }}
