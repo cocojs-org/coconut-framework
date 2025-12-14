@@ -26,6 +26,7 @@
         "typescript": "5.3.3"
     },
     "peerDependencies": {
+        "magic-string": "^0.30.21",
         "typescript": "5.3.3"
     }
 }
