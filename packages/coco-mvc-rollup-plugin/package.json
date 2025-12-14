@@ -1,6 +1,6 @@
 {
     "name": "@cocojs/rollup-plugin-mvc",
-    "version": "0.0.1-alpha202512141339",
+    "version": "0.0.1-alpha.0",
     "description": "A rollup plugin for @cocojs/mvc",
     "main": "dist/index.cjs.js",
     "types": "dist/index.d.ts",
