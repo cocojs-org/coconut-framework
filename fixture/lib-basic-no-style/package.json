@@ -1,7 +1,7 @@
 {
-    "name": "simple-lib-demo",
+    "name": "simple-lib",
     "version": "0.0.1",
-    "description": "库项目，单一项目，无样式",
+    "description": "最简单的库项目，单一项目，无样式",
     "type": "module",
     "module": "dist/bundle.esm.js",
     "types": "dist/types/lib.d.ts",
@@ -22,7 +22,7 @@
         "typescript": "5.3.3"
     },
     "peerDependencies": {
-        "@cocojs/mvc": "0.0.1-alpha.x"
+        "@cocojs/mvc": ">=0.0.1-alpha.0 <0.0.2"
     },
     "packageManager": "pnpm@10.20.0"
 }

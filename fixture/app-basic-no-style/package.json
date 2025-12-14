@@ -1,0 +1,20 @@
+{
+    "name": "simple-app",
+    "version": "1.0.0",
+    "description": "最简单的应用项目，单项目，无样式",
+    "scripts": {
+        "prepare": "ts-patch install -s",
+        "dev": "coco app dev",
+        "build": "coco app build"
+    },
+    "devDependencies": {
+        "@cocojs/cli": ">=0.0.1-alpha.0 <0.0.2",
+        "@cocojs/mvc": ">=0.0.1-alpha.0 <0.0.2",
+        "ts-patch": "3.1.2",
+        "typescript": "5.3.3"
+    },
+    "dependencies": {
+        "@cocojs/mvc": ">=0.0.1-alpha.0 <0.0.2"
+    },
+    "packageManager": "pnpm@10.20.0"
+}
