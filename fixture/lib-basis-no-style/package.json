@@ -1,0 +1,28 @@
+{
+    "name": "simple-lib-demo",
+    "version": "0.0.1",
+    "description": "库项目，单一项目，无样式",
+    "type": "module",
+    "module": "dist/bundle.esm.js",
+    "types": "dist/types/lib.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build:lib": "coco lib build",
+        "build": "pnpm run build:lib"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@cocojs/cli": ">=0.0.1-alpha.0 <0.0.2",
+        "@cocojs/mvc": ">=0.0.1-alpha.0 <0.0.2",
+        "ts-patch": "3.1.2",
+        "typescript": "5.3.3"
+    },
+    "peerDependencies": {
+        "@cocojs/mvc": "0.0.1-alpha.x"
+    },
+    "packageManager": "pnpm@10.20.0"
+}
