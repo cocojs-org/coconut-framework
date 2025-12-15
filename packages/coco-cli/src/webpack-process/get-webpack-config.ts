@@ -39,11 +39,8 @@ const buildInConfig = {
                             ],
                         },
                     },
-                    function debugAfterTsLoader(source: string) {
-                        console.log('-------- SOURCE START --------');
-                        console.log(source);
-                        console.log('-------- SOURCE END ----------');
-                        return source;
+                    {
+                        loader: require.resolve('../../runtime-config/debug-after-ts-loader.js'),
                     },
                     {
                         loader: require.resolve('ts-loader'),
