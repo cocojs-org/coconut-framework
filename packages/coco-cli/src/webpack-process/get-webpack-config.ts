@@ -27,7 +27,6 @@ const buildInConfig = {
                     {
                         loader: require.resolve('babel-loader'),
                         options: {
-                            presets: [require.resolve('@babel/preset-typescript')],
                             plugins: [
                                 [require.resolve('@babel/plugin-proposal-decorators'), { version: '2023-11' }],
                                 [
@@ -41,6 +40,9 @@ const buildInConfig = {
                         },
                     },
                     {
+                        loader: path.resolve(__dirname, 'debug-after-ts-loader.js'),
+                    },
+                    {
                         loader: require.resolve('ts-loader'),
                         options: {
                             context: process.cwd(),
@@ -48,7 +50,7 @@ const buildInConfig = {
                         },
                     },
                     {
-                        loader: require.resolve('@cocojs/webpack-loader-mvc')
+                        loader: require.resolve('@cocojs/webpack-loader-mvc'),
                     },
                 ],
                 exclude: /node_modules/,
