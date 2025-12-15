@@ -40,9 +40,6 @@ const buildInConfig = {
                         },
                     },
                     {
-                        loader: require.resolve('../../runtime-config/debug-after-ts-loader.js'),
-                    },
-                    {
                         loader: require.resolve('ts-loader'),
                         options: {
                             context: process.cwd(),
