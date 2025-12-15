@@ -18,6 +18,7 @@
     "@cocojs/webpack-loader-mvc": "0.0.0"
   },
   "changesets": [
+    "calm-sloths-shop",
     "cuddly-ducks-shine",
     "deep-cases-sniff",
     "dull-otters-eat",
