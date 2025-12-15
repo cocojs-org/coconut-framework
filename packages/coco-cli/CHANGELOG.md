@@ -1,5 +1,11 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.3
+
+### Patch Changes
+
+-   0037a32: 测试打包
+
 ## 0.0.1-alpha.2
 
 ### Patch Changes
