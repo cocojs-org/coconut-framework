@@ -1,5 +1,11 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.5
+
+### Patch Changes
+
+-   32edf89: 测试webpack打包
+
 ## 0.0.1-alpha.4
 
 ### Patch Changes
