@@ -1,5 +1,11 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.6
+
+### Patch Changes
+
+-   036fe19: test webpack loader
+
 ## 0.0.1-alpha.5
 
 ### Patch Changes
