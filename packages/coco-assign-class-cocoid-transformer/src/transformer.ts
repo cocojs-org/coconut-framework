@@ -11,15 +11,15 @@ import type {
 } from '@babel/types';
 
 type ClassVisitor = (node: ClassDeclaration | ClassExpression) => void;
-const ssidKeyName = '$$cocoId';
+const cocoidKey = '$$cocoId';
 
-enum SCENE {
-    Jest,
-    Rollup,
-    Webpack
-}
-
-function createTransformer(warn: (msg: string) => void, error: (msg: string) => void, scene?: SCENE) {
+/**
+ * 创建一个transformer
+ * @param warn 告警打印
+ * @param error 报错打印
+ * @param prefix 统一前缀，最终添加的$cocoId的值为`${prefix.trim()}${class.name}`
+ */
+function createTransformer(warn: (msg: string) => void, error: (msg: string) => void, prefix: string = '') {
     /**
      * 递归遍历 AST 查找 Class 节点
      * @param ast - 当前要遍历的节点或节点数组
@@ -96,17 +96,17 @@ function createTransformer(warn: (msg: string) => void, error: (msg: string) => 
                         if (el.type === 'ClassProperty' && el.key.type === 'Identifier') {
                             const prop = el as ClassProperty;
                             const key = prop.key as Identifier;
-                            if (!prop.static || key.name !== ssidKeyName) {
+                            if (!prop.static || key.name !== cocoidKey) {
                                 return false;
                             }
                             const value = prop.value as StringLiteral;
                             if (value.type !== 'StringLiteral') {
                                 error(
-                                    `想要为类${className}自定义"${ssidKeyName}"，值必须是字符串字面量`
+                                    `想要为类${className}自定义"${cocoidKey}"，值必须是字符串字面量`
                                 );
                             } else if (!value.value || value.value.trim() === '') {
                                 error(
-                                    `想要为类${className}自定义"${ssidKeyName}"，值不能是空字符串`
+                                    `想要为类${className}自定义"${cocoidKey}"，值不能是空字符串`
                                 );
                             }
                             return true;
@@ -119,7 +119,13 @@ function createTransformer(warn: (msg: string) => void, error: (msg: string) => 
                     return;
                 }
                 // 插入的代码
-                const staticPropCode = `static ${ssidKeyName} = '${className}';\n`;
+                let cocoidKeyValue: string;
+                if (typeof prefix !== 'string' || !prefix.trim()) {
+                    cocoidKeyValue = className;
+                } else {
+                    cocoidKeyValue = `${prefix.trim()}${className}`;
+                }
+                const staticPropCode = `static ${cocoidKey} = '${cocoidKeyValue}';\n`;
                 // 插入点：ClassBody 的起始大括号 { 之后 (+1)
                 // Babel AST 节点上的 start 属性是标准字段
                 const insertionPoint = classBody.start + 1;

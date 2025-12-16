@@ -33,6 +33,26 @@ export default Btn;
         })
     });
 
+    it('有装饰器的类，会添加$$cocoId属性，支持自定义prefix', async () => {
+        const sourceCode = `
+function logged(value: any, { kind, name }) {
+    if (kind === "class") {
+        return class extends value {} as any
+    }
+}
+
+@logged
+class Btn {
+    count: number;
+    render() {};
+}
+export default Btn;
+        `;
+        await runTest(sourceCode, (outputCode) => {
+            expect(outputCode).toContain("$$cocoId = 'PrefixBtn'");
+        }, { prefix: 'Prefix'});
+    });
+
     it('有装饰器的类，已经存在$$cocoId，则不做处理', async () => {
         const sourceCode = `
 function logged(value: any, { kind, name }) {
