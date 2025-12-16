@@ -1,18 +1,22 @@
 import { test, expect } from '@playwright/test';
+import { startServeApp, stopServeApp } from './_helper/exec-test'
 
-test('has title', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+test.describe('应用测试', () => {
+    let res;
+    test.beforeEach(async () => {
+        res = await startServeApp();
+        if (!res.url) {
+            throw new Error('启用服务失败，没有找到url');
+        }
+    })
 
-  // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Playwright/);
-});
+    test.afterEach(async () => {
+        await stopServeApp(res);
+    })
 
-test('get started link', async ({ page }) => {
-  await page.goto('https://playwright.dev/');
+    test('能够渲染简单文字', async ({ page }) => {
+        await page.goto(res.url);
 
-  // Click the get started link.
-  await page.getByRole('link', { name: 'Get started' }).click();
-
-  // Expects page to have a heading with the name of Installation.
-  await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
-});
+        await expect(page.getByText('hello cocojs')).toHaveText('hello cocojs');
+    });
+})
