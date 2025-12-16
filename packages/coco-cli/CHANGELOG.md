@@ -1,5 +1,11 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.8
+
+### Patch Changes
+
+-   01e5d68: 添加prefix
+
 ## 0.0.1-alpha.7
 
 ### Patch Changes
