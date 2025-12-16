@@ -1,5 +1,13 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.7
+
+### Patch Changes
+
+-   7ff796e: 添加prefix支持
+-   Updated dependencies [7ff796e]
+    -   @cocojs/rollup-plugin-mvc@0.0.1-alpha.4
+
 ## 0.0.1-alpha.6
 
 ### Patch Changes

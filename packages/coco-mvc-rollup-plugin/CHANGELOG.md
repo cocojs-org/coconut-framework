@@ -1,5 +1,11 @@
 # @cocojs/rollup-plugin-mvc
 
+## 0.0.1-alpha.4
+
+### Patch Changes
+
+-   7ff796e: 添加prefix支持
+
 ## 0.0.1-alpha.3
 
 ### Patch Changes
