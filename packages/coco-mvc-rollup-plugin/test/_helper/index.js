@@ -21,11 +21,11 @@ ${sourceCode}
     fs.writeFileSync(targetFilePath, content, 'utf8');
 }
 
-async function bundle(input) {
+async function bundle(input, pluginOpts) {
     const builder = await rollup.rollup({
         input: input,
         plugins: [
-            rollupPluginMvc(),
+            rollupPluginMvc(pluginOpts),
             typescript({
                 tslib: require.resolve('tslib'),
                 compilerOptions: {
@@ -51,15 +51,17 @@ async function bundle(input) {
  * 执行一次测试用例
  * @param sourceCode 源码
  * @param assertFn  对打包结果断言函数，入参就是输出的字符串
+ * @param pluginOpts 插件选项
  * @returns {Promise<void>}
  */
 async function runTest(
     sourceCode,
     assertFn = () => {},
+    pluginOpts = {}
 ) {
     await writeCode(sourceCode);
     const input = path.join(__dirname, '..', 'input.ts');
-    const { code, builder } = await bundle(input);
+    const { code, builder } = await bundle(input, pluginOpts);
     assertFn(code);
     await builder.close();
 }
