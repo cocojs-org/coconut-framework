@@ -24,9 +24,11 @@ function mergeRollupConfig(config1: any, config2: any) {
     const _config1 = {};
     const _config2 = {};
     for (const key of validKeys) {
-        _config1[key] = (typeof config1 !== 'object' || config1 === null) ? config1[key] : undefined;
-        _config2[key] = (typeof config2 !== 'object' || config2 === null) ? config2[key] : undefined;
+        _config1[key] = (typeof config1 === 'object' || config1 !== null) ? config1[key] : undefined;
+        _config2[key] = (typeof config2 === 'object' || config2 !== null) ? config2[key] : undefined;
     }
+    console.info('config', config1, config2);
+    console.info('_config', _config1, _config2);
     return Object.assign({}, _config1, _config2);
 }
 
