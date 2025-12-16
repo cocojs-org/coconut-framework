@@ -18,6 +18,7 @@
     "@cocojs/webpack-loader-mvc": "0.0.0"
   },
   "changesets": [
+    "calm-apes-behave",
     "calm-sloths-shop",
     "cuddly-ducks-shine",
     "cyan-singers-lay",
