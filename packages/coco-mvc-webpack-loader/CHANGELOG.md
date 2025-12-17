@@ -1,5 +1,11 @@
 # @cocojs/webpack-loader-mvc
 
+## 0.0.1-alpha.2
+
+### Patch Changes
+
+-   7361875: $$cocoId -> $$id
+
 ## 0.0.1-alpha.1
 
 ### Patch Changes
