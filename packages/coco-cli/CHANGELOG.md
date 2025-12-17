@@ -1,5 +1,14 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.10
+
+### Patch Changes
+
+-   7361875: $$cocoId -> $$id
+-   Updated dependencies [7361875]
+    -   @cocojs/webpack-loader-mvc@0.0.1-alpha.2
+    -   @cocojs/rollup-plugin-mvc@0.0.1-alpha.5
+
 ## 0.0.1-alpha.9
 
 ### Patch Changes
