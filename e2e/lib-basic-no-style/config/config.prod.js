@@ -1,6 +1,6 @@
 const configProd = {
     rollup: {
-        cocoId: {
+        cocojs: {
             prefix: 'Coco'
         }
     },

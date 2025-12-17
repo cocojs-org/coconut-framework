@@ -159,7 +159,7 @@ const cliDts = [
 
 const assignClassSsidTransformer = [
     {
-        packageName: 'coco-assign-class-cocoid-transformer',
+        packageName: 'coco-assign-class-id-transformer',
         tsconfigJson: 'tsconfig.json',
         mainEntryPointFilePath: './dts-tmp/src/index.d.ts'
     }

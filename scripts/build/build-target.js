@@ -17,9 +17,9 @@ const cliBuildCotCocoDist = path.join(cocoCli, '/dist/build-dot-coco-process/ind
 const cliWebpackProcess = path.join(cocoCli, './src/webpack-process/index.ts');
 const cliWebpackDist = path.join(cocoCli, '/dist/webpack-process/index.js');
 
-const cocoAssignClassSsidTransformer = path.join(packages, './coco-assign-class-cocoid-transformer');
-const cocoAssignClassSsidTransformerInput = path.join(cocoAssignClassSsidTransformer, './src/index.ts');
-const cocoAssignClassSsidTransformerOutput = path.join(cocoAssignClassSsidTransformer, './dist/index.cjs.js');
+const cocoAssignClassIdTransformer = path.join(packages, './coco-assign-class-id-transformer');
+const cocoAssignClassIdTransformerInput = path.join(cocoAssignClassIdTransformer, './src/index.ts');
+const cocoAssignClassIdTransformerOutput = path.join(cocoAssignClassIdTransformer, './dist/index.cjs.js');
 const cocoMvcRollupPlugin = path.join(packages, './coco-mvc-rollup-plugin');
 const cocoMvcRollupPluginInput = path.join(cocoMvcRollupPlugin, './src/index.ts');
 const cocoMvcRollupPluginOutput = path.join(cocoMvcRollupPlugin, './dist/index.cjs.js');
@@ -29,9 +29,9 @@ const cocoMvcWebpackLoaderOutput = path.join(cocoMvcWebpackLoader, './dist/index
 
 module.exports.rollupTargets = [
     {
-        input: cocoAssignClassSsidTransformerInput,
+        input: cocoAssignClassIdTransformerInput,
         output: {
-            file: cocoAssignClassSsidTransformerOutput,
+            file: cocoAssignClassIdTransformerOutput,
             format: 'cjs',
         },
         ignoreRollupPlugin: true
@@ -43,7 +43,7 @@ module.exports.rollupTargets = [
             format: 'cjs',
         },
         alias: [
-            PACKAGE.ASSIGN_CLASS_SSID_TRANSFORMER,
+            PACKAGE.ASSIGN_CLASS_ID_TRANSFORMER,
         ],
         ignoreRollupPlugin: true
     },
@@ -54,7 +54,7 @@ module.exports.rollupTargets = [
             format: 'cjs',
         },
         alias: [
-            PACKAGE.ASSIGN_CLASS_SSID_TRANSFORMER,
+            PACKAGE.ASSIGN_CLASS_ID_TRANSFORMER,
         ],
         ignoreRollupPlugin: true
     },
@@ -76,7 +76,7 @@ module.exports.rollupTargets = [
             PACKAGE.REACT_RECONCILER,
             PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS,
             PACKAGE.REACT_SHARED,
-            PACKAGE.ASSIGN_CLASS_SSID_TRANSFORMER,
+            PACKAGE.ASSIGN_CLASS_ID_TRANSFORMER,
         ],
     },
     {

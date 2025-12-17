@@ -6,8 +6,8 @@ import target from '../target';
  * @public
  */
 @target([Target.Type.Method])
-class Cocoid extends Metadata {
+class Id extends Metadata {
     value: string;
 }
 
-export default Cocoid;
+export default Id;

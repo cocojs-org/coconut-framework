@@ -9,8 +9,8 @@ import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
  * 3. 项目中通过@component方法装饰注册的组件
  */
 export interface IocComDef<T> {
-    // cocoid，每个组件的id是唯一的
-    cocoid: string;
+    // id，所有组件唯一
+    id: string;
 
     cls: Class<T>;
 
@@ -32,24 +32,24 @@ class IocComponentDefinition {
     clsDefinitionMap: Map<Class<any>, IocComDef<any>> = new Map();
 
     newIocComponentDefinition<T>(
-        cocoid: string,
+        id: string,
         cls: Class<T>,
         isSingleton: boolean,
         instantiateType: 'new' | 'method'
     ): IocComDef<T> {
-        return { cocoid, cls, isSingleton, instantiateType };
+        return { id, cls, isSingleton, instantiateType };
     }
 
     addDefinition(
         cls: Class<any>,
-        cocoid: string,
+        id: string,
         isSingleton: boolean,
         methodInstantiateOpts?: { configurationCls: Class<any>; method: string }
     ) {
-        if (typeof cocoid !== 'string' || !cocoid.trim()) {
+        if (typeof id !== 'string' || !id.trim()) {
             throw new Error(`生成组件id失败: [${cls.name}]`);
         }
-        const existIdDef = this.idDefinitionMap.get(cocoid);
+        const existIdDef = this.idDefinitionMap.get(id);
         if (existIdDef) {
             throw new Error(`存在cocoid的组件: [${existIdDef.cls.name}] - [${cls.name}]`);
         }
@@ -58,7 +58,7 @@ class IocComponentDefinition {
             throw new Error(`存在同名的组件: [${existClsDef.cls.name}] - [${cls.name}]`);
         }
         const componentDefinition = this.newIocComponentDefinition(
-            cocoid,
+            id,
             cls,
             isSingleton,
             methodInstantiateOpts ? 'method' : 'new'
@@ -66,7 +66,7 @@ class IocComponentDefinition {
         if (methodInstantiateOpts) {
             componentDefinition.methodInstantiateOpts = methodInstantiateOpts;
         }
-        this.idDefinitionMap.set(cocoid, componentDefinition);
+        this.idDefinitionMap.set(id, componentDefinition);
         this.clsDefinitionMap.set(cls, componentDefinition);
     }
 
@@ -96,7 +96,7 @@ class IocComponentDefinition {
             if (qualifier) {
                 for (const child of descendantList) {
                     const def = this.clsDefinitionMap.get(child);
-                    if (def.cocoid === qualifier) {
+                    if (def.id === qualifier) {
                         return def;
                     }
                 }
@@ -104,7 +104,7 @@ class IocComponentDefinition {
             if (qualifier) {
                 const diagnose = createDiagnose(
                     DiagnoseCode.CO10010,
-                    definition.cocoid,
+                    definition.id,
                     descendantList.map((i) => i.name),
                     qualifier
                 );
@@ -112,7 +112,7 @@ class IocComponentDefinition {
             } else {
                 const diagnose = createDiagnose(
                     DiagnoseCode.CO10009,
-                    definition.cocoid,
+                    definition.id,
                     descendantList.map((i) => i.name)
                 );
                 throw new Error(stringifyDiagnose(diagnose));

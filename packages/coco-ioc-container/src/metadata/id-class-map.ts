@@ -9,8 +9,8 @@ import { createDiagnose, DiagnoseCode, printDiagnose, stringifyDiagnose } from '
 import Metadata from './instantiate-one-metadata';
 import { type MetaMetadata } from './metadata-repository';
 
-class CocoidClassMap {
-    private cocoidClassMap: Map<string, Class<Metadata>> = new Map();
+class IdClassMap {
+    private idClassMap: Map<string, Class<Metadata>> = new Map();
 
     /**
      * * 保存元数据类本身，方便运行是通过id获取元数据类
@@ -18,33 +18,33 @@ class CocoidClassMap {
      */
     constructor(metaMetadataMap: Map<Class<Metadata>, MetaMetadata>) {
         for (const cls of metaMetadataMap.keys()) {
-            const cocoId = cls.$$cocoId;
-            if (typeof cocoId !== 'string' || !cocoId.trim()) {
+            const id = cls.$$id;
+            if (typeof id !== 'string' || !id.trim()) {
                 throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10016, cls.name)));
             }
-            if (this.cocoidClassMap.has(cocoId)) {
-                throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10017, cls, this.cocoidClassMap.get(cocoId))));
+            if (this.idClassMap.has(id)) {
+                throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10017, cls, this.idClassMap.get(id))));
             }
-            this.cocoidClassMap.set(cocoId, cls);
+            this.idClassMap.set(id, cls);
         }
     }
 
     /**
      * * 根据cocoId获取元数据类
-     * * @param cocoId 元数据类id
+     * * @param id 元数据类id
      * * @returns 元数据类
      */
-    getMetaClassById(cocoId: string) {
-        if (typeof cocoId !== 'string' || !cocoId.trim() || !this.cocoidClassMap.has(cocoId)) {
+    getMetaClassById(id: string) {
+        if (typeof id !== 'string' || !id.trim() || !this.idClassMap.has(id)) {
             return null;
         } else {
-            return this.cocoidClassMap.get(cocoId);
+            return this.idClassMap.get(id);
         }
     }
 
     destructor() {
-        this.cocoidClassMap.clear();
+        this.idClassMap.clear();
     }
 }
 
-export default CocoidClassMap;
+export default IdClassMap;

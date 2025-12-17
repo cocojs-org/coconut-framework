@@ -126,7 +126,7 @@ importers:
         specifier: ^5.102.1
         version: 5.102.1(webpack-cli@6.0.1)
 
-  packages/coco-assign-class-cocoid-transformer:
+  packages/coco-assign-class-id-transformer:
     devDependencies:
       '@babel/parser':
         specifier: ^7.28.5

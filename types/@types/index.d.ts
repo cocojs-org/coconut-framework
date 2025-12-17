@@ -5,12 +5,12 @@ declare const __TEST__: boolean;
 declare interface Class<T> {
     new (...args: any): T;
     toString(): string;
-    $$cocoId?: string;
+    $$id?: string;
 }
 
 declare interface MetadataClass<T> {
     new (...args: any): T;
     toString(): string;
-    $$cocoId?: string;
+    $$id?: string;
     classDecoratorModifyPrototype?(prototype: any): void;
 }
