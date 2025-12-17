@@ -1,10 +1,11 @@
 import { test, expect } from '@playwright/test';
 import { startServeApp, stopServeApp } from './_helper/exec-test'
 
-test.describe('应用测试', () => {
+test.describe('单一应用项目-无样式', () => {
+    const projectFolder = 'app-basic-no-style';
     let res;
     test.beforeEach(async () => {
-        res = await startServeApp();
+        res = await startServeApp(projectFolder);
         if (!res.url) {
             throw new Error('启用服务失败，没有找到url');
         }

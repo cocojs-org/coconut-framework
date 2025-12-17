@@ -9,7 +9,7 @@ class Btn {
 export default Btn; 
         `;
         await runTest(sourceCode, (outputCode) => {
-            expect(outputCode).not.toContain('$$cocoId');
+            expect(outputCode).not.toContain('$$id');
         })
     });
 
@@ -29,7 +29,7 @@ class Btn {
 export default Btn;
         `;
         await runTest(sourceCode, (outputCode) => {
-            expect(outputCode).toContain("$$cocoId = 'Btn'");
+            expect(outputCode).toContain("$$id = 'Btn'");
         })
     });
 
@@ -45,15 +45,15 @@ function logged(value: any, { kind, name }) {
 class Btn {
     count: number;
     
-    static $$cocoId = 'dontModify';
+    static $$id = 'dontModify';
 
     render() {};
 }
 export default Btn;
         `;
         await runTest(sourceCode, (outputCode) => {
-            expect(outputCode).toContain("$$cocoId = 'dontModify'");
-            expect(outputCode).not.toContain("$$cocoId = 'Btn'");
+            expect(outputCode).toContain("$$id = 'dontModify'");
+            expect(outputCode).not.toContain("$$id = 'Btn'");
         })
     });
 
@@ -71,7 +71,7 @@ function logged(value: any, { kind, name }) {
 class Btn {
     count: number;
     
-    static $$cocoId = undefined;
+    static $$id = undefined;
 
     render() {};
 }
@@ -85,7 +85,7 @@ export default Btn;
                 threeError = error[0].message;
             }
         }
-        expect(threeError).toContain("想要为类Btn自定义\"$$cocoId\"，值必须是字符串字面量");
+        expect(threeError).toContain("想要为类Btn自定义\"$$id\"，值必须是字符串字面量");
     });
 
     it('有装饰器的类，已经存在$$cocoId，但使用空字符串，打包报错', async () => {
@@ -101,7 +101,7 @@ function logged(value: any, { kind, name }) {
 class Btn {
     count: number;
     
-    static $$cocoId = '';
+    static $$id = '';
 
     render() {};
 }
@@ -115,6 +115,6 @@ export default Btn;
                 threeError = error[0].message;
             }
         }
-        expect(threeError).toContain("想要为类Btn自定义\"$$cocoId\"，值不能是空字符串");
+        expect(threeError).toContain("想要为类Btn自定义\"$$id\"，值不能是空字符串");
     });
 })

@@ -11,7 +11,7 @@ import type {
 } from '@babel/types';
 
 type ClassVisitor = (node: ClassDeclaration | ClassExpression) => void;
-const cocoidKey = '$$cocoId';
+const cocoidKey = '$$id';
 
 /**
  * 创建一个transformer

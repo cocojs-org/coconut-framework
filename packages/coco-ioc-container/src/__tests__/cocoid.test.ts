@@ -9,8 +9,8 @@ describe('@cocoid装饰器', () => {
     let Target;
     let component;
     let Component;
-    let cocoid;
-    let Cocoid;
+    let id;
+    let Id;
     let instantiateMetadata;
     let consoleErrorSpy;
 
@@ -21,8 +21,8 @@ describe('@cocoid装饰器', () => {
         target = cocoMvc.target;
         component = cocoMvc.component;
         Component = cocoMvc.Component;
-        cocoid = cocoMvc.cocoid;
-        Cocoid = cocoMvc.Cocoid;
+        id = cocoMvc.id;
+        Id = cocoMvc.Id;
         Metadata = cocoMvc.Metadata;
         Target = cocoMvc.Target;
         configuration = cocoMvc.configuration;
@@ -43,12 +43,12 @@ describe('@cocoid装饰器', () => {
 
     test('支持通过id获取Cocoid类', () => {
         application.start();
-        const cls = application.getMetaClassById('Cocoid');
-        expect(cls).toBe(Cocoid);
+        const cls = application.getMetaClassById('Id');
+        expect(cls).toBe(Id);
     });
 
     test('@cocoid装饰器不能装饰在class上', () => {
-        @cocoid('Button')
+        @id('Button')
         @component()
         class Button {
             field: string;
@@ -58,7 +58,7 @@ describe('@cocoid装饰器', () => {
         expect(consoleErrorSpy).toHaveBeenCalledWith(
             'CO10004：%s 类上class装饰器 %s 只能用于装饰%s',
             'Button',
-            '@cocoid',
+            '@id',
             'method'
         );
     });
@@ -66,7 +66,7 @@ describe('@cocoid装饰器', () => {
     test('@component装饰器不能装饰在field上', () => {
         @component()
         class Button {
-            @cocoid('field')
+            @id('field')
             field: string;
         }
 
@@ -75,7 +75,7 @@ describe('@cocoid装饰器', () => {
             'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
             'Button',
             'field',
-            '@cocoid',
+            '@id',
             'method'
         );
     });
@@ -85,7 +85,7 @@ describe('@cocoid装饰器', () => {
             class Theme {}
             @webApplication()
             class Application {
-                @cocoid('CustomComp')
+                @id('CustomComp')
                 @component()
                 theme(): Theme {
                     return new Theme();

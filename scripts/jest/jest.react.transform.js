@@ -1,4 +1,4 @@
-const { createTransformer } = require('../../packages/coco-assign-class-cocoid-transformer');
+const { createTransformer } = require('../../packages/coco-assign-class-id-transformer');
 const { babelOptions } = require('../shared/common-compiler-option');
 const { default: babelJest } = require('babel-jest');
 

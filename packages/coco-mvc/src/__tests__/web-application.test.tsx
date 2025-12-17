@@ -4,7 +4,7 @@ describe('@webApplication装饰器', () => {
     let application;
     let view;
     let component;
-    let cocoid;
+    let id;
     let scope;
     let SCOPE;
     let webApplication;
@@ -18,7 +18,7 @@ describe('@webApplication装饰器', () => {
         Application = cocoMvc.Application;
         view = cocoMvc.view;
         component = cocoMvc.component;
-        cocoid = cocoMvc.cocoid;
+        id = cocoMvc.id;
         scope = cocoMvc.scope;
         SCOPE = cocoMvc.SCOPE;
         webApplication = cocoMvc.webApplication;
@@ -78,7 +78,7 @@ describe('@webApplication装饰器', () => {
         class Theme {}
         @webApplication()
         class Application {
-            @cocoid('Theme')
+            @id('Theme')
             @component()
             theme(): Theme {
                 return new Theme();
@@ -95,7 +95,7 @@ describe('@webApplication装饰器', () => {
         class Button {}
         @webApplication()
         class Application {
-            @cocoid('Button')
+            @id('Button')
             @scope(SCOPE.Prototype)
             @component()
             button(): Button {

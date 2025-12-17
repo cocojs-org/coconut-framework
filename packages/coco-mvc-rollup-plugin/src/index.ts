@@ -1,5 +1,5 @@
 import { Plugin, PluginContext } from 'rollup';
-import { createTransformer } from 'assign-class-cocoid-transformer';
+import { createTransformer } from 'assign-class-id-transformer';
 
 interface PluginOption {
     // 前缀，最终添加的$cocoId的值为`${prefix.trim()}${class.name}`

@@ -3,7 +3,7 @@ import { initMetadataModule, clearMetadataModule, type Metadata, type MetadataRe
 import { getDecoratorParam, initDecoratorParamModule, clearDecoratorParamModule } from '../create-decorator-exp';
 import { initIocComponentModule, destructorIocComponentModule } from '../ioc-container/workflow';
 import PropertiesConfig from '../properties/properties-config';
-import type CocoidClassMap from '../metadata/cocoid-class-map';
+import type IdClassMap from '../metadata/id-class-map';
 import type ComponentMetadataClass from '../metadata/component-metadata-class.ts';
 import type IocComponentDefinition from '../ioc-container/ioc-component-definition.ts';
 
@@ -14,7 +14,7 @@ import type IocComponentDefinition from '../ioc-container/ioc-component-definiti
 class Application {
     componentMetadataClass: ComponentMetadataClass;
     metadataRepository: MetadataRepository;
-    cocoidClassMap: CocoidClassMap;
+    idClassMap: IdClassMap;
     propertiesConfig: PropertiesConfig;
     iocComponentDefinition: IocComponentDefinition;
     iocComponentFactory: IocComponentFactory;
@@ -31,9 +31,9 @@ class Application {
         initDecoratorParamModule();
 
         // 用装饰器参数初始化元数据数据
-        const { metadataRepository, cocoidClassMap, componentMetadataClass } = initMetadataModule(getDecoratorParam());
+        const { metadataRepository, idClassMap, componentMetadataClass } = initMetadataModule(getDecoratorParam());
         this.metadataRepository = metadataRepository;
-        this.cocoidClassMap = cocoidClassMap;
+        this.idClassMap = idClassMap;
         this.componentMetadataClass = componentMetadataClass;
 
         // 用元数据信息初始化ioc组件数据
@@ -50,7 +50,7 @@ class Application {
 
     public destructor() {
         destructorIocComponentModule(this.iocComponentDefinition, this.iocComponentFactory);
-        clearMetadataModule(this.metadataRepository, this.cocoidClassMap, this.componentMetadataClass);
+        clearMetadataModule(this.metadataRepository, this.idClassMap, this.componentMetadataClass);
         clearDecoratorParamModule();
     }
 
@@ -89,7 +89,7 @@ class Application {
         return this.metadataRepository.listBeDecoratedClsByClassKindMetadata(MetadataCls);
     }
     public getMetaClassById(id: string) {
-        return this.cocoidClassMap.getMetaClassById(id);
+        return this.idClassMap.getMetaClassById(id);
     }
 
     /**

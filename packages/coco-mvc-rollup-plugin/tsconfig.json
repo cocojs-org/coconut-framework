@@ -16,7 +16,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "paths": {
-            "assign-class-cocoid-transformer": ["../coco-assign-class-cocoid-transformer"],
+            "assign-class-id-transformer": ["../coco-assign-class-id-transformer"],
         }
     },
     "include": ["src/**/*"],

@@ -1,7 +1,7 @@
 const ts = require('typescript');
 const babelJest = require('babel-jest').default;
 const { typescriptOptions, babelOptions } = require('../shared/common-compiler-option');
-const { createTransformer } = require('../../packages/coco-assign-class-cocoid-transformer');
+const { createTransformer } = require('../../packages/coco-assign-class-id-transformer');
 
 module.exports = {
     process(src, filename, transformOptions) {

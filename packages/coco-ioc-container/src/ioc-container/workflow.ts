@@ -8,7 +8,7 @@ import {
 } from './ioc-component-definition-helper';
 import { type ComponentMetadataClass, type MetadataRepository } from '../metadata';
 import Scope, { SCOPE } from '../decorator/metadata/scope';
-import Cocoid from '../decorator/metadata/cocoid';
+import Id from '../decorator/metadata/id';
 import Component from '../decorator/metadata/component';
 import IocComponentDefinition from './ioc-component-definition';
 import IocComponentFactory from './ioc-component-factory';
@@ -32,7 +32,7 @@ function doBuildIocComponentDefinition(
                     // 取组件装饰器的@scope装饰器
                     scope = getComponentDecoratorScope(componentMetadata, metaMetadata, componentMetadataClass);
                 }
-                iocComponentDefinition.addDefinition(beDecoratedCls, beDecoratedCls.$$cocoId, scope === SCOPE.Singleton);
+                iocComponentDefinition.addDefinition(beDecoratedCls, beDecoratedCls.$$id, scope === SCOPE.Singleton);
             } else {
                 const methods = metadataRepository.listMethodByMetadataCls(beDecoratedCls, Component);
                 for (const method of methods) {
@@ -48,11 +48,11 @@ function doBuildIocComponentDefinition(
                         Scope
                     ) as Scope[];
                     // TODO: 添加校验是否有@cocoid装饰器；
-                    const cocoidMetas: Cocoid[] = metadataRepository.listMethodKindMetadata(
+                    const cocoidMetas: Id[] = metadataRepository.listMethodKindMetadata(
                         beDecoratedCls,
                         method,
-                        Cocoid
-                    ) as Cocoid[];
+                        Id
+                    ) as Id[];
                     iocComponentDefinition.addDefinition(
                         componentMetas[0].value,
                         cocoidMetas[0].value,

@@ -4,7 +4,7 @@
 
 代码仓库基于pnpm的 monorepo 结构，不同功能拆分出不同子包。
 
--   `coco-assign-class-cocoid-transformer`: 基于`babel-parser`的 transformer，为有装饰器的类添加静态$$cocoid属性。
+-   `coco-assign-class-id-transformer`: 基于`babel-parser`的 transformer，为有装饰器的类添加静态$$id属性。
 -   `coco-cli`: 命令行，基于webpack的应用开发、构建工具，以及基于 rollup 的组件库构建工具。
 -   `coco-ioc-container`: ioc容器，核心，在标准 es 装饰器规范之上封装了一套基于类和元数据的运行时框架。
 -   `coco-mvc`: 框架入口，所有的运行时装饰器和组件都在这里导出。

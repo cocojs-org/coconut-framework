@@ -8,7 +8,7 @@ import { configFileName, defaultConfigName } from './util/env';
 import fs from 'node:fs';
 
 enum ValidProp {
-    cocoId = 'cocoId',
+    cocojs = 'cocojs',
 }
 
 async function readRollup(cmd?: string) {
@@ -24,7 +24,7 @@ async function readRollup(cmd?: string) {
 
 // 目前 rollup 的配置仅支持简单的自定义，后续有需求再增强
 function mergeRollupConfig(config1: any, config2: any) {
-    const validKeys = [ValidProp.cocoId];
+    const validKeys = [ValidProp.cocojs];
     const _config1 = {};
     const _config2 = {};
     for (const key of validKeys) {
@@ -45,7 +45,7 @@ export const build = async () => {
     const result = await rollup({
         input: path.join(process.cwd(), './src/index.ts'),
         plugins: [
-            cocojs(config[ValidProp.cocoId]),
+            cocojs(config[ValidProp.cocojs]),
             typescript({
                 compilerOptions: {
                     target: 'ESNext',
