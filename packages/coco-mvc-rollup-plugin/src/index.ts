@@ -2,16 +2,16 @@ import { Plugin, PluginContext } from 'rollup';
 import { createTransformer } from 'assign-class-id-transformer';
 
 interface PluginOption {
-    // 前缀，最终添加的$cocoId的值为`${prefix.trim()}${class.name}`
-    prefix?: string;
+    // id统一前缀
+    idPrefix?: string;
 }
 
 // 定义 Class Visitor 的类型
-export default function addStaticIdPlugin({ prefix }: PluginOption = {}): Plugin {
+export default function addStaticIdPlugin({ idPrefix }: PluginOption = {}): Plugin {
     return {
-        name: 'rollup-plugin-assign-class-ssid',
+        name: 'rollup-plugin-assign-class-id',
         transform(this: PluginContext, code, id) {
-            const handler = createTransformer(this.warn, this.error, prefix);
+            const handler = createTransformer(this.warn, this.error, idPrefix);
             return handler(code, id);
         },
     };
