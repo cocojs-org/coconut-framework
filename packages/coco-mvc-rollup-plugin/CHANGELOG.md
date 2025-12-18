@@ -1,5 +1,11 @@
 # @cocojs/rollup-plugin-mvc
 
+## 0.0.1-alpha.6
+
+### Patch Changes
+
+-   3666fba: prefix -> idPrefix
+
 ## 0.0.1-alpha.5
 
 ### Patch Changes

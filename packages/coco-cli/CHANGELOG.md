@@ -1,5 +1,12 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.11
+
+### Patch Changes
+
+-   Updated dependencies [3666fba]
+    -   @cocojs/rollup-plugin-mvc@0.0.1-alpha.6
+
 ## 0.0.1-alpha.10
 
 ### Patch Changes
