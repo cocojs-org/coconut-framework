@@ -1,5 +1,11 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.12
+
+### Patch Changes
+
+-   4f3662e: fix env中undefined覆盖前面的配置的问题
+
 ## 0.0.1-alpha.11
 
 ### Patch Changes
