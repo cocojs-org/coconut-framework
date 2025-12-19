@@ -27,6 +27,7 @@
     "devDependencies": {
         "@babel/cli": "^7.26.4",
         "@babel/core": "^7.24.3",
+        "@babel/generator": "^7.28.5",
         "@babel/parser": "^7.28.5",
         "@babel/plugin-proposal-decorators": "^7.24.1",
         "@babel/plugin-syntax-decorators": "^7.25.9",
@@ -34,6 +35,7 @@
         "@babel/plugin-transform-react-jsx": "^7.23.4",
         "@babel/preset-env": "^7.25.3",
         "@babel/preset-typescript": "^7.24.7",
+        "@babel/types": "^7.28.5",
         "@changesets/cli": "^2.29.7",
         "@cocojs/type-extractor": "workspace:*",
         "@microsoft/api-extractor": "^7.52.7",
@@ -53,7 +55,6 @@
         "jest-environment-jsdom": "^29.7.0",
         "jsonfile": "^6.1.0",
         "lint-staged": "^15.2.10",
-        "magic-string": "^0.30.21",
         "memfs": "^4.51.1",
         "prettier": "3.3.3",
         "rollup": "^4.24.0",

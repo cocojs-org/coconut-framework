@@ -1,7 +1,7 @@
 const runTest = require('./_helper').runTest
 
-describe('带有装饰器的类添加$$cocoId属性', () => {
-    it('没有装饰器的类，不添加$$cocoId', async () => {
+describe('带有装饰器的类添加$$id属性', () => {
+    it('没有装饰器的类，不添加$$id', async () => {
         const sourceCode = `
 class Btn {
     count: number
@@ -13,7 +13,7 @@ export default Btn;
         })
     });
 
-    it('有装饰器的类，会添加$$cocoId属性', async () => {
+    it('有装饰器的类，会添加$$id属性', async () => {
         const sourceCode = `
 function logged(value: any, { kind, name }) {
     if (kind === "class") {
@@ -29,11 +29,11 @@ class Btn {
 export default Btn;
         `;
         await runTest(sourceCode, (outputCode) => {
-            expect(outputCode).toContain("$$id = 'Btn'");
+            expect(outputCode).toContain('$$id = "Btn"');
         })
     });
 
-    it('有装饰器的类，已经存在$$cocoId，则不做处理', async () => {
+    it('有装饰器的类，已经存在$$id，则不做处理', async () => {
         const sourceCode = `
 function logged(value: any, { kind, name }) {
     if (kind === "class") {
@@ -58,7 +58,7 @@ export default Btn;
     });
 
 
-    it('有装饰器的类，已经存在$$cocoId，但不是字符串字面量，打包报错', async () => {
+    it('有装饰器的类，已经存在$$id，但不是字符串字面量，打包报错', async () => {
         let threeError = '';
         const sourceCode = `
 function logged(value: any, { kind, name }) {
@@ -88,7 +88,7 @@ export default Btn;
         expect(threeError).toContain("想要为类Btn自定义\"$$id\"，值必须是字符串字面量");
     });
 
-    it('有装饰器的类，已经存在$$cocoId，但使用空字符串，打包报错', async () => {
+    it('有装饰器的类，已经存在$$id，但使用空字符串，打包报错', async () => {
         let threeError = '';
         const sourceCode = `
 function logged(value: any, { kind, name }) {

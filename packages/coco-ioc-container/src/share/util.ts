@@ -111,7 +111,7 @@ export function isCocoClass(v: any) {
         typeof v === 'function' &&
         v.prototype &&
         v.prototype.constructor === v &&
-        // 必须有$$cocoId属性
+        // 必须有$$id属性
         typeof v.$$id === 'string' &&
         v.$$id.trim()
     );

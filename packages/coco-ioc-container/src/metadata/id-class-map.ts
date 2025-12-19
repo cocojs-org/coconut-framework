@@ -30,7 +30,7 @@ class IdClassMap {
     }
 
     /**
-     * * 根据cocoId获取元数据类
+     * * 根据$$id获取元数据类
      * * @param id 元数据类id
      * * @returns 元数据类
      */

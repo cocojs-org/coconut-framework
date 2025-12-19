@@ -1,61 +1,172 @@
 import { parse } from '@babel/parser';
-import MagicString from 'magic-string';
+import { generate } from '@babel/generator';
 import type {
     Node,
     ClassDeclaration,
+    CallExpression,
     ClassExpression,
     ClassProperty,
     ClassBody,
     Identifier,
-    StringLiteral
+    StringLiteral, BlockStatement,
 } from '@babel/types';
+import * as t from '@babel/types';
 
-type ClassVisitor = (node: ClassDeclaration | ClassExpression) => void;
-const cocoidKey = '$$id';
+const innerIdName = '$$id';
+
+function isClassDeclaration(node: any) {
+    return node.type === 'ClassDeclaration';
+}
+
+function isDescribeExpression (node: any) {
+    if (
+        t.isExpressionStatement(node) &&
+        t.isCallExpression(node.expression) &&
+        t.isIdentifier((<CallExpression>node.expression).callee, { name: 'describe' })
+    ) {
+        const describeCb = (<CallExpression>node.expression).arguments[1];
+        if (t.isArrowFunctionExpression(describeCb) || t.isFunctionExpression(describeCb)) {
+            return (<BlockStatement>describeCb.body).body;
+        }
+    }
+    return null;
+}
+
+const isTestExpression = (node) => {
+    if (
+        t.isExpressionStatement(node) &&
+        t.isCallExpression(node.expression) &&
+        (t.isIdentifier((<CallExpression>node.expression).callee, { name: 'test' }) ||
+            t.isIdentifier((<CallExpression>node.expression).callee, { name: 'it' }))
+    ) {
+        const testCb = node.expression.arguments[1];
+        if (t.isArrowFunctionExpression(testCb)) {
+            return (<BlockStatement>testCb.body).body;
+        }
+    }
+    return null;
+};
+
+const isFunction = (node) => {
+    if (t.isFunctionDeclaration(node)) {
+        return (<BlockStatement>node.body).body;
+    }
+    return null;
+};
+
+const isTryBlock = (node) => {
+    if (t.isTryStatement(node)) {
+        return (<BlockStatement>node.block).body;
+    }
+    return null;
+};
+
+// 正式环境下只为顶层的类添加$$id
+const needHandleClassBlockPathListForProd = [
+    [isClassDeclaration],
+];
+// 测试时候，很多类定义不在顶层
+const needHandleClassBlockPathListForTest = [
+    [isDescribeExpression, isTestExpression, isClassDeclaration],
+    [isDescribeExpression, isDescribeExpression, isTestExpression, isClassDeclaration],
+    [isDescribeExpression, isDescribeExpression, isFunction, isClassDeclaration],
+    [isDescribeExpression, isFunction, isClassDeclaration],
+    [isDescribeExpression, isTestExpression, isTryBlock, isClassDeclaration],
+    [isDescribeExpression, isDescribeExpression, isTestExpression, isTryBlock, isClassDeclaration],
+];
 
 /**
  * 创建一个transformer
  * @param warn 告警打印
  * @param error 报错打印
- * @param prefix 统一前缀，最终添加的$cocoId的值为`${prefix.trim()}${class.name}`
+ * @param prefix 统一前缀，最终添加的$$id的值为`${prefix.trim()}${class.name}`
  */
 function createTransformer(warn: (msg: string) => void, error: (msg: string) => void, prefix: string = '') {
-    /**
-     * 递归遍历 AST 查找 Class 节点
-     * @param ast - 当前要遍历的节点或节点数组
-     * @param visitor - 找到 Class 节点时调用的回调函数
-     */
-    function findClasses(ast: Node | Node[] | undefined, visitor: ClassVisitor) {
-        if (ast === undefined || ast === null) {
-            return;
-        }
 
-        // 1. 处理节点数组 (如 Program body)
-        if (Array.isArray(ast)) {
-            ast.forEach(node => findClasses(node, visitor));
-            return;
-        }
-
-        // 2. 处理单个对象节点
-        if (typeof ast === 'object' && ast.type) {
-            const node = ast;
-
-            // 找到目标节点：ClassDeclaration 或 ClassExpression
-            if (node.type === 'ClassDeclaration' || node.type === 'ClassExpression') {
-                visitor(node);
+    function assignStatic$$id(node: ClassDeclaration) {
+        const hasDecorators = node.decorators && node.decorators.length > 0;
+        // 必须有装饰器且必须有名称 (id)
+        if (hasDecorators && node.id) {
+            const className = node.id.name;
+            const classBody = node.body as ClassBody;
+            if (typeof classBody.start !== 'number' || classBody.start < 0) {
+                // 插入点：ClassBody 的起始大括号 { 之后 (+1) 如果起始位置丢失或无效，这是异常情况，应跳过
+                warn(`这可能是一个 bug`);
+                return false;
             }
+            const alreadyExists = classBody.body.some((el) => {
+                // 必须是 ClassProperty 且 key 是 Identifier
+                if (el.type === 'ClassProperty' && el.key.type === 'Identifier') {
+                    const prop = el as ClassProperty;
+                    const key = prop.key as Identifier;
+                    if (!prop.static || key.name !== innerIdName) {
+                        return false;
+                    }
+                    const value = prop.value as StringLiteral;
+                    if (value.type !== 'StringLiteral') {
+                        error(`想要为类${className}自定义"${innerIdName}"，值必须是字符串字面量`);
+                    } else if (!value.value || value.value.trim() === '') {
+                        error(`想要为类${className}自定义"${innerIdName}"，值不能是空字符串`);
+                    }
+                    return true;
+                }
+                return false;
+            });
+            if (alreadyExists) {
+                // 已经存在就是用户显式指定
+                return false;
+            }
+            // 插入的代码
+            let innerIdValue: string;
+            if (typeof prefix !== 'string' || !prefix.trim()) {
+                innerIdValue = className;
+            } else {
+                innerIdValue = `${prefix.trim()}${className}`;
+            }
+            const staticIdProperty = t.classProperty(
+                t.identifier(innerIdName),
+                t.stringLiteral(innerIdValue),
+                null,
+                null,
+                false,
+                true
+            );
+            node.body.body.unshift(staticIdProperty);
+            return true;
+        }
+        return false;
+    }
 
-            // 递归遍历所有子属性（避免遍历 start/end 等元数据）
-            for (const key in node) {
-                // 排除元数据属性
-                if (key !== 'range' && key !== 'start' && key !== 'end' && key !== 'loc' && key !== 'type') {
-                    const prop = (node)[key];
 
-                    // 递归查找子节点或子节点数组
-                    if (prop && (typeof prop === 'object' || Array.isArray(prop))) {
-                        findClasses(prop, visitor);
+    function findClassClassDeclarationNode(node: any, path: Function[]) {
+        if (path.length < 1) {
+            return false;
+        } else if (path.length === 1) {
+            if (path[0] !== isClassDeclaration) {
+                // 最后一个必须是判断是否是函数定义的，如果不是的话直接报错
+                throw new Error('最后一个判断应当是isClassDeclaration');
+            }
+            if (isClassDeclaration(node)) {
+                assignStatic$$id(node);
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            // len > 1
+            const match = path[0];
+            const nextBlockList = match(node);
+            if (nextBlockList) {
+                let modified = false;
+                for (const next of nextBlockList) {
+                    const find = findClassClassDeclarationNode(next, path.slice(1));
+                    if (find && !modified) {
+                        modified = true;
                     }
                 }
+                return modified;
+            } else {
+                return false;
             }
         }
     }
@@ -65,79 +176,37 @@ function createTransformer(warn: (msg: string) => void, error: (msg: string) => 
         if (!/\.(ts|tsx)$/.test(id) && !/\.(jsx)$/.test(id)) {
             return null;
         }
-        const s = new MagicString(code);
+
         // 2. 解析：启用 TypeScript 和现代装饰器语法
         const ast = parse(code, {
             sourceType: 'module',
-            plugins: [
-                'typescript',
-                'decorators',
-                'classProperties',
-                'jsx',
-                'decoratorAutoAccessors'
-            ]
+            plugins: ['typescript', 'decorators', 'classProperties', 'jsx', 'decoratorAutoAccessors'],
         });
-        let modified = false;
-        // 3. 遍历和修改逻辑
-        findClasses(ast.program.body, (node) => {
-            const hasDecorators = node.decorators && node.decorators.length > 0;
-            // 必须有装饰器且必须有名称 (id)
-            if (hasDecorators && node.id) {
-                const className = node.id.name;
-                const classBody = node.body as ClassBody;
-                if (typeof classBody.start !== 'number' || classBody.start < 0) {
-                    // 如果起始位置丢失或无效，我们无法安全地插入代码，应跳过
-                    warn(`这可能是一个 bug，Skipping class in ${id}: ClassBody start position is missing.`);
-                    return;
-                }
-                const alreadyExists = classBody.body.some(
-                    el => {
-                        // 必须是 ClassProperty 且 key 是 Identifier
-                        if (el.type === 'ClassProperty' && el.key.type === 'Identifier') {
-                            const prop = el as ClassProperty;
-                            const key = prop.key as Identifier;
-                            if (!prop.static || key.name !== cocoidKey) {
-                                return false;
-                            }
-                            const value = prop.value as StringLiteral;
-                            if (value.type !== 'StringLiteral') {
-                                error(
-                                    `想要为类${className}自定义"${cocoidKey}"，值必须是字符串字面量`
-                                );
-                            } else if (!value.value || value.value.trim() === '') {
-                                error(
-                                    `想要为类${className}自定义"${cocoidKey}"，值不能是空字符串`
-                                );
-                            }
-                            return true;
-                        }
-                        return false;
-                    }
-                );
-                if (alreadyExists) {
-                    // 已经存在就是用户显式指定
-                    return;
-                }
-                // 插入的代码
-                let cocoidKeyValue: string;
-                if (typeof prefix !== 'string' || !prefix.trim()) {
-                    cocoidKeyValue = className;
-                } else {
-                    cocoidKeyValue = `${prefix.trim()}${className}`;
-                }
-                const staticPropCode = `static ${cocoidKey} = '${cocoidKeyValue}';\n`;
-                // 插入点：ClassBody 的起始大括号 { 之后 (+1)
-                // Babel AST 节点上的 start 属性是标准字段
-                const insertionPoint = classBody.start + 1;
-                s.appendLeft(insertionPoint, staticPropCode);
-                modified = true;
-            }
-        });
-        if (modified) {
-            return s.toString();
+
+        const body = ast.program?.body;
+        if (!body || !Array.isArray(body)) {
+            return;
         }
 
-        return null;
+        let regenerate = false;
+        const needHandleClassBlockPathList = __TEST__
+            ? [...needHandleClassBlockPathListForProd, ...needHandleClassBlockPathListForTest]
+            : needHandleClassBlockPathListForProd;
+        for (const blockPath of needHandleClassBlockPathList) {
+            for (const statement of body) {
+                const find = findClassClassDeclarationNode(statement, blockPath);
+                if (find && !regenerate) {
+                    regenerate = true;
+                }
+            }
+        }
+
+        if (regenerate) {
+            const { code } = generate(ast, { compact: false, retainLines: true });
+            return code;
+        } else {
+            return null;
+        }
     }
 
     return transformer;

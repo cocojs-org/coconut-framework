@@ -1,4 +1,4 @@
-describe('@cocoid装饰器', () => {
+describe('@id装饰器', () => {
     let Application;
     let application;
     let webApplication;
@@ -41,13 +41,13 @@ describe('@cocoid装饰器', () => {
         consoleErrorSpy.mockRestore();
     });
 
-    test('支持通过id获取Cocoid类', () => {
+    test('支持通过id获取id类', () => {
         application.start();
         const cls = application.getMetaClassById('Id');
         expect(cls).toBe(Id);
     });
 
-    test('@cocoid装饰器不能装饰在class上', () => {
+    test('@id装饰器不能装饰在class上', () => {
         @id('Button')
         @component()
         class Button {
@@ -81,7 +81,7 @@ describe('@cocoid装饰器', () => {
     });
 
     describe('@component装饰在方法上', () => {
-        test('使用cocoid自定义之后，可以使用getComponent实例化组件。', () => {
+        test('使用@id自定义之后，可以使用getComponent实例化组件。', () => {
             class Theme {}
             @webApplication()
             class Application {

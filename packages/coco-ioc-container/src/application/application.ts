@@ -62,9 +62,9 @@ class Application {
     public getComponent<T>(cls: Class<T>, option?: { qualifier?: string }): T;
     // 根据组件id返回组件实例
     public getComponent<T>(id: string, option?: { qualifier?: string }): T;
-    public getComponent<T>(ClsOrCocoid: Class<T> | string, option?: { qualifier?: string }) {
+    public getComponent<T>(ClassOrId: Class<T> | string, option?: { qualifier?: string }) {
         return this.iocComponentFactory.getComponents(this, {
-            classOrId: ClsOrCocoid,
+            classOrId: ClassOrId,
             qualifier: option?.qualifier,
         });
     }

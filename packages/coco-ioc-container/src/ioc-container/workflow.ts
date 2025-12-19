@@ -47,15 +47,15 @@ function doBuildIocComponentDefinition(
                         method,
                         Scope
                     ) as Scope[];
-                    // TODO: 添加校验是否有@cocoid装饰器；
-                    const cocoidMetas: Id[] = metadataRepository.listMethodKindMetadata(
+                    // TODO: 添加校验是否有@id装饰器；
+                    const idMetas: Id[] = metadataRepository.listMethodKindMetadata(
                         beDecoratedCls,
                         method,
                         Id
                     ) as Id[];
                     iocComponentDefinition.addDefinition(
                         componentMetas[0].value,
-                        cocoidMetas[0].value,
+                        idMetas[0].value,
                         !scopeMetas.length || scopeMetas[0].value === SCOPE.Singleton,
                         {
                             configurationCls: beDecoratedCls,
