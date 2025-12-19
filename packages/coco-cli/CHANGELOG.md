@@ -1,5 +1,11 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.14
+
+### Patch Changes
+
+-   3f729dd: feat: 去掉@cocojs/webpack-loader-mvc
+
 ## 0.0.1-alpha.13
 
 ### Patch Changes
