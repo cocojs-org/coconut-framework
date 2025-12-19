@@ -1,5 +1,13 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.16
+
+### Patch Changes
+
+-   2394a0e: feat: 尝试添加缓存，不处理不带class 的源码
+-   Updated dependencies [2394a0e]
+    -   @cocojs/webpack-loader-mvc@0.0.1-alpha.5
+
 ## 0.0.1-alpha.15
 
 ### Patch Changes

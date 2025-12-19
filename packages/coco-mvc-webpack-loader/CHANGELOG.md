@@ -1,5 +1,11 @@
 # @cocojs/webpack-loader-mvc
 
+## 0.0.1-alpha.5
+
+### Patch Changes
+
+-   2394a0e: feat: 尝试添加缓存，不处理不带class 的源码
+
 ## 0.0.1-alpha.4
 
 ### Patch Changes
