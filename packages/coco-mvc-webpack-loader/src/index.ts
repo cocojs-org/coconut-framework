@@ -1,14 +1,20 @@
 import { createTransformer } from 'assign-class-id-transformer';
 
 function addStaticIdLoader(source: any) {
-    const filename = this.resourcePath;
-
-     const transformer = createTransformer(
-         (msg) => this.emitWarning(new Error(msg)),
-         (msg) => this.emitError(new Error(msg)),
-     );
-     const code = transformer(source, filename);
-     return code || source;
+    this.cacheable(true);
+    if (!source.includes('class ')) {
+        return source;
+    }
+    const transformer = createTransformer(
+        (msg) => this.emitWarning(new Error(msg)),
+        (msg) => this.emitError(new Error(msg)),
+    );
+    const start = Date.now();
+    const code = transformer(source, this.resourcePath);
+    if (code) {
+        console.info('===trans', this.resourcePath, Date.now() - start);
+    }
+    return code || source;
 }
 
 module.exports = addStaticIdLoader;
