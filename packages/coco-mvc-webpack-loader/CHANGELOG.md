@@ -1,5 +1,11 @@
 # @cocojs/webpack-loader-mvc
 
+## 0.0.1-alpha.4
+
+### Patch Changes
+
+-   beda158: 添加打印
+
 ## 0.0.1-alpha.3
 
 ### Patch Changes
