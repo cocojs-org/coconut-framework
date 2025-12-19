@@ -1,7 +1,7 @@
 {
     "name": "@cocojs/cli",
     "description": "命令行工具，支持开发和构建功能",
-    "version": "0.0.1-alpha.12",
+    "version": "0.0.1-alpha.13",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "bin": {

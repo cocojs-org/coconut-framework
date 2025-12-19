@@ -1,5 +1,11 @@
 # @cocojs/rollup-plugin-mvc
 
+## 0.0.1-alpha.7
+
+### Patch Changes
+
+-   9954de7: assign-class-id-transformer 只处理顶层的类
+
 ## 0.0.1-alpha.6
 
 ### Patch Changes

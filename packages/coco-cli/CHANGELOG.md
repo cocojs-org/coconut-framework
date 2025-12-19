@@ -1,5 +1,13 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.13
+
+### Patch Changes
+
+-   Updated dependencies [9954de7]
+    -   @cocojs/webpack-loader-mvc@0.0.1-alpha.3
+    -   @cocojs/rollup-plugin-mvc@0.0.1-alpha.7
+
 ## 0.0.1-alpha.12
 
 ### Patch Changes
