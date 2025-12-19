@@ -46,6 +46,9 @@ const buildInConfig = {
                             transpileOnly: false,
                         },
                     },
+                    {
+                        loader: require.resolve('@cocojs/webpack-loader-mvc'),
+                    },
                 ],
                 exclude: /node_modules/,
             },
