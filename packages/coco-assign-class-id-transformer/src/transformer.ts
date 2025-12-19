@@ -179,7 +179,6 @@ function createTransformer(warn: (msg: string) => void, error: (msg: string) => 
             }
         }
 
-        console.info('===start trans', id, Date.now())
         // 2. 解析：启用 TypeScript 和现代装饰器语法
         const ast = parse(code, {
             sourceType: 'module',
@@ -206,7 +205,6 @@ function createTransformer(warn: (msg: string) => void, error: (msg: string) => 
 
         if (regenerate) {
             const { code } = generate(ast, { compact: false, retainLines: true });
-            console.info('===end trans', id, Date.now());
             return code;
         } else {
             return null;
