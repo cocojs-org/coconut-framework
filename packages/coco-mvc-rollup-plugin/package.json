@@ -34,8 +34,5 @@
         "typescript": "5.3.3"
     },
     "license": "MIT",
-    "author": "",
-    "dependencies": {
-        "magic-string": "^0.30.21"
-    }
+    "author": ""
 }

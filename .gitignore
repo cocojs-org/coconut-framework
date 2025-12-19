@@ -150,4 +150,3 @@ dist
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
-e2e/**/pnpm-lock.yaml

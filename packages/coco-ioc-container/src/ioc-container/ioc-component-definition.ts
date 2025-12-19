@@ -51,7 +51,7 @@ class IocComponentDefinition {
         }
         const existIdDef = this.idDefinitionMap.get(id);
         if (existIdDef) {
-            throw new Error(`存在cocoid的组件: [${existIdDef.cls.name}] - [${cls.name}]`);
+            throw new Error(`存在id的组件: [${id}] - [${existIdDef.cls.name}] - [${cls.name}]`);
         }
         const existClsDef = this.clsDefinitionMap.get(cls);
         if (existClsDef) {

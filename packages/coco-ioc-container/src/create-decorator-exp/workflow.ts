@@ -35,7 +35,7 @@ function initDecoratorParamModule() {
     // 所有的被装饰类都要符合一定的要求
     for (const beDecoratedClass of getDecoratorParam().keys()) {
         if (!isCocoClass(beDecoratedClass)) {
-            throw new Error('所有被装饰器的对象必须都是类或者类字段或类方法，且必须存在静态$$cocoId字段。')
+            throw new Error(`所有被装饰器的对象${beDecoratedClass?.name}必须都是类或者类字段或类方法，且必须存在静态$$id字段。`)
         }
     }
 }
