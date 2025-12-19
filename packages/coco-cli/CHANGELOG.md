@@ -1,5 +1,13 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.15
+
+### Patch Changes
+
+-   beda158: 添加打印
+-   Updated dependencies [beda158]
+    -   @cocojs/webpack-loader-mvc@0.0.1-alpha.4
+
 ## 0.0.1-alpha.14
 
 ### Patch Changes
