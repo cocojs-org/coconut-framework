@@ -1,5 +1,13 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.17
+
+### Patch Changes
+
+-   c038229: feat: transpileOnly: true，启用的话编译太慢了
+-   Updated dependencies [c038229]
+    -   @cocojs/webpack-loader-mvc@0.0.1-alpha.6
+
 ## 0.0.1-alpha.16
 
 ### Patch Changes
