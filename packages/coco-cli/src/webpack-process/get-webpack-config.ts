@@ -43,7 +43,8 @@ const buildInConfig = {
                         loader: require.resolve('ts-loader'),
                         options: {
                             context: process.cwd(),
-                            transpileOnly: false,
+                            // TODO: 如果开启类型检查的话，编译过程会比较慢，待优化
+                            transpileOnly: true,
                         },
                     },
                     {
