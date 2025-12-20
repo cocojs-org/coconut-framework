@@ -40,6 +40,14 @@ async function bundle(input) {
                             },
                         },
                         {
+                            loader: require.resolve('ts-loader'),
+                            options: {
+                                context: path.resolve(__dirname, '..', '..'),
+                                configFile: 'tsconfig.test.json',
+                                transpileOnly: true,
+                            },
+                        },
+                        {
                             loader: path.resolve(__dirname, '../../dist/index.cjs.js'),
                         },
                     ],
