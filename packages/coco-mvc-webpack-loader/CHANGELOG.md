@@ -1,5 +1,11 @@
 # @cocojs/webpack-loader-mvc
 
+## 0.0.1-alpha.7
+
+### Patch Changes
+
+-   3494be5: 去掉耗时打印
+
 ## 0.0.1-alpha.6
 
 ### Patch Changes

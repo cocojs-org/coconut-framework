@@ -1,5 +1,12 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.18
+
+### Patch Changes
+
+-   Updated dependencies [3494be5]
+    -   @cocojs/webpack-loader-mvc@0.0.1-alpha.7
+
 ## 0.0.1-alpha.17
 
 ### Patch Changes
