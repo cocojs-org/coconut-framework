@@ -64,11 +64,11 @@ class WorkFlow {
     }
 
     public async build() {
-        return this.run('build-once');
+        return await this.run('build-once');
     }
 
     public async dev() {
-        return this.run('build-and-watch');
+        return await this.run('build-and-watch');
     }
 
     private async run(task: string) {
