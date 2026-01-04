@@ -1,5 +1,11 @@
 # @cocojs/cli
 
+## 0.0.1-alpha.19
+
+### Patch Changes
+
+-   e04f9b1: 扫描 src 下所有文件夹
+
 ## 0.0.1-alpha.18
 
 ### Patch Changes
