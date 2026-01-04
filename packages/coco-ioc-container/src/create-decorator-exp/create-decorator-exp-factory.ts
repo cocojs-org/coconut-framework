@@ -195,7 +195,8 @@ function createDecoratorExp(metadataCls: Class<any>, option?: CreateDecoratorExp
 }
 
 /**
- * 创建一个未绑定元数据的装饰器表达式，后续通过表达式的第二个参数来绑定
+ * 创建一个未绑定元数据的装饰器表达式
+ * 需要在正式的元数据类上添加decorateSelf装饰器来关联真实的元数据类，装饰器到其他类的使用方式和createDecoratorExp是一致的。
  * 适用于装饰器装饰自己元数据类的场景
  * @public
  */
