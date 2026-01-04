@@ -7,14 +7,14 @@ import { build as buildLib } from './build-lib';
  * coco app build 构建
  * coco app dev 开发
  */
-function execAppCmd(action: string) {
+async function execAppCmd(action: string) {
     switch (action) {
         case 'build': {
-            buildApp();
+            await buildApp();
             break;
         }
         case 'dev': {
-            devApp();
+            await devApp();
             break;
         }
         default: {
@@ -28,14 +28,10 @@ function execAppCmd(action: string) {
  * 组件库项目命令
  * coco lib build 构建
  */
-function execLibCmd(action: string) {
+async function execLibCmd(action: string) {
     switch (action) {
         case 'build': {
-            buildLib();
-            break;
-        }
-        case 'dev': {
-            devApp();
+            await buildLib();
             break;
         }
         default: {

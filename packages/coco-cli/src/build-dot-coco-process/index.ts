@@ -1,20 +1,21 @@
 import process from 'node:process';
-import DotCocoBuilder from './dot-coco-builder';
+import DotCocoBuilder, { Event } from './dot-coco-builder';
 
 function startListening(builder: DotCocoBuilder) {
-    let watching = false;
-    process.on('message', (msg) => {
+    process.on('message', async (msg) => {
         switch (msg) {
             case 'build-once': {
-                builder.build();
+                await builder.buildOnce();
                 process.send('build-success');
                 break;
             }
             case 'build-and-watch': {
-                builder.build();
-                process.send('init-build-success');
-                watching = true;
-                builder.startWatch();
+                builder.addEventListener((e: Event) => {
+                    if (e === Event.InitBuildFinished) {
+                        process.send('init-build-success');
+                    }
+                });
+                builder.buildAndWatch();
                 break;
             }
             default: {
@@ -25,10 +26,7 @@ function startListening(builder: DotCocoBuilder) {
     });
 
     async function handleTerminate() {
-        if (watching) {
-            await builder.stopWatch();
-            watching = false;
-        }
+        await builder.stopWatch();
         process.exit(0);
     }
     process.on('SIGTERM', handleTerminate);
@@ -44,5 +42,3 @@ function startAsProcess() {
 }
 
 startAsProcess();
-
-export default DotCocoBuilder;
