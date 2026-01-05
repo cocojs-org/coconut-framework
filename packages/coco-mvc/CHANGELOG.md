@@ -1,5 +1,11 @@
 # @cocojs/mvc
 
+## 0.1.0-beta.6
+
+### Minor Changes
+
+-   c1e58bc: enter beta stage
+
 ## 0.0.1-alpha.5
 
 ### Patch Changes
