@@ -1,5 +1,11 @@
 # @cocojs/mvc
 
+## 0.0.1-alpha.5
+
+### Patch Changes
+
+-   7361875: $$cocoId -> $$id
+
 ## 0.0.1-alpha.4
 
 ### Patch Changes

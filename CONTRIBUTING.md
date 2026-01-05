@@ -43,19 +43,16 @@
 
 ## 版本规范
 
--   `create-coco`、`@cocojs/cli`、`@cocojs/mvc`都遵循[semver](https://semver.org/lang/zh-CN/)规范。
--   `@cocojs/cli`和`@cocojs/mvc`2个包的版本号遵循主版本号一致，次版本号、修订号不一致的规则，这样可以保证一定的灵活性，但又不会过于混乱。
+- `@cocojs/type-extractor`、`@cocojs/babel-plugin`、`@cocojs/webpack-loader`统一遵循[semver](https://semver.org/lang/zh-CN/)规范。
+- `@cocojs/cli`、`@cocojs/mvc`目前处于`0.1.0-beta.x`版本中，且一直处于`beta`版本，直到第一个正式版（`0.1.0`）发布后再遵循[semver](https://semver.org/lang/zh-CN/)规范。
+- `@cocojs/cli`和`@cocojs/mvc`这 2 个包需要保证相互兼容且不强制一起发布，所以遵循主版本号一致，次版本号、修订号不一致的规则，这样可以保证一定的灵活性，但又不会过于混乱。
 
 ## 发布
-仓库有以下包需要发布：
-- @cocojs/cli
-- @cocojs/mvc
-- @cocojs/type-extractor
-- @cocojs/babel-plugin
-- @cocojs/webpack-loader
 
 步骤如下：
-1. 在根目录下执行`changeset`，然后按照命令行的提醒选择要发布的包，目前除了`@cocojs/type-extractor`之外都处于`alpha`阶段。
+1. 在根目录下执行`changeset`：
+   - `@cocojs/cli`、`@cocojs/mvc`应该一直选择**PATCH**阶段，直到正式版发布。
+   - `@cocojs/type-extractor`、`@cocojs/babel-plugin`、`@cocojs/webpack-loader`根据semver规范选择合适的版本升级即可。
 2. 在自己的 fork 仓库中提交 pr 请求到中心仓库 master 分支。
 3. action 会自动运行，然后创建一个新版本的 pr 请求。
 4. 管理员合并 pr 后，会自动发布新的版本。

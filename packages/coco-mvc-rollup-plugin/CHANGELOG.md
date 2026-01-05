@@ -1,5 +1,14 @@
 # @cocojs/rollup-plugin-mvc
 
+## 0.0.1-alpha.4
+
+### Patch Changes
+
+-   7361875: $$cocoId -> $$id
+-   7ff796e: 添加prefix支持
+-   9954de7: assign-class-id-transformer 只处理顶层的类
+-   3666fba: prefix -> idPrefix
+
 ## 0.0.1-alpha.3
 
 ### Patch Changes

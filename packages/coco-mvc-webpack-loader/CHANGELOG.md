@@ -1,5 +1,16 @@
 # @cocojs/webpack-loader-mvc
 
+## 0.0.1-alpha.2
+
+### Patch Changes
+
+-   7361875: $$cocoId -> $$id
+-   3494be5: 去掉耗时打印
+-   c038229: feat: transpileOnly: true，启用的话编译太慢了
+-   9954de7: assign-class-id-transformer 只处理顶层的类
+-   2394a0e: feat: 尝试添加缓存，不处理不带class 的源码
+-   beda158: 添加打印
+
 ## 0.0.1-alpha.1
 
 ### Patch Changes
