@@ -1,10 +1,12 @@
 {
   "mode": "pre",
-  "tag": "alpha",
+  "tag": "beta",
   "initialVersions": {
-    "@cocojs/cli": "0.0.1-alpha202511202111",
+    "@cocojs/cli": "0.0.1-alpha.19",
     "coco-ioc-container": "0.0.0",
-    "@cocojs/mvc": "0.0.1-alpha202511172037",
+    "@cocojs/mvc": "0.0.1-alpha.5",
+    "@cocojs/rollup-plugin-mvc": "0.0.1-alpha.7",
+    "@cocojs/webpack-loader-mvc": "0.0.1-alpha.7",
     "coco-render": "0.0.0",
     "coco-router": "0.0.0",
     "@cocojs/type-extractor": "0.0.16",
@@ -13,9 +15,7 @@
     "react-dom": "0.0.0",
     "react-reconciler": "0.0.0",
     "react-shared": "0.0.0",
-    "shared": "0.0.0",
-    "@cocojs/rollup-plugin-mvc": "0.0.0",
-    "@cocojs/webpack-loader-mvc": "0.0.0"
+    "shared": "0.0.0"
   },
   "changesets": [
     "bold-beans-add",
