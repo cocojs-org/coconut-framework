@@ -4,12 +4,6 @@
         "target": "ESNext",
         "lib": ["dom"],
         "module": "ESNext",
-        "jsx": "preserve",
-        "plugins": [
-            {
-                "transform": "@cocojs/type-extractor",
-                "transformProgram": true
-            }
-        ]
+        "jsx": "preserve"
     }
 }

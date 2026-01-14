@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const rollup = require('rollup');
 const rollupPluginMvc = require('@cocojs/rollup-plugin-mvc');
-const typescript = require('@rollup/plugin-typescript');
 
 async function writeCode(sourceCode) {
     const targetFilePath = path.resolve(__dirname, '..', 'input.ts');
@@ -26,16 +25,6 @@ async function bundle(input, pluginOpts) {
         input: input,
         plugins: [
             rollupPluginMvc(pluginOpts),
-            typescript({
-                tslib: require.resolve('tslib'),
-                compilerOptions: {
-                    target: "ESNext",
-                    module: "ESNext",
-                    jsx: "preserve",
-                    allowImportingTsExtensions: false,
-                },
-                include: ["packages/coco-mvc-rollup-plugin/**/*"],
-            }),
         ],
     });
 

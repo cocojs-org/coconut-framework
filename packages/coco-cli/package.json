@@ -33,7 +33,6 @@
         "@babel/plugin-proposal-decorators": "^7.25.9",
         "@babel/plugin-transform-react-jsx": "^7.25.9",
         "@cocojs/rollup-plugin-mvc": "workspace:*",
-        "@cocojs/type-extractor": "workspace:*",
         "@cocojs/webpack-loader-mvc": "workspace:*",
         "@rollup/plugin-babel": "^6.0.4",
         "@rollup/plugin-typescript": "^12.1.2",

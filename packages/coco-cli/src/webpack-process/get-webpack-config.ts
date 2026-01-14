@@ -40,14 +40,6 @@ const buildInConfig = {
                         },
                     },
                     {
-                        loader: require.resolve('ts-loader'),
-                        options: {
-                            context: process.cwd(),
-                            // TODO: 如果开启类型检查的话，编译过程会比较慢，待优化，试试看：fork-ts-checker-webpack-plugin
-                            transpileOnly: true,
-                        },
-                    },
-                    {
                         loader: require.resolve('@cocojs/webpack-loader-mvc'),
                     },
                 ],

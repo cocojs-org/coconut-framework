@@ -16,9 +16,10 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "paths": {
-            "assign-class-id-transformer": ["../coco-assign-class-id-transformer"],
+            "coco-compiler": ["../coco-compiler"]
         }
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist", "**/*.test.ts"]
+    "exclude": ["node_modules", "dist", "**/*.test.ts"],
+    "references": [{ "path": "../coco-compiler" }]
 }

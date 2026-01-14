@@ -1,14 +1,12 @@
 const path = require('node:path');
-const process = require('node:process');
-
-const isTest = process.env.NODE_ENV === 'test';
+const { isTest } = require('../shared/constant');
 const { PACKAGE } = require("./rollup-alias");
+
 const packages = path.join(__dirname, '../../packages');
 const cocoMvc = path.join(packages, './coco-mvc');
 const cocoMvcInput = path.join(cocoMvc, './src/index.ts');
 const cocoMvcInputTest = path.join(cocoMvc, './src/test.ts');
 const cocoMvcOutput = path.join(cocoMvc, './dist/index.cjs.js');
-
 const cocoCli = path.join(packages, './coco-cli');
 const cliSrc = path.join(cocoCli, './src/index.ts');
 const cliDist = path.join(cocoCli, '/dist/index.js');
@@ -16,10 +14,9 @@ const cliBuildDotCocoProcess = path.join(cocoCli, './src/build-dot-coco-process/
 const cliBuildCotCocoDist = path.join(cocoCli, '/dist/build-dot-coco-process/index.js');
 const cliWebpackProcess = path.join(cocoCli, './src/webpack-process/index.ts');
 const cliWebpackDist = path.join(cocoCli, '/dist/webpack-process/index.js');
-
-const cocoAssignClassIdTransformer = path.join(packages, './coco-assign-class-id-transformer');
-const cocoAssignClassIdTransformerInput = path.join(cocoAssignClassIdTransformer, './src/index.ts');
-const cocoAssignClassIdTransformerOutput = path.join(cocoAssignClassIdTransformer, './dist/index.cjs.js');
+const cocoCompiler = path.join(packages, './coco-compiler');
+const cocoCompilerInput = path.join(cocoCompiler, './src/index.ts');
+const cocoCompilerOutput = path.join(cocoCompiler, './dist/index.cjs.js');
 const cocoMvcRollupPlugin = path.join(packages, './coco-mvc-rollup-plugin');
 const cocoMvcRollupPluginInput = path.join(cocoMvcRollupPlugin, './src/index.ts');
 const cocoMvcRollupPluginOutput = path.join(cocoMvcRollupPlugin, './dist/index.cjs.js');
@@ -29,12 +26,12 @@ const cocoMvcWebpackLoaderOutput = path.join(cocoMvcWebpackLoader, './dist/index
 
 module.exports.rollupTargets = [
     {
-        input: cocoAssignClassIdTransformerInput,
+        input: cocoCompilerInput,
         output: {
-            file: cocoAssignClassIdTransformerOutput,
+            file: cocoCompilerOutput,
             format: 'cjs',
         },
-        ignoreRollupPlugin: true
+        useRollupPlugin: false
     },
     {
         input: cocoMvcRollupPluginInput,
@@ -43,9 +40,9 @@ module.exports.rollupTargets = [
             format: 'cjs',
         },
         alias: [
-            PACKAGE.ASSIGN_CLASS_ID_TRANSFORMER,
+            PACKAGE.TS_COMPILER,
         ],
-        ignoreRollupPlugin: true
+        useRollupPlugin: false
     },
     {
         input: cocoMvcWebpackLoaderInput,
@@ -54,9 +51,9 @@ module.exports.rollupTargets = [
             format: 'cjs',
         },
         alias: [
-            PACKAGE.ASSIGN_CLASS_ID_TRANSFORMER,
+            PACKAGE.TS_COMPILER,
         ],
-        ignoreRollupPlugin: true
+        useRollupPlugin: false
     },
     {
         input: isTest ? cocoMvcInputTest : cocoMvcInput,
@@ -75,9 +72,10 @@ module.exports.rollupTargets = [
             PACKAGE.REACT_DOM_HOST_CONFIG,
             PACKAGE.REACT_RECONCILER,
             PACKAGE.REACT_RECONCILER_REACT_WORK_TAGS,
-            PACKAGE.REACT_SHARED,
-            PACKAGE.ASSIGN_CLASS_ID_TRANSFORMER,
+            PACKAGE.REACT_SHARED
         ],
+        useRollupPlugin: true,
+        useNodeResolve: true,
     },
     {
         input: cliSrc,
@@ -85,7 +83,7 @@ module.exports.rollupTargets = [
             file: cliDist,
             format: 'cjs'
         },
-        ignoreRollupPlugin: true
+        useRollupPlugin: false
     },
     {
         input: cliBuildDotCocoProcess,
@@ -93,7 +91,7 @@ module.exports.rollupTargets = [
             file: cliBuildCotCocoDist,
             format: 'cjs'
         },
-        ignoreRollupPlugin: true
+        useRollupPlugin: false
     },
     {
         input: cliWebpackProcess,
@@ -101,6 +99,6 @@ module.exports.rollupTargets = [
             file: cliWebpackDist,
             format: 'cjs'
         },
-        ignoreRollupPlugin: true
+        useRollupPlugin: false
     }
 ];

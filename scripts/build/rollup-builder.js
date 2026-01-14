@@ -1,17 +1,19 @@
 const rollup = require('rollup');
+const resolve = require('@rollup/plugin-node-resolve');
 const replace = require('@rollup/plugin-replace');
 const babel = require('@rollup/plugin-babel');
 const typescript = require('@rollup/plugin-typescript');
 const aliasPlugin = require('@rollup/plugin-alias');
 const genEntries = require('./rollup-alias').genEntries;
-const { typescriptOptions, babelOptions } = require('../shared/common-compiler-option')
+const { babelOptions } = require('../shared/common-compiler-option')
+const { isTest } = require('../shared/constant');
 
 function genRollupConfig (inputConfig) {
-    const { input, alias, external, ignoreRollupPlugin } = inputConfig
+    const { input, alias, external, useRollupPlugin, useNodeResolve } = inputConfig
 
-    let rollupPluginAssignClassSsid;
-    if (!ignoreRollupPlugin) {
-        rollupPluginAssignClassSsid = require('../../packages/coco-mvc-rollup-plugin/dist/index.cjs')
+    let cocoCompiler;
+    if (useRollupPlugin) {
+        cocoCompiler = require('../../packages/coco-mvc-rollup-plugin/dist/index.cjs')
     }
 
     return {
@@ -19,14 +21,20 @@ function genRollupConfig (inputConfig) {
         external,
         plugins: [
             replace({
-                __DEV__: process.env.NODE_ENV === 'test',
-                __TEST__: process.env.NODE_ENV === 'test',
+                __DEV__: isTest,
+                __TEST__: isTest,
             }),
-            rollupPluginAssignClassSsid && rollupPluginAssignClassSsid(),
-            typescript({
+            cocoCompiler && cocoCompiler(),
+            !useRollupPlugin && typescript({
                 compilerOptions: {
-                    ...typescriptOptions
+                    target: 'ESNext',
+                    lib: ['dom'],
+                    module: 'ESNext',
+                    jsx: 'preserve',
                 }
+            }),
+            !!useNodeResolve && resolve({
+                extensions: ['.js', '.ts']
             }),
             babel({
                 extensions: ['.js', '.ts', '.tsx'],

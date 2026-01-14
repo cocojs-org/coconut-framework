@@ -1,15 +1,11 @@
-const { createTransformer } = require('../../packages/coco-assign-class-id-transformer');
-const { babelOptions } = require('../shared/common-compiler-option');
-const { default: babelJest } = require('babel-jest');
+const babelJest = require('babel-jest').default;
+const { babelOptions } = require('../../shared/common-compiler-option');
+const { compileOneFile } = require('../../../packages/coco-compiler');
 
 module.exports = {
     process(src, filename, transformOptions) {
-        if (filename.endsWith('.jsx') || filename.endsWith('.js')) {
-            const ssidTransformer = createTransformer(console.warn, (error) => {
-                throw new Error(error);
-            });
-            const result = ssidTransformer(src, filename);
-            const code = result ? result : src;
+        if (filename.endsWith('.ts') || filename.endsWith('.tsx')) {
+            const { code } = compileOneFile(src, filename);
             const transformer = babelJest.createTransformer({
                 presets: babelOptions.presets,
                 plugins: [

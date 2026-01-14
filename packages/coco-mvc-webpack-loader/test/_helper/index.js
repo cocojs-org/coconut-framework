@@ -33,22 +33,13 @@ async function bundle(input) {
                         {
                             loader: require.resolve('babel-loader'),
                             options: {
-                                presets: [require.resolve('@babel/preset-typescript')],
                                 plugins: [
                                     [require.resolve('@babel/plugin-proposal-decorators'), { version: '2023-11' }],
                                 ],
                             },
                         },
                         {
-                            loader: require.resolve('ts-loader'),
-                            options: {
-                                context: path.resolve(__dirname, '..', '..'),
-                                configFile: 'tsconfig.test.json',
-                                transpileOnly: true,
-                            },
-                        },
-                        {
-                            loader: path.resolve(__dirname, '../../dist/index.cjs.js'),
+                            loader: require.resolve('@cocojs/webpack-loader-mvc')
                         },
                     ],
                     exclude: /node_modules/,

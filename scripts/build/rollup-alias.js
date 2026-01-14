@@ -1,6 +1,5 @@
 const path = require("node:path");
-const process = require('node:process');
-const isTest = process.env.NODE_ENV === 'test';
+const { isTest } = require('../shared/constant');
 
 const packages = path.join(__dirname, '../../packages');
 // todo 和tsconfig.json.path放在一起维护；
@@ -20,7 +19,7 @@ const reactReconcilerReactWorkTags = path.join(packages, './react-reconciler/src
 const reactDOM = path.join(packages, './react-dom/src/index.js')
 const reactDOMFiberHostConfig = path.join(packages, './react-dom/src/client/ReactDomHostConfig.js')
 const reactShared = path.join(packages, './react-shared/src/index.js')
-const assignClassIdTransformer = path.join(packages, './coco-assign-class-id-transformer/src/index.ts');
+const tsCompiler = path.join(packages, './coco-compiler/src/index.ts');
 
 const PACKAGE = {
     MVC: 'coco-mvc',
@@ -35,7 +34,7 @@ const PACKAGE = {
     REACT_DOM: 'react-dom',
     REACT_DOM_HOST_CONFIG: 'react-dom-ReactFiberHostConfig',
     REACT_SHARED: 'react-shared',
-    ASSIGN_CLASS_ID_TRANSFORMER: 'assign-class-id-transformer'
+    TS_COMPILER: 'coco-compiler',
 };
 
 const pathMap = {
@@ -51,7 +50,7 @@ const pathMap = {
     [PACKAGE.REACT_DOM]: reactDOM,
     [PACKAGE.REACT_DOM_HOST_CONFIG]: reactDOMFiberHostConfig,
     [PACKAGE.REACT_SHARED]: reactShared,
-    [PACKAGE.ASSIGN_CLASS_ID_TRANSFORMER]: assignClassIdTransformer,
+    [PACKAGE.TS_COMPILER]: tsCompiler,
 }
 
 function genEntries(config) {

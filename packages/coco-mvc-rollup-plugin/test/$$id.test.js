@@ -6,7 +6,7 @@ describe('带有装饰器的类添加$$id属性', () => {
 class Btn {
     count: number
 }
-export default Btn; 
+export default Btn;
         `;
         await runTest(sourceCode, (outputCode) => {
             expect(outputCode).not.toContain('$$id');
@@ -145,7 +145,7 @@ function logged(value: any, { kind, name }) {
 class Btn {
     count: number;
     
-    static $$id = '';
+    static $$id = ' ';
 
     render() {};
 }

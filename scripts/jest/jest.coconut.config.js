@@ -14,7 +14,7 @@ module.exports = {
     ],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
     transform: {
-        '\\.[jt]sx?$': '<rootDir>/scripts/jest/jest.coconut.transform.js',
+        '\\.[jt]sx?$': '<rootDir>/scripts/jest/transform/jest.coconut.transform.js',
     },
     moduleNameMapper: {
         '@cocojs/mvc': '<rootDir>/packages/coco-mvc/dist/index.cjs.js',
