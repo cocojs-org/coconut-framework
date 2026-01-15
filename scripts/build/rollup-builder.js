@@ -5,7 +5,6 @@ const babel = require('@rollup/plugin-babel');
 const typescript = require('@rollup/plugin-typescript');
 const aliasPlugin = require('@rollup/plugin-alias');
 const genEntries = require('./rollup-alias').genEntries;
-const { babelOptions } = require('../shared/common-compiler-option')
 const { isTest } = require('../shared/constant');
 
 function genRollupConfig (inputConfig) {
@@ -38,7 +37,8 @@ function genRollupConfig (inputConfig) {
             }),
             babel({
                 extensions: ['.js', '.ts', '.tsx'],
-                ...babelOptions,
+                presets: ['@babel/preset-env'],
+                plugins: [['@babel/plugin-proposal-decorators', { version: '2023-11' }]],
             }),
             aliasPlugin({
                 entries: genEntries(alias)
