@@ -5,7 +5,7 @@ function isComponentDecorator(decorator: ts.Decorator): boolean {
     return isDecoratorExp(decorator, 'component');
 }
 
-function updateComponentDecorator(member: ts.ClassElement, markUpdate: () => void) {
+function updateComponentDecorator(member: ts.ClassElement, markUpdate: (identifier: ts.Identifier) => void) {
     if (!ts.isMethodDeclaration(member)) {
         return member;
     }
@@ -42,7 +42,7 @@ function updateComponentDecorator(member: ts.ClassElement, markUpdate: () => voi
         return member;
     }
 
-    markUpdate();
+    markUpdate(identifier);
     const newModifiers = modifiers.map((m) =>
         ts.isDecorator(m) && m === component
             ? ts.factory.createDecorator(

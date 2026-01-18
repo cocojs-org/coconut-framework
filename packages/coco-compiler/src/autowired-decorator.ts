@@ -5,7 +5,7 @@ function isAutowiredDecorator(decorator: ts.Decorator): decorator is ts.Decorato
     return isDecoratorExp(decorator, 'autowired');
 }
 
-function updateAutowiredDecorator(member: ts.ClassElement, markUpdate: () => void) {
+function updateAutowiredDecorator(member: ts.ClassElement, markUpdate: (identifier: ts.Identifier) => void) {
     if (!ts.isPropertyDeclaration(member)) {
         return member;
     }
@@ -35,7 +35,7 @@ function updateAutowiredDecorator(member: ts.ClassElement, markUpdate: () => voi
         return member;
     }
 
-    markUpdate();
+    markUpdate(identifier);
     const newModifiers = modifiers.map((m) =>
         ts.isDecorator(m) && m === autowired
             ? ts.factory.createDecorator(

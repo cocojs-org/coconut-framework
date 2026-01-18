@@ -60,7 +60,7 @@ function extractIdentifierFromType(type: ts.TypeNode): ts.Identifier | undefined
     return undefined;
 }
 
-function createImport(className: string, importPath: string) {
+function createNamedImport(className: string, importPath: string) {
     return ts.factory.createImportDeclaration(
         undefined, // modifiers
         ts.factory.createImportClause(
@@ -70,7 +70,16 @@ function createImport(className: string, importPath: string) {
                 ts.factory.createImportSpecifier(false, undefined, ts.factory.createIdentifier(className)),
             ])
         ),
-        ts.factory.createStringLiteral(importPath), // 路径
+        ts.factory.createStringLiteral(importPath),
+        undefined
+    );
+}
+
+function createImport(className: string, importPath: string) {
+    return ts.factory.createImportDeclaration(
+        undefined,
+        ts.factory.createImportClause(undefined, ts.factory.createIdentifier(className), undefined),
+        ts.factory.createStringLiteral(importPath),
         undefined
     );
 }
@@ -82,24 +91,27 @@ function updateTypeImports(sourceFile: ts.SourceFile, identifyList: ts.Identifie
     const importNames = new Set<string>();
     identifyList.forEach((iden) => importNames.add(iden.text));
     const newStatements = [];
-    for (const stmt of sourceFile.statements) {
-        if (importNames.size === 0) {
-            newStatements.push(stmt);
-            continue;
-        }
-        if (ts.isImportDeclaration(stmt)) {
-            if (stmt.importClause.namedBindings?.kind === ts.SyntaxKind.NamedImports) {
-                const findImport = stmt.importClause.namedBindings.elements.find(e => importNames.has(e.name.text));
-                if (findImport) {
-                    const name = findImport.name.text;
-                    const importPath = (<ts.StringLiteral>stmt.moduleSpecifier).text;
-                    newStatements.push(createImport('Render', 'coco-render'));
-                    importNames.delete(name);
+    for (const name of importNames) {
+        for (const stmt of sourceFile.statements) {
+            if (ts.isImportDeclaration(stmt)) {
+                if (stmt.importClause.namedBindings?.kind === ts.SyntaxKind.NamedImports) {
+                    const match = stmt.importClause.namedBindings.elements.find((e) => name === e.name.text);
+                    if (match) {
+                        const importPath = (<ts.StringLiteral>stmt.moduleSpecifier).text;
+                        newStatements.push(createNamedImport(name, importPath));
+                        break;
+                    }
+                }
+                if (stmt.importClause.name && ts.isIdentifier(stmt.importClause.name)) {
+                    if (stmt.importClause.name.text === name) {
+                        const importPath = (<ts.StringLiteral>stmt.moduleSpecifier).text;
+                        newStatements.push(createImport(name, importPath));
+                        break;
+                    }
                 }
             }
         }
-        newStatements.push(stmt);
     }
-    return ts.factory.updateSourceFile(sourceFile, newStatements);
+    return ts.factory.updateSourceFile(sourceFile, [ ...newStatements, ...sourceFile.statements]);
 }
 export { isDecoratorExp, extractIdentifierFromType, hasClassKindDecorator, updateTypeImports };
