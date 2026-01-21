@@ -2,8 +2,8 @@
     "extends": ["../../tsconfig.json"],
     "compilerOptions": {
         "composite": true,
-        "module": "CommonJS",
-        "moduleResolution": "Node",
+        "module": "node16",
+        "moduleResolution": "node16",
         "declaration": true,
         "allowImportingTsExtensions": false,
         "outDir": "./dts-tmp",

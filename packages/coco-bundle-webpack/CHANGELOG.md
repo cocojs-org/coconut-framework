@@ -1,4 +1,4 @@
-# @cocojs/webpack-loader-mvc
+# @cocojs/bundle-webpack
 
 ## 0.0.1-alpha.7
 

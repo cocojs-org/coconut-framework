@@ -1,6 +1,6 @@
 import { compileOneFile } from 'coco-compiler';
 
-function addStaticIdLoader(source: any) {
+function cocoMvcLoader(source: string) {
     this.cacheable(true);
     if (!source.includes('class ')) {
         return source;
@@ -8,9 +8,9 @@ function addStaticIdLoader(source: any) {
     try {
         const { code } = compileOneFile(source, this.resourcePath);
         return code;
-    } catch (e: any) {
+    } catch (e) {
         this.emitError(e);
     }
 }
 
-module.exports = addStaticIdLoader;
+export default cocoMvcLoader;

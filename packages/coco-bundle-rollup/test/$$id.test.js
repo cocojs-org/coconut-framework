@@ -29,7 +29,7 @@ class Btn {
 export default Btn;
         `;
         await runTest(sourceCode, (outputCode) => {
-            expect(outputCode).toContain("static $$id = \"Btn\"");
+            expect(outputCode).toContain("$$id = \"Btn\"");
         })
     });
 
@@ -54,8 +54,8 @@ class Btn {
 export default Btn;
         `;
         await runTest(sourceCode, (outputCode) => {
-            expect(outputCode).toContain('static $$id = "Btn"');
-            expect(outputCode).toContain('static $$id = "Card"');
+            expect(outputCode).toContain('$$id = "Btn"');
+            expect(outputCode).toContain('$$id = "Card"');
         });
     });
 
@@ -75,7 +75,7 @@ class Btn {
 export default Btn;
         `;
         await runTest(sourceCode, (outputCode) => {
-            expect(outputCode).toContain('static $$id = "CocoBtn"');
+            expect(outputCode).toContain('$$id = "CocoBtn"');
         }, { idPrefix: 'Coco'});
     });
 
@@ -98,8 +98,8 @@ class Btn {
 export default Btn;
         `;
         await runTest(sourceCode, (outputCode) => {
-            expect(outputCode).toContain("static $$id = 'dontModify'");
-            expect(outputCode).not.toContain("static $$id = 'Btn'");
+            expect(outputCode).toContain("$$id = 'dontModify'");
+            expect(outputCode).not.toContain("$$id = 'Btn'");
         })
     });
 

@@ -1,7 +1,6 @@
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import path from 'node:path';
 import fs from 'node:fs';
-import { merge } from 'webpack-merge';
 import { configFileName, defaultConfigName } from '../util/env';
 
 async function readWebpack(cmd?: string) {
@@ -19,34 +18,6 @@ async function readWebpack(cmd?: string) {
 const buildInConfig = {
     mode: 'production',
     entry: path.join(process.cwd(), './src/.coco/index.tsx'),
-    module: {
-        rules: [
-            {
-                test: /\.tsx?$/,
-                use: [
-                    {
-                        loader: require.resolve('babel-loader'),
-                        options: {
-                            plugins: [
-                                [require.resolve('@babel/plugin-proposal-decorators'), { version: '2023-11' }],
-                                [
-                                    require.resolve('@babel/plugin-transform-react-jsx'),
-                                    {
-                                        runtime: 'automatic',
-                                        importSource: '@cocojs/mvc',
-                                    },
-                                ],
-                            ],
-                        },
-                    },
-                    {
-                        loader: require.resolve('@cocojs/webpack-loader-mvc'),
-                    },
-                ],
-                exclude: /node_modules/,
-            },
-        ],
-    },
     resolveLoader: {
         modules: [path.resolve(__dirname, '../../node_modules'), 'node_modules'],
     },
@@ -90,7 +61,7 @@ const buildInConfig = {
 async function getWebpackConfig(cmd: string) {
     const baseConfig = await readWebpack();
     const envConfig = await readWebpack(cmd);
-    return merge(buildInConfig, baseConfig, envConfig);
+    return [buildInConfig, baseConfig, envConfig]
 }
 
 export default getWebpackConfig;

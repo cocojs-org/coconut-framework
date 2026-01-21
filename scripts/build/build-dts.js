@@ -166,7 +166,7 @@ const cocoCompiler = [
 
 const rollupPluginAssignClassSsid = [
     {
-        packageName: 'coco-mvc-rollup-plugin',
+        packageName: 'coco-bundle-rollup',
         tsconfigJson: 'tsconfig.json',
         mainEntryPointFilePath: './dts-tmp/index.d.ts'
     }

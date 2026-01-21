@@ -1,43 +1,30 @@
-import Webpack from 'webpack';
-import WebpackDevServer from 'webpack-dev-server';
+import bundle, { startDev } from '@cocojs/bundle-webpack';
 import getWebpackConfig from './get-webpack-config';
 
 class WebpackBuilder {
-    server: WebpackDevServer;
+    // server: WebpackDevServer;
+    stopDev: () => Promise<void>;
 
     public async build() {
-        return new Promise<void>(async (resolve, reject) => {
-            const config = await getWebpackConfig('build');
-            const compiler = Webpack(config);
-            compiler.run((err, stats) => {
-                console.log(
-                    stats.toString({
-                        chunks: false, // 使构建过程更静默无输出
-                        colors: true, // 在控制台展示颜色
-                    })
-                );
-                if (stats.hasErrors()) {
-                    reject(err);
-                } else {
-                    resolve();
-                }
-                compiler.close((err) => {});
-            });
-        });
+        const config = await getWebpackConfig('build');
+        await bundle(config);
     }
 
     public async startServer() {
-        const { devServer, ...config } = await getWebpackConfig('dev');
-        const compiler = Webpack(config);
-        const devServerOptions = { ...devServer, open: true };
-        this.server = new WebpackDevServer(devServerOptions, compiler);
-        await this.server.start();
+        if (this.stopDev) {
+            console.warn('已经启动了一个 dev 服务了。')
+            return;
+        }
+        const config = await getWebpackConfig('dev');
+        this.stopDev = startDev(config);
     }
 
     public async stopServer() {
-        if (this.server) {
-            await this.server.stop();
-            this.server = null;
+        if (this.stopDev) {
+            await this.stopDev();
+            this.stopDev = null;
+        } else {
+            // 并没有其他启动服务，不需要停止
         }
     }
 }

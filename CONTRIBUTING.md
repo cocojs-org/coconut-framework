@@ -8,8 +8,8 @@
 -   `coco-compiler`: 基于 ts compiler api 的转译程序，编译时给组件添加必要信息。
 -   `coco-ioc-container`: ioc容器，核心，在标准 es 装饰器规范之上封装了一套基于类和元数据的运行时框架。
 -   `coco-mvc`: 框架入口，所有的运行时装饰器和组件都在这里导出。
--   `coco-mvc-rollup-plugin`: 打包工具库时需要的rollup插件。
--   `coco-mvc-webpack-loader`: 打包应用时需要的webpack loader。
+-   `coco-bunle-rollup`: rollup打包器，构建库。
+-   `coco-bundle-webpack`: webpack打包器，构建应用。
 -   `coco-render`: 渲染组件。
 -   `coco-router`: 客户端路由组件。
 -   `coco-view`: 视图层装饰器、组件。
@@ -41,7 +41,7 @@
 
 ## 版本规范
 
-- `@cocojs/rollup-plugin-mvc`、`@cocojs/webpack-loader-mvc`统一遵循[semver](https://semver.org/lang/zh-CN/)规范。
+- `@cocojs/bundle-rollup`、`@cocojs/bundle-webpack`统一遵循[semver](https://semver.org/lang/zh-CN/)规范。
 - `@cocojs/cli`、`@cocojs/mvc`、`@cocojs/compiler`目前处于`0.1.0-beta.x`版本中，且一直处于`beta`版本，直到第一个正式版（`0.1.0`）发布后再遵循[semver](https://semver.org/lang/zh-CN/)规范。
 - `@cocojs/cli`、`@cocojs/mvc` 、`@cocojs/compiler`这些包需要保证相互兼容且不强制一起发布，所以遵循主版本号一致，次版本号、修订号不一致的规则，这样可以保证一定的灵活性，但又不会过于混乱。
 
@@ -50,7 +50,7 @@
 步骤如下：
 1. 在根目录下执行`changeset`：
    - `@cocojs/cli`、`@cocojs/mvc`应该一直选择**PATCH**阶段，直到正式版发布。
-   - `@cocojs/rollup-plugin-mvc`、`@cocojs/webpack-loader-mvc`根据semver规范选择合适的版本升级即可。
+   - `@cocojs/bundle-rollup`、`@cocojs/bundle-webpack`根据semver规范选择合适的版本升级即可。
 2. 在自己的 fork 仓库中提交 pr 请求到中心仓库 master 分支。
 3. action 会自动运行，然后创建一个新版本的 pr 请求。
 4. 管理员合并 pr 后，会自动发布新的版本。

@@ -20,6 +20,8 @@ const reactDOM = path.join(packages, './react-dom/src/index.js')
 const reactDOMFiberHostConfig = path.join(packages, './react-dom/src/client/ReactDomHostConfig.js')
 const reactShared = path.join(packages, './react-shared/src/index.js')
 const tsCompiler = path.join(packages, './coco-compiler/src/index.ts');
+const bundleRollup = path.join(packages, './coco-bundle-rollup/src/index.ts')
+const bundleWebpack = path.join(packages, './coco-bundle-webpack/src/index.ts')
 
 const PACKAGE = {
     MVC: 'coco-mvc',
@@ -35,6 +37,8 @@ const PACKAGE = {
     REACT_DOM_HOST_CONFIG: 'react-dom-ReactFiberHostConfig',
     REACT_SHARED: 'react-shared',
     TS_COMPILER: 'coco-compiler',
+    BUNDLE_ROLLUP: '@cocojs/bundle-rollup',
+    BUNDLE_WEBPACK: '@cocojs/bundle-webpack',
 };
 
 const pathMap = {
@@ -51,6 +55,8 @@ const pathMap = {
     [PACKAGE.REACT_DOM_HOST_CONFIG]: reactDOMFiberHostConfig,
     [PACKAGE.REACT_SHARED]: reactShared,
     [PACKAGE.TS_COMPILER]: tsCompiler,
+    [PACKAGE.BUNDLE_ROLLUP]: bundleRollup,
+    [PACKAGE.BUNDLE_WEBPACK]: bundleWebpack
 }
 
 function genEntries(config) {

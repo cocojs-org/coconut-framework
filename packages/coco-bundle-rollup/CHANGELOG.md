@@ -1,4 +1,4 @@
-# @cocojs/rollup-plugin-mvc
+# @cocojs/bundle-rollup
 
 ## 0.0.1-alpha.7
 

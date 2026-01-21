@@ -5,10 +5,10 @@ module.exports = {
     cache: false,
     maxWorkers: 1,
     testEnvironment: 'jsdom',
-    testMatch: ['<rootDir>/packages/coco-mvc-rollup-plugin/**/*.test.js'],
+    testMatch: ['<rootDir>/packages/coco-bundle-rollup/**/*.test.js'],
     moduleFileExtensions: ['js', 'jsx'],
     moduleNameMapper: {
-        '@cocojs/rollup-plugin-mvc': '<rootDir>/packages/coco-mvc-rollup-plugin/dist/index.cjs.js',
+        '@cocojs/bundle-rollup': '<rootDir>/packages/coco-bundle-rollup/dist/index.cjs.js',
     },
     globals: {
         __DEV__: true,

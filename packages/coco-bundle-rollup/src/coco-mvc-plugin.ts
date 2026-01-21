@@ -6,16 +6,19 @@ interface PluginOption {
     idPrefix?: string;
 }
 
-// 定义 Class Visitor 的类型
-export default function addStaticIdPlugin({ idPrefix }: PluginOption = {}): Plugin {
+function cocoMvcPlugin({ idPrefix }: PluginOption = {}): Plugin {
     return {
-        name: 'rollup-plugin-coco-compiler',
+        name: 'rollup-plugin-coco-mvc',
         transform(this: PluginContext, code, id) {
             try {
-                return compileOneFile(code, id, idPrefix);
+                const output = compileOneFile(code, id, idPrefix);
+                return output;
             } catch (e: any) {
                 this.error(e.message);
             }
         },
     };
 }
+
+export { PluginOption }
+export default cocoMvcPlugin;

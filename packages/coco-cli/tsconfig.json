@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "composite": true,
         "rootDir": "src",
         "outDir": "dts-tmp",
         "declaration": true,
@@ -9,7 +10,15 @@
         "module": "node16",
         "moduleResolution": "node16",
         "skipLibCheck": true,
-        "typeRoots": ["../../types", "./node_modules/@types"]
+        "typeRoots": ["../../types", "./node_modules/@types"],
+        "paths": {
+            "@cocojs/bundle-webpack": ["../coco-bundle-webpack"],
+            "@cocojs/bundle-rollup": ["../coco-bundle-rollup"]
+        }
     },
-    "include": ["src"]
+    "include": ["src"],
+    "references": [
+        { "path": "../coco-bundle-webpack" },
+        { "path": "../coco-bundle-rollup" }
+    ]
 }
