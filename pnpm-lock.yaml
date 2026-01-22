@@ -101,6 +101,9 @@ importers:
       rollup:
         specifier: ^4.53.3
         version: 4.53.3
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -111,9 +114,6 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@20.0.0)
-      typescript:
-        specifier: 5.3.3
-        version: 5.3.3
 
   packages/coco-bundle-webpack:
     dependencies:
@@ -126,6 +126,9 @@ importers:
       babel-loader:
         specifier: ^10.0.0
         version: 10.0.0(@babel/core@7.28.5)(webpack@5.102.1)
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
       webpack:
         specifier: ^5.102.1
         version: 5.102.1
@@ -151,18 +154,9 @@ importers:
       setimmediate:
         specifier: ^1.0.5
         version: 1.0.5
-      typescript:
-        specifier: 5.3.3
-        version: 5.3.3
 
   packages/coco-cli:
     dependencies:
-      '@babel/core':
-        specifier: ^7.26.7
-        version: 7.28.5
-      '@babel/generator':
-        specifier: ^7.26.5
-        version: 7.28.5
       '@cocojs/bundle-rollup':
         specifier: workspace:*
         version: link:../coco-bundle-rollup

@@ -7,7 +7,8 @@ class WebpackBuilder {
 
     public async build() {
         const config = await getWebpackConfig('build');
-        await bundle(config);
+        // TODO: .default 有没有优雅的写法？
+        await bundle.default(config);
     }
 
     public async startServer() {

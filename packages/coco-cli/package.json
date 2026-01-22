@@ -28,8 +28,6 @@
     },
     "license": "MIT",
     "dependencies": {
-        "@babel/core": "^7.26.7",
-        "@babel/generator": "^7.26.5",
         "@cocojs/bundle-rollup": "workspace:*",
         "@cocojs/bundle-webpack": "workspace:*",
         "chokidar": "^4.0.3",

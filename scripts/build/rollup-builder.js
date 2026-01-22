@@ -83,10 +83,7 @@ const generalTargets = [
         output: {
             file: cliWebpackDist,
             format: 'cjs'
-        },
-        alias: [
-            PACKAGE.BUNDLE_WEBPACK,
-        ],
+        }
     }
 ];
 

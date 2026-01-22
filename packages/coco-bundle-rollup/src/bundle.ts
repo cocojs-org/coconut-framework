@@ -1,4 +1,3 @@
-import path from 'node:path';
 import { OutputOptions, rollup, type RollupOptions } from 'rollup';
 import babel from '@rollup/plugin-babel';
 import cocoMvcPlugin, { PluginOption } from './coco-mvc-plugin';
@@ -18,13 +17,11 @@ function customBuild( option : IOption = {}) {
                 ...Array.isArray(plugins) ? plugins : [],
                 cocoMvcPlugin(pluginOption),
                 babel({
-                    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+                    extensions: ['.ts', '.tsx'],
                     plugins: [
                         [require.resolve('@babel/plugin-proposal-decorators'), { version: '2023-11' }],
                         [
-                            require.resolve('@babel/plugin-transform-react-jsx', {
-                                paths: [path.resolve(__dirname, '..', '../node_modules')],
-                            }),
+                            require.resolve('@babel/plugin-transform-react-jsx'),
                             {
                                 runtime: 'automatic',
                                 importSource: '@cocojs/mvc',

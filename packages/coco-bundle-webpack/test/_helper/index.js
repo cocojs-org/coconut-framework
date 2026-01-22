@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { createFsFromVolume, Volume } = require('memfs');
 const webpackBundle = require('@cocojs/bundle-webpack').default;
 require('setimmediate');
 
@@ -31,7 +32,12 @@ async function runTest(
     assertFn = () => {},
 ) {
     await writeCode(sourceCode);
-    const stats = await webpackBundle({ entry: path.join(__dirname, '../input.ts') }, { useMemoryFs: true });
+    function created(compiler) {
+        const memoryFs = createFsFromVolume(new Volume());
+        compiler.outputFileSystem = memoryFs;
+        compiler.outputFileSystem.join = path.join.bind(path);
+    }
+    const stats = await webpackBundle({ entry: path.join(__dirname, '../input.ts') }, { created: created  });
     const output = stats.toJson({ source: true }).modules[0].source;
     assertFn(output);
 }

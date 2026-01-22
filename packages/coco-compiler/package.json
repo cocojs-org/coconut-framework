@@ -1,4 +1,5 @@
 {
+    "private": true,
     "name": "@cocojs/compiler",
     "version": "0.1.0-beta.202601082200",
     "description": "A Coco component transpiler built on the TypeScript compiler API.",
