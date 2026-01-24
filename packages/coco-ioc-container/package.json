@@ -1,5 +1,6 @@
 {
     "private": true,
+    "dependencies": {},
     "name": "coco-ioc-container",
     "types": "dist/index.d.ts",
     "description": "IOC容器。",

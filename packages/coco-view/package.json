@@ -1,5 +1,6 @@
 {
     "private": true,
+    "dependencies": {},
     "name": "coco-view",
     "description": "视图层装饰器包。",
     "types": "dist/index.d.ts",

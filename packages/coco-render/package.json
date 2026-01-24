@@ -1,5 +1,6 @@
 {
     "private": true,
+    "dependencies": {},
     "name": "coco-render",
     "types": "dist/index.d.ts",
     "description": "渲染器",

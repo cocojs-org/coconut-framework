@@ -1,5 +1,6 @@
 {
     "private": true,
+    "dependencies": {},
     "name": "react-shared",
     "description": "和react仓库下shared包保持同步",
     "version": "0.0.0"
