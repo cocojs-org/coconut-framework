@@ -1,5 +1,4 @@
 ---
-'@cocojs/rollup-plugin-mvc': patch
 '@cocojs/cli': patch
 ---
 

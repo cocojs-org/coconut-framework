@@ -104,9 +104,6 @@ importers:
       rollup:
         specifier: ^4.53.3
         version: 4.53.3
-      typescript:
-        specifier: 5.3.3
-        version: 5.3.3
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -132,9 +129,6 @@ importers:
       babel-loader:
         specifier: ^10.0.0
         version: 10.0.0(@babel/core@7.28.5)(webpack@5.102.1)
-      typescript:
-        specifier: 5.3.3
-        version: 5.3.3
       webpack:
         specifier: ^5.102.1
         version: 5.102.1
