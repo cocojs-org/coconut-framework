@@ -1,5 +1,12 @@
 # @cocojs/cli
 
+## 0.1.0-beta.21
+
+### Patch Changes
+
+-   @cocojs/bundle-rollup@0.0.1-beta.8
+-   @cocojs/bundle-webpack@0.0.1-beta.8
+
 ## 0.1.0-beta.20
 
 ### Minor Changes
