@@ -1,5 +1,6 @@
 {
     "private": true,
+    "dependencies": {},
     "name": "coco-ioc-container",
     "types": "dist/index.d.ts",
     "description": "IOC容器。",
@@ -8,6 +9,6 @@
     "author": "",
     "license": "MIT",
     "devDependencies": {
-        "lodash": "^4.17.21"
+        "lodash-es": "^4.17.22"
     }
 }

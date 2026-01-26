@@ -134,8 +134,8 @@ dist
 **/dts-tmp
 **/tsconfig.tsbuildinfo
 .rollup.cache
-/packages/coco-mvc-rollup-plugin/test/input.ts
-/packages/coco-mvc-webpack-loader/test/input.ts
+/packages/coco-bundle-rollup/test/input.ts
+/packages/coco-bundle-webpack/test/input.ts
 
 # ide
 .idea

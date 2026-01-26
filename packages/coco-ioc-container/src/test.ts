@@ -3,7 +3,7 @@ import { MetadataRepository } from './metadata/index.ts';
 import Metadata, { instantiateMetadata } from './metadata/instantiate-one-metadata.ts';
 import { createDecoratorExpFactory } from './create-decorator-exp';
 import type Application from './application/application.ts';
-import _ from 'lodash';
+import { isEqual } from 'lodash-es';
 
 /**
  * 期望被装饰的类的类元信息收集正确的
@@ -28,7 +28,7 @@ function checkClassMetadataAsExpected(
             classMetadataList.push(...config.classMetadata);
         }
     }
-    return _.isEqual(classMetadataList, expectedMetadataList);
+    return isEqual(classMetadataList, expectedMetadataList);
 }
 
 export { MetadataRepository, checkClassMetadataAsExpected, createDecoratorExpFactory, instantiateMetadata };

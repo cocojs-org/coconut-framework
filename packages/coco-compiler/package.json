@@ -1,0 +1,33 @@
+{
+    "name": "@cocojs/compiler",
+    "version": "0.1.0-beta.202601082200",
+    "description": "A Coco component transpiler built on the TypeScript compiler API.",
+    "main": "dist/index.cjs.js",
+    "types": "dist/index.d.ts",
+    "files": [
+        "dist"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "jest": "jest"
+    },
+    "keywords": [],
+    "author": "jiangchenguang",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/cocojs-org/coconut-framework/issues"
+    },
+    "homepage": "https://github.com/cocojs-org/coconut-framework",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/cocojs-org/coconut-framework.git"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.14",
+        "@types/node": "^22.13.1",
+        "jest": "^29.7.0"
+    },
+    "dependencies": {
+        "typescript": "5.3.3"
+    }
+}

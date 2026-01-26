@@ -1,0 +1,9 @@
+{
+    "include": ["test"],
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": ["dom"],
+        "module": "ESNext",
+        "jsx": "preserve"
+    }
+}

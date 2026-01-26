@@ -1,5 +1,6 @@
 {
     "private": true,
+    "dependencies": {},
     "name": "coco-router",
     "description": "路由。",
     "types": "dist/index.d.ts",

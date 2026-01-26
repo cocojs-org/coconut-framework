@@ -1,8 +1,9 @@
-const { rollupTargets } = require('./build-target');
-const { build } = require("./rollup-builder");
+const buildTools = require("./rollup-builder");
+const buildCoco = require("./coco-builder");
 
 async function buildAll () {
-  await Promise.all([build(rollupTargets)])
+    await buildTools();
+    await buildCoco();
 }
 
 buildAll();

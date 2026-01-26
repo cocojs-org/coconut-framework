@@ -3,8 +3,7 @@ const path = require('node:path');
 const cp = require('node:child_process');
 const process = require('node:process');
 const { Extractor, ExtractorConfig, ExtractorResult } = require('@microsoft/api-extractor');
-
-const isTest = process.env.NODE_ENV === 'test';
+const { isTest } = require('../shared/constant');
 
 function buildDtsTmp(packageName, tsconfigJson) {
     const packagesDir = path.join(process.cwd(), 'packages', packageName);
@@ -157,9 +156,9 @@ const cliDts = [
     }
 ]
 
-const assignClassSsidTransformer = [
+const cocoCompiler = [
     {
-        packageName: 'coco-assign-class-id-transformer',
+        packageName: 'coco-compiler',
         tsconfigJson: 'tsconfig.json',
         mainEntryPointFilePath: './dts-tmp/src/index.d.ts'
     }
@@ -167,7 +166,7 @@ const assignClassSsidTransformer = [
 
 const rollupPluginAssignClassSsid = [
     {
-        packageName: 'coco-mvc-rollup-plugin',
+        packageName: 'coco-bundle-rollup',
         tsconfigJson: 'tsconfig.json',
         mainEntryPointFilePath: './dts-tmp/index.d.ts'
     }
@@ -178,7 +177,7 @@ function doBuild(t) {
     runApiExtractor(t.packageName, t.mainEntryPointFilePath);
 }
 function build() {
-    assignClassSsidTransformer.forEach(doBuild)
+    cocoCompiler.forEach(doBuild)
     rollupPluginAssignClassSsid.forEach(doBuild)
     if (isTest) {
         cocoMvcDtsTest.forEach(doBuild)

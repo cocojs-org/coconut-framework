@@ -1,9 +1,6 @@
 import path from 'node:path';
-import { rollup } from 'rollup';
 import process from 'node:process';
-import typescript from '@rollup/plugin-typescript';
-import babel from '@rollup/plugin-babel';
-import cocojs from '@cocojs/rollup-plugin-mvc';
+import buildCocoLibApp from '@cocojs/bundle-rollup';
 import { configFileName, defaultConfigName } from './util/env';
 import fs from 'node:fs';
 
@@ -46,45 +43,14 @@ async function getRollupConfig() {
 
 export const build = async () => {
     const config = await getRollupConfig();
-    const result = await rollup({
-        input: path.join(process.cwd(), './src/index.ts'),
-        plugins: [
-            cocojs(config[ValidProp.cocojs]),
-            typescript({
-                compilerOptions: {
-                    target: 'ESNext',
-                    lib: ['dom', 'esnext'],
-                    declaration: true,
-                    declarationDir: './dist/types',
-                    jsx: 'preserve',
-                    resolveJsonModule: true,
-                    plugins: [
-                        {
-                            transform: '@cocojs/type-extractor',
-                            transformProgram: true,
-                        },
-                    ],
-                },
-            }),
-            babel({
-                extensions: ['.js', '.jsx', '.ts', '.tsx'],
-                plugins: [
-                    [require.resolve('@babel/plugin-proposal-decorators'), { version: '2023-11' }],
-                    [
-                        require.resolve('@babel/plugin-transform-react-jsx', {
-                            paths: [path.resolve(__dirname, '..', '../node_modules')],
-                        }),
-                        {
-                            runtime: 'automatic',
-                            importSource: '@cocojs/mvc',
-                        },
-                    ],
-                ],
-            }),
-        ],
-    });
-    await result.write({
-        file: path.join(process.cwd(), './dist/index.esm.js'),
-        format: 'es',
-    });
+    await buildCocoLibApp(
+        {
+            input: path.join(process.cwd(), './src/index.ts'),
+            output: {
+                file: path.join(process.cwd(), './dist/index.esm.js'),
+                format: 'es',
+            },
+        },
+        config[ValidProp.cocojs]
+    );
 };
