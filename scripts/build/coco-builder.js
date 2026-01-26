@@ -2,7 +2,6 @@ const path = require('node:path');
 const resolve = require('@rollup/plugin-node-resolve');
 const aliasPlugin = require('@rollup/plugin-alias');
 const replace = require('@rollup/plugin-replace');
-const { default: rollupRunner } = require("@cocojs/bundle-rollup");
 const packages = path.join(__dirname, '../../packages');
 const cocoMvc = path.join(packages, './coco-mvc');
 const cocoMvcInput = path.join(cocoMvc, './src/index.ts');
@@ -47,6 +46,8 @@ const cocoTargets = [
 ]
 
 async function buildCoco () {
+    // 动态引入，防止执行rollup-builder的时候报错。
+    const { default: rollupRunner } = require("@cocojs/bundle-rollup");
     for (const target of cocoTargets) {
         await rollupRunner(target);
     }

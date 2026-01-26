@@ -1,6 +1,6 @@
-# @cocojs/ts-compiler
+# @cocojs/compiler
 
-基于ts api 的转译程序。
+基于 typescript api 的转译程序。
 
 ✨ **功能**
 - 组件添加`static $$id`属性

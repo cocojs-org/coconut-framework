@@ -1,5 +1,5 @@
 import { Plugin, PluginContext } from 'rollup';
-import { compileOneFile } from 'coco-compiler';
+import { compileOneFile } from '@cocojs/compiler';
 
 interface PluginOption {
     // id统一前缀

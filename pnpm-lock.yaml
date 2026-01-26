@@ -95,6 +95,9 @@ importers:
       '@babel/plugin-transform-react-jsx':
         specifier: ^7.27.1
         version: 7.28.6(@babel/core@7.28.5)
+      '@cocojs/compiler':
+        specifier: workspace:*
+        version: link:../coco-compiler
       '@rollup/plugin-babel':
         specifier: ^6.1.0
         version: 6.1.0(@babel/core@7.28.5)(@types/babel__core@7.20.5)(rollup@4.53.3)
@@ -123,6 +126,9 @@ importers:
       '@babel/plugin-transform-react-jsx':
         specifier: ^7.28.6
         version: 7.28.6(@babel/core@7.28.5)
+      '@cocojs/compiler':
+        specifier: workspace:*
+        version: link:../coco-compiler
       babel-loader:
         specifier: ^10.0.0
         version: 10.0.0(@babel/core@7.28.5)(webpack@5.102.1)
@@ -178,6 +184,10 @@ importers:
         version: 22.18.13
 
   packages/coco-compiler:
+    dependencies:
+      typescript:
+        specifier: 5.3.3
+        version: 5.3.3
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -188,9 +198,6 @@ importers:
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@22.18.13)
-      typescript:
-        specifier: 5.3.3
-        version: 5.3.3
 
   packages/coco-ioc-container:
     devDependencies:

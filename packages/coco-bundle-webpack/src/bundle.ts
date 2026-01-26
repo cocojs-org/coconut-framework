@@ -36,15 +36,16 @@ const commonLoaderConfig: Configuration = {
     },
 };
 
+interface Hook {
+    // webpack compiler 创建后执行
+    created?: (compiler: Webpack.Compiler) => void;
+}
 
 /**
  * 运行一次代码构建
- * @param noCommonLoaderConfig 除了公共loader外的配置
- * @param flowOpt 控制执行一次打包过程中非webpack配置的选项，用于控制打包流
+ * @param noCommonLoaderConfig 除了公共loader外的配置，如果是多个配置，也是按序作为webpack-merge的参数
+ * @param hook 打包过程中非webpack配置项，自定义工作流
  */
-interface Hook {
-    created?: (compiler: Webpack.Compiler) => void;
-}
 async function bundle(noCommonLoaderConfig: Configuration | Configuration[], hook: Hook = {}) {
     const { created } = hook;
     const configList = Array.isArray(noCommonLoaderConfig) ? noCommonLoaderConfig : [noCommonLoaderConfig];
@@ -70,6 +71,10 @@ async function bundle(noCommonLoaderConfig: Configuration | Configuration[], hoo
     });
 }
 
+/**
+ * 启动开发服务器
+ * @param noCommonLoaderConfig 除了公共loader外的配置，如果是多个配置，也是按序作为webpack-merge的参数
+ */
 async function startDev(noCommonLoaderConfig: Configuration | Configuration[]) {
     const configList = Array.isArray(noCommonLoaderConfig) ? noCommonLoaderConfig : [noCommonLoaderConfig];
     const finalConfig = merge(commonLoaderConfig, ...configList);

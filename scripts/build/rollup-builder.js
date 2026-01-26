@@ -42,9 +42,7 @@ const generalTargets = [
             file: bundleRollupOutput,
             format: 'cjs',
         },
-        alias: [
-            PACKAGE.TS_COMPILER,
-        ],
+        alias: [],
     },
     {
         input: bundleWebpackInput,
@@ -60,9 +58,7 @@ const generalTargets = [
             file: webpackLoaderOutput,
             format: 'cjs',
         },
-        alias: [
-            PACKAGE.TS_COMPILER,
-        ],
+        alias: [],
     },
     {
         input: cliSrc,

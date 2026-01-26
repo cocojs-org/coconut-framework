@@ -1,4 +1,4 @@
-import { compileOneFile } from 'coco-compiler';
+import { compileOneFile } from '@cocojs/compiler';
 
 function cocoMvcLoader(source: string) {
     this.cacheable(true);
