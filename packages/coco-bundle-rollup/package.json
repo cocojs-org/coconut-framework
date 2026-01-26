@@ -1,6 +1,6 @@
 {
     "name": "@cocojs/bundle-rollup",
-    "version": "0.0.1-alpha.7",
+    "version": "0.0.1-beta.8",
     "description": "A rollup bundler for coco-mvc.",
     "main": "dist/index.cjs.js",
     "types": "dist/index.d.ts",
