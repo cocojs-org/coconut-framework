@@ -1,5 +1,4 @@
 ---
-'@cocojs/webpack-loader-mvc': patch
 '@cocojs/cli': patch
 ---
 
