@@ -1,10 +1,10 @@
-import * as ts from 'typescript';
-import { commonCompilerOptions, transformerFactory } from '../../dist';
+const ts = require('typescript');
+const { commonCompilerOptions, transformerFactory } = require('@cocojs/compiler');
 
-export function compileTs(files: Record<string, string>) {
-    const outputs: Record<string, string> = {};
+function compileTs(files) {
+    const outputs = {};
 
-    const compilerOptions: ts.CompilerOptions = {
+    const compilerOptions = {
         ...commonCompilerOptions,
     };
 
@@ -34,3 +34,5 @@ export function compileTs(files: Record<string, string>) {
 
     return outputs;
 }
+
+module.exports.compileTs = compileTs

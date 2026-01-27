@@ -1,4 +1,5 @@
-import { compileTs } from './_helper'
+const { compileTs } = require('./_helper');
+
 describe('@component装饰器', () => {
     it('通过返回的类型，确定注入的组件类型', () => {
         const result = compileTs({
