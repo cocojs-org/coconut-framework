@@ -1,3 +1,6 @@
+/**
+ * react 包测试配置文件
+ */
 const path = require('path');
 
 module.exports = {

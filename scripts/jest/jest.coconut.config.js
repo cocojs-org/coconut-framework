@@ -1,3 +1,6 @@
+/**
+ * coco自身功能测试配置文件
+ */
 const path = require('path');
 
 module.exports = {
@@ -5,13 +8,15 @@ module.exports = {
     cache: false,
     maxConcurrency: 1,
     testEnvironment: 'jsdom',
-    testMatch: ['**/__tests__/**/*.test.(ts|tsx)'],
-    testPathIgnorePatterns: [
-        '<rootDir>/packages/react/',
-        '<rootDir>/packages/react-dom/',
-        '<rootDir>/packages/react-reconciler/',
-        '<rootDir>/packages/react-shared/',
+    testMatch: [
+        '<rootDir>/packages/coco-cli/**/__tests__/**/*.test.(ts|tsx)',
+        '<rootDir>/packages/coco-ioc-container/**/__tests__/**/*.test.(ts|tsx)',
+        '<rootDir>/packages/coco-mvc/**/__tests__/**/*.test.(ts|tsx)',
+        '<rootDir>/packages/coco-render/**/__tests__/**/*.test.(ts|tsx)',
+        '<rootDir>/packages/coco-router/**/__tests__/**/*.test.(ts|tsx)',
+        '<rootDir>/packages/coco-view/**/__tests__/**/*.test.(ts|tsx)',
     ],
+    testPathIgnorePatterns: [],
     moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
     transform: {
         '\\.[jt]sx?$': '<rootDir>/scripts/jest/transform.js',

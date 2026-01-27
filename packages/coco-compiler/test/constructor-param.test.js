@@ -1,4 +1,5 @@
-import { compileTs } from './_helper'
+const { compileTs } = require('./_helper');
+
 describe('@constructorParam装饰器', () => {
     it('如果是类，将类作为参数', () => {
         const result = compileTs({

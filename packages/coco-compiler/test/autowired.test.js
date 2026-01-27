@@ -1,4 +1,5 @@
-import { compileTs } from './_helper'
+const { compileTs } = require('./_helper');
+
 describe('@autowired装饰器', () => {
     it('复合大驼峰命名规范的标识符则设置成装饰器参数', () => {
         const result = compileTs({

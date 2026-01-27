@@ -1,4 +1,5 @@
-import { compileTs } from './_helper'
+const { compileTs } = require('./_helper');
+
 describe('添加$$id属性', () => {
     beforeEach(async () => {});
 
