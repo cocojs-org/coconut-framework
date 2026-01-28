@@ -2,7 +2,7 @@ describe('@sessionStorage装饰器', () => {
     let cocoMvc;
     let Application;
     let application;
-    let SessionStorage;
+    let SessionStorageMeta;
     let sessionStorage;
     let component;
     let consoleErrorSpy;
@@ -12,7 +12,7 @@ describe('@sessionStorage装饰器', () => {
         jest.resetModules();
         cocoMvc = await import('@cocojs/mvc');
         Application = cocoMvc.Application;
-        SessionStorage = cocoMvc.SessionStorage;
+        SessionStorageMeta = cocoMvc.SessionStorageMeta;
         sessionStorage = cocoMvc.sessionStorage;
         component = cocoMvc.component;
         application = new Application();
@@ -29,7 +29,7 @@ describe('@sessionStorage装饰器', () => {
     test('支持通过id获取SessionStorage类', () => {
         application.start();
         const cls = application.getMetaClassById('SessionStorage');
-        expect(cls).toBe(SessionStorage);
+        expect(cls).toBe(SessionStorageMeta);
     });
 
     test('@sessionStorage装饰器不能装饰在字段上', () => {

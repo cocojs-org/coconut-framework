@@ -2,7 +2,7 @@ describe('@localStorage装饰器', () => {
     let cocoMvc;
     let Application;
     let application;
-    let LocalStorage;
+    let LocalStorageMeta;
     let localStorage;
     let component;
     let consoleErrorSpy;
@@ -12,7 +12,7 @@ describe('@localStorage装饰器', () => {
         jest.resetModules();
         cocoMvc = await import('@cocojs/mvc');
         Application = cocoMvc.Application;
-        LocalStorage = cocoMvc.LocalStorage;
+        LocalStorageMeta = cocoMvc.LocalStorageMeta;
         localStorage = cocoMvc.localStorage;
         component = cocoMvc.component;
         application = new Application();
@@ -29,7 +29,7 @@ describe('@localStorage装饰器', () => {
     test('支持通过id获取LocalStorage类', () => {
         application.start();
         const cls = application.getMetaClassById('LocalStorage');
-        expect(cls).toBe(LocalStorage);
+        expect(cls).toBe(LocalStorageMeta);
     });
 
     test('@localStorage装饰器不能装饰在字段上', () => {
