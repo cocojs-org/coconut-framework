@@ -1,3 +1,6 @@
+/**
+ * 不需要使用@cocojs/bundle-rollup 做特殊定制，直接使用rollup打包的目标
+ */
 const rollup = require('rollup');
 const replace = require('@rollup/plugin-replace');
 const babel = require('@rollup/plugin-babel');
@@ -27,7 +30,6 @@ const bundleWebpackOutput = path.join(bundleWebpack, './dist/index.cjs.js');
 const webpackLoaderInput = path.join(bundleWebpack, './src/coco-mvc-loader.ts');
 const webpackLoaderOutput = path.join(bundleWebpack, './dist/coco-mvc-loader.js');
 
-// 一般打包对象，没有使用cocojs特性
 const generalTargets = [
     {
         input: cocoCompilerInput,
