@@ -1,4 +1,4 @@
-describe('configuration装饰器', () => {
+describe('@configuration装饰器', () => {
     let Application;
     let application;
     let configuration;

@@ -1,3 +1,6 @@
+/**
+ * 需要使用@cocojs/bundle-rollup打包的库
+ */
 const path = require('node:path');
 const resolve = require('@rollup/plugin-node-resolve');
 const aliasPlugin = require('@rollup/plugin-alias');
@@ -10,7 +13,6 @@ const cocoMvcOutput = path.join(cocoMvc, './dist/index.cjs.js');
 const { isTest } = require('../shared/constant');
 const { genEntries, PACKAGE } = require('./rollup-alias');
 
-// 使用了coco-mvc特性的打包对象
 const cocoTargets = [
     {
         input: isTest ? cocoMvcInputTest : cocoMvcInput,
@@ -46,7 +48,10 @@ const cocoTargets = [
 ]
 
 async function buildCoco () {
-    // 动态引入，防止执行rollup-builder的时候报错。
+    /**
+     * 首次加载这个文件 @cocojs/bundle-rollup 还没有打包出来，会导致报错。
+     * 所以这里需要动态引入。
+     */
     const { default: rollupRunner } = require("@cocojs/bundle-rollup");
     for (const target of cocoTargets) {
         await rollupRunner(target);

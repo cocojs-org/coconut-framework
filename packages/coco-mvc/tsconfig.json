@@ -16,7 +16,7 @@
         }
     },
     "include": ["src"],
-    "exclude": ["src/__tests__", "src/test.ts"],
+    "exclude": [],
     "references": [
         { "path": "../coco-ioc-container" },
         { "path": "../coco-router" },

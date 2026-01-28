@@ -1,4 +1,4 @@
-describe('constructor-param', () => {
+describe('@constructorParam装饰器', () => {
     let Application;
     let application;
     let cocoMvc;

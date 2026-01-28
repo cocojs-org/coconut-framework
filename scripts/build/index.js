@@ -1,9 +1,9 @@
-const buildTools = require("./rollup-builder");
-const buildCoco = require("./coco-builder");
+const buildGeneralLib = require("./build-by-rollup");
+const buildCocoLib = require("./build-by-bundle-rollup");
 
 async function buildAll () {
-    await buildTools();
-    await buildCoco();
+    await buildGeneralLib();
+    await buildCocoLib();
 }
 
 buildAll();
