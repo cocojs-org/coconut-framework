@@ -1,5 +1,11 @@
 # @cocojs/mvc
 
+## 0.1.0-beta.7
+
+### Patch Changes
+
+-   9bdd027: add LocalStorage SessionStorage component.
+
 ## 0.1.0-beta.6
 
 ### Minor Changes
