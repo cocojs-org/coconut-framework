@@ -36,6 +36,7 @@
         "@babel/plugin-transform-react-jsx": "^7.27.1",
         "@cocojs/compiler": "workspace:*",
         "@rollup/plugin-babel": "^6.1.0",
+        "@rollup/plugin-node-resolve": "^16.0.3",
         "rollup": "^4.53.3"
     }
 }
