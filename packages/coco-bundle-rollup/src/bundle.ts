@@ -1,4 +1,5 @@
 import { OutputOptions, rollup, type RollupOptions } from 'rollup';
+import resolve from '@rollup/plugin-node-resolve';
 import babel from '@rollup/plugin-babel';
 import cocoMvcPlugin, { PluginOption } from './coco-mvc-plugin';
 
@@ -15,6 +16,9 @@ function customBuild( option : IOption = {}) {
             input: input,
             plugins: [
                 ...Array.isArray(plugins) ? plugins : [],
+                resolve({
+                    extensions: ['.ts', '.tsx', '.js', '.jsx']
+                }),
                 cocoMvcPlugin(pluginOption),
                 babel({
                     extensions: ['.ts', '.tsx'],
