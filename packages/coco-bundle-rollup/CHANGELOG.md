@@ -1,5 +1,11 @@
 # @cocojs/bundle-rollup
 
+## 0.0.1-beta.10
+
+### Patch Changes
+
+-   9484372: rollup support find .ts .tsx files
+
 ## 0.0.1-beta.9
 
 ### Patch Changes
