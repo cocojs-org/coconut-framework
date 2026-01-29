@@ -1,5 +1,11 @@
 # @cocojs/mvc
 
+## 0.1.0-beta.9
+
+### Patch Changes
+
+-   ff8a8fa: exports.imports should point to index.esm.js
+
 ## 0.1.0-beta.8
 
 ### Patch Changes
