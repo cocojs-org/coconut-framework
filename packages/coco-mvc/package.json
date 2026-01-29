@@ -3,6 +3,7 @@
     "version": "0.1.0-beta.7",
     "description": "由装饰器驱动，快速构建可扩展的 Web 应用。",
     "main": "dist/index.cjs.js",
+    "module": "dist/index.esm.js",
     "types": "dist/index.d.ts",
     "scripts": {},
     "exports": {

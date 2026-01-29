@@ -10,16 +10,22 @@ const cocoMvc = path.join(packages, './coco-mvc');
 const cocoMvcInput = path.join(cocoMvc, './src/index.ts');
 const cocoMvcInputTest = path.join(cocoMvc, './src/test.ts');
 const cocoMvcOutput = path.join(cocoMvc, './dist/index.cjs.js');
+const cocoMvcOutputEsm = path.join(cocoMvc, './dist/index.esm.js');
 const { isTest } = require('../shared/constant');
 const { genEntries, PACKAGE } = require('./rollup-alias');
 
 const cocoTargets = [
     {
         input: isTest ? cocoMvcInputTest : cocoMvcInput,
-        output: {
-            file: cocoMvcOutput,
-            format: 'cjs',
-        },
+        output: [
+            {
+                file: cocoMvcOutput,
+                format: 'cjs',
+            }, {
+                file: cocoMvcOutputEsm,
+                format: 'es',
+            }
+        ],
         plugins: [
             replace({
                 __DEV__: isTest,
@@ -52,7 +58,7 @@ async function buildCoco () {
      * 首次加载这个文件 @cocojs/bundle-rollup 还没有打包出来，会导致报错。
      * 所以这里需要动态引入。
      */
-    const { default: rollupRunner } = require("@cocojs/bundle-rollup");
+    const { bundle: rollupRunner } = require("@cocojs/bundle-rollup");
     for (const target of cocoTargets) {
         await rollupRunner(target);
     }

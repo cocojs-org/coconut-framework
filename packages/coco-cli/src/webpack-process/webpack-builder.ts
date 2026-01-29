@@ -1,4 +1,4 @@
-import bundle, { startDev } from '@cocojs/bundle-webpack';
+import { startDev, bundle } from '@cocojs/bundle-webpack';
 import getWebpackConfig from './get-webpack-config';
 
 class WebpackBuilder {
@@ -7,8 +7,7 @@ class WebpackBuilder {
 
     public async build() {
         const config = await getWebpackConfig('build');
-        // TODO: .default 有没有优雅的写法？
-        await bundle.default(config);
+        await bundle(config);
     }
 
     public async startServer() {
