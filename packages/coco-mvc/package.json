@@ -8,12 +8,12 @@
     "scripts": {},
     "exports": {
         ".": {
-            "import": "./dist/index.cjs.js",
+            "import": "./dist/index.esm.js",
             "require": "./dist/index.cjs.js",
             "types": "./dist/index.d.ts"
         },
         "./jsx-runtime": {
-            "import": "./dist/index.cjs.js",
+            "import": "./dist/index.esm.js",
             "require": "./dist/index.cjs.js",
             "types": "./dist/index.d.ts"
         }
