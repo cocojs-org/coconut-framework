@@ -1,5 +1,11 @@
 # @cocojs/mvc
 
+## 0.1.0-beta.8
+
+### Patch Changes
+
+-   cb9f04d: add esm dist file
+
 ## 0.1.0-beta.7
 
 ### Patch Changes

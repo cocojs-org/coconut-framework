@@ -1,5 +1,13 @@
 # @cocojs/bundle-webpack
 
+## 0.0.1-beta.9
+
+### Patch Changes
+
+-   cb9f04d: add esm dist file
+-   Updated dependencies [cb9f04d]
+    -   @cocojs/compiler@0.1.0-beta.202601082202
+
 ## 0.0.1-beta.8
 
 ### Patch Changes
