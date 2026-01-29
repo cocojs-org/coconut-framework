@@ -1,4 +1,3 @@
 import bundle, { customBuild } from './bundle';
 
-export default bundle;
-export { customBuild };
+export { customBuild, bundle };

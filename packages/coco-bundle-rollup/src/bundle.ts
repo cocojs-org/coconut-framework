@@ -32,8 +32,14 @@ function customBuild( option : IOption = {}) {
             ],
         });
 
-        const rollupOutput = useGenerate ? await rollupBuild.generate(output as OutputOptions) : await rollupBuild.write(output as OutputOptions);
-        return { rollupBuild, rollupOutput };
+        const outputIsArray = Array.isArray(output);
+        const outputList = outputIsArray ? output : [output];
+        const rollupOutput = [];
+        for (const out of outputList) {
+            const result = useGenerate ? await rollupBuild.generate(out as OutputOptions) : await rollupBuild.write(out as OutputOptions);
+            rollupOutput.push(result);
+        }
+        return { rollupBuild, rollupOutput: outputIsArray ? rollupOutput : rollupOutput[0] };
     }
 
     return build;

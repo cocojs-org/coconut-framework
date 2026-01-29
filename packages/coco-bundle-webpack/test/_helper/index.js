@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { createFsFromVolume, Volume } = require('memfs');
-const webpackBundle = require('@cocojs/bundle-webpack').default;
+const { bundle: webpackBundle } = require('@cocojs/bundle-webpack');
 require('setimmediate');
 
 async function writeCode(sourceCode) {

@@ -21,37 +21,58 @@ const cliWebpackDist = path.join(cocoCli, '/dist/webpack-process/index.js');
 const cocoCompiler = path.join(packages, './coco-compiler');
 const cocoCompilerInput = path.join(cocoCompiler, './src/index.ts');
 const cocoCompilerOutput = path.join(cocoCompiler, './dist/index.cjs.js');
+const cocoCompilerOutputEsm = path.join(cocoCompiler, './dist/index.esm.js');
 const bundleRollup = path.join(packages, './coco-bundle-rollup');
 const bundleRollupInput = path.join(bundleRollup, './src/index.ts');
 const bundleRollupOutput = path.join(bundleRollup, './dist/index.cjs.js');
+const bundleRollupOutputEsm = path.join(bundleRollup, './dist/index.esm.js');
 const bundleWebpack = path.join(packages, './coco-bundle-webpack');
 const bundleWebpackInput = path.join(bundleWebpack, './src/index.ts');
 const bundleWebpackOutput = path.join(bundleWebpack, './dist/index.cjs.js');
+const bundleWebpackOutputEsm = path.join(bundleWebpack, './dist/index.esm.js');
 const webpackLoaderInput = path.join(bundleWebpack, './src/coco-mvc-loader.ts');
 const webpackLoaderOutput = path.join(bundleWebpack, './dist/coco-mvc-loader.js');
 
 const generalTargets = [
     {
         input: cocoCompilerInput,
-        output: {
-            file: cocoCompilerOutput,
-            format: 'cjs',
-        }
+        output: [
+            {
+                file: cocoCompilerOutput,
+                format: 'cjs',
+            },
+            {
+                file: cocoCompilerOutputEsm,
+                format: 'es',
+            }
+        ]
     },
     {
         input: bundleRollupInput,
-        output: {
-            file: bundleRollupOutput,
-            format: 'cjs',
-        },
+        output: [
+            {
+                file: bundleRollupOutput,
+                format: 'cjs',
+            },
+            {
+                file: bundleRollupOutputEsm,
+                format: 'es',
+            }
+        ],
         alias: [],
     },
     {
         input: bundleWebpackInput,
-        output: {
-            file: bundleWebpackOutput,
-            format: 'cjs',
-        },
+        output: [
+            {
+                file: bundleWebpackOutput,
+                format: 'cjs',
+            },
+            {
+                file: bundleWebpackOutputEsm,
+                format: 'es',
+            }
+        ],
         alias: [],
     },
     {
@@ -124,8 +145,11 @@ async function build() {
     try {
         for (const { output, ...rest } of generalTargets) {
             const rollupConfig = genRollupConfig(rest);
-            const result = await rollup.rollup(rollupConfig)
-            await result.write(output)
+            const outputs = Array.isArray(output) ? output : [output];
+            for (const output of outputs) {
+                const result = await rollup.rollup(rollupConfig)
+                await result.write(output);
+            }
         }
     } catch (e) {
         console.error('rollup rollup error', e);
