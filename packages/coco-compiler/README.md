@@ -1,10 +1,3 @@
-# @cocojs/compiler
+# coconut-framework [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/cocojs-org/coconut-framework/blob/main/LICENSE)
 
-基于 typescript api 的转译程序。
-
-✨ **功能**
-- 组件添加`static $$id`属性
-- `@constructorParams()`装饰器添加入参
-- `@autowired()`装饰器添加入参
-- `@component()`装饰器添加入参
-
+`@cocojs/bundle-webpack`属于[coconut-framework](https://github.com/cocojs-org/coconut-framework)代码仓，更多内容见[cocojs.dev](https://cocojs.dev)。
