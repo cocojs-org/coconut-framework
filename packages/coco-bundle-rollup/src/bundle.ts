@@ -34,6 +34,14 @@ function customBuild( option : IOption = {}) {
                     ],
                 }),
             ],
+            external: [
+                /**
+                 * 当打包成库时
+                 * @cocojs/mvc是作为peer dependency
+                 * @cocojs/mvc及其打头的依赖都作为外部依赖
+                 */
+                /^@cocojs\/mvc(\/.*)?$/
+            ],
         });
 
         const outputIsArray = Array.isArray(output);
