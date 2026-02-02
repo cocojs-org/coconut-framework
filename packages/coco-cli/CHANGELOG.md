@@ -1,5 +1,12 @@
 # @cocojs/cli
 
+## 0.1.0-beta.24
+
+### Patch Changes
+
+-   Updated dependencies [123e002]
+    -   @cocojs/bundle-rollup@0.0.1-beta.11
+
 ## 0.1.0-beta.23
 
 ### Patch Changes

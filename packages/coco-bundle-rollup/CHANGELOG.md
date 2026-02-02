@@ -1,5 +1,11 @@
 # @cocojs/bundle-rollup
 
+## 0.0.1-beta.11
+
+### Patch Changes
+
+-   123e002: rollup 打包排除@cocojs/mvc
+
 ## 0.0.1-beta.10
 
 ### Patch Changes
