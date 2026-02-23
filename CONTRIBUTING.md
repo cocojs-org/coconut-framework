@@ -4,15 +4,15 @@
 
 代码仓库基于 pnpm 的 monorepo 结构，不同功能拆分出不同子包。以'react'开头的子包名都是 React 开源库的代码。
 
--   `coco-cli`: 命令行，基于webpack的应用开发、构建工具，以及基于 rollup 的组件库构建工具。
--   `coco-compiler`: 基于 ts compiler api 的转译程序，编译时给组件添加必要信息。
+-   `coco-bundle-rollup`: rollup打包器，用于构建库。
+-   `coco-bundle-webpack`: webpack打包器，用于构建应用。
+-   `coco-cli`: 命令行工具，为开发和打包功能提供命令入口，底层还是调用各种打包器。
+-   `coco-compiler`: 基于 ts compiler api 的转译程序，为组件相关功能提供支持。
 -   `coco-ioc-container`: ioc容器，核心，在标准 es 装饰器规范之上封装了一套基于类和元数据的运行时框架。
 -   `coco-mvc`: 框架入口，所有的运行时装饰器和组件都在这里导出。
--   `coco-bunle-rollup`: rollup打包器，构建库。
--   `coco-bundle-webpack`: webpack打包器，构建应用。
 -   `coco-render`: 渲染组件。
 -   `coco-router`: 客户端路由组件。
--   `coco-view`: 视图层装饰器、组件。
+-   `coco-view`: 所有视图层装饰器、组件。
 -   `react`: 和react仓库下react包保持同步。
 -   `react-dom`: 和react仓库下react-dom包保持同步。
 -   `react-reconciler`: 和react仓库下react-reconciler包保持同步。
@@ -41,9 +41,8 @@
 
 ## 版本规范
 
-- `@cocojs/bundle-rollup`、`@cocojs/bundle-webpack`统一遵循[semver](https://semver.org/lang/zh-CN/)规范。
-- `@cocojs/cli`、`@cocojs/mvc`、`@cocojs/compiler`目前处于`0.1.0-beta.x`版本中，且一直处于`beta`版本，直到第一个正式版（`0.1.0`）发布后再遵循[semver](https://semver.org/lang/zh-CN/)规范。
-- `@cocojs/cli`、`@cocojs/mvc` 、`@cocojs/compiler`这些包需要保证相互兼容且不强制一起发布，所以遵循主版本号一致，次版本号、修订号不一致的规则，这样可以保证一定的灵活性，但又不会过于混乱。
+- 目前所有包都是`0.1.0-beta.x`版本中，直到第一个正式版（`0.1.0`）发布，发布后会遵循[semver](https://semver.org/lang/zh-CN/)规范。
+- `@cocojs/cli`、`@cocojs/mvc`2 个包需要保证相互兼容且不强制一起发布，所以遵循主版本号一致，次版本号、修订号不一致的规则，这样可以保证一定的灵活性，但又不会过于混乱。
 
 ## 发布
 
