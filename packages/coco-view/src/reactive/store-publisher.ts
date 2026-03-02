@@ -28,12 +28,6 @@ class StorePublisher {
         }
     }
 
-    broadcast() {
-        for (const sub of this.subscribers) {
-            sub.exec();
-        }
-    }
-
     getSubscribers() {
         if (__DEV__) {
             return this.subscribers;

@@ -16,6 +16,7 @@ describe('@store装饰器', () => {
     let view;
     let store;
     let Store;
+    let viewInstanceContext;
     let autowired;
     let memoized;
     let reactive;
@@ -28,6 +29,7 @@ describe('@store装饰器', () => {
         view = cocoMvc.view;
         store = cocoMvc.store;
         Store = cocoMvc.Store;
+        viewInstanceContext = cocoMvc.viewInstanceContext;
         autowired = cocoMvc.autowired;
         memoized = cocoMvc.memoized;
         reactive = cocoMvc.reactive;
@@ -145,7 +147,11 @@ describe('@store装饰器', () => {
             userInfo: UserInfo;
 
             handleClick = () => {
-                this.userInfo.name = '李四';
+                viewInstanceContext(
+                    this,
+                    this.userInfo,
+                    () => {this.userInfo.name = '李四';}
+                )
             };
 
             render() {

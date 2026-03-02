@@ -17,6 +17,7 @@ describe('@store和@page联动功能', () => {
     let page;
     let store;
     let Store;
+    let viewInstanceContext;
     let autowired;
     let memoized;
     let bind;
@@ -30,6 +31,7 @@ describe('@store和@page联动功能', () => {
         page = cocoMvc.page;
         store = cocoMvc.store;
         Store = cocoMvc.Store;
+        viewInstanceContext = cocoMvc.viewInstanceContext;
         autowired = cocoMvc.autowired;
         memoized = cocoMvc.memoized;
         bind = cocoMvc.bind;
@@ -108,7 +110,13 @@ describe('@store和@page联动功能', () => {
             userInfo: UserInfo;
 
             handleClick = () => {
-                this.userInfo.name = '李四';
+                viewInstanceContext(
+                    this,
+                    this.userInfo,
+                    () => {
+                        this.userInfo.name = '李四';
+                    }
+                )
             };
 
             render() {

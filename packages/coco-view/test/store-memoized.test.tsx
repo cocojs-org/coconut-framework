@@ -16,6 +16,7 @@ describe('@store和@memoized联动功能', () => {
     let view;
     let store;
     let Store;
+    let viewInstanceContext;
     let reactive;
     let autowired;
     let memoized;
@@ -28,6 +29,7 @@ describe('@store和@memoized联动功能', () => {
         view = cocoMvc.view;
         store = cocoMvc.store;
         Store = cocoMvc.Store;
+        viewInstanceContext = cocoMvc.viewInstanceContext;
         reactive = cocoMvc.reactive;
         autowired = cocoMvc.autowired;
         memoized = cocoMvc.memoized;
@@ -93,7 +95,13 @@ describe('@store和@memoized联动功能', () => {
             userInfo: UserInfo;
 
             handleClick = () => {
-                this.userInfo.name = '李四';
+                viewInstanceContext(
+                    this,
+                    this.userInfo,
+                    () => {
+                        this.userInfo.name = '李四';
+                    }
+                )
             };
 
             render() {
@@ -144,7 +152,11 @@ describe('@store和@memoized联动功能', () => {
 
             @bind()
             notShowColon() {
-                this.userInfo.showColon = false;
+                viewInstanceContext(
+                    this,
+                    this.userInfo,
+                    () => { this.userInfo.showColon = false; }
+                )
             }
 
             @memoized()
@@ -164,7 +176,11 @@ describe('@store和@memoized联动功能', () => {
             userInfo: UserInfo;
 
             handleClick = () => {
-                this.userInfo.name = '李四';
+                viewInstanceContext(
+                    this,
+                    this.userInfo,
+                    () => { this.userInfo.name = '李四'; }
+                )
             };
 
             render() {

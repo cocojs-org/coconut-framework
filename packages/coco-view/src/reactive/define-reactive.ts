@@ -24,6 +24,7 @@ function defineReactive(object: Record<any, any>, field: string, getter: IGetter
             if (value === newValue || (newValue !== newValue && value !== value)) {
                 return true;
             }
+            // TODO: notify和setter分别是干嘛的，令人难以理解。
             publisher.notify();
             setter?.(object, field, newValue);
             return true;

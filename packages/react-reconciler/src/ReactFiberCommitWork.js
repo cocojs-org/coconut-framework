@@ -22,7 +22,7 @@ import {
 } from 'react-dom-ReactFiberHostConfig';
 import { commitUpdateQueue } from './ReactFiberClassUpdateQueue';
 import { deletedTreeCleanUpLevel } from 'react-shared';
-import { disconnectStore } from './coco-mvc/autowired';
+import { disconnectStore } from './coco-mvc/store';
 
 let nextEffect = null;
 let inProgressRoot = null;

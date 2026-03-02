@@ -2,20 +2,13 @@ import StorePublisher from './store-publisher';
 
 let id = 0;
 
-interface Runner {
-    exec: () => void;
-}
-
 class StoreSubscriber {
     private id: number;
 
     private publishers: StorePublisher[] = [];
 
-    private runner: Runner;
-
-    constructor(runner: Runner) {
+    constructor() {
         this.id = id++;
-        this.runner = runner;
     }
 
     connect(publisher: StorePublisher) {
@@ -37,10 +30,6 @@ class StoreSubscriber {
             publisher.removeListener(this);
         });
         this.publishers = [];
-    }
-
-    exec() {
-        this.runner.exec();
     }
 }
 
