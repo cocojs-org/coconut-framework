@@ -21,7 +21,7 @@ export { default as SessionStorageMeta } from './decorator/metadata/session-stor
 export { default as sessionStorage } from './decorator/session-storage';
 export { default as SessionStorage } from './component/session-storage';
 export { default as Store } from './decorator/metadata/store';
-export { default as store, viewInstanceContext } from './decorator/store';
+export { default as store } from './decorator/store';
 export { default as View } from './decorator/metadata/view';
 export { default as view } from './decorator/view';
 export { default as StoreSubscriber } from './reactive/store-subscriber';

@@ -37,6 +37,8 @@ const storeComponentUpdater = {
     enqueueSetState(inst, field, payload) {
         const fiber = inst[fiberField];
         const viewInstance = inst[bindViewInst];
+        // 使用后立刻清空标记
+        inst[bindViewInst] = null;
         if (viewInstance === null || viewInstance === undefined) {
             throw new Error("需要在viewInstanceContext中进行属性更新")
         }
@@ -51,6 +53,26 @@ const storeComponentUpdater = {
             }
         }
     }
+}
+
+function reactiveStoreField(ctor, viewComponent) {
+    const { application } = getMvcApi();
+    // 找到所有的注入
+    const Autowired = application.getMetaClassById('Autowired');
+    const autowiredFields = application.listFieldByMetadataCls(ctor, Autowired);
+    autowiredFields.forEach((field) => {
+        const storeInst = viewComponent[field];
+        Object.defineProperty(viewComponent, field, {
+            get() {
+                // 每次访问前设置标记
+                storeInst[bindViewInst] = viewComponent;
+                return storeInst;
+            },
+            set() {
+                console.error('store实例在初始化之后不允许修改');
+            }
+        });
+    });
 }
 
 /**
@@ -125,9 +147,10 @@ function initFiber(storeInstance) {
  * 视图组件实例，如果其类自动注入了store，那么关联*视图组件实例*和*store实例*
  */
 function connectStore(ctor, instance) {
-    const uniqueStores = getAutowiredStores(ctor, instance);
-    if (uniqueStores.length > 0) {
-        uniqueStores.forEach((store) => initFiber(store, instance));
+    reactiveStoreField(ctor, instance);
+    const stores = getAutowiredStores(ctor, instance);
+    if (stores.length > 0) {
+        stores.forEach((store) => initFiber(store, instance));
         const storeSubscriber = new StoreSubscriber();
         Object.defineProperty(instance, 'storeSubscriber', {
             value: storeSubscriber,
@@ -135,7 +158,7 @@ function connectStore(ctor, instance) {
             enumerable: false,
             configurable: true,
         });
-        uniqueStores.forEach((store) => {
+        stores.forEach((store) => {
             storeSubscriber.connect(store.storePublisher);
         });
     }

@@ -2,8 +2,6 @@ import { createDecoratorExp, type Decorator, type Application } from 'coco-ioc-c
 import Store from './metadata/store';
 import StorePublisher from '../reactive/store-publisher';
 
-const bindViewInst = '_viewInst';
-
 export default createDecoratorExp(Store, {
     componentPostConstruct: function (metadata: Store, application: Application) {
         // 和使用store的组件保持订阅关系
@@ -16,10 +14,3 @@ export default createDecoratorExp(Store, {
         });
     },
 }) as () => Decorator<ClassDecoratorContext>;
-
-// TODO: 后续使用defineProperty代替
-export function viewInstanceContext(viewInstance, storeInst, setFn) {
-    storeInst[bindViewInst] = viewInstance;
-    setFn();
-    storeInst[bindViewInst] = null;
-}
