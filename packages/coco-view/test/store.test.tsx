@@ -171,52 +171,6 @@ describe('@store装饰器', () => {
         expect(getByText(heading, '展示:李四')).toBeTruthy();
     });
 
-    it('卸载引用store的组件时，store和组件之间的订阅关系也会解除', () => {
-        @store()
-        class UserInfo {}
-
-        @view()
-        class Detail {
-            @autowired()
-            userInfo: UserInfo;
-
-            render() {
-                return <h1>展示</h1>;
-            }
-        }
-
-        @view()
-        class Form {
-            @autowired()
-            userInfo: UserInfo;
-
-            render() {
-                return <button>input</button>;
-            }
-        }
-
-        application.start();
-        const container = document.createElement('div');
-        cocoMvc.renderIntoContainer(
-            <div>
-                <Form />
-                <Detail />
-            </div>,
-            container
-        );
-        const userinfo = application.getComponent(UserInfo);
-        const subscribers = userinfo.storePublisher.getSubscribers();
-        expect(subscribers.length).toBe(2);
-        // 卸载Detail组件
-        cocoMvc.renderIntoContainer(
-            <div>
-                <Form />
-            </div>,
-            container
-        );
-        expect(subscribers.length).toBe(1);
-    });
-
     it('一个组件多次注入同一个store，会有warn提醒', () => {
         @store()
         class UserInfo {}

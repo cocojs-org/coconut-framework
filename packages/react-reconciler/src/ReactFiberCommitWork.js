@@ -22,7 +22,6 @@ import {
 } from 'react-dom-ReactFiberHostConfig';
 import { commitUpdateQueue } from './ReactFiberClassUpdateQueue';
 import { deletedTreeCleanUpLevel } from 'react-shared';
-import { disconnectStore } from './coco-mvc/store';
 
 let nextEffect = null;
 let inProgressRoot = null;
@@ -176,7 +175,6 @@ function commitDeletionEffectsOnFiber(finishedRoot, nearestMountedAncestor, dele
         case ClassComponent: {
             safelyDetachRef(deletedFiber);
             const instance = deletedFiber.stateNode;
-            disconnectStore(instance);
             if (typeof instance.viewWillUnmount === 'function') {
                 safelyCallComponentWillUnmount(deletedFiber, nearestMountedAncestor, instance);
             }

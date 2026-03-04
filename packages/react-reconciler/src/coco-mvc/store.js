@@ -4,7 +4,6 @@
  * 属性名尽量与真正的fiber对象保持一致，这样就可以尽量复用fiber的更新函数
  * 但注意store组件对应的fiber对象不会添加到fiber树中，即不会影响fiber树的形状和节点链接关系。
  */
-import { StoreSubscriber } from 'coco-view';
 import { getMvcApi } from './common-api';
 import { enqueueConcurrentClassUpdate } from "../ReactFiberConcurrentUpdate";
 import { processUpdateQueue } from '../ReactFiberClassUpdateQueue';
@@ -40,7 +39,8 @@ const storeComponentUpdater = {
         // 使用后立刻清空标记
         inst[bindViewInst] = null;
         if (viewInstance === null || viewInstance === undefined) {
-            throw new Error("需要在viewInstanceContext中进行属性更新")
+            console.error("store只能通过视图组件的属性更新状态。")
+            return;
         }
         const update = createUpdate(field);
         update.payload = payload;
@@ -151,25 +151,7 @@ function connectStore(ctor, instance) {
     const stores = getAutowiredStores(ctor, instance);
     if (stores.length > 0) {
         stores.forEach((store) => initFiber(store, instance));
-        const storeSubscriber = new StoreSubscriber();
-        Object.defineProperty(instance, 'storeSubscriber', {
-            value: storeSubscriber,
-            writable: false,
-            enumerable: false,
-            configurable: true,
-        });
-        stores.forEach((store) => {
-            storeSubscriber.connect(store.storePublisher);
-        });
     }
 }
 
-function disconnectStore(instance) {
-    const storeSubscriber = instance.storeSubscriber;
-    if (storeSubscriber) {
-        delete instance.storeSubscriber;
-        storeSubscriber.disconnectAll();
-    }
-}
-
-export { initFiber, getAutowiredStores, processUpdateQueueForStore, connectStore, disconnectStore };
+export { initFiber, getAutowiredStores, processUpdateQueueForStore, connectStore };
