@@ -20,7 +20,7 @@ class Publisher {
         }
     }
 
-    public notify() {
+    public dirty() {
         for (let i = 0; i < this.subscribers.length; i++) {
             this.subscribers[i].dirty();
         }

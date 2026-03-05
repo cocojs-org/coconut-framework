@@ -24,4 +24,4 @@ export { default as Store } from './decorator/metadata/store';
 export { default as store } from './decorator/store';
 export { default as View } from './decorator/metadata/view';
 export { default as view } from './decorator/view';
-export { defineReactive } from './reactive/define-reactive';
+export { definePublisher } from './memoized/define-publisher';
