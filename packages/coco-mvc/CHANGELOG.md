@@ -1,5 +1,11 @@
 # @cocojs/mvc
 
+## 0.1.0-beta.10
+
+### Patch Changes
+
+-   56e728c: refactor: 优化store的实现
+
 ## 0.1.0-beta.9
 
 ### Patch Changes
