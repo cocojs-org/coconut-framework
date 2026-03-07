@@ -89,9 +89,43 @@ describe('@store装饰器', () => {
         );
     });
 
+    it('field没有初始值，重新渲染也不会报错。', () => {
+        @store()
+        class UserInfo {
+            @reactive()
+            name: string;
+        }
+
+        @view()
+        class Detail {
+            @autowired()
+            userInfo: UserInfo;
+
+            handleClick = () => {
+                this.userInfo.name = '李四';
+            };
+
+            render() {
+                return <h1>展示:{this.userInfo?.name}</h1>;
+            }
+        }
+
+        application.start();
+        const container = document.createElement('div');
+        cocoMvc.renderIntoContainer(
+            <Detail />,
+            container
+        );
+        cocoMvc.renderIntoContainer(
+            <Detail />,
+            container
+        );
+    })
+
     it('注入的store都是同一个对象的引用', () => {
         @store()
         class UserInfo {
+            @reactive()
             name: string = '张三';
         }
 

@@ -104,12 +104,19 @@ function getAutowiredStores(ctor, instance) {
     return uniqueStores;
 }
 
-function createFiber() {
+function createFiber(storeInstance) {
+    const ctor = storeInstance.constructor;
+    const { application } = getMvcApi();
+    const Autowired = application.getMetaClassById('Autowired');
+    const autowiredFields = application.listFieldByMetadataCls(ctor, Autowired);
     return {
         alternate: null,
         stateNode: null,
         updateQueue: null,
-        memoizedState: null,
+        memoizedState: autowiredFields.reduce((prev, field) => {
+            prev[field] = storeInstance[field];
+            return prev;
+        }, {}),
     }
 }
 
@@ -138,7 +145,7 @@ function initFiber(storeInstance) {
     if (storeInstance[fiberField]) {
         return;
     }
-    storeInstance[fiberField] = createFiber();
+    storeInstance[fiberField] = createFiber(storeInstance);
     storeInstance[updaterField] = storeComponentUpdater;
     initializeUpdateQueue(storeInstance[fiberField]);
 }
@@ -150,8 +157,8 @@ function connectStore(ctor, instance) {
     reactiveStoreField(ctor, instance);
     const stores = getAutowiredStores(ctor, instance);
     if (stores.length > 0) {
-        stores.forEach((store) => initFiber(store, instance));
+        stores.forEach((store) => initFiber(store));
     }
 }
 
-export { initFiber, getAutowiredStores, processUpdateQueueForStore, connectStore };
+export { getAutowiredStores, processUpdateQueueForStore, connectStore };
