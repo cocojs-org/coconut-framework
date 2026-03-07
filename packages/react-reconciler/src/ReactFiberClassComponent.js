@@ -9,9 +9,9 @@ import { get, NAME } from 'shared';
 import { Update } from './ReactFiberFlags';
 import { getMvcApi } from './coco-mvc/common-api';
 import { isMounted } from './ReactFiberTreeReflection';
-import { connectStore } from './coco-mvc/autowired';
 import { initProps, updateProps } from './coco-mvc/props';
 import { reactiveAssignField } from 'shared';
+import { connectStore, processUpdateQueueForStore } from './coco-mvc/store';
 
 let didWarnAboutDirectlyAssigningPropsToState;
 if (__DEV__) {
@@ -107,6 +107,10 @@ function mountClassInstance(workInProgress, ctor, newProps) {
 
 function updateClassInstance(current, workInProgress, ctor, newProps) {
     const instance = workInProgress.stateNode;
+    {
+        // 处理掉当前实例关联的store上的更新
+        processUpdateQueueForStore(ctor, instance);
+    }
     const oldState = workInProgress.memoizedState;
     let newState = oldState;
     processUpdateQueue(workInProgress, newProps, instance);

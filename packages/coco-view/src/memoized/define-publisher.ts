@@ -1,3 +1,7 @@
+/**
+ * definePublisher
+ * 为对象的field关联一个publisher，更新的时候通知所有的subscribe过期。
+ */
 import Publisher from './publisher.ts';
 import Subscriber from './subscriber.ts';
 
@@ -8,7 +12,7 @@ interface ISetter {
     (object: Record<any, any>, field: string, newValue: any): void;
 }
 
-function defineReactive(object: Record<any, any>, field: string, getter: IGetter, setter?: ISetter) {
+function definePublisher(object: Record<any, any>, field: string, getter: IGetter, setter?: ISetter) {
     const publisher = new Publisher();
     Object.defineProperty(object, field, {
         configurable: false,
@@ -24,11 +28,14 @@ function defineReactive(object: Record<any, any>, field: string, getter: IGetter
             if (value === newValue || (newValue !== newValue && value !== value)) {
                 return true;
             }
-            publisher.notify();
+            {
+                // 这里不管setter函数做了什么，或者有没有做更新，我们都标记dirty，这是简单粗暴的做法
+                publisher.dirty();
+            }
             setter?.(object, field, newValue);
             return true;
         },
     });
 }
 
-export { defineReactive };
+export { definePublisher };

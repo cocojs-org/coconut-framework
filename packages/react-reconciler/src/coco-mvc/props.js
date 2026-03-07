@@ -1,7 +1,7 @@
 /**
  * 视图组件的props
  */
-import { defineReactive } from 'coco-view';
+import { definePublisher } from 'coco-view';
 
 const NoReactiveProps = ['children'];
 
@@ -14,11 +14,14 @@ function initProps(instance, newProps) {
             continue;
         }
         _values[field] = newProps[field];
-        const getter = () => _values[field];
-        const setter = (object, key, newValue) => {
-            _values[field] = newValue;
-        };
-        defineReactive(instance.props, field, getter, setter);
+        definePublisher(
+            instance.props,
+            field,
+            function getter(){ return _values[field] },
+            function setter(object, key, newValue) {
+                _values[field] = newValue;
+            }
+        )
     }
 }
 
