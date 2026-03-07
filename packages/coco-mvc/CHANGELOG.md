@@ -1,5 +1,11 @@
 # @cocojs/mvc
 
+## 0.1.0-beta.11
+
+### Patch Changes
+
+-   dab51e8: fix: 初始化store的memoized属性
+
 ## 0.1.0-beta.10
 
 ### Patch Changes
