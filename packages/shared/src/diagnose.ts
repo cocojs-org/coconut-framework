@@ -32,6 +32,7 @@ export enum DiagnoseCode {
     'CO10025' = 'CO10025', // findClassKindMetadataRecursively参数错误，入参不是元数据类
     'CO10026' = 'CO10026', // 不能添加多个相同的 field 装饰器
     'CO10027' = 'CO10027', // 不能添加多个相同的 method 装饰器
+    'CO10028' = 'CO10028', // memoized装饰了field类型，但值不是箭头函数
 }
 
 const DiagnoseCodeMsg = {
@@ -62,6 +63,7 @@ const DiagnoseCodeMsg = {
     [DiagnoseCode.CO10025]: `findClassKindMetadataRecursively的第二个参数 %s 必须是元数据类。`,
     [DiagnoseCode.CO10026]: '在一个字段上不能添加多次同一个装饰器，但 %s 上 %s 字段存在重复装饰器: %s',
     [DiagnoseCode.CO10027]: '在一个方法上不能添加多次同一个装饰器，但 %s 上 %s 字段存在重复装饰器: %s',
+    [DiagnoseCode.CO10028]: '%s 类 %s 字段上memoized装饰器，但 %s 的值必须是函数，不能是 %s',
 };
 
 export function createDiagnose(code: DiagnoseCode, ...args: any[]): Diagnose {
