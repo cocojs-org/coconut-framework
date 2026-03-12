@@ -14,6 +14,7 @@ import { get, NAME, reactiveAssignField } from 'shared';
 const fiberField = '_fiber';
 const updaterField = 'updater'; // 类比react组件的updater
 const bindViewInst = '_viewInst'; // 当更新store的属性时，需要知道是哪个视图组件触发的，才能找到对象的fiber对象，然后触发重新渲染。
+const innerStoreInst = '_storeInst'; // 指向store实例
 
 // 在一个组件中多次注入同一个store
 let warnedAutowiredSameStoreInOneComponentMultipleTimes;
@@ -36,10 +37,8 @@ const storeComponentUpdater = {
     enqueueSetState(inst, field, payload) {
         const fiber = inst[fiberField];
         const viewInstance = inst[bindViewInst];
-        // 使用后立刻清空标记
-        inst[bindViewInst] = null;
         if (viewInstance === null || viewInstance === undefined) {
-            console.error("store只能通过视图组件的属性更新状态。")
+            console.error("单独对store属性赋值并不能触发页面渲染，需要在视图组件中赋值。")
             return;
         }
         const update = createUpdate(field);
@@ -55,24 +54,44 @@ const storeComponentUpdater = {
     }
 }
 
-function reactiveStoreField(ctor, viewComponent) {
+/**
+ * 返回store的一个代理对象，主要目的赋值的时候知道对应的视图组件
+ */
+function proxy(store, storeCtor, viewComponent) {
+    const { application } = getMvcApi();
+    const proxied = { [innerStoreInst]: store };
+    const Reactive = application.getMetaClassById('Reactive');
+    const fields = application.listFieldByMetadataCls(storeCtor, Reactive);
+    for (const field of fields) {
+        Object.defineProperty(proxied, field, {
+            enumerable: true,
+            get() {
+                return store[field];
+            },
+            set(val) {
+                store[bindViewInst] = viewComponent;
+                store[field] = val;
+                store[bindViewInst] = null;
+            }
+        })
+    }
+    return proxied;
+}
+
+function proxyStoreComponent(ctor, viewComponent) {
     const { application } = getMvcApi();
     // 找到所有的注入
     const Autowired = application.getMetaClassById('Autowired');
+    const Store = application.getMetaClassById('Store');
     const autowiredFields = application.listFieldByMetadataCls(ctor, Autowired);
-    autowiredFields.forEach((field) => {
-        const storeInst = viewComponent[field];
-        Object.defineProperty(viewComponent, field, {
-            get() {
-                // 每次访问前设置标记
-                storeInst[bindViewInst] = viewComponent;
-                return storeInst;
-            },
-            set() {
-                console.error('store实例在初始化之后不允许修改');
-            }
-        });
-    });
+    // 过滤出所有注入的store
+    for (const field of autowiredFields) {
+        const component = viewComponent[field];
+        if (component && application.findClassKindMetadataRecursively(component.constructor, Store, 0)) {
+            // store组件访问的是代理对象，非原始组件
+            viewComponent[field] = proxy(component, component.constructor, viewComponent);
+        }
+    }
 }
 
 /**
@@ -84,11 +103,11 @@ function getAutowiredStores(ctor, instance) {
     const Autowired = application.getMetaClassById('Autowired');
     const autowiredFields = application.listFieldByMetadataCls(ctor, Autowired);
     const autowiredComponents = autowiredFields.map((field) => instance[field]);
-    const Store = application.getMetaClassById('Store');
-    // 过滤出所有注入的store
+    // 找到所有的storeProxy
     const stores = autowiredComponents
         .filter(Boolean)
-        .filter((comp) => application.findClassKindMetadataRecursively(comp.constructor, Store, 0));
+        .map((proxy) => proxy[innerStoreInst])
+        .filter(Boolean);
     // store去重
     const uniqueStores = stores.filter((s, idx) => {
         const index = stores.indexOf(s);
@@ -141,6 +160,7 @@ function processUpdateQueueForStore(ctor, instance) {
     }
 }
 
+// TODO 放在store组件实例化的地方
 function initFiber(storeInstance) {
     if (storeInstance[fiberField]) {
         return;
@@ -154,11 +174,11 @@ function initFiber(storeInstance) {
  * 视图组件实例，如果其类自动注入了store，那么关联*视图组件实例*和*store实例*
  */
 function connectStore(ctor, instance) {
-    reactiveStoreField(ctor, instance);
+    proxyStoreComponent(ctor, instance);
     const stores = getAutowiredStores(ctor, instance);
     if (stores.length > 0) {
         stores.forEach((store) => initFiber(store));
     }
 }
 
-export { getAutowiredStores, processUpdateQueueForStore, connectStore };
+export { processUpdateQueueForStore, connectStore };

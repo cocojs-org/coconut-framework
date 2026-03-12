@@ -205,6 +205,51 @@ describe('@store装饰器', () => {
         expect(getByText(heading, '展示:李四')).toBeTruthy();
     });
 
+    it('修改store的属性时，所有注入store的视图组件都会重新渲染-jsx', () => {
+        @store()
+        class UserInfo {
+            @reactive()
+            name: string = '张三';
+        }
+
+        @view()
+        class Detail {
+            @autowired()
+            userInfo: UserInfo;
+
+            render() {
+                return <h1>展示:{this.userInfo?.name}</h1>;
+            }
+        }
+
+        @view()
+        class Form {
+            @autowired()
+            userInfo: UserInfo;
+
+            render() {
+                return <button onClick={() => {this.userInfo.name = '李四';}}>input:{this.userInfo.name}</button>;
+            }
+        }
+
+        application.start();
+        const container = document.createElement('div');
+        cocoMvc.renderIntoContainer(
+            <div>
+                <Form />
+                <Detail />
+            </div>,
+            container
+        );
+        const input = getByRole(container, 'button');
+        expect(getByText(input, 'input:张三')).toBeTruthy();
+        const heading = getByRole(container, 'heading');
+        expect(getByText(heading, '展示:张三')).toBeTruthy();
+        input.click();
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示:李四')).toBeTruthy();
+    });
+
     it('一个组件多次注入同一个store，会有warn提醒', () => {
         @store()
         class UserInfo {}
