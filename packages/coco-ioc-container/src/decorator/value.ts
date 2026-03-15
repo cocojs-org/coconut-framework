@@ -3,11 +3,12 @@ import Value from './metadata/value';
 import type Application from '../application';
 
 export default createDecoratorExp(Value, {
-    componentPostConstruct: function (metadata: Value, application: Application, field?: string) {
+    componentPostConstruct: function (metadata: Value, application: Application, target?: { name: string }) {
         const path = metadata.value;
         if (typeof path !== 'string' || !path.trim()) {
             return;
         }
-        this[field] = application.propertiesConfig.getValue(path);
+        const { name } = target;
+        this[name] = application.propertiesConfig.getValue(path);
     },
 }) as (path: string) => Decorator<ClassFieldDecoratorContext>;

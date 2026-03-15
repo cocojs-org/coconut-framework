@@ -5,6 +5,7 @@ import ConstructorParam from '../decorator/metadata/constructor-param';
 import Autowired from '../decorator/metadata/autowired';
 import { createDiagnose, DiagnoseCode, printDiagnose, stringifyDiagnose } from 'shared';
 import Qualifier from '../decorator/metadata/qualifier';
+import { KindField, KindMethod } from '../create-decorator-exp';
 
 type ConstructOption = {
     classOrId: Class<any> | string;
@@ -38,7 +39,7 @@ class IocComponentFactory {
                 for (const meta of metaList) {
                     const option = getCreateDecoratorOption(meta.constructor as Class<any>);
                     if (option) {
-                        option.componentPostConstruct.call(component, meta, application, field);
+                        option.componentPostConstruct.call(component, meta, application, { name: field, kind: KindField });
                     }
                 }
             }
@@ -46,7 +47,7 @@ class IocComponentFactory {
                 for (const meta of metaList) {
                     const option = getCreateDecoratorOption(meta.constructor as Class<any>);
                     if (option) {
-                        option.componentPostConstruct.call(component, meta, application, method);
+                        option.componentPostConstruct.call(component, meta, application, { name: method, kind: KindMethod });
                     }
                 }
             }

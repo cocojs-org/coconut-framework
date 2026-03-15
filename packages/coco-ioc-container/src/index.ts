@@ -20,6 +20,7 @@ export { default as value } from './decorator/value';
 export {
     createDecoratorExp,
     createPlaceholderDecoratorExp,
+    Kind,
     KindClass,
     KindField,
     KindMethod,

@@ -4,7 +4,8 @@ import { reactiveAssignField } from 'shared';
 import { definePublisher } from '../memoized/define-publisher.ts';
 
 export default createDecoratorExp(Reactive, {
-    componentPostConstruct(metadata: Reactive, application: Application, name: string) {
+    componentPostConstruct(metadata: Reactive, application: Application, target: { name: string }) {
+        const { name } = target;
         // TODO: 限制只能在store或view组件内部
         let value: any = this[name];
         definePublisher(

@@ -49,7 +49,7 @@ describe('@store和@memoized联动功能', () => {
         consoleErrorSpy.mockRestore();
     });
 
-    it('修改store的属性时，使用store属性的memoized函数也应该重新执行', () => {
+    it('修改store的属性时，使用store属性的memoized函数也应该重新执行--method', () => {
         const fn = jest.fn();
 
         @store()
@@ -126,7 +126,161 @@ describe('@store和@memoized联动功能', () => {
         expect(getByText(heading, '展示李四')).toBeTruthy();
     });
 
-    it('修改store的属性时，如果memoized函数没有使用到该属性，则应该使用缓存', () => {
+    it('修改store的属性时，使用store属性的memoized函数也应该重新执行--field箭头函数', () => {
+        const fn = jest.fn();
+
+        @store()
+        class UserInfo {
+            @reactive()
+            name: string = '张三';
+        }
+
+        @view()
+        class Detail {
+            @reactive()
+            showColon: boolean = true;
+
+            @bind()
+            notShowColon() {
+                this.showColon = false;
+            }
+
+            @autowired()
+            userInfo: UserInfo;
+
+            @memoized()
+            label = () => {
+                fn();
+                return this.userInfo?.name;
+            }
+
+            render() {
+                return (
+                    <h1 onClick={this.notShowColon}>
+                        展示{this.showColon ? ':' : ''}
+                        {this.label()}
+                    </h1>
+                );
+            }
+        }
+
+        @view()
+        class Form {
+            @autowired()
+            userInfo: UserInfo;
+
+            handleClick = () => {
+                this.userInfo.name = '李四';
+            };
+
+            render() {
+                return <button onClick={this.handleClick}>input:{this.userInfo.name}</button>;
+            }
+        }
+
+        application.start();
+        const container = document.createElement('div');
+        cocoMvc.renderIntoContainer(
+            <div>
+                <Form />
+                <Detail />
+            </div>,
+            container
+        );
+        expect(fn).toHaveBeenCalledTimes(1);
+        const input = getByRole(container, 'button');
+        expect(getByText(input, 'input:张三')).toBeTruthy();
+        const heading = getByRole(container, 'heading');
+        expect(getByText(heading, '展示:张三')).toBeTruthy();
+        input.click();
+        expect(fn).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示:李四')).toBeTruthy();
+        // 没有修改store，所以不会触发memoized重新计算
+        heading.click();
+        expect(fn).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示李四')).toBeTruthy();
+    });
+
+    it('修改store的属性时，使用store属性的memoized函数也应该重新执行--field普通函数', () => {
+        const fn = jest.fn();
+
+        @store()
+        class UserInfo {
+            @reactive()
+            name: string = '张三';
+        }
+
+        @view()
+        class Detail {
+            @reactive()
+            showColon: boolean = true;
+
+            @bind()
+            notShowColon() {
+                this.showColon = false;
+            }
+
+            @autowired()
+            userInfo: UserInfo;
+
+            @memoized()
+            label = function() {
+                fn();
+                return this.userInfo?.name;
+            };
+
+            render() {
+                return (
+                    <h1 onClick={this.notShowColon}>
+                        展示{this.showColon ? ':' : ''}
+                        {this.label()}
+                    </h1>
+                );
+            }
+        }
+
+        @view()
+        class Form {
+            @autowired()
+            userInfo: UserInfo;
+
+            handleClick = () => {
+                this.userInfo.name = '李四';
+            };
+
+            render() {
+                return <button onClick={this.handleClick}>input:{this.userInfo.name}</button>;
+            }
+        }
+
+        application.start();
+        const container = document.createElement('div');
+        cocoMvc.renderIntoContainer(
+            <div>
+                <Form />
+                <Detail />
+            </div>,
+            container
+        );
+        expect(fn).toHaveBeenCalledTimes(1);
+        const input = getByRole(container, 'button');
+        expect(getByText(input, 'input:张三')).toBeTruthy();
+        const heading = getByRole(container, 'heading');
+        expect(getByText(heading, '展示:张三')).toBeTruthy();
+        input.click();
+        expect(fn).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示:李四')).toBeTruthy();
+        // 没有修改store，所以不会触发memoized重新计算
+        heading.click();
+        expect(fn).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示李四')).toBeTruthy();
+    });
+
+    it('修改store的属性时，如果memoized函数没有使用到该属性，则应该使用缓存--method', () => {
         const fn = jest.fn();
 
         @store()
@@ -195,5 +349,408 @@ describe('@store和@memoized联动功能', () => {
         expect(fn).toHaveBeenCalledTimes(2);
         expect(getByText(input, 'input:李四')).toBeTruthy();
         expect(getByText(heading, '展示:李四')).toBeTruthy();
+    });
+
+    it('修改store的属性时，如果memoized函数没有使用到该属性，则应该使用缓存--field箭头函数', () => {
+        const fn = jest.fn();
+
+        @store()
+        class UserInfo {
+            @reactive()
+            name: string = '张三';
+            @reactive()
+            showColon: boolean = true;
+        }
+
+        @view()
+        class Detail {
+            @autowired()
+            userInfo: UserInfo;
+
+            @bind()
+            notShowColon() {
+                this.userInfo.showColon = false;
+            }
+
+            @memoized()
+            label = () => {
+                fn();
+                return this.userInfo?.name;
+            }
+
+            render() {
+                return <h1 onClick={this.notShowColon}>展示:{this.label()}</h1>;
+            }
+        }
+
+        @view()
+        class Form {
+            @autowired()
+            userInfo: UserInfo;
+
+            handleClick = () => {
+                this.userInfo.name = '李四';
+            };
+
+            render() {
+                return <button onClick={this.handleClick}>input:{this.userInfo.name}</button>;
+            }
+        }
+
+        application.start();
+        const container = document.createElement('div');
+        cocoMvc.renderIntoContainer(
+            <div>
+                <Form />
+                <Detail />
+            </div>,
+            container
+        );
+        expect(fn).toHaveBeenCalledTimes(1);
+        const input = getByRole(container, 'button');
+        expect(getByText(input, 'input:张三')).toBeTruthy();
+        const heading = getByRole(container, 'heading');
+        expect(getByText(heading, '展示:张三')).toBeTruthy();
+        input.click();
+        expect(fn).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示:李四')).toBeTruthy();
+        // 虽然修改了store的useColon，但不会触发memoized重新计算
+        heading.click();
+        expect(fn).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示:李四')).toBeTruthy();
+    });
+
+    it('修改store的属性时，如果memoized函数没有使用到该属性，则应该使用缓存--field普通函数', () => {
+        const fn = jest.fn();
+
+        @store()
+        class UserInfo {
+            @reactive()
+            name: string = '张三';
+            @reactive()
+            showColon: boolean = true;
+        }
+
+        @view()
+        class Detail {
+            @autowired()
+            userInfo: UserInfo;
+
+            @bind()
+            notShowColon() {
+                this.userInfo.showColon = false;
+            }
+
+            @memoized()
+            label = function() {
+                fn();
+                return this.userInfo?.name;
+            };
+
+            render() {
+                return <h1 onClick={this.notShowColon}>展示:{this.label()}</h1>;
+            }
+        }
+
+        @view()
+        class Form {
+            @autowired()
+            userInfo: UserInfo;
+
+            handleClick = () => {
+                this.userInfo.name = '李四';
+            };
+
+            render() {
+                return <button onClick={this.handleClick}>input:{this.userInfo.name}</button>;
+            }
+        }
+
+        application.start();
+        const container = document.createElement('div');
+        cocoMvc.renderIntoContainer(
+            <div>
+                <Form />
+                <Detail />
+            </div>,
+            container
+        );
+        expect(fn).toHaveBeenCalledTimes(1);
+        const input = getByRole(container, 'button');
+        expect(getByText(input, 'input:张三')).toBeTruthy();
+        const heading = getByRole(container, 'heading');
+        expect(getByText(heading, '展示:张三')).toBeTruthy();
+        input.click();
+        expect(fn).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示:李四')).toBeTruthy();
+        // 虽然修改了store的useColon，但不会触发memoized重新计算
+        heading.click();
+        expect(fn).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示:李四')).toBeTruthy();
+    });
+
+    it('memoized-a依赖memoized-b，memoized-b重新计算会引起memoized-b重新计算--method', () => {
+        const fn1 = jest.fn();
+        const fn2 = jest.fn();
+
+        @store()
+        class UserInfo {
+            @reactive()
+            name: string = '张三';
+        }
+
+        @view()
+        class Detail {
+            @reactive()
+            showColon: boolean = true;
+
+            @bind()
+            notShowColon() {
+                this.showColon = false;
+            }
+
+            @autowired()
+            userInfo: UserInfo;
+
+            @memoized()
+            name() {
+                fn1();
+                return this.userInfo?.name;
+            }
+
+            @memoized()
+            nameLabel() {
+                fn2();
+                return `${this.name()}，字孔明`;
+            }
+
+            render() {
+                return (
+                    <h1 onClick={this.notShowColon}>
+                        展示{this.showColon ? ':' : ''}
+                        {this.nameLabel()}
+                    </h1>
+                );
+            }
+        }
+        @view()
+        class Form {
+            @autowired()
+            userInfo: UserInfo;
+
+            handleClick = () => {
+                this.userInfo.name = '李四';
+            };
+
+            render() {
+                return <button onClick={this.handleClick}>input:{this.userInfo.name}</button>;
+            }
+        }
+
+        application.start();
+        const container = document.createElement('div');
+        cocoMvc.renderIntoContainer(
+            <div>
+                <Form />
+                <Detail />
+            </div>,
+            container
+        );
+        expect(fn1).toHaveBeenCalledTimes(1);
+        expect(fn2).toHaveBeenCalledTimes(1);
+        const input = getByRole(container, 'button');
+        expect(getByText(input, 'input:张三')).toBeTruthy();
+        const heading = getByRole(container, 'heading');
+        expect(getByText(heading, '展示:张三，字孔明')).toBeTruthy();
+
+        input.click();
+        expect(fn1).toHaveBeenCalledTimes(2);
+        expect(fn2).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示:李四，字孔明')).toBeTruthy();
+
+        heading.click();
+        expect(fn1).toHaveBeenCalledTimes(2);
+        expect(fn2).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示李四，字孔明')).toBeTruthy();
+    });
+
+    it('memoized-a依赖memoized-b，memoized-b重新计算会引起memoized-b重新计算-field箭头函数', () => {
+        const fn1 = jest.fn();
+        const fn2 = jest.fn();
+
+        @store()
+        class UserInfo {
+            @reactive()
+            name: string = '张三';
+        }
+
+        @view()
+        class Detail {
+            @reactive()
+            showColon: boolean = true;
+
+            @bind()
+            notShowColon() {
+                this.showColon = false;
+            }
+
+            @autowired()
+            userInfo: UserInfo;
+
+            @memoized()
+            name = () => {
+                fn1();
+                return this.userInfo?.name;
+            }
+
+            @memoized()
+            nameLabel = () => {
+                fn2();
+                return `${this.name()}，字孔明`;
+            }
+
+            render() {
+                return (
+                    <h1 onClick={this.notShowColon}>
+                        展示{this.showColon ? ':' : ''}
+                        {this.nameLabel()}
+                    </h1>
+                );
+            }
+        }
+        @view()
+        class Form {
+            @autowired()
+            userInfo: UserInfo;
+
+            handleClick = () => {
+                this.userInfo.name = '李四';
+            };
+
+            render() {
+                return <button onClick={this.handleClick}>input:{this.userInfo.name}</button>;
+            }
+        }
+
+        application.start();
+        const container = document.createElement('div');
+        cocoMvc.renderIntoContainer(
+            <div>
+                <Form />
+                <Detail />
+            </div>,
+            container
+        );
+        expect(fn1).toHaveBeenCalledTimes(1);
+        expect(fn2).toHaveBeenCalledTimes(1);
+        const input = getByRole(container, 'button');
+        expect(getByText(input, 'input:张三')).toBeTruthy();
+        const heading = getByRole(container, 'heading');
+        expect(getByText(heading, '展示:张三，字孔明')).toBeTruthy();
+
+        input.click();
+        expect(fn1).toHaveBeenCalledTimes(2);
+        expect(fn2).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示:李四，字孔明')).toBeTruthy();
+
+        heading.click();
+        expect(fn1).toHaveBeenCalledTimes(2);
+        expect(fn2).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示李四，字孔明')).toBeTruthy();
+    });
+
+    it('memoized-a依赖memoized-b，memoized-b重新计算会引起memoized-b重新计算-field普通函数', () => {
+        const fn1 = jest.fn();
+        const fn2 = jest.fn();
+
+        @store()
+        class UserInfo {
+            @reactive()
+            name: string = '张三';
+        }
+
+        @view()
+        class Detail {
+            @reactive()
+            showColon: boolean = true;
+
+            @bind()
+            notShowColon() {
+                this.showColon = false;
+            }
+
+            @autowired()
+            userInfo: UserInfo;
+
+            @memoized()
+            name = function() {
+                fn1();
+                return this.userInfo?.name;
+            };
+
+            @memoized()
+            nameLabel = function () {
+                fn2();
+                return `${this.name()}，字孔明`;
+            };
+
+            render() {
+                return (
+                    <h1 onClick={this.notShowColon}>
+                        展示{this.showColon ? ':' : ''}
+                        {this.nameLabel()}
+                    </h1>
+                );
+            }
+        }
+        @view()
+        class Form {
+            @autowired()
+            userInfo: UserInfo;
+
+            handleClick = () => {
+                this.userInfo.name = '李四';
+            };
+
+            render() {
+                return <button onClick={this.handleClick}>input:{this.userInfo.name}</button>;
+            }
+        }
+
+        application.start();
+        const container = document.createElement('div');
+        cocoMvc.renderIntoContainer(
+            <div>
+                <Form />
+                <Detail />
+            </div>,
+            container
+        );
+        expect(fn1).toHaveBeenCalledTimes(1);
+        expect(fn2).toHaveBeenCalledTimes(1);
+        const input = getByRole(container, 'button');
+        expect(getByText(input, 'input:张三')).toBeTruthy();
+        const heading = getByRole(container, 'heading');
+        expect(getByText(heading, '展示:张三，字孔明')).toBeTruthy();
+
+        input.click();
+        expect(fn1).toHaveBeenCalledTimes(2);
+        expect(fn2).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示:李四，字孔明')).toBeTruthy();
+
+        heading.click();
+        expect(fn1).toHaveBeenCalledTimes(2);
+        expect(fn2).toHaveBeenCalledTimes(2);
+        expect(getByText(input, 'input:李四')).toBeTruthy();
+        expect(getByText(heading, '展示李四，字孔明')).toBeTruthy();
     });
 });

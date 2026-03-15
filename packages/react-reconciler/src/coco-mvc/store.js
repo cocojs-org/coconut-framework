@@ -8,7 +8,7 @@ import { getMvcApi } from './common-api';
 import { enqueueConcurrentClassUpdate } from "../ReactFiberConcurrentUpdate";
 import { processUpdateQueue } from '../ReactFiberClassUpdateQueue';
 import { initializeUpdateQueue, createUpdate } from '../ReactFiberClassUpdateQueue';
-import { get, NAME, reactiveAssignField } from 'shared';
+import { get, NAME, reactiveAssignField, createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
 
 
 const fiberField = '_fiber';
@@ -39,7 +39,7 @@ const storeComponentUpdater = {
         // 使用后立刻清空标记
         inst[bindViewInst] = null;
         if (viewInstance === null || viewInstance === undefined) {
-            console.error("store只能通过视图组件的属性更新状态。")
+            console.error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10029, inst.constructor.name, field)));
             return;
         }
         const update = createUpdate(field);
@@ -60,18 +60,21 @@ function reactiveStoreField(ctor, viewComponent) {
     // 找到所有的注入
     const Autowired = application.getMetaClassById('Autowired');
     const autowiredFields = application.listFieldByMetadataCls(ctor, Autowired);
+    const Store = application.getMetaClassById('Store');
     autowiredFields.forEach((field) => {
-        const storeInst = viewComponent[field];
-        Object.defineProperty(viewComponent, field, {
-            get() {
-                // 每次访问前设置标记
-                storeInst[bindViewInst] = viewComponent;
-                return storeInst;
-            },
-            set() {
-                console.error('store实例在初始化之后不允许修改');
-            }
-        });
+        const component = viewComponent[field];
+        if (application.findClassKindMetadataRecursively(component.constructor, Store, 0)) {
+            Object.defineProperty(viewComponent, field, {
+                get() {
+                    // 每次访问前设置标记
+                    component[bindViewInst] = viewComponent;
+                    return component;
+                },
+                set() {
+                    console.error('store实例在初始化之后不允许修改');
+                }
+            });
+        }
     });
 }
 
@@ -141,6 +144,7 @@ function processUpdateQueueForStore(ctor, instance) {
     }
 }
 
+// TODO 放在store组件实例化的地方
 function initFiber(storeInstance) {
     if (storeInstance[fiberField]) {
         return;
@@ -161,4 +165,4 @@ function connectStore(ctor, instance) {
     }
 }
 
-export { getAutowiredStores, processUpdateQueueForStore, connectStore };
+export { processUpdateQueueForStore, connectStore };
