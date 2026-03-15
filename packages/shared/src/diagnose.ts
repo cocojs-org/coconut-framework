@@ -33,6 +33,7 @@ export enum DiagnoseCode {
     'CO10026' = 'CO10026', // 不能添加多个相同的 field 装饰器
     'CO10027' = 'CO10027', // 不能添加多个相同的 method 装饰器
     'CO10028' = 'CO10028', // memoized装饰了field类型，但值不是箭头函数
+    'CO10029' = 'CO10029', // store组件的更新方法不正确
 }
 
 const DiagnoseCodeMsg = {
@@ -64,6 +65,7 @@ const DiagnoseCodeMsg = {
     [DiagnoseCode.CO10026]: '在一个字段上不能添加多次同一个装饰器，但 %s 上 %s 字段存在重复装饰器: %s',
     [DiagnoseCode.CO10027]: '在一个方法上不能添加多次同一个装饰器，但 %s 上 %s 字段存在重复装饰器: %s',
     [DiagnoseCode.CO10028]: '%s 类 %s 字段上memoized装饰器，但 %s 的值必须是函数，不能是 %s',
+    [DiagnoseCode.CO10029]: '更新 %s 组件的 %s 字段需要通过视图组件的属性更新，不能独立使用store更新或多次更新',
 };
 
 export function createDiagnose(code: DiagnoseCode, ...args: any[]): Diagnose {

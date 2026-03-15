@@ -277,4 +277,45 @@ describe('@store装饰器', () => {
         );
         expect(consoleWarnSpy).toHaveBeenCalledWith('%s组件中多次注入%s，只需要注入一次就够了。', 'Detail', 'UserInfo');
     });
+
+    it('单独获取store引用，多次更新field会提醒错误', () => {
+        @store()
+        class UserInfo {
+            @reactive()
+            name: string = '张三';
+        }
+
+        @view()
+        class Form {
+            @autowired()
+            userInfo: UserInfo;
+
+            handleClick = () => {
+                // 这样的话，只访问了this.userInfo一次，所以会有问题。
+                const userInfo = this.userInfo;
+                userInfo.name = '李四';
+                userInfo.name = '王五';
+            };
+
+            render() {
+                return <button onClick={this.handleClick}>input:{this.userInfo.name}</button>;
+            }
+        }
+
+        application.start();
+        const container = document.createElement('div');
+        cocoMvc.renderIntoContainer(
+            <div>
+                <Form />
+            </div>,
+            container
+        );
+        const input = getByRole(container, 'button');
+        expect(getByText(input, 'input:张三')).toBeTruthy();
+        input.click();
+        expect(getByText(input, 'input:李四')).toBeTruthy(); // 只有第一次更新是成功的
+        expect(consoleErrorSpy).toHaveBeenCalledWith(
+            'CO10029：更新 UserInfo 组件的 name 字段需要通过视图组件的属性更新，不能独立使用store更新或多次更新',
+        );
+    });
 });
