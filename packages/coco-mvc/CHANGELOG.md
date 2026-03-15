@@ -1,5 +1,11 @@
 # @cocojs/mvc
 
+## 0.1.0-beta.12
+
+### Patch Changes
+
+-   c956b94: memoized支持field
+
 ## 0.1.0-beta.11
 
 ### Patch Changes
