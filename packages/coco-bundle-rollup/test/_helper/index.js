@@ -20,7 +20,7 @@ ${sourceCode}
 }
 
 async function bundle(input, pluginOpts) {
-    const cocoLibBuild = customBuild({ useGenerate: true })
+    const cocoLibBuild = customBuild({ useGenerate: true, addConstructorParamImportStmt: '@cocojs/mvc' });
     const { rollupBuild, rollupOutput: { output } } = await cocoLibBuild({
         input: input,
         output: { format: 'es' },

@@ -30,16 +30,29 @@ function updateMembers(classDeclaration: ts.ClassDeclaration) {
     return { updated, members: updated ? members : classDeclaration.members, autowiredList, componentList };
 }
 
-function transformerFactory(prefix: string = ''): ts.TransformerFactory<ts.SourceFile> {
-    return (context): (s: ts.SourceFile) => ts.SourceFile => {
+/**
+ * 转换工具工厂函数
+ * @param idPrefix id前缀
+ * @param addConstructorParamImportStmt 遇到构造函数有参数时，是否添加import { constructorParam } from 'xxx'语句
+ */
+function transformerFactory(
+    idPrefix: string = '',
+    addConstructorParamImportStmt?: 'coco-ioc-container' | '@cocojs/mvc'
+): ts.TransformerFactory<ts.SourceFile> {
+    return (context): ((s: ts.SourceFile) => ts.SourceFile) => {
         let constructorParamList: ts.Identifier[] = [];
         let autowiredList: ts.Identifier[] = [];
         let componentList: ts.Identifier[] = [];
         const visit: ts.Visitor = (node) => {
             if (ts.isClassDeclaration(node)) {
                 if (hasClassKindDecorator(node)) {
-                    const $$idProperty = ifNeedAdd$$idProperty(node, prefix);
-                    const { members, updated: membersUpdated, autowiredList: _autowiredList, componentList: _componentList } = updateMembers(node);
+                    const $$idProperty = ifNeedAdd$$idProperty(node, idPrefix);
+                    const {
+                        members,
+                        updated: membersUpdated,
+                        autowiredList: _autowiredList,
+                        componentList: _componentList,
+                    } = updateMembers(node);
                     const {
                         modifiers,
                         updated: constructorParamsUpdated,
@@ -49,9 +62,15 @@ function transformerFactory(prefix: string = ''): ts.TransformerFactory<ts.Sourc
                     if (!membersUpdated && !constructorParamsUpdated && !$$idProperty) {
                         return node;
                     } else {
-                        if (_autowiredList) { autowiredList = _autowiredList; }
-                        if (_componentList) { componentList = _componentList; }
-                        if (constructorParamsUpdated) {constructorParamList = _constructorParamTypeList;}
+                        if (_autowiredList) {
+                            autowiredList = _autowiredList;
+                        }
+                        if (_componentList) {
+                            componentList = _componentList;
+                        }
+                        if (constructorParamsUpdated) {
+                            constructorParamList = _constructorParamTypeList;
+                        }
                         return ts.factory.updateClassDeclaration(
                             node,
                             modifiers,
@@ -76,7 +95,23 @@ function transformerFactory(prefix: string = ''): ts.TransformerFactory<ts.Sourc
                 return updatedSourceFile;
             }
 
-            return updateTypeImports(updatedSourceFile, [ ...constructorParamList, ...autowiredList, ...componentList]);
+            let importConstructorParamDecorator: undefined | { module: string };
+            if (!!constructorParamList.length && addConstructorParamImportStmt) {
+                if (
+                    addConstructorParamImportStmt === 'coco-ioc-container' ||
+                    addConstructorParamImportStmt === '@cocojs/mvc'
+                ) {
+                    importConstructorParamDecorator = { module: addConstructorParamImportStmt };
+                } else {
+                    console.error('未知的addConstructorParamImportStmt', addConstructorParamImportStmt);
+                }
+            }
+
+            return updateTypeImports(
+                updatedSourceFile,
+                [...constructorParamList, ...autowiredList, ...componentList],
+                importConstructorParamDecorator
+            );
         };
     };
 }

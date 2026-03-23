@@ -1,15 +1,16 @@
 import { OutputOptions, rollup, type RollupOptions } from 'rollup';
 import resolve from '@rollup/plugin-node-resolve';
 import babel from '@rollup/plugin-babel';
-import cocoMvcPlugin, { PluginOption } from './coco-mvc-plugin';
+import { PluginOption, cocoMvcPluginForNoImport, cocoMvcPluginForThirdPartLib, cocoMvcPluginForCocoMvc } from './coco-mvc-plugin';
 
 interface IOption {
     useGenerate?: boolean; // 使用bundle.generate生成output
     disableJsx?: boolean; // 不用jsx插件，确保待编译的源文件中没有jsx
+    addConstructorParamImportStmt?: 'coco-ioc-container' | '@cocojs/mvc';
 }
 
 function customBuild( option : IOption = {}) {
-    const { useGenerate } = option;
+    const { useGenerate, addConstructorParamImportStmt } = option;
     async function build(rollupOption: RollupOptions, pluginOption: PluginOption) {
         const { input, output, plugins } = rollupOption;
         const rollupBuild = await rollup({
@@ -19,7 +20,9 @@ function customBuild( option : IOption = {}) {
                 resolve({
                     extensions: ['.ts', '.tsx', '.js', '.jsx']
                 }),
-                cocoMvcPlugin(pluginOption),
+                addConstructorParamImportStmt === 'coco-ioc-container' ? cocoMvcPluginForCocoMvc(pluginOption)
+                    : addConstructorParamImportStmt === '@cocojs/mvc' ? cocoMvcPluginForThirdPartLib(pluginOption)
+                        : cocoMvcPluginForNoImport(pluginOption),
                 babel({
                     extensions: ['.ts', '.tsx'],
                     plugins: [
@@ -57,7 +60,8 @@ function customBuild( option : IOption = {}) {
     return build;
 }
 
-const bundle = customBuild();
+const bundleCocoMvc = customBuild({ addConstructorParamImportStmt: 'coco-ioc-container' });
+const bundleThirdPartLib = customBuild({ addConstructorParamImportStmt: '@cocojs/mvc' });
+const bundleJest = customBuild();
 
-export { customBuild }
-export default bundle;
+export { bundleCocoMvc, bundleThirdPartLib, bundleJest, customBuild }

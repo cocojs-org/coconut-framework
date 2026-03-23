@@ -1,6 +1,6 @@
 import path from 'node:path';
 import process from 'node:process';
-import { bundle } from '@cocojs/bundle-rollup';
+import { bundleThirdPartLib } from '@cocojs/bundle-rollup';
 import { configFileName, defaultConfigName } from './util/env';
 import fs from 'node:fs';
 
@@ -43,7 +43,7 @@ async function getRollupConfig() {
 
 export const build = async () => {
     const config = await getRollupConfig();
-    await bundle(
+    await bundleThirdPartLib(
         {
             input: path.join(process.cwd(), './src/index.ts'),
             output: {

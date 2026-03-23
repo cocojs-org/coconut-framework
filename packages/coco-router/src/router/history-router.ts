@@ -1,6 +1,6 @@
 import router from '../decorator/router';
 import RouteMeta from '../decorator/metadata/route';
-import { type Application, constructorParam } from 'coco-ioc-container';
+import { type Application } from 'coco-ioc-container';
 import RouteComponentMapper from './route-component-mapper';
 import Router from './router';
 import Route from './route';
@@ -10,7 +10,6 @@ import { Render } from 'coco-render';
  * @public
  */
 @router()
-@constructorParam()
 class HistoryRouter extends Router {
     constructor(render: Render) {
         super();

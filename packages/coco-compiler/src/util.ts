@@ -84,7 +84,11 @@ function createImport(className: string, importPath: string) {
     );
 }
 
-function updateTypeImports(sourceFile: ts.SourceFile, identifyList: ts.Identifier[] = []): ts.SourceFile {
+function updateTypeImports(
+    sourceFile: ts.SourceFile,
+    identifyList: ts.Identifier[] = [],
+    importConstructorParamDecorator?: { module: string }
+): ts.SourceFile {
     if (!identifyList.length) {
         return sourceFile;
     }
@@ -112,6 +116,26 @@ function updateTypeImports(sourceFile: ts.SourceFile, identifyList: ts.Identifie
             }
         }
     }
-    return ts.factory.updateSourceFile(sourceFile, [ ...newStatements, ...sourceFile.statements]);
+    if (importConstructorParamDecorator) {
+        newStatements.push(
+            ts.factory.createImportDeclaration(
+                undefined,
+                ts.factory.createImportClause(
+                    undefined,
+                    undefined,
+                    ts.factory.createNamedImports([
+                        ts.factory.createImportSpecifier(
+                            false,
+                            undefined,
+                            ts.factory.createIdentifier('constructorParam')
+                        ),
+                    ])
+                ),
+                ts.factory.createStringLiteral(importConstructorParamDecorator.module),
+                undefined
+            )
+        );
+    }
+    return ts.factory.updateSourceFile(sourceFile, [...newStatements, ...sourceFile.statements]);
 }
 export { isDecoratorExp, extractIdentifierFromType, hasClassKindDecorator, updateTypeImports };

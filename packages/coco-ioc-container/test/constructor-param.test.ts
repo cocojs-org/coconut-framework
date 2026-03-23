@@ -80,7 +80,6 @@ describe('@constructorParam装饰器', () => {
         let fn7: any = 22;
 
         @component()
-        @constructorParam()
         class ButtonA {
             constructor(str: string, num: number, bool: boolean, obj: object, nul: null, und: undefined, sym: symbol) {
                 fn1 = str;
@@ -111,7 +110,6 @@ describe('@constructorParam装饰器', () => {
         let fn5: any = 22;
 
         @component()
-        @constructorParam()
         class ButtonA {
             constructor(str: String, num: Number, bool: Boolean, sym: Symbol) {
                 fn1 = str;
@@ -137,7 +135,6 @@ describe('@constructorParam装饰器', () => {
         let fn5: any = 22;
 
         @component()
-        @constructorParam()
         class ButtonA {
             constructor(obj: Object, arr: Array<any>, fn: Function, set: Set<any>, map: Map<any, any>) {
                 fn1 = obj;
@@ -163,7 +160,6 @@ describe('@constructorParam装饰器', () => {
         let fn3: any = 22;
 
         @component()
-        @constructorParam()
         class ButtonA {
             constructor(obj: {}, arr: [], fn: () => {}) {
                 fn1 = obj;
@@ -228,7 +224,6 @@ describe('@constructorParam装饰器', () => {
         test('不能通过constructorParam装饰器注入自己，因为constructorParam装饰器在类定义之前执行，这时候被装饰器还未定义', () => {
             let btn: any = 22;
 
-            @constructorParam()
             @component()
             class Button {
                 constructor(button: Button) {
@@ -245,7 +240,6 @@ describe('@constructorParam装饰器', () => {
             let fnB: any = 23;
 
             @component()
-            @constructorParam()
             class ButtonA {
                 constructor(buttonB: ButtonB) {
                     fnA = buttonB;
@@ -253,7 +247,6 @@ describe('@constructorParam装饰器', () => {
             }
 
             @component()
-            @constructorParam()
             class ButtonB {
                 constructor(buttonA: ButtonA) {
                     fnB = buttonA;
