@@ -87,7 +87,7 @@ function createImport(className: string, importPath: string) {
 function updateTypeImports(
     sourceFile: ts.SourceFile,
     identifyList: ts.Identifier[] = [],
-    importConstructorParamDecorator?: { module: string }
+    importConstructorInjectDecorator?: { module: string }
 ): ts.SourceFile {
     if (!identifyList.length) {
         return sourceFile;
@@ -116,7 +116,7 @@ function updateTypeImports(
             }
         }
     }
-    if (importConstructorParamDecorator) {
+    if (importConstructorInjectDecorator) {
         newStatements.push(
             ts.factory.createImportDeclaration(
                 undefined,
@@ -127,11 +127,11 @@ function updateTypeImports(
                         ts.factory.createImportSpecifier(
                             false,
                             undefined,
-                            ts.factory.createIdentifier('constructorParam')
+                            ts.factory.createIdentifier('constructorInject')
                         ),
                     ])
                 ),
-                ts.factory.createStringLiteral(importConstructorParamDecorator.module),
+                ts.factory.createStringLiteral(importConstructorInjectDecorator.module),
                 undefined
             )
         );

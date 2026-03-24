@@ -11,7 +11,7 @@ function compileOneFile(
     code: string,
     fileName: string,
     prefix: string = '',
-    addConstructorParamImportStmt?: 'coco-ioc-container' | '@cocojs/mvc'
+    addConstructorInjectImportStmt?: 'coco-ioc-container' | '@cocojs/mvc'
 ): { code: string; map?: string } {
     const result = ts.transpileModule(code, {
         fileName,
@@ -20,7 +20,7 @@ function compileOneFile(
             sourceMap: true,
         },
         transformers: {
-            before: [transformerFactory(prefix, addConstructorParamImportStmt)],
+            before: [transformerFactory(prefix, addConstructorInjectImportStmt)],
         },
     });
 

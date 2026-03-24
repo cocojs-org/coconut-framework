@@ -6,11 +6,11 @@ import { PluginOption, cocoMvcPluginForNoImport, cocoMvcPluginForThirdPartLib, c
 interface IOption {
     useGenerate?: boolean; // 使用bundle.generate生成output
     disableJsx?: boolean; // 不用jsx插件，确保待编译的源文件中没有jsx
-    addConstructorParamImportStmt?: 'coco-ioc-container' | '@cocojs/mvc';
+    addConstructorInjectImportStmt?: 'coco-ioc-container' | '@cocojs/mvc';
 }
 
 function customBuild( option : IOption = {}) {
-    const { useGenerate, addConstructorParamImportStmt } = option;
+    const { useGenerate, addConstructorInjectImportStmt } = option;
     async function build(rollupOption: RollupOptions, pluginOption: PluginOption) {
         const { input, output, plugins } = rollupOption;
         const rollupBuild = await rollup({
@@ -20,8 +20,8 @@ function customBuild( option : IOption = {}) {
                 resolve({
                     extensions: ['.ts', '.tsx', '.js', '.jsx']
                 }),
-                addConstructorParamImportStmt === 'coco-ioc-container' ? cocoMvcPluginForCocoMvc(pluginOption)
-                    : addConstructorParamImportStmt === '@cocojs/mvc' ? cocoMvcPluginForThirdPartLib(pluginOption)
+                addConstructorInjectImportStmt === 'coco-ioc-container' ? cocoMvcPluginForCocoMvc(pluginOption)
+                    : addConstructorInjectImportStmt === '@cocojs/mvc' ? cocoMvcPluginForThirdPartLib(pluginOption)
                         : cocoMvcPluginForNoImport(pluginOption),
                 babel({
                     extensions: ['.ts', '.tsx'],
@@ -60,8 +60,8 @@ function customBuild( option : IOption = {}) {
     return build;
 }
 
-const bundleCocoMvc = customBuild({ addConstructorParamImportStmt: 'coco-ioc-container' });
-const bundleThirdPartLib = customBuild({ addConstructorParamImportStmt: '@cocojs/mvc' });
+const bundleCocoMvc = customBuild({ addConstructorInjectImportStmt: 'coco-ioc-container' });
+const bundleThirdPartLib = customBuild({ addConstructorInjectImportStmt: '@cocojs/mvc' });
 const bundleJest = customBuild();
 
 export { bundleCocoMvc, bundleThirdPartLib, bundleJest, customBuild }

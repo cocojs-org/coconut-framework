@@ -1,6 +1,6 @@
 import * as ts from 'typescript';
 import { hasClassKindDecorator, updateTypeImports } from './util.ts';
-import { updateConstructorParamDecorator } from './constructor-param-decorator.ts';
+import { updateConstructorInjectDecorator } from './constructor-inject-decorator.ts';
 import { updateAutowiredDecorator } from './autowired-decorator.ts';
 import { updateComponentDecorator } from './component-decorator.ts';
 import { ifNeedAdd$$idProperty } from './static-$$id-property.ts';
@@ -33,14 +33,14 @@ function updateMembers(classDeclaration: ts.ClassDeclaration) {
 /**
  * 转换工具工厂函数
  * @param idPrefix id前缀
- * @param addConstructorParamImportStmt 遇到构造函数有参数时，是否添加import { constructorParam } from 'xxx'语句
+ * @param addConstructorInjectImportStmt 遇到构造函数有参数时，是否添加import { constructorInject } from 'xxx'语句
  */
 function transformerFactory(
     idPrefix: string = '',
-    addConstructorParamImportStmt?: 'coco-ioc-container' | '@cocojs/mvc'
+    addConstructorInjectImportStmt?: 'coco-ioc-container' | '@cocojs/mvc'
 ): ts.TransformerFactory<ts.SourceFile> {
     return (context): ((s: ts.SourceFile) => ts.SourceFile) => {
-        let constructorParamList: ts.Identifier[] = [];
+        let constructorInjectList: ts.Identifier[] = [];
         let autowiredList: ts.Identifier[] = [];
         let componentList: ts.Identifier[] = [];
         const visit: ts.Visitor = (node) => {
@@ -55,11 +55,11 @@ function transformerFactory(
                     } = updateMembers(node);
                     const {
                         modifiers,
-                        updated: constructorParamsUpdated,
-                        constructorParamTypeList: _constructorParamTypeList,
-                    } = updateConstructorParamDecorator(node);
+                        updated: constructorInjectUpdated,
+                        constructorInjectTypeList: _constructorInjectTypeList,
+                    } = updateConstructorInjectDecorator(node);
 
-                    if (!membersUpdated && !constructorParamsUpdated && !$$idProperty) {
+                    if (!membersUpdated && !constructorInjectUpdated && !$$idProperty) {
                         return node;
                     } else {
                         if (_autowiredList) {
@@ -68,8 +68,8 @@ function transformerFactory(
                         if (_componentList) {
                             componentList = _componentList;
                         }
-                        if (constructorParamsUpdated) {
-                            constructorParamList = _constructorParamTypeList;
+                        if (constructorInjectUpdated) {
+                            constructorInjectList = _constructorInjectTypeList;
                         }
                         return ts.factory.updateClassDeclaration(
                             node,
@@ -91,26 +91,26 @@ function transformerFactory(
         return (sourceFile) => {
             const updatedSourceFile = ts.visitNode(sourceFile, visit) as ts.SourceFile;
 
-            if (!constructorParamList.length && !autowiredList.length && !componentList.length) {
+            if (!constructorInjectList.length && !autowiredList.length && !componentList.length) {
                 return updatedSourceFile;
             }
 
-            let importConstructorParamDecorator: undefined | { module: string };
-            if (!!constructorParamList.length && addConstructorParamImportStmt) {
+            let importConstructorInjectDecorator: undefined | { module: string };
+            if (!!constructorInjectList.length && addConstructorInjectImportStmt) {
                 if (
-                    addConstructorParamImportStmt === 'coco-ioc-container' ||
-                    addConstructorParamImportStmt === '@cocojs/mvc'
+                    addConstructorInjectImportStmt === 'coco-ioc-container' ||
+                    addConstructorInjectImportStmt === '@cocojs/mvc'
                 ) {
-                    importConstructorParamDecorator = { module: addConstructorParamImportStmt };
+                    importConstructorInjectDecorator = { module: addConstructorInjectImportStmt };
                 } else {
-                    console.error('未知的addConstructorParamImportStmt', addConstructorParamImportStmt);
+                    console.error('未知的addConstructorInjectImportStmt', addConstructorInjectImportStmt);
                 }
             }
 
             return updateTypeImports(
                 updatedSourceFile,
-                [...constructorParamList, ...autowiredList, ...componentList],
-                importConstructorParamDecorator
+                [...constructorInjectList, ...autowiredList, ...componentList],
+                importConstructorInjectDecorator
             );
         };
     };
