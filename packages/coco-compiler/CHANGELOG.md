@@ -1,5 +1,11 @@
 # @cocojs/compiler
 
+## 0.1.0-beta.202601082203
+
+### Patch Changes
+
+-   ff6212f: https://github.com/cocojs-org/coconut-framework/issues/95
+
 ## 0.1.0-beta.202601082202
 
 ### Patch Changes

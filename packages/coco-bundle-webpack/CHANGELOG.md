@@ -1,5 +1,13 @@
 # @cocojs/bundle-webpack
 
+## 0.0.1-beta.10
+
+### Patch Changes
+
+-   ff6212f: https://github.com/cocojs-org/coconut-framework/issues/95
+-   Updated dependencies [ff6212f]
+    -   @cocojs/compiler@0.1.0-beta.202601082203
+
 ## 0.0.1-beta.9
 
 ### Patch Changes
