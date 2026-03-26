@@ -30,7 +30,7 @@ function compileTs(files) {
         host,
     });
 
-    program.emit(undefined, host.writeFile, undefined, undefined, { before: [transformerFactory()] });
+    program.emit(undefined, host.writeFile, undefined, undefined, { before: [transformerFactory('', '@cocojs/mvc')] });
 
     return outputs;
 }

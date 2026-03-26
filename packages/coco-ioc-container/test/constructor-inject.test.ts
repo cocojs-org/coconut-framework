@@ -1,12 +1,12 @@
-describe('@constructorParam装饰器', () => {
+describe('@constructorInject装饰器', () => {
     let Application;
     let application;
     let cocoMvc;
     let component;
     let scope;
     let SCOPE;
-    let constructorParam;
-    let ConstructorParam;
+    let constructorInject;
+    let ConstructorInject;
     let consoleErrorSpy;
     beforeEach(async () => {
         consoleErrorSpy = jest.spyOn(console, 'error');
@@ -16,8 +16,8 @@ describe('@constructorParam装饰器', () => {
         component = cocoMvc.component;
         scope = cocoMvc.scope;
         SCOPE = cocoMvc.SCOPE;
-        constructorParam = cocoMvc.constructorParam;
-        ConstructorParam = cocoMvc.ConstructorParam;
+        constructorInject = cocoMvc.constructorInject;
+        ConstructorInject = cocoMvc.ConstructorInject;
         application = new Application();
         cocoMvc.registerMvcApi(application);
     });
@@ -30,16 +30,16 @@ describe('@constructorParam装饰器', () => {
         consoleErrorSpy.mockRestore();
     });
 
-    test('支持通过id获取ConstructorParam类', () => {
+    test('支持通过id获取constructorInject类', () => {
         application.start();
-        const cls = application.getMetaClassById('ConstructorParam');
-        expect(cls).toBe(ConstructorParam);
+        const cls = application.getMetaClassById('ConstructorInject');
+        expect(cls).toBe(ConstructorInject);
     });
 
-    test('@constructorParam装饰器不能装饰在字段上', () => {
+    test('@constructorInject装饰器不能装饰在字段上', () => {
         @component()
         class Button {
-            @constructorParam()
+            @constructorInject()
             field: string;
         }
 
@@ -48,15 +48,15 @@ describe('@constructorParam装饰器', () => {
             'CO10005：%s 类 %s 字段上field装饰器 %s 只能用于装饰%s',
             'Button',
             'field',
-            '@constructorParam',
+            '@constructorInject',
             'class'
         );
     });
 
-    test('@constructorParam装饰器不能装饰在method上', () => {
+    test('@constructorInject装饰器不能装饰在method上', () => {
         @component()
         class Button {
-            @constructorParam()
+            @constructorInject()
             getName() {}
         }
 
@@ -65,7 +65,7 @@ describe('@constructorParam装饰器', () => {
             'CO10006：%s 类 %s 方法上method装饰器 %s 只能用于装饰%s',
             'Button',
             'getName',
-            '@constructorParam',
+            '@constructorInject',
             'class'
         );
     });
@@ -80,7 +80,6 @@ describe('@constructorParam装饰器', () => {
         let fn7: any = 22;
 
         @component()
-        @constructorParam()
         class ButtonA {
             constructor(str: string, num: number, bool: boolean, obj: object, nul: null, und: undefined, sym: symbol) {
                 fn1 = str;
@@ -111,7 +110,6 @@ describe('@constructorParam装饰器', () => {
         let fn5: any = 22;
 
         @component()
-        @constructorParam()
         class ButtonA {
             constructor(str: String, num: Number, bool: Boolean, sym: Symbol) {
                 fn1 = str;
@@ -137,7 +135,6 @@ describe('@constructorParam装饰器', () => {
         let fn5: any = 22;
 
         @component()
-        @constructorParam()
         class ButtonA {
             constructor(obj: Object, arr: Array<any>, fn: Function, set: Set<any>, map: Map<any, any>) {
                 fn1 = obj;
@@ -163,7 +160,6 @@ describe('@constructorParam装饰器', () => {
         let fn3: any = 22;
 
         @component()
-        @constructorParam()
         class ButtonA {
             constructor(obj: {}, arr: [], fn: () => {}) {
                 fn1 = obj;
@@ -184,7 +180,7 @@ describe('@constructorParam装饰器', () => {
         let fn: any = 22;
 
         @component()
-        @constructorParam()
+        @constructorInject()
         class ButtonA {
             // @ts-expect-error - 故意使用未定义的标识符来测试系统如何处理
             constructor(like: Like) {
@@ -208,7 +204,7 @@ describe('@constructorParam装饰器', () => {
         enum e {}
 
         @component()
-        @constructorParam()
+        @constructorInject()
         class ButtonA {
             constructor(obj: t, arr: inter, fn: e) {
                 fn1 = obj;
@@ -225,10 +221,9 @@ describe('@constructorParam装饰器', () => {
     });
 
     describe('初始化的组件的scope都是singleton', () => {
-        test('不能通过constructorParam装饰器注入自己，因为constructorParam装饰器在类定义之前执行，这时候被装饰器还未定义', () => {
+        test('不能通过constructorInject装饰器注入自己，因为constructorInject装饰器在类定义之前执行，这时候被装饰器还未定义', () => {
             let btn: any = 22;
 
-            @constructorParam()
             @component()
             class Button {
                 constructor(button: Button) {
@@ -240,12 +235,11 @@ describe('@constructorParam装饰器', () => {
             expect(btn).toBe(undefined);
         });
 
-        test('不能通过constructorParam装饰器注入词法作用域靠后的类，因为类的声明不会提升，导致constructorParam装饰器拿不到词法作用域靠后的类', () => {
+        test('不能通过constructorInject装饰器注入词法作用域靠后的类，因为类的声明不会提升，导致constructorInject装饰器拿不到词法作用域靠后的类', () => {
             let fnA: any = 22;
             let fnB: any = 23;
 
             @component()
-            @constructorParam()
             class ButtonA {
                 constructor(buttonB: ButtonB) {
                     fnA = buttonB;
@@ -253,7 +247,6 @@ describe('@constructorParam装饰器', () => {
             }
 
             @component()
-            @constructorParam()
             class ButtonB {
                 constructor(buttonA: ButtonA) {
                     fnB = buttonA;
@@ -272,8 +265,8 @@ describe('@constructorParam装饰器', () => {
     });
 
     xdescribe('初始化的组件的scope都是prototype', () => {
-        xtest('不能通过constructorParam装饰器注入自己', () => {
-            @constructorParam()
+        xtest('不能通过constructorInject装饰器注入自己', () => {
+            @constructorInject()
             @scope(SCOPE.Prototype)
             @component()
             class Button {

@@ -1,3 +1,3 @@
-import bundle, { customBuild } from './bundle';
+import { bundleJest, bundleCocoMvc, bundleThirdPartLib, customBuild } from './bundle';
 
-export { customBuild, bundle };
+export { customBuild, bundleJest, bundleCocoMvc, bundleThirdPartLib };

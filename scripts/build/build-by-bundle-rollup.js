@@ -58,9 +58,9 @@ async function buildCoco () {
      * 首次加载这个文件 @cocojs/bundle-rollup 还没有打包出来，会导致报错。
      * 所以这里需要动态引入。
      */
-    const { bundle: rollupRunner } = require("@cocojs/bundle-rollup");
+    const { bundleCocoMvc } = require("@cocojs/bundle-rollup");
     for (const target of cocoTargets) {
-        await rollupRunner(target);
+        await bundleCocoMvc(target);
     }
 }
 

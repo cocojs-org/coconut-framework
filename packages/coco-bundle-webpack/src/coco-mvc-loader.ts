@@ -6,7 +6,7 @@ function cocoMvcLoader(source: string) {
         return source;
     }
     try {
-        const { code } = compileOneFile(source, this.resourcePath);
+        const { code } = compileOneFile(source, this.resourcePath, '', '@cocojs/mvc');
         return code;
     } catch (e) {
         this.emitError(e);

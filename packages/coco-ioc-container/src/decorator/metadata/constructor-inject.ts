@@ -6,8 +6,8 @@ import Metadata from '../../metadata/instantiate-one-metadata';
  * @public
  */
 @target([Target.Type.Class])
-class ConstructorParam extends Metadata {
+class ConstructorInject extends Metadata {
     value: Class<any>[];
 }
 
-export default ConstructorParam;
+export default ConstructorInject;

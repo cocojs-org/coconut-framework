@@ -7,27 +7,12 @@ const commonCompilerOptions: ts.CompilerOptions = {
     emitDecoratorMetadata: false,
 };
 
-function compile(files: string[], outDir: string) {
-    const tsOptions = {
-        ...commonCompilerOptions,
-        outDir,
-    };
-    const host = ts.createCompilerHost(tsOptions);
-    const program = ts.createProgram({
-        rootNames: files,
-        options: tsOptions,
-        host,
-    });
-
-    const emitResult = program.emit(undefined, undefined, undefined, undefined, {
-        before: [transformerFactory()],
-    });
-
-    const diagnostics = ts.getPreEmitDiagnostics(program).concat(emitResult.diagnostics);
-    return diagnostics;
-}
-
-function compileOneFile(code: string, fileName: string, prefix: string = ''): { code: string; map?: string } {
+function compileOneFile(
+    code: string,
+    fileName: string,
+    prefix: string = '',
+    addConstructorInjectImportStmt?: 'coco-ioc-container' | '@cocojs/mvc'
+): { code: string; map?: string } {
     const result = ts.transpileModule(code, {
         fileName,
         compilerOptions: {
@@ -35,7 +20,7 @@ function compileOneFile(code: string, fileName: string, prefix: string = ''): { 
             sourceMap: true,
         },
         transformers: {
-            before: [transformerFactory(prefix)],
+            before: [transformerFactory(prefix, addConstructorInjectImportStmt)],
         },
     });
 
@@ -45,4 +30,4 @@ function compileOneFile(code: string, fileName: string, prefix: string = ''): { 
     };
 }
 
-export { commonCompilerOptions, transformerFactory, compileOneFile }
+export { commonCompilerOptions, compileOneFile }

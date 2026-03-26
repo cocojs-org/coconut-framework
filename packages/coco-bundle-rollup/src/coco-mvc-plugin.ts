@@ -6,7 +6,8 @@ interface PluginOption {
     idPrefix?: string;
 }
 
-function cocoMvcPlugin({ idPrefix }: PluginOption = {}): Plugin {
+// 不会插入 import { constructorInject } from 'xxxx' 的场景
+function cocoMvcPluginForNoImport({ idPrefix }: PluginOption = {}): Plugin {
     return {
         name: 'rollup-plugin-coco-mvc',
         transform(this: PluginContext, code, id) {
@@ -20,5 +21,34 @@ function cocoMvcPlugin({ idPrefix }: PluginOption = {}): Plugin {
     };
 }
 
-export { PluginOption }
-export default cocoMvcPlugin;
+// 插入 import { constructorInject } from 'coco-ioc-container' 的场景
+function cocoMvcPluginForCocoMvc({ idPrefix }: PluginOption = {}): Plugin {
+    return {
+        name: 'rollup-plugin-coco-mvc',
+        transform(this: PluginContext, code, id) {
+            try {
+                const output = compileOneFile(code, id, idPrefix, 'coco-ioc-container');
+                return output;
+            } catch (e: any) {
+                this.error(e.message);
+            }
+        },
+    };
+}
+
+// 插入 import { constructorInject } from '@cocojs/mvc' 的场景
+function cocoMvcPluginForThirdPartLib({ idPrefix }: PluginOption = {}): Plugin {
+    return {
+        name: 'rollup-plugin-coco-mvc',
+        transform(this: PluginContext, code, id) {
+            try {
+                const output = compileOneFile(code, id, idPrefix, '@cocojs/mvc');
+                return output;
+            } catch (e: any) {
+                this.error(e.message);
+            }
+        },
+    };
+}
+
+export { PluginOption, cocoMvcPluginForNoImport, cocoMvcPluginForCocoMvc, cocoMvcPluginForThirdPartLib };

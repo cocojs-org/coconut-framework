@@ -1,7 +1,7 @@
 import { type IocComDef } from './ioc-component-definition';
 import type Application from '../application';
 import { getCreateDecoratorOption } from '../create-decorator-exp/create-decorator-options';
-import ConstructorParam from '../decorator/metadata/constructor-param';
+import ConstructorInject from '../decorator/metadata/constructor-inject.ts';
 import Autowired from '../decorator/metadata/autowired';
 import { createDiagnose, DiagnoseCode, printDiagnose, stringifyDiagnose } from 'shared';
 import Qualifier from '../decorator/metadata/qualifier';
@@ -110,14 +110,14 @@ class IocComponentFactory {
             instantiatingStage.add(targetDefinition.cls);
 
             const constructorArgs = [];
-            const constructorParams = application.metadataRepository.listClassKindMetadata(
+            const constructorInject = application.metadataRepository.listClassKindMetadata(
                 instantiateDefinition.cls,
-                ConstructorParam
+                ConstructorInject
             );
-            if (constructorParams.length > 0) {
+            if (constructorInject.length > 0) {
                 // 因为元数据不能重复，所以只有一个
-                const constructorParamsParams = (constructorParams[0] as ConstructorParam).value;
-                for (const dependency of constructorParamsParams) {
+                const constructorInjectParams = (constructorInject[0] as ConstructorInject).value;
+                for (const dependency of constructorInjectParams) {
                     if (dependency === undefined) {
                         constructorArgs.push(undefined);
                     } else {

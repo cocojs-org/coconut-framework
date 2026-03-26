@@ -38,7 +38,7 @@
  * 2. 不能和其他component复合装饰器同时使用
  */
 /**
- * constructor-param
+ * constructor-inject
  * 1. 只能用在class上，且只能装饰一次
  */
 /**
