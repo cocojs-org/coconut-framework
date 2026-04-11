@@ -1,9 +1,21 @@
-import { startServe, build, readFileContent } from './util';
+import {
+    startServe,
+    build,
+    absProjectPath,
+    installDependenciesForLib,
+    packCocoCli,
+    packCocoMvc,
+    installDependenciesForApp,
+} from './util';
 import * as path from 'path';
 import * as fs from 'fs';
 
-function absProjectPath(projectDir: string) {
-    return path.join(__dirname, '..', projectDir);
+function prepareApp(projectFolder: string) {
+    packCocoCli();
+    packCocoMvc();
+    const projectDir = absProjectPath(projectFolder);
+    installDependenciesForApp(projectDir);
+    build(projectDir);
 }
 /**
  * 打包一个应用，并启动服务
@@ -11,7 +23,6 @@ function absProjectPath(projectDir: string) {
  */
 async function startServeApp(projectFolder: string) {
     const projectDir = absProjectPath(projectFolder);
-    build(projectDir);
     const distDir = path.join(projectDir, 'dist');
     const res = await startServe(distDir);
     return res;
@@ -24,8 +35,11 @@ async function stopServeApp(res) {
     }
 }
 
-async function buildLib(projectFolder: string) {
+function prepareLib(projectFolder: string) {
+    packCocoCli();
+    packCocoMvc();
     const projectDir = absProjectPath(projectFolder);
+    installDependenciesForLib(projectDir);
     build(projectDir);
 }
 
@@ -35,4 +49,4 @@ function readLibDistFile(projectFolder: string) {
     return fs.readFileSync(distPath, 'utf-8');
 }
 
-export { startServeApp, stopServeApp, buildLib, readLibDistFile };
+export { startServeApp, stopServeApp, readLibDistFile, prepareLib, prepareApp };

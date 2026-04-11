@@ -1,11 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { buildLib, readLibDistFile } from './_helper/exec-test'
+import { prepareLib, readLibDistFile } from './_helper/exec-test'
 
 test.describe('单一库项目-没有样式', () => {
     const projectFolder = 'lib-basic-no-style';
 
-    test.beforeEach(async () => {
-        await buildLib(projectFolder);
+    test.beforeAll(async () => {
+        prepareLib(projectFolder);
     })
 
     test.afterEach(async () => {})

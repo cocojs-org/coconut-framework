@@ -16,13 +16,12 @@
     "author": "",
     "license": "ISC",
     "devDependencies": {
-        "@cocojs/cli": ">=0.0.1-alpha.0 <0.0.2",
-        "@cocojs/mvc": ">=0.0.1-alpha.0 <0.0.2",
-        "ts-patch": "3.1.2",
+        "@cocojs/cli": "file:../../packages/coco-cli/cocojs-cli-0.1.0-beta.25.tgz",
+        "@cocojs/mvc": "file:../../packages/coco-mvc/cocojs-mvc-0.1.0-beta.13.tgz",
         "typescript": "5.3.3"
     },
+    "packageManager": "pnpm@10.20.0",
     "peerDependencies": {
-        "@cocojs/mvc": ">=0.0.1-alpha.0 <0.0.2"
-    },
-    "packageManager": "pnpm@10.20.0"
+        "@cocojs/mvc": "file:../../packages/coco-mvc/cocojs-mvc-0.1.0-beta.13.tgz"
+    }
 }
