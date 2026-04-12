@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { prepareApp, startServeApp, stopServeApp } from './_helper/exec-test';
+import { prepareApp, startServeApp, stopServeApp } from './_helper/exec-test.ts';
 
 test.describe('单一应用项目-无样式', () => {
     const projectFolder = 'app-basic-no-style';

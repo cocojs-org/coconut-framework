@@ -49,7 +49,7 @@ function removeOldDependencies(projectDir: string) {
 
 function installCocoCli(projectDir: string) {
     // 要搜索的目录
-    const dir = path.join(__dirname, '../../packages/coco-cli'); // 当前文件所在目录，可改成你需要的路径
+    const dir = path.join(__dirname, '../..'); // 当前文件所在目录，可改成你需要的路径
 
     // 同步读取目录
     const files = fs.readdirSync(dir);
@@ -70,7 +70,7 @@ function installCocoCli(projectDir: string) {
 
 function installCocoMvc(projectDir: string, projectType: 'lib' | 'app') {
     // 要搜索的目录
-    const dir = path.join(__dirname, '../../packages/coco-mvc'); // 当前文件所在目录，可改成你需要的路径
+    const dir = path.join(__dirname, '../../../coco-mvc'); // 当前文件所在目录，可改成你需要的路径
 
     // 同步读取目录
     const files = fs.readdirSync(dir);
@@ -102,12 +102,12 @@ function installDependenciesForApp(projectDir: string) {
 }
 
 function packCocoCli() {
-    const dir = path.join(__dirname, '../../packages/coco-cli');
+    const dir = path.join(__dirname, '../..');
     execSync(`pnpm pack`, { stdio: 'inherit', cwd: dir });
 }
 
 function packCocoMvc() {
-    const dir = path.join(__dirname, '../../packages/coco-mvc');
+    const dir = path.join(__dirname, '../../../coco-mvc');
     execSync(`pnpm pack`, { stdio: 'inherit', cwd: dir });
 }
 
