@@ -48,9 +48,12 @@ const buildInConfig = {
         new HtmlWebpackPlugin({
             templateContent: `
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+</head>
 <body>
-  <div id="root"></div>
+    <div id="root"></div>
 </body>
 </html>
   `,
