@@ -9,7 +9,7 @@ function absProjectPath(projectDir: string) {
 
 function startServe(assertDir) {
     const server = http.createServer((req, res) => {
-        const urlPath = req.url === '/' ? '/index.html' : req.url;
+        const urlPath = !req.url.includes('.js') ? '/index.html' : req.url;
         const filePath = path.join(assertDir, urlPath);
 
         if (!fs.existsSync(filePath)) {
