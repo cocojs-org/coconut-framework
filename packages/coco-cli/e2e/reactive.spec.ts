@@ -1,8 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { prepareApp, startServeApp, stopServeApp } from './_helper/exec-test.ts';
 
-test.describe('单一应用项目-无样式', () => {
-    const projectFolder = 'app-basic-no-style';
+test.describe('响应式', () => {
+    const projectFolder = 'reactive';
     let res;
     test.beforeAll(async () => {
         prepareApp(projectFolder);
@@ -15,12 +15,6 @@ test.describe('单一应用项目-无样式', () => {
     test.afterAll(async () => {
         await stopServeApp(res);
     })
-
-    test('能够渲染简单文字', async ({ page }) => {
-        await page.goto(res.url);
-
-        await expect(page.getByText('hello cocojs')).toHaveText('hello cocojs');
-    });
 
     test('@reactive功能正常', async ({ page }) => {
         await page.goto(`${res.url}/reactive`);
@@ -42,5 +36,15 @@ test.describe('单一应用项目-无样式', () => {
         await page.click('button#add');
         await expect(page.locator('span')).toContainText('counter: 1');
         expect(logs).toContain('this is undefined in unbind function.');
+    });
+
+    test('@store功能正常', async ({ page }) => {
+        await page.goto(`${res.url}/store`);
+
+        await expect(page.locator('span')).toContainText('theme: light');
+        await page.click('button#dark');
+        await expect(page.locator('span')).toContainText('theme: dark');
+        await page.click('button#light');
+        await expect(page.locator('span')).toContainText('theme: light');
     });
 })
