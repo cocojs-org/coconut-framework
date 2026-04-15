@@ -1,4 +1,3 @@
 packages:
   - 'packages/*'
-  - '!fixture/**'
-  - '!packages/**/e2e/**'
+  - '!**/e2e/**'
