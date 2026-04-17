@@ -19,7 +19,7 @@ class Button {
   }
 
   render() {
-    return <div onClick={this.onClick}>
+    return <div id={'btn'} onClick={this.onClick}>
       {this.props.children}{this.props.loading ? `...` : null}
     </div>
   }

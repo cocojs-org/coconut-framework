@@ -2,17 +2,26 @@ import {
     startServe,
     build,
     absProjectPath,
-    installDependenciesForLib,
-    packCocoCli,
-    packCocoMvc,
-    installDependenciesForApp,
+    installCocoMvc,
+    installCocoCli,
+    removeOldDependencies,
 } from './util.ts';
 import * as path from 'path';
 import * as fs from 'fs';
 
+function installDependenciesForLib(projectDir: string) {
+    removeOldDependencies(projectDir);
+    installCocoCli(projectDir);
+    installCocoMvc(projectDir, 'lib');
+}
+
+function installDependenciesForApp(projectDir: string) {
+    removeOldDependencies(projectDir);
+    installCocoCli(projectDir);
+    installCocoMvc(projectDir, 'app');
+}
+
 function prepareApp(projectFolder: string) {
-    packCocoCli();
-    packCocoMvc();
     const projectDir = absProjectPath(projectFolder);
     installDependenciesForApp(projectDir);
     build(projectDir);
@@ -36,11 +45,20 @@ async function stopServeApp(res) {
 }
 
 function prepareLib(projectFolder: string) {
-    packCocoCli();
-    packCocoMvc();
+    const projectRoot = absProjectPath(projectFolder);
+    const libProjectDir = path.join(projectRoot, 'packages/lib');
+    const devProjectDir = path.join(projectRoot, 'packages/dev');
+    installDependenciesForLib(libProjectDir);
+    build(libProjectDir);
+    installDependenciesForApp(devProjectDir);
+    build(devProjectDir);
+}
+
+async function startLibDevServe(projectFolder: string) {
     const projectDir = absProjectPath(projectFolder);
-    installDependenciesForLib(projectDir);
-    build(projectDir);
+    const distDir = path.join(projectDir, 'packages/dev/dist');
+    const res = await startServe(distDir);
+    return res;
 }
 
 function readLibDistFile(projectFolder: string) {
@@ -49,4 +67,4 @@ function readLibDistFile(projectFolder: string) {
     return fs.readFileSync(distPath, 'utf-8');
 }
 
-export { startServeApp, stopServeApp, readLibDistFile, prepareLib, prepareApp };
+export { startServeApp, stopServeApp, startLibDevServe, readLibDistFile, prepareLib, prepareApp };

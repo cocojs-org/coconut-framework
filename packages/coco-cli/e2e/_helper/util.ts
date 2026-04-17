@@ -83,36 +83,17 @@ function installCocoMvc(projectDir: string, projectType: 'lib' | 'app') {
     if (result.length === 1) {
         const gtzFileName = result[0];
         const rltPath = path.relative(projectDir, gtzFileName);
-        execSync(`pnpm install ${rltPath} ${projectType === 'lib' ? '--save-peer' : ''}`, { stdio: 'inherit', cwd: projectDir });
+        execSync(
+            `pnpm install ${rltPath} ${projectType === 'lib' ? '-D' : ''}`,
+            { stdio: 'inherit', cwd: projectDir }
+        );
     } else {
         throw new Error(`Coco coco ${dir} not found`);
     }
-}
-
-function installDependenciesForLib(projectDir: string) {
-    removeOldDependencies(projectDir);
-    installCocoCli(projectDir);
-    installCocoMvc(projectDir, 'lib');
-}
-
-function installDependenciesForApp(projectDir: string) {
-    removeOldDependencies(projectDir);
-    installCocoCli(projectDir);
-    installCocoMvc(projectDir, 'app');
-}
-
-function packCocoCli() {
-    const dir = path.join(__dirname, '../..');
-    execSync(`pnpm pack`, { stdio: 'inherit', cwd: dir });
-}
-
-function packCocoMvc() {
-    const dir = path.join(__dirname, '../../../coco-mvc');
-    execSync(`pnpm pack`, { stdio: 'inherit', cwd: dir });
 }
 
 function build(projectDir) {
     execSync(`pnpm run build`, { stdio: 'inherit', cwd: projectDir });
 }
 
-export { absProjectPath, startServe, build, installDependenciesForLib, installDependenciesForApp, packCocoCli, packCocoMvc };
+export { absProjectPath, startServe, build, installCocoMvc, installCocoCli, removeOldDependencies };
