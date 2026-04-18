@@ -13,6 +13,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
     testDir: './packages/coco-cli/e2e',
+    // testMatch: /.*router\.spec\.ts/,
     globalSetup: './packages/coco-cli/e2e/_helper/playwright-global-setup.js',
     /* Run tests in files in parallel */
     fullyParallel: true,

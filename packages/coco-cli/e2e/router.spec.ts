@@ -25,4 +25,15 @@ test.describe('路由', () => {
         await page.click('button');
         await expect(page.locator('span')).toContainText('a page');
     });
+
+    test('修改动态路由，页面重新渲染', async ({ page }) => {
+        await page.goto(`${res.url}/user/zhangsan`);
+        await expect(page.locator('span#userId')).toContainText('zhangsan');
+
+        await page.goto(`${res.url}/user/lisi`);
+        await expect(page.locator('span#userId')).toContainText('lisi');
+
+        await page.click('button#wangwu');
+        await expect(page.locator('span#userId')).toContainText('wangwu');
+    })
 })

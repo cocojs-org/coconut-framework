@@ -159,7 +159,7 @@ packages:
     resolution: {integrity: sha512-2Mm/kIIr4hfGNfK56kvDNThb7vpwB4M4K34u00FEpY48Q4jmR3qd5WkjZ8qbAI00FrDDfWdNoaCJFOMV761TnA==}
 
   '@cocojs/mvc@file:../../../coco-mvc/cocojs-mvc-0.1.0-beta.13.tgz':
-    resolution: {integrity: sha512-PlKnCqVSIGqZiBVFbRacV7aFpKeE7lzpCH/jflS610mUS9DqDDLBsPfiWiVe+0c32mxexUpUqq5G2dn/MWbTrQ==, tarball: file:../../../coco-mvc/cocojs-mvc-0.1.0-beta.13.tgz}
+    resolution: {integrity: sha512-m7pxs2kRpXC1N5WAYMdoQiBTrgStRMhfqVg6P4WFm4eKTUTkxhWmjCVf14N2RVn7ATN73rzCsrR6Ruk19oHmeQ==, tarball: file:../../../coco-mvc/cocojs-mvc-0.1.0-beta.13.tgz}
     version: 0.1.0-beta.13
 
   '@jridgewell/gen-mapping@0.3.13':
