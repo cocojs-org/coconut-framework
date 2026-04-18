@@ -151,7 +151,7 @@ packages:
     resolution: {integrity: sha512-b1NTOC3MDpcBSvZ5xSiEQelCl1qWxvKePM7P5y8MBP3X2avrsVuGR8KjLdrYhlBYeNKihcLT7D27nGK2YHN81g==}
 
   '@cocojs/cli@file:../../cocojs-cli-0.1.0-beta.25.tgz':
-    resolution: {integrity: sha512-TYDvy8dpZmV3tb8zJpKdn1AR6GnTlaVT9XykUdYkj99TcYeOO1I3UeiwfPLLQWYjdrHYZzypSTGLmM2kuD/i7g==, tarball: file:../../cocojs-cli-0.1.0-beta.25.tgz}
+    resolution: {integrity: sha512-ZDQPMgQkkUc9D2YVn364vdleZqmsDfErmECski3PHMPVPMeOqJsWgPs+hdFN1RNc+VAeQLS4fWTBAk+sCD32FQ==, tarball: file:../../cocojs-cli-0.1.0-beta.25.tgz}
     version: 0.1.0-beta.25
     hasBin: true
 
@@ -1077,8 +1077,8 @@ packages:
     resolution: {integrity: sha512-1cDNdwJ2Jaohmb3sg4OmKaMBwuC48sYni5HUw2DvsC8LjGTLK9h+eb1X6RyuOHe4hT0ULCW68iomhjUoKUqlPQ==}
     engines: {node: '>= 0.4'}
 
-  hasown@2.0.2:
-    resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
+  hasown@2.0.3:
+    resolution: {integrity: sha512-ej4AhfhfL2Q2zpMmLo7U1Uv9+PyhIZpgQLGT1F9miIGmiCJIoCgSmczFdrc97mWT4kVY72KA+WnnhJ5pghSvSg==}
     engines: {node: '>= 0.4'}
 
   he@1.2.0:
@@ -1093,8 +1093,8 @@ packages:
     engines: {node: '>=12'}
     hasBin: true
 
-  html-webpack-plugin@5.6.6:
-    resolution: {integrity: sha512-bLjW01UTrvoWTJQL5LsMRo1SypHW80FTm12OJRSnr3v6YHNhfe+1r0MYUZJMACxnCHURVnBWRwAsWs2yPU9Ezw==}
+  html-webpack-plugin@5.6.7:
+    resolution: {integrity: sha512-md+vXtdCAe60s1k6AU3dUyMJnDxUyQAwfwPKoLisvgUF1IXjtlLsk2se54+qfL9Mdm26bbwvjJybpNx48NKRLw==}
     engines: {node: '>=10.13.0'}
     peerDependencies:
       '@rspack/core': 0.x || 1.x
@@ -1995,7 +1995,7 @@ snapshots:
       '@cocojs/bundle-webpack': 0.0.1-beta.10(@babel/core@7.29.0)(tslib@2.8.1)
       chokidar: 4.0.3
       fs-extra: 11.3.4
-      html-webpack-plugin: 5.6.6(webpack@5.106.2)
+      html-webpack-plugin: 5.6.7(webpack@5.106.2)
     transitivePeerDependencies:
       - '@babel/core'
       - '@rspack/core'
@@ -2944,7 +2944,7 @@ snapshots:
       get-proto: 1.0.1
       gopd: 1.2.0
       has-symbols: 1.1.0
-      hasown: 2.0.2
+      hasown: 2.0.3
       math-intrinsics: 1.1.0
 
   get-proto@1.0.1:
@@ -2972,7 +2972,7 @@ snapshots:
 
   has-symbols@1.1.0: {}
 
-  hasown@2.0.2:
+  hasown@2.0.3:
     dependencies:
       function-bind: 1.1.2
 
@@ -2995,7 +2995,7 @@ snapshots:
       relateurl: 0.2.7
       terser: 5.46.1
 
-  html-webpack-plugin@5.6.6(webpack@5.106.2):
+  html-webpack-plugin@5.6.7(webpack@5.106.2):
     dependencies:
       '@types/html-minifier-terser': 6.1.0
       html-minifier-terser: 6.1.0
@@ -3070,7 +3070,7 @@ snapshots:
 
   is-core-module@2.16.1:
     dependencies:
-      hasown: 2.0.2
+      hasown: 2.0.3
 
   is-docker@3.0.0: {}
 

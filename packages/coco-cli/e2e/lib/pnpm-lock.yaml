@@ -191,7 +191,7 @@ packages:
     resolution: {integrity: sha512-b1NTOC3MDpcBSvZ5xSiEQelCl1qWxvKePM7P5y8MBP3X2avrsVuGR8KjLdrYhlBYeNKihcLT7D27nGK2YHN81g==}
 
   '@cocojs/cli@file:../../cocojs-cli-0.1.0-beta.25.tgz':
-    resolution: {integrity: sha512-TYDvy8dpZmV3tb8zJpKdn1AR6GnTlaVT9XykUdYkj99TcYeOO1I3UeiwfPLLQWYjdrHYZzypSTGLmM2kuD/i7g==, tarball: file:../../cocojs-cli-0.1.0-beta.25.tgz}
+    resolution: {integrity: sha512-ZDQPMgQkkUc9D2YVn364vdleZqmsDfErmECski3PHMPVPMeOqJsWgPs+hdFN1RNc+VAeQLS4fWTBAk+sCD32FQ==, tarball: file:../../cocojs-cli-0.1.0-beta.25.tgz}
     version: 0.1.0-beta.25
     hasBin: true
 

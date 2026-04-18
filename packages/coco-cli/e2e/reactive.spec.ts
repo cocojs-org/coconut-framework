@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { prepareApp, startServeApp, stopServeApp } from './_helper/exec-test.ts';
+import { prepareApp, startServeApp } from './_helper/exec-test.ts';
 
 test.describe('响应式', () => {
     const projectFolder = 'reactive';
@@ -13,7 +13,7 @@ test.describe('响应式', () => {
     })
 
     test.afterAll(async () => {
-        await stopServeApp(res);
+        await res?.stopServe();
     })
 
     test('@reactive功能正常', async ({ page }) => {

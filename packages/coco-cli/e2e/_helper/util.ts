@@ -2,12 +2,13 @@ import * as http from 'http';
 import * as fs from 'fs';
 import * as path from 'path';
 import { execSync } from 'node:child_process';
+import type { Server } from 'http';
 
 function absProjectPath(projectDir: string) {
     return path.join(__dirname, '..', projectDir);
 }
 
-function startServe(assertDir) {
+function startServe(assertDir): Promise<{ url: string, server: Server }> {
     const server = http.createServer((req, res) => {
         const urlPath = !req.url.includes('.js') ? '/index.html' : req.url;
         const filePath = path.join(assertDir, urlPath);

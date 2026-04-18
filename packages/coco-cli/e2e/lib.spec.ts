@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { prepareLib, startLibDevServe, stopServeApp } from './_helper/exec-test.ts';
+import { prepareLib, startLibDevServe } from './_helper/exec-test.ts';
 
 test.describe('引用工具库', () => {
     const projectFolder = 'lib';
@@ -14,7 +14,7 @@ test.describe('引用工具库', () => {
     })
 
     test.afterEach(async () => {
-        await stopServeApp(res);
+        await res?.stopServe();
     })
 
     test('使用lib中的视图组件并渲染', async ({ page }) => {

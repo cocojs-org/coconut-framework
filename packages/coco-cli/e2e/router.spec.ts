@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { prepareApp, startServeApp, stopServeApp } from './_helper/exec-test.ts';
+import { prepareApp, startServeApp } from './_helper/exec-test.ts';
 
 test.describe('路由', () => {
     const projectFolder = 'router';
@@ -13,7 +13,7 @@ test.describe('路由', () => {
     })
 
     test.afterAll(async () => {
-        await stopServeApp(res);
+        await res?.stopServe();
     })
 
     test('简单页面跳转', async ({ page }) => {
