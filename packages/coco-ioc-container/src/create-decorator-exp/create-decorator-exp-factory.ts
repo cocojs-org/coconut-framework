@@ -146,8 +146,8 @@ function createDecoratorExpFactory(fn: IAddDecoratorParams) {
                     }
                     case KindMethod:
                     case KindField:
-                        break;
                     case KindGetter:
+                        break;
                     case KindSetter:
                     case KindAccessor:
                     default:
@@ -157,6 +157,7 @@ function createDecoratorExpFactory(fn: IAddDecoratorParams) {
                     switch (context.kind) {
                         case KindField:
                         case KindMethod:
+                        case KindGetter:
                             fn(isPlaceholderExp, this.constructor, {
                                 metadataKind: context.kind,
                                 metadataClass: MetaClsOrPlaceholderMetaCls,

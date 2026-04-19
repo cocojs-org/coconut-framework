@@ -1,9 +1,9 @@
 /**
  * 当前路由
  */
-import { store } from 'coco-view';
+import { component } from 'coco-ioc-container';
 
-@store()
+@component()
 class Route {
     // window.location.pathname
     public pathname: string;

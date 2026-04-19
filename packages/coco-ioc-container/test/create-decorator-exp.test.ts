@@ -163,28 +163,6 @@ describe('create-decorator-exp:createDecoratorExpFactory', () => {
         expect(fn).toHaveBeenCalledTimes(1);
     });
 
-    test('不能装饰getter', () => {
-        let errorMsg = '';
-        try {
-            const fn = jest.fn();
-            const create = createDecoratorExpFactory(fn);
-
-            class Meta6 {}
-            // TODO: 如果在测试文件中引用类型？const m: () => Decorator<ClassGetterDecoratorContext> = create(Meta6);
-            const m = create(false, Meta6);
-
-            class A {
-                @m()
-                get g() {
-                    return 1;
-                }
-            }
-        } catch (e) {
-            errorMsg = e.message;
-        }
-        expect(errorMsg).toBe('CO10019：框架暂不支持为 getter 添加装饰器。');
-    });
-
     test('不能装饰setter', () => {
         let errorMsg = '';
         try {

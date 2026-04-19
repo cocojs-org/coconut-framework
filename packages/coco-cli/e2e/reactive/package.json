@@ -1,0 +1,17 @@
+{
+    "name": "reactive",
+    "version": "1.0.0",
+    "description": "最简单的应用项目，单项目，无样式",
+    "scripts": {
+        "dev": "coco app dev",
+        "build": "coco app build"
+    },
+    "devDependencies": {
+        "@cocojs/cli": "file:../../cocojs-cli-0.1.0-beta.25.tgz",
+        "typescript": "5.3.3"
+    },
+    "packageManager": "pnpm@10.20.0",
+    "dependencies": {
+        "@cocojs/mvc": "file:../../../coco-mvc/cocojs-mvc-0.1.0-beta.13.tgz"
+    }
+}

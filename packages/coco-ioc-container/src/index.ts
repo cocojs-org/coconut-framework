@@ -24,6 +24,9 @@ export {
     KindClass,
     KindField,
     KindMethod,
+    KindGetter,
+    KindSetter,
+    KindAccessor,
     type Decorator,
     type Field,
 } from './create-decorator-exp';

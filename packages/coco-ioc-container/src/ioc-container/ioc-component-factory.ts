@@ -5,7 +5,7 @@ import ConstructorInject from '../decorator/metadata/constructor-inject.ts';
 import Autowired from '../decorator/metadata/autowired';
 import { createDiagnose, DiagnoseCode, printDiagnose, stringifyDiagnose } from 'shared';
 import Qualifier from '../decorator/metadata/qualifier';
-import { KindField, KindMethod } from '../create-decorator-exp';
+import { KindField, KindGetter, KindMethod } from '../create-decorator-exp';
 
 type ConstructOption = {
     classOrId: Class<any> | string;
@@ -28,7 +28,7 @@ class IocComponentFactory {
         }
         const metadatas = application.metadataRepository.getMetadataByClass(cls);
         if (metadatas) {
-            const { classMetadata, methodMetadata, fieldMetadata } = metadatas;
+            const { classMetadata, methodMetadata, fieldMetadata, getterMetadata } = metadatas;
             for (const meta of classMetadata) {
                 const option = getCreateDecoratorOption(meta.constructor as Class<any>);
                 if (option) {
@@ -48,6 +48,17 @@ class IocComponentFactory {
                     const option = getCreateDecoratorOption(meta.constructor as Class<any>);
                     if (option) {
                         option.componentPostConstruct.call(component, meta, application, { name: method, kind: KindMethod });
+                    }
+                }
+            }
+            for (const [getter, metaList] of getterMetadata.entries()) {
+                for (const meta of metaList) {
+                    const option = getCreateDecoratorOption(meta.constructor as Class<any>);
+                    if (option) {
+                        option.componentPostConstruct.call(component, meta, application, {
+                            name: getter,
+                            kind: KindGetter,
+                        });
                     }
                 }
             }

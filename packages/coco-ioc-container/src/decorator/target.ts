@@ -3,6 +3,7 @@ import {
     KindClass,
     KindField,
     KindMethod,
+    KindGetter,
     DecoratorExpWithDecoratorSelf,
 } from '../create-decorator-exp';
 
@@ -13,6 +14,7 @@ export enum Type {
     Class = KindClass,
     Field = KindField,
     Method = KindMethod,
+    Getter = KindGetter
 }
 
 /**

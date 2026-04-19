@@ -1,4 +1,12 @@
-import { createDecoratorExp, type Decorator, type Application, type Kind, KindMethod, KindField } from 'coco-ioc-container';
+import {
+    createDecoratorExp,
+    type Decorator,
+    type Application,
+    type Kind,
+    KindMethod,
+    KindField,
+    KindGetter,
+} from 'coco-ioc-container';
 import Memoized from './metadata/memoized';
 import Subscriber from '../memoized/subscriber';
 import { createDiagnose, DiagnoseCode, stringifyDiagnose } from 'shared';
@@ -25,6 +33,19 @@ export default createDecoratorExp(Memoized, {
                 const diagnose = createDiagnose(DiagnoseCode.CO10028, this.constructor.name, name, name, type);
                 console.error(stringifyDiagnose(diagnose));
             }
+        } else if (kind === KindGetter) {
+            const descriptor = Object.getOwnPropertyDescriptor(this.constructor.prototype, name);
+            const getter = descriptor?.get;
+            if (typeof getter !== 'function') {
+                console.error("不应该拿不到getter函数");
+                return;
+            }
+            const subscriber = new Subscriber(getter.bind(this));
+            const memoizedGetter = subscriber.memoizedFn;
+            Object.defineProperty(this, name, {
+                ...descriptor,
+                get: memoizedGetter
+            })
         } else {
             // 理论上不会走到这里
         }

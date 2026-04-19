@@ -4,7 +4,7 @@
  * 元数据的实例通过装饰器一一对应的元数据类加上装饰器表达式的参数实例化得到，具体见create-metadata.ts
  */
 import Metadata, { instantiateMetadata } from './instantiate-one-metadata';
-import { KindClass, KindField, KindMethod, type Field } from '../create-decorator-exp';
+import { KindClass, KindField, KindMethod, type Field, KindGetter } from '../create-decorator-exp';
 import { type Params } from '../create-decorator-exp/decorator-exp-param';
 import { createDiagnose, DiagnoseCode, printDiagnose, stringifyDiagnose } from 'shared';
 
@@ -13,6 +13,7 @@ export interface MetaMetadata {
     classMetadata: Metadata[];
     fieldMetadata: Map<Field, Metadata[]>; // 元数据类是没有字段装饰器的，但用户可能误加了，那么启动的时候保存起来，校验时去掉
     methodMetadata: Map<Field, Metadata[]>; // 元数据类是没有方法装饰器的，但用户可能误加了，那么启动的时候保存起来，校验时去掉
+    getterMetadata: Map<Field, Metadata[]>; // 元数据类是没有getter装饰器的，但用户可能误加了，那么启动的时候保存起来，校验时去掉
 }
 
 // 非元数据子类（业务类）的元数据
@@ -20,6 +21,7 @@ export interface BizMetadata {
     classMetadata: Metadata[];
     fieldMetadata: Map<Field, Metadata[]>;
     methodMetadata: Map<Field, Metadata[]>;
+    getterMetadata: Map<Field, Metadata[]>;
 }
 
 class MetadataRepository {
@@ -45,6 +47,9 @@ class MetadataRepository {
                     case KindMethod:
                         this.addMethodKindMetadata(beDecoratedCls, field, metadataClass, metadataParam);
                         break;
+                    case KindGetter:
+                        this.addGetterKindMetadata(beDecoratedCls, field, metadataClass, metadataParam);
+                        break;
                 }
             }
         }
@@ -64,6 +69,7 @@ class MetadataRepository {
             classMetadata: Metadata[];
             fieldMetadata?: Map<Field, Metadata[]>;
             methodMetadata?: Map<Field, Metadata[]>;
+            getterMetadata?: Map<Field, Metadata[]>;
         } = Object.getPrototypeOf(Cls) === Metadata ? this.metaMetadataMap.get(Cls) : this.bizMetadataMap.get(Cls);
         return value;
     }
@@ -76,6 +82,7 @@ class MetadataRepository {
                 classMetadata: [],
                 fieldMetadata: new Map(),
                 methodMetadata: new Map(),
+                getterMetadata: new Map(),
             };
             map.set(cls, config);
         }
@@ -120,6 +127,21 @@ class MetadataRepository {
         if (!methodMetas) {
             methodMetas = [];
             methodMetadata.set(fieldName, methodMetas);
+        }
+        const metadata = instantiateMetadata(MetadataCls, args);
+        methodMetas.push(metadata);
+    }
+
+    addGetterKindMetadata(Cls: Class<any>, fieldName: Field, MetadataCls: Class<Metadata>, args?: any) {
+        let config = this.getMetadataByClass(Cls);
+        if (!config) {
+            config = this.addToMap(Cls);
+        }
+        const { getterMetadata } = config;
+        let methodMetas = getterMetadata.get(fieldName);
+        if (!methodMetas) {
+            methodMetas = [];
+            getterMetadata.set(fieldName, methodMetas);
         }
         const metadata = instantiateMetadata(MetadataCls, args);
         methodMetas.push(metadata);
@@ -190,7 +212,9 @@ class MetadataRepository {
      */
     findClassKindMetadataRecursively(beDecoratedCls: Class<any>, TargetCls: Class<any>, levels: number = Infinity) {
         if (!TargetCls || !this.metaMetadataMap.has(TargetCls)) {
-            throw new Error(stringifyDiagnose(createDiagnose(DiagnoseCode.CO10025, TargetCls?.name ? TargetCls.name : TargetCls)));
+            throw new Error(
+                stringifyDiagnose(createDiagnose(DiagnoseCode.CO10025, TargetCls?.name ? TargetCls.name : TargetCls))
+            );
         }
         if (levels < 0) {
             return null;

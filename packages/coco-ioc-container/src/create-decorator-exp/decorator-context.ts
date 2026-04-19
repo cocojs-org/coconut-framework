@@ -9,7 +9,7 @@ export const KindAccessor = 'accessor';
  */
 export type Field = string;
 
-export type Kind = typeof KindClass | typeof KindField | typeof KindMethod;
+export type Kind = typeof KindClass | typeof KindField | typeof KindMethod | typeof KindGetter;
 export type Context =
     | ClassDecoratorContext
     | ClassFieldDecoratorContext
