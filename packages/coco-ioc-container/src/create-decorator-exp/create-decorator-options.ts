@@ -3,7 +3,7 @@
  */
 import type Metadata from '../metadata/instantiate-one-metadata';
 import type Application from '../application';
-import { Field, Kind } from './decorator-context';
+import { Field, Kind, KindGetter, KindMethod, KindField } from './decorator-context';
 
 /**
  * @public
@@ -17,16 +17,22 @@ type ComponentClassPostConstructFn = (metadata: Metadata, application: Applicati
  * @param application - 全局的application对象
  * @param target - 被装饰字段或方法
  */
-type ComponentFieldPostConstructFn = (metadata: Metadata, application: Application, target: {name: Field, kind: Kind}) => void;
+type ComponentFieldPostConstructFn = (metadata: Metadata, application: Application, target: {name: Field, kind: typeof KindField }) => void;
 /**
  * @public
  */
-type ComponentMethodPostConstructFn = (metadata: Metadata, application: Application, target: {name: Field, kind: Kind}) => void;
+type ComponentMethodPostConstructFn = (metadata: Metadata, application: Application, target: {name: Field, kind: typeof KindMethod }) => void;
+type ComponentGetterPostConstructFn = (
+    metadata: Metadata,
+    application: Application,
+    target: { name: Field; kind: typeof KindGetter },
+) => void;
 
 type ComponentPostConstruct =
     | ComponentClassPostConstructFn
     | ComponentMethodPostConstructFn
-    | ComponentFieldPostConstructFn;
+    | ComponentFieldPostConstructFn
+    | ComponentGetterPostConstructFn;
 
 interface CreateDecoratorExpOption {
     /**

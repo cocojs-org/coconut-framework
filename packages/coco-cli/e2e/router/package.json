@@ -1,5 +1,5 @@
 {
-    "name": "simple-app",
+    "name": "router",
     "version": "1.0.0",
     "description": "最简单的应用项目，单项目，无样式",
     "scripts": {
