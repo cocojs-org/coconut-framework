@@ -1,5 +1,11 @@
 # @cocojs/mvc
 
+## 0.1.0-beta.14
+
+### Patch Changes
+
+-   851ebb7: https://github.com/cocojs-org/coconut-framework/issues/225
+
 ## 0.1.0-beta.13
 
 ### Patch Changes

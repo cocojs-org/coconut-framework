@@ -1,5 +1,11 @@
 # @cocojs/cli
 
+## 0.1.0-beta.26
+
+### Patch Changes
+
+-   851ebb7: https://github.com/cocojs-org/coconut-framework/issues/225
+
 ## 0.1.0-beta.25
 
 ### Patch Changes
